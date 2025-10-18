@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ables.ai</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden; /* Prevent scrolling */
+        }
+        .gradient-bg {
+            background: radial-gradient(circle at center, #111827, #000000);
+        }
+        .main-content {
+            animation: fadeIn 2s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .scrolling-words-wrapper {
+            height: 1.25em; /* Match line-height from Tailwind's 'leading-tight' */
+            overflow: hidden;
+            text-align: right;
+        }
+        .scrolling-words {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            transform: translateY(0);
+            /* Animation: 12s total, pauses on each word */
+            animation: scrollUp 12s ease-in-out infinite;
+        }
+        .scrolling-words li {
+            line-height: 1.25em; /* Match wrapper height */
+            height: 1.25em;
+            padding: 0;
+            margin: 0;
+        }
+        @keyframes scrollUp {
+            0%, 8% { transform: translateY(0); } /* profit */
+            16%, 24% { transform: translateY(-1.25em); } /* receiv */
+            32%, 40% { transform: translateY(-2.5em); } /* coach */
+            48%, 56% { transform: translateY(-3.75em); } /* bank */
+            64%, 72% { transform: translateY(-5em); } /* do */
+            80%, 88% { transform: translateY(-6.25em); } /* achiev */
+            100% { transform: translateY(-7.5em); } /* Loops back to profit */
+        }
+    </style>
+</head>
+<body class="bg-black text-gray-300">
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-white">
+                ables<span class="text-indigo-400">.ai</span>
+            </a>
+            <!-- Navigation removed for mystery -->
+        </div>
+    </header>
+
+    <main class="gradient-bg min-h-screen flex items-center justify-center">
+        <!-- Mysterious Hero Section -->
+        <section class="text-center main-content">
+            <div class="container mx-auto px-6">
+                <h1 class="text-5xl md:text-8xl font-bold text-white leading-tight tracking-tighter flex justify-center items-center">
+                    <div class="scrolling-words-wrapper">
+                        <ul class="scrolling-words">
+                            <li>profit</li>
+                            <li>receiv</li>
+                            <li>coach</li>
+                            <li>bank</li>
+                            <li>do</li>
+                            <li>achiev</li>
+                            <li>profit</li> <!-- Duplicate first item for a seamless loop -->
+                        </ul>
+                    </div>
+                    <span class="text-indigo-400">.ables</span>
+                </h1>
+            </div>
+        </section>
+    </main>
+
+    <!-- Simplified Footer -->
+    <footer class="bg-black text-white fixed bottom-0 left-0 right-0">
+        <div class="container mx-auto px-6 py-4">
+            <div class="text-center text-gray-500 text-sm">
+                &copy; 2025 ables.ai. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
