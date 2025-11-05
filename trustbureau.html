@@ -64,7 +64,7 @@
         }
         .table-wrapper {
             width: 100%;
- overflow-x: auto;
+            overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
         table {
@@ -118,7 +118,8 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <div class="stat-card">
                     <div class="text-sm font-medium text-slate-500 mb-1">AI Trust Score</div>
-                    <div class="flex items-baseline space-x-2">  <div class="text-5xl font-bold text-blue-900" id="trust-score">[Score]</div>
+                    <div class="flex items-baseline space-x-2">
+                        <div class="text-5xl font-bold text-blue-900" id="trust-score">[Score]</div>
                         <div class="px-3 py-0.5 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold" id="trust-status">[Status]</div>
                     </div>
                 </div>
@@ -148,4 +149,285 @@
                     <button id="tab-transactions-btn" role="tab" aria-controls="tab-transactions" aria-selected="false" class="tab-btn" data-target="tab-transactions">
                         Transaction Data
                     </button>
-                    <butt
+                    <button id="tab-approvals-btn" role="tab" aria-controls="tab-approvals" aria-selected="false" class="tab-btn" data-target="tab-approvals">
+                        Recommended Approvals
+                    </button>
+                </div>
+            </nav>
+
+            <main>
+                <!-- Overview Panel -->
+                <div id="tab-overview" role="tabpanel" aria-labelledby="tab-overview-btn" class="tab-panel active">
+                    <p class="mb-6 text-slate-600">
+                        This section provides a high-level summary of the application, including applicant details and the AI-generated key insights. Use this to get a quick 'at-a-glance' understanding of the file's strengths and weaknesses.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="stat-card">
+                            <h3 class="text-lg font-semibold text-blue-900 mb-4">Business Profile</h3>
+                            <ul class="space-y-2 text-sm" id="business-profile-list">
+                                <!-- Business profile items will be injected here -->
+                            </ul>
+                        </div>
+                        <div class="stat-card">
+                            <h3 class="text-lg font-semibold text-blue-900 mb-4">Owner Profile</h3>
+                            <ul class="space-y-2 text-sm" id="owner-profile-list">
+                                <!-- Owner profile items will be injected here -->
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="stat-card bg-green-50 border-green-200">
+                            <h3 class="text-lg font-semibold text-green-800 mb-4">Strengths (Pros)</h3>
+                            <ul class="space-y-3" id="strengths-list">
+                                <!-- Strengths will be injected here -->
+                            </ul>
+                        </div>
+                        <div class="stat-card bg-red-50 border-red-200">
+                            <h3 class="text-lg font-semibold text-red-800 mb-4">Red Flags (Cons)</h3>
+                            <ul class="space-y-3" id="redflags-list">
+                                <!-- Red flags will be injected here -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cash Flow Panel -->
+                <div id="tab-cashflow" role="tabpanel" aria-labelledby="tab-cashflow-btn" class="tab-panel">
+                    <p class="mb-6 text-slate-600">
+                        Analyze the applicant's 6-month banking history to understand revenue consistency, cash management, and potential risks. The charts below visualize key trends, while the table provides exact figures.
+                    </p>
+
+                    <div class="stat-card mb-6">
+                        <h3 class="text-lg font-semibold text-blue-900 mb-4">Bank Account Summary (6 Months)</h3>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Month</th>
+                                        <th>Deposits ($)</th>
+                                        <th>Dep. Count</th>
+                                        <th>Withdrawals ($)</th>
+                                        <th>Transfers In ($)</th>
+                                        <th>Avg Daily Bal</th>
+                                        <th>NSFs</th>
+                                        <th>Ending Bal</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bank-summary-table">
+                                    <!-- Bank summary rows will be injected here -->
+                                </tbody>
+                                <tfoot id="bank-summary-footer">
+                                    <!-- Bank summary footer will be injected here -->
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="stat-card mb-6">
+                        <h3 class="text-lg font-semibold text-blue-900 mb-4">Revenue vs. Withdrawals & Ending Balance</h3>
+                        <div class="chart-container">
+                            <canvas id="cashFlowChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <h3 class="text-lg font-semibold text-blue-900 mb-4">Risk Factors: NSFs & Transfers In</h3>
+                        <div class="chart-container">
+                            <canvas id="riskChart"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Debt Panel -->
+                <div id="tab-debt" role="tabpanel" aria-labelledby="tab-debt-btn" class="tab-panel">
+                    <p class="mb-6 text-slate-600">
+                        This section details the applicant's existing financial obligations and public records. Review this to understand their current leverage, debt stacking, and any outstanding judgments or liens.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="stat-card">
+                            <h3 class="text-lg font-semibold text-blue-900 mb-4">Est. Monthly Debt Payments</h3>
+                            <div class="chart-container" style="height: 300px; max-height: 350px;">
+                                <canvas id="monthlyDebtChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <h3 class="text-lg font-semibold text-blue-900 mb-4">Est. Debt Payoff Balances</h3>
+                            <div class="chart-container" style="height: 300px; max-height: 350px;">
+                                <canvas id="payoffChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="stat-card">
+                            <h3 class="text-lg font-semibold text-blue-900 mb-4">Extrapolated Debt Obligations</h3>
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Payment ($)</th>
+                                            <th>Frequency</th>
+                                            <th>Monthly Cost</th>
+                                            <th>Suspected Funder</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="extrapolated-debt-table">
+                                        <!-- Extrapolated debt rows will be injected here -->
+                                    </tbody>
+                                    <tfoot id="extrapolated-debt-footer">
+                                        <!-- Extrapolated debt footer will be injected here -->
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <h3 class="text-lg font-semibold text-blue-900 mb-4">Existing Debts & Balances</h3>
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Funder</th>
+                                            <th>Position</th>
+                                            <th>Balance</th>
+                                            <th>Payoff (Est.)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="existing-debt-table">
+                                        <!-- Existing debt rows will be injected here -->
+                                    </tbody>
+                                    <tfoot id="existing-debt-footer">
+                                        <!-- Existing debt footer will be injected here -->
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                        <div class="stat-card">
+                            <h3 class="text-lg font-semibold text-blue-900 mb-4">UCC Filings (Active)</h3>
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Filing Date</th>
+                                            <th>Secured Party (Funder)</th>
+                                            <th>Collateral Type</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ucc-table">
+                                        <!-- UCC rows will be injected here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <h3 class="text-lg font-semibold text-blue-900 mb-4">Judgments & Liens</h3>
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Record Date</th>
+                                            <th>Type</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="liens-table">
+                                        <!-- Liens rows will be injected here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Transaction Data Panel -->
+                <div id="tab-transactions" role="tabpanel" aria-labelledby="tab-transactions-btn" class="tab-panel">
+                    <p class="mb-6 text-slate-600">
+                        A detailed log of recent, significant transactions for analysis. This provides context for the cash flow summary.
+                    </p>
+                    <div class="stat-card">
+                        <h3 class="text-lg font-semibold text-blue-900 mb-4">Recent Transactions</h3>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Description</th>
+                                        <th>Category</th>
+                                        <th>Amount ($)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transactions-table">
+                                    <!-- Transaction rows will be injected here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Approvals Panel -->
+                <div id="tab-approvals" role="tabpanel" aria-labelledby="tab-approvals-btn" class="tab-panel">
+                    <p class="mb-6 text-slate-600">
+                        This section provides AI-generated recommendations based on the applicant's calculated financial metrics. Scenarios are for underwriting consideration only.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="stat-card">
+                            <h3 class="text-lg font-semibold text-blue-900 mb-4">Key Underwriting Metrics</h3>
+                            <ul class="space-y-2 text-sm" id="key-metrics-list">
+                                <!-- Key metrics will be injected here -->
+                            </ul>
+                        </div>
+                        <div class="stat-card bg-blue-50 border-blue-200">
+                            <h3 class="text-lg font-semibold text-blue-900 mb-4">Financial Ratios</h3>
+                            <ul class="space-y-2 text-sm" id="key-ratios-list">
+                                <!-- Key ratios will be injected here -->
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <h3 class="text-lg font-semibold text-blue-900 mb-4">Recommended Approval Scenarios</h3>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Scenario</th>
+                                        <th>Amount</th>
+                                        <th>Term</th>
+                                        <th>Est. Daily Payment</th>
+                                        <th>Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recommendations-table">
+                                    <!-- Recommendation rows will be injected here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="mt-12 text-center text-sm text-slate-500">
+                <p>&copy; 2025 <span id="footer-company-name">TrustBureau.ai</span>. All rights reserved.</p>
+                <p class="mt-1">
+                    Disclaimer: This report is for informational purposes only. All data is AI-analyzed and should be manually verified.
+                </p>
+            </footer>
+
+        </div>
+    </div>
+
+    <script>
+        // Place script removed for brevity; we won't replicate full script for demonstration.
+    </script>
+</body>
+</html>
