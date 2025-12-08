@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sutton Funding | Private Capital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.1/dist/umd/lucide.min.js"></script>
+    
+    <!-- Fonts: Cormorant Garamond (Serif) & Jost (Sans) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans: ['"Jost"', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: { 
+                            950: '#080C15', /* Deep Dark Navy from Logo Background */
+                            900: '#0F1623', 
+                            800: '#151E2E', 
+                            700: '#1E293B' 
+                        },
+                        ivory: { 
+                            50: '#FDFCF9', 
+                            100: '#FAF8F3', 
+                            200: '#F0EDE6', 
+                            300: '#E2DDD3' 
+                        },
+                        brass: { 
+                            300: '#C8A05F', /* Matte Gold from Logo */
+                            400: '#B6904E', 
+                            500: '#A4803D' 
+                        }
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                        'grid-pattern': "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23C8A05F' fill-opacity='0.03' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E\")",
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { 
+            font-family: 'Jost', sans-serif; 
+            background-color: #080C15; 
+            color: #E2DDD3;
+            font-weight: 300;
+        }
+        .font-serif { font-family: 'Cormorant Garamond', serif; }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #080C15; }
+        ::-webkit-scrollbar-thumb { background: #B6904E; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #C8A05F; }
+
+        .animate-fade-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Glass Panel Styling */
+        .pro-panel { 
+            background: rgba(15, 22, 35, 0.6); 
+            border: 1px solid rgba(200, 160, 95, 0.1); 
+            backdrop-filter: blur(12px);
+            transition: all 0.4s ease;
+        }
+        .pro-panel:hover { 
+            border-color: rgba(200, 160, 95, 0.3);
+            background: rgba(15, 22, 35, 0.8);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+        }
+
+        /* Buttons - Updated to match logo gold */
+        .btn-primary {
+            background: #C8A05F;
+            background: linear-gradient(135deg, #C8A05F 0%, #B6904E 100%);
+            color: #080C15; /* Dark text for contrast */
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            font-weight: 700;
+            border: 1px solid #C8A05F;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px -10px rgba(200, 160, 95, 0.3);
+            filter: brightness(1.1);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(200, 160, 95, 0.3);
+            color: #C8A05F;
+            transition: all 0.3s ease;
+            font-weight: 700;
+        }
+        .btn-outline:hover {
+            background: rgba(200, 160, 95, 0.1);
+            border-color: #C8A05F;
+        }
+
+        /* Inputs & Sliders */
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; height: 20px; cursor: pointer; }
+        input[type=range]:focus { outline: none; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 1px; cursor: pointer; background: rgba(200,160,95,0.3); }
+        input[type=range]::-webkit-slider-thumb { height: 16px; width: 16px; border-radius: 50%; background: #C8A05F; cursor: pointer; -webkit-appearance: none; margin-top: -7px; border: 2px solid #080C15; transition: transform 0.2s; }
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); background: #B6904E; }
+
+        /* Accordion Animation */
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        details[open] summary ~ * { animation: slideDown 0.3s ease-in-out; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="selection:bg-brass-400 selection:text-navy-950 overflow-x-hidden text-sm bg-navy-950 bg-grid-pattern">
+
+    <!-- Header -->
+    <header class="fixed w-full top-0 z-50 bg-navy-950/90 backdrop-blur-md border-b border-brass-400/10 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex items-center justify-between h-24">
+                <!-- Logo -->
+                <a href="#" class="flex items-center gap-4 group">
+                    <img src="https://i.imgur.com/MXMqYLc.png" alt="Sutton Funding" class="h-12 w-auto opacity-90 group-hover:opacity-100 transition-opacity">
+                    <div class="hidden sm:block border-l border-brass-400/30 pl-4">
+                        <span class="font-serif text-2xl text-ivory-100 tracking-wide font-bold">Sutton Funding</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Nav -->
+                <nav class="hidden md:flex items-center gap-8">
+                    <a href="#about" class="text-xs uppercase tracking-[0.2em] text-ivory-300/60 hover:text-brass-300 transition-colors font-bold">Heritage</a>
+                    <a href="#services" class="text-xs uppercase tracking-[0.2em] text-ivory-300/60 hover:text-brass-300 transition-colors font-bold">Capital</a>
+                    <a href="#process" class="text-xs uppercase tracking-[0.2em] text-ivory-300/60 hover:text-brass-300 transition-colors font-bold">Protocol</a>
+                    <a href="#faq" class="text-xs uppercase tracking-[0.2em] text-ivory-300/60 hover:text-brass-300 transition-colors font-bold">FAQ</a>
+                    <a href="sutton_funding_app.html" class="btn-primary px-8 py-3 rounded-sm text-xs uppercase tracking-[0.2em] text-navy-950 font-bold">Client Portal</a>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <button onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" class="md:hidden text-brass-300 p-2">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden absolute top-24 left-0 w-full bg-navy-950 border-b border-brass-400/10 shadow-2xl">
+            <div class="flex flex-col p-8 space-y-6 text-center">
+                <a href="#about" class="text-sm uppercase tracking-[0.2em] text-ivory-200 font-bold">Heritage</a>
+                <a href="#services" class="text-sm uppercase tracking-[0.2em] text-ivory-200 font-bold">Capital</a>
+                <a href="#process" class="text-sm uppercase tracking-[0.2em] text-ivory-200 font-bold">Protocol</a>
+                <a href="sutton_funding_app.html" class="text-sm uppercase tracking-[0.2em] text-brass-300 font-bold">Client Portal</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center pt-24 overflow-hidden">
+        <!-- Abstract Background Glow -->
+        <div class="absolute top-[-10%] right-[-10%] w-[800px] h-[800px] bg-brass-500/5 rounded-full blur-[120px] pointer-events-none"></div>
+        <div class="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-navy-800/20 rounded-full blur-[100px] pointer-events-none"></div>
+        
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10 w-full">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="max-w-2xl animate-fade-in">
+                    <div class="inline-flex items-center gap-3 mb-8 pl-1 border-l border-brass-400/50">
+                        <span class="text-brass-300 text-[10px] uppercase tracking-[0.3em] font-bold">Private Business Capital</span>
+                    </div>
+                    
+                    <h1 class="font-serif text-5xl sm:text-6xl lg:text-7xl text-ivory-50 leading-[1.1] mb-8 font-medium">
+                        Funding for the <br>
+                        <span class="text-brass-300 italic">Modern Enterprise</span>
+                    </h1>
+                    
+                    <p class="text-ivory-200/60 text-lg font-light leading-relaxed mb-12 max-w-xl">
+                        We provide the sophisticated liquidity you need to scale with confidence. Smart terms, rapid execution, and absolute discretion.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-5 items-start">
+                        <a href="sutton_funding_app.html" class="btn-primary px-10 py-4 text-xs uppercase tracking-[0.2em] font-bold rounded-sm text-navy-950">
+                            Begin Application
+                        </a>
+                        <a href="#process" class="btn-outline px-10 py-4 text-xs uppercase tracking-[0.2em] font-bold rounded-sm">
+                            Our Protocol
+                        </a>
+                    </div>
+                    
+                    <div class="mt-16 flex items-center gap-4 text-ivory-300/40 text-xs font-light">
+                        <div class="flex gap-1 text-brass-300">
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        </div>
+                        <span class="border-l border-brass-400/10 pl-4">"Excellent" 4.8/5 Rating</span>
+                    </div>
+                </div>
+                
+                <div class="relative lg:h-[700px] w-full hidden lg:block animate-fade-in" style="animation-delay: 0.2s">
+                    <div class="absolute inset-0 rounded-sm overflow-hidden border border-brass-400/10 bg-navy-900 shadow-2xl">
+                        <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop" alt="Modern Architecture" class="w-full h-full object-cover opacity-60 mix-blend-overlay grayscale hover:grayscale-0 transition-all duration-1000 transform hover:scale-105">
+                        <div class="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/20 to-transparent"></div>
+                    </div>
+                    
+                    <!-- Floater Card 1 -->
+                    <div class="absolute bottom-24 -left-12 pro-panel p-8 max-w-xs rounded-sm border-l-4 border-l-brass-300 shadow-xl backdrop-blur-xl">
+                        <p class="font-serif text-4xl text-ivory-100 mb-1">$300M+</p>
+                        <p class="text-[10px] uppercase tracking-widest text-brass-300/80 font-bold">Capital Deployed</p>
+                    </div>
+                    
+                    <!-- Floater Card 2 -->
+                    <div class="absolute top-24 -right-6 pro-panel p-6 max-w-[200px] rounded-sm text-right shadow-xl backdrop-blur-xl">
+                        <p class="font-serif text-3xl text-ivory-100 mb-1">24h</p>
+                        <p class="text-[10px] uppercase tracking-widest text-ivory-300/50 font-bold">Approval Speed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <div class="border-y border-brass-400/10 bg-navy-900/30 backdrop-blur-sm relative z-20">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-12">
+                <div class="text-center group cursor-default">
+                    <p class="font-serif text-4xl lg:text-5xl text-ivory-100 mb-2 group-hover:text-brass-300 transition-colors duration-500">$500M</p>
+                    <p class="text-ivory-300/30 text-[10px] uppercase tracking-[0.25em] font-bold">Total Funding</p>
+                </div>
+                <div class="text-center group cursor-default">
+                    <p class="font-serif text-4xl lg:text-5xl text-ivory-100 mb-2 group-hover:text-brass-300 transition-colors duration-500">15k+</p>
+                    <p class="text-ivory-300/30 text-[10px] uppercase tracking-[0.25em] font-bold">Clients Served</p>
+                </div>
+                <div class="text-center group cursor-default">
+                    <p class="font-serif text-4xl lg:text-5xl text-ivory-100 mb-2 group-hover:text-brass-300 transition-colors duration-500">98%</p>
+                    <p class="text-ivory-300/30 text-[10px] uppercase tracking-[0.25em] font-bold">Approval Rate</p>
+                </div>
+                <div class="text-center group cursor-default">
+                    <p class="font-serif text-4xl lg:text-5xl text-ivory-100 mb-2 group-hover:text-brass-300 transition-colors duration-500">50</p>
+                    <p class="text-ivory-300/30 text-[10px] uppercase tracking-[0.25em] font-bold">States Served</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <section id="about" class="py-32 relative overflow-hidden">
+        <!-- Decoration -->
+        <div class="absolute right-0 top-1/4 w-[500px] h-[500px] bg-brass-400/5 rounded-full blur-[120px] pointer-events-none"></div>
+        
+        <div class="max-w-4xl mx-auto px-6 lg:px-8 text-center relative z-10">
+            <div class="inline-flex items-center justify-center w-16 h-16 border border-brass-400/20 rounded-full mb-8 text-brass-300">
+                <img src="https://i.imgur.com/MXMqYLc.png" class="h-8 w-auto opacity-80">
+            </div>
+            
+            <h2 class="font-serif text-4xl sm:text-5xl text-ivory-50 mb-10">The Sutton Standard</h2>
+            
+            <div class="space-y-8 text-xl text-ivory-200/60 font-light leading-relaxed">
+                <p>
+                    Founded in 2015, Sutton Funding was established with a singular purpose: to bring the sophistication and service of private banking to commercial business lending.
+                </p>
+                <p>
+                    We believe that true partnership means more than just providing capital. It means understanding the unique DNA of your business. We have engineered a modern, technology-driven platform that delivers fast, flexible funding solutions with absolute transparency.
+                </p>
+            </div>
+            
+            <div class="mt-16 grid md:grid-cols-3 gap-8 text-left">
+                <div class="p-8 pro-panel rounded-sm group">
+                    <div class="w-12 h-12 bg-brass-400/10 rounded-full flex items-center justify-center mb-6 group-hover:bg-brass-400/20 transition-colors">
+                        <i data-lucide="shield" class="w-6 h-6 text-brass-300"></i>
+                    </div>
+                    <h3 class="text-ivory-100 text-sm uppercase tracking-widest font-bold mb-3">Integrity</h3>
+                    <p class="text-ivory-300/50 text-sm leading-relaxed">Transparent dealings and honest counsel form the foundation of every relationship.</p>
+                </div>
+                <div class="p-8 pro-panel rounded-sm group">
+                    <div class="w-12 h-12 bg-brass-400/10 rounded-full flex items-center justify-center mb-6 group-hover:bg-brass-400/20 transition-colors">
+                        <i data-lucide="lock" class="w-6 h-6 text-brass-300"></i>
+                    </div>
+                    <h3 class="text-ivory-100 text-sm uppercase tracking-widest font-bold mb-3">Discretion</h3>
+                    <p class="text-ivory-300/50 text-sm leading-relaxed">Your financial matters are handled with the confidentiality they deserve.</p>
+                </div>
+                <div class="p-8 pro-panel rounded-sm group">
+                    <div class="w-12 h-12 bg-brass-400/10 rounded-full flex items-center justify-center mb-6 group-hover:bg-brass-400/20 transition-colors">
+                        <i data-lucide="award" class="w-6 h-6 text-brass-300"></i>
+                    </div>
+                    <h3 class="text-ivory-100 text-sm uppercase tracking-widest font-bold mb-3">Excellence</h3>
+                    <p class="text-ivory-300/50 text-sm leading-relaxed">We hold ourselves to the highest standards of professional service.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-32 bg-navy-900/50">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="mb-20 flex flex-col md:flex-row justify-between items-end gap-6">
+                <div>
+                    <p class="text-brass-300 text-xs uppercase tracking-[0.25em] mb-4 pl-1 border-l border-brass-400/50 font-bold">Instruments</p>
+                    <h2 class="font-serif text-4xl sm:text-5xl text-ivory-50">Capital Solutions</h2>
+                </div>
+                <p class="text-ivory-300/40 text-sm max-w-xs text-right hidden md:block">
+                    A comprehensive suite of financing instruments, each structured to serve distinct business requirements.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="pro-panel p-10 group rounded-sm hover:shadow-2xl hover:shadow-black/50 transition-all duration-500 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-[50px] -mr-16 -mt-16 transition-opacity opacity-0 group-hover:opacity-100"></div>
+                    <div class="text-brass-300/50 mb-8 group-hover:text-brass-300 transition-colors">
+                        <i data-lucide="zap" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-serif text-2xl text-ivory-100 mb-4">Merchant Cash Advance</h3>
+                    <p class="text-ivory-200/50 text-sm leading-relaxed mb-8 min-h-[60px]">Liquidity based on your revenue, not your credit score. Perfect for handling immediate opportunities.</p>
+                    <div class="border-t border-brass-400/10 pt-6 flex justify-between items-center">
+                        <span class="text-[10px] uppercase tracking-widest text-ivory-300/40 font-bold">Up to $500k</span>
+                        <a href="sutton_funding_app.html" class="text-brass-300 hover:text-ivory-100 transition-colors"><i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="pro-panel p-10 group rounded-sm hover:shadow-2xl hover:shadow-black/50 transition-all duration-500 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-[50px] -mr-16 -mt-16 transition-opacity opacity-0 group-hover:opacity-100"></div>
+                    <div class="text-brass-300/50 mb-8 group-hover:text-brass-300 transition-colors">
+                        <i data-lucide="link" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-serif text-2xl text-ivory-100 mb-4">Bridge Financing</h3>
+                    <p class="text-ivory-200/50 text-sm leading-relaxed mb-8 min-h-[60px]">Strategic short-term capital to bridge the gap between immediate needs and long-term financing.</p>
+                    <div class="border-t border-brass-400/10 pt-6 flex justify-between items-center">
+                        <span class="text-[10px] uppercase tracking-widest text-ivory-300/40 font-bold">24-48 Hours</span>
+                        <a href="sutton_funding_app.html" class="text-brass-300 hover:text-ivory-100 transition-colors"><i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="pro-panel p-10 group rounded-sm hover:shadow-2xl hover:shadow-black/50 transition-all duration-500 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-[50px] -mr-16 -mt-16 transition-opacity opacity-0 group-hover:opacity-100"></div>
+                    <div class="text-brass-300/50 mb-8 group-hover:text-brass-300 transition-colors">
+                        <i data-lucide="refresh-cw" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-serif text-2xl text-ivory-100 mb-4">Line of Credit</h3>
+                    <p class="text-ivory-200/50 text-sm leading-relaxed mb-8 min-h-[60px]">A revolving safety net. Draw funds only when you need them and pay interest only on what you use.</p>
+                    <div class="border-t border-brass-400/10 pt-6 flex justify-between items-center">
+                        <span class="text-[10px] uppercase tracking-widest text-ivory-300/40 font-bold">Revolving</span>
+                        <a href="sutton_funding_app.html" class="text-brass-300 hover:text-ivory-100 transition-colors"><i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="pro-panel p-10 group rounded-sm hover:shadow-2xl hover:shadow-black/50 transition-all duration-500 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-[50px] -mr-16 -mt-16 transition-opacity opacity-0 group-hover:opacity-100"></div>
+                    <div class="text-brass-300/50 mb-8 group-hover:text-brass-300 transition-colors">
+                        <i data-lucide="calendar-check" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-serif text-2xl text-ivory-100 mb-4">Term Loan</h3>
+                    <p class="text-ivory-200/50 text-sm leading-relaxed mb-8 min-h-[60px]">Traditional structure with fixed payments and longer terms for established businesses seeking stability.</p>
+                    <div class="border-t border-brass-400/10 pt-6 flex justify-between items-center">
+                        <span class="text-[10px] uppercase tracking-widest text-ivory-300/40 font-bold">Up to 5 Years</span>
+                        <a href="sutton_funding_app.html" class="text-brass-300 hover:text-ivory-100 transition-colors"><i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="pro-panel p-10 group rounded-sm hover:shadow-2xl hover:shadow-black/50 transition-all duration-500 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-[50px] -mr-16 -mt-16 transition-opacity opacity-0 group-hover:opacity-100"></div>
+                    <div class="text-brass-300/50 mb-8 group-hover:text-brass-300 transition-colors">
+                        <i data-lucide="monitor" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-serif text-2xl text-ivory-100 mb-4">Equipment Finance</h3>
+                    <p class="text-ivory-200/50 text-sm leading-relaxed mb-8 min-h-[60px]">Acquire the machinery and technology you need to compete without depleting your working capital.</p>
+                    <div class="border-t border-brass-400/10 pt-6 flex justify-between items-center">
+                        <span class="text-[10px] uppercase tracking-widest text-ivory-300/40 font-bold">100% Financing</span>
+                        <a href="sutton_funding_app.html" class="text-brass-300 hover:text-ivory-100 transition-colors"><i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="pro-panel p-10 group rounded-sm bg-brass-400/5 border-brass-400/20 hover:shadow-2xl hover:shadow-black/50 transition-all duration-500 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-brass-400/10 rounded-full blur-[50px] -mr-16 -mt-16 transition-opacity opacity-0 group-hover:opacity-100"></div>
+                    <div class="text-brass-300 mb-8">
+                        <i data-lucide="arrow-up-right" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-serif text-2xl text-ivory-100 mb-4">Custom Solution</h3>
+                    <p class="text-ivory-200/50 text-sm leading-relaxed mb-8 min-h-[60px]">Complex needs? Our private banking advisors will structure a bespoke capital solution for you.</p>
+                    <div class="border-t border-brass-400/10 pt-6 flex justify-between items-center">
+                        <span class="text-[10px] uppercase tracking-widest text-ivory-300/40 font-bold">Consultation</span>
+                        <a href="sutton_funding_app.html" class="text-brass-300 hover:text-ivory-100 transition-colors"><i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Industries Section -->
+    <section class="py-24 border-t border-brass-400/5">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <p class="text-brass-300 text-xs uppercase tracking-[0.25em] mb-4 font-bold">Expertise</p>
+                <h2 class="font-serif text-3xl sm:text-4xl text-ivory-50">Industries Served</h2>
+            </div>
+            
+            <div class="flex flex-wrap justify-center gap-4 lg:gap-6">
+                <a href="#" class="px-8 py-4 bg-white/5 border border-white/10 rounded-sm text-ivory-200 text-xs uppercase tracking-widest hover:bg-brass-300 hover:text-navy-950 hover:border-brass-300 transition-all duration-300 font-bold">Construction</a>
+                <a href="#" class="px-8 py-4 bg-white/5 border border-white/10 rounded-sm text-ivory-200 text-xs uppercase tracking-widest hover:bg-brass-300 hover:text-navy-950 hover:border-brass-300 transition-all duration-300 font-bold">Healthcare</a>
+                <a href="#" class="px-8 py-4 bg-white/5 border border-white/10 rounded-sm text-ivory-200 text-xs uppercase tracking-widest hover:bg-brass-300 hover:text-navy-950 hover:border-brass-300 transition-all duration-300 font-bold">Logistics</a>
+                <a href="#" class="px-8 py-4 bg-white/5 border border-white/10 rounded-sm text-ivory-200 text-xs uppercase tracking-widest hover:bg-brass-300 hover:text-navy-950 hover:border-brass-300 transition-all duration-300 font-bold">E-Commerce</a>
+                <a href="#" class="px-8 py-4 bg-white/5 border border-white/10 rounded-sm text-ivory-200 text-xs uppercase tracking-widest hover:bg-brass-300 hover:text-navy-950 hover:border-brass-300 transition-all duration-300 font-bold">Manufacturing</a>
+                <a href="#" class="px-8 py-4 bg-white/5 border border-white/10 rounded-sm text-ivory-200 text-xs uppercase tracking-widest hover:bg-brass-300 hover:text-navy-950 hover:border-brass-300 transition-all duration-300 font-bold">Technology</a>
+                <a href="#" class="px-8 py-4 bg-white/5 border border-white/10 rounded-sm text-ivory-200 text-xs uppercase tracking-widest hover:bg-brass-300 hover:text-navy-950 hover:border-brass-300 transition-all duration-300 font-bold">Real Estate</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section id="process" class="py-32 bg-navy-900/50 border-t border-brass-400/10">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-20 items-center">
+                <div class="order-2 lg:order-1 relative">
+                    <div class="aspect-[4/5] bg-navy-800 relative rounded-sm overflow-hidden border border-brass-400/10 shadow-2xl">
+                         <img src="3-steps-pic.jpg" alt="Process" class="w-full h-full object-cover opacity-70">
+                         <div class="absolute inset-0 bg-navy-900/40"></div>
+                    </div>
+                    <div class="absolute -bottom-6 -right-6 w-32 h-32 border-r border-b border-brass-400/30"></div>
+                    <div class="absolute -top-6 -left-6 w-32 h-32 border-l border-t border-brass-400/30"></div>
+                </div>
+                
+                <div class="order-1 lg:order-2">
+                    <p class="text-brass-300 text-xs uppercase tracking-[0.25em] mb-4 pl-1 border-l border-brass-400/50 font-bold">Execution</p>
+                    <h2 class="font-serif text-4xl sm:text-5xl text-ivory-50 mb-8">A Frictionless Protocol</h2>
+                    <p class="text-ivory-200/60 text-lg font-light mb-12">
+                        We've stripped away the bureaucracy. Get funded in three simple steps with no impact on your credit for the initial application.
+                    </p>
+                    
+                    <div class="space-y-12">
+                        <!-- Step 1 -->
+                        <div class="flex gap-6 group">
+                            <div class="flex-shrink-0 w-12 h-12 border border-brass-400/30 rounded-full flex items-center justify-center font-serif text-xl text-brass-300 group-hover:bg-brass-300 group-hover:text-navy-950 transition-all duration-300">1</div>
+                            <div>
+                                <h3 class="font-serif text-2xl text-ivory-100 mb-2">Digital Application</h3>
+                                <p class="text-ivory-200/50 text-sm leading-relaxed">Complete our secure online application in under 5 minutes. No physical paperwork required.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 2 -->
+                        <div class="flex gap-6 group">
+                            <div class="flex-shrink-0 w-12 h-12 border border-brass-400/30 rounded-full flex items-center justify-center font-serif text-xl text-brass-300 group-hover:bg-brass-300 group-hover:text-navy-950 transition-all duration-300">2</div>
+                            <div>
+                                <h3 class="font-serif text-2xl text-ivory-100 mb-2">Rapid Underwriting</h3>
+                                <p class="text-ivory-200/50 text-sm leading-relaxed">Our proprietary technology reviews your application instantly, often providing approval within 24 hours.</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="flex gap-6 group">
+                            <div class="flex-shrink-0 w-12 h-12 border border-brass-400/30 rounded-full flex items-center justify-center font-serif text-xl text-brass-300 group-hover:bg-brass-300 group-hover:text-navy-950 transition-all duration-300">3</div>
+                            <div>
+                                <h3 class="font-serif text-2xl text-ivory-100 mb-2">Capital Deployment</h3>
+                                <p class="text-ivory-200/50 text-sm leading-relaxed">Funds are wired directly to your business bank account within 24-48 hours of approval.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-12">
+                        <a href="sutton_funding_app.html" class="btn-primary px-8 py-3 rounded-sm text-xs uppercase tracking-[0.2em] font-medium text-navy-950 font-bold">Start Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Qualification Calculator -->
+    <section class="py-32 relative">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="pro-panel p-12 lg:p-20 relative overflow-hidden rounded-sm shadow-2xl">
+                <!-- Decorative Elements -->
+                <div class="absolute -top-24 -right-24 w-64 h-64 border border-brass-400/10 rounded-full"></div>
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-navy-900 via-brass-400/50 to-navy-900"></div>
+                
+                <div class="grid lg:grid-cols-2 gap-16 relative z-10">
+                    <div>
+                        <p class="text-brass-300 text-xs uppercase tracking-[0.25em] mb-6 font-bold">Estimate Eligibility</p>
+                        <h2 class="font-serif text-4xl text-ivory-50 mb-12">See What You Qualify For</h2>
+                        
+                        <div class="mb-10">
+                            <div class="flex justify-between mb-4">
+                                <span class="text-ivory-200/60 text-xs uppercase tracking-widest font-bold">Monthly Gross Revenue</span>
+                                <span id="currentRevenue" class="font-serif text-3xl text-brass-300">$50,000</span>
+                            </div>
+                            <input type="range" min="5000" max="1000000" value="50000" class="w-full" id="revenueSlider">
+                            <div class="flex justify-between mt-3 text-[10px] text-ivory-300/30 uppercase tracking-wider font-bold">
+                                <span>$5K</span>
+                                <span>$1M+</span>
+                            </div>
+                        </div>
+                        
+                        <p class="text-ivory-200/40 text-xs italic">*This is a preliminary estimate based on typical industry multiples. Actual offers may vary.</p>
+                    </div>
+                    
+                    <div class="flex flex-col justify-center items-center lg:items-start lg:pl-16 lg:border-l border-brass-400/10">
+                        <p class="text-ivory-200/50 text-[10px] uppercase tracking-[0.2em] mb-4 font-bold">Estimated Funding Power</p>
+                        <div id="qualificationAmount" class="font-serif text-6xl lg:text-8xl text-ivory-50 mb-10 tracking-tighter">$150,000</div>
+                        <a href="sutton_funding_app.html" class="btn-primary w-full text-center bg-brass-300 text-navy-950 px-8 py-4 text-xs uppercase tracking-[0.2em] font-medium font-bold hover:bg-brass-400">
+                            Get Pre-Qualified
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-32 bg-navy-900/50">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-20">
+                <p class="text-brass-300 text-xs uppercase tracking-[0.25em] mb-4 font-bold">Endorsements</p>
+                <h2 class="font-serif text-4xl sm:text-5xl text-ivory-50">Client Success Stories</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Review 1 -->
+                <div class="bg-navy-950 p-10 border border-brass-400/10 relative">
+                    <span class="absolute top-6 left-6 text-6xl text-brass-400/20 font-serif">"</span>
+                    <p class="text-ivory-200/70 font-serif text-lg italic leading-relaxed mb-8 relative z-10 pt-4">
+                        Sutton Funding helped us secure $150,000 in working capital when our traditional bank said no. The process was incredibly fast and transparent.
+                    </p>
+                    <div class="border-t border-brass-400/10 pt-6">
+                        <p class="text-ivory-100 font-medium">Sarah Mitchell</p>
+                        <p class="text-ivory-300/40 text-xs uppercase tracking-wider mt-1 font-bold">CEO, Mitchell Mfg.</p>
+                    </div>
+                </div>
+
+                <!-- Review 2 -->
+                <div class="bg-navy-950 p-10 border border-brass-400/10 relative">
+                    <span class="absolute top-6 left-6 text-6xl text-brass-400/20 font-serif">"</span>
+                    <p class="text-ivory-200/70 font-serif text-lg italic leading-relaxed mb-8 relative z-10 pt-4">
+                        The equipment financing terms were excellent and the approval process was seamless. Highly recommended for established businesses.
+                    </p>
+                    <div class="border-t border-brass-400/10 pt-6">
+                        <p class="text-ivory-100 font-medium">David Chen</p>
+                        <p class="text-ivory-300/40 text-xs uppercase tracking-wider mt-1 font-bold">Owner, Chen's Bakery</p>
+                    </div>
+                </div>
+
+                <!-- Review 3 -->
+                <div class="bg-navy-950 p-10 border border-brass-400/10 relative">
+                    <span class="absolute top-6 left-6 text-6xl text-brass-400/20 font-serif">"</span>
+                    <p class="text-ivory-200/70 font-serif text-lg italic leading-relaxed mb-8 relative z-10 pt-4">
+                        Finding funding was challenging until we found Sutton. They understood our vision and provided the capital we needed to launch successfully.
+                    </p>
+                    <div class="border-t border-brass-400/10 pt-6">
+                        <p class="text-ivory-100 font-medium">Maria Rodriguez</p>
+                        <p class="text-ivory-300/40 text-xs uppercase tracking-wider mt-1 font-bold">Founder, TechStart</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-24 border-t border-brass-400/5">
+        <div class="max-w-3xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <p class="text-brass-300 text-xs uppercase tracking-[0.25em] mb-4 font-bold">Clarification</p>
+                <h2 class="font-serif text-3xl sm:text-4xl text-ivory-50">Common Questions</h2>
+            </div>
+            
+            <div class="space-y-4">
+                <details class="group bg-navy-950 border border-white/5 rounded-sm open:border-brass-400/30 transition-all duration-300">
+                    <summary class="flex justify-between items-center p-6 cursor-pointer hover:bg-white/5 transition-colors">
+                        <h3 class="text-ivory-100 font-medium text-lg">What is the typical funding timeline?</h3>
+                        <span class="text-brass-300 group-open:rotate-180 transition-transform"><i data-lucide="chevron-down" class="w-5 h-5"></i></span>
+                    </summary>
+                    <div class="px-6 pb-6 text-ivory-300/60 leading-relaxed">
+                        Most applications receive a decision within 24 hours. Funding is typically completed within 24-72 hours of final approval, depending on the complexity of the file.
+                    </div>
+                </details>
+                
+                <details class="group bg-navy-950 border border-white/5 rounded-sm open:border-brass-400/30 transition-all duration-300">
+                    <summary class="flex justify-between items-center p-6 cursor-pointer hover:bg-white/5 transition-colors">
+                        <h3 class="text-ivory-100 font-medium text-lg">What documentation is required?</h3>
+                        <span class="text-brass-300 group-open:rotate-180 transition-transform"><i data-lucide="chevron-down" class="w-5 h-5"></i></span>
+                    </summary>
+                    <div class="px-6 pb-6 text-ivory-300/60 leading-relaxed">
+                        For initial approval, we typically require just a completed application and your three most recent business bank statements. Additional documentation may be requested for larger loan amounts.
+                    </div>
+                </details>
+                
+                <details class="group bg-navy-950 border border-white/5 rounded-sm open:border-brass-400/30 transition-all duration-300">
+                    <summary class="flex justify-between items-center p-6 cursor-pointer hover:bg-white/5 transition-colors">
+                        <h3 class="text-ivory-100 font-medium text-lg">Will this affect my credit?</h3>
+                        <span class="text-brass-300 group-open:rotate-180 transition-transform"><i data-lucide="chevron-down" class="w-5 h-5"></i></span>
+                    </summary>
+                    <div class="px-6 pb-6 text-ivory-300/60 leading-relaxed">
+                        Our initial application involves a soft credit pull, which does not impact your credit score. Hard inquiries are generally only performed at the final stages of funding for specific products.
+                    </div>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final Call to Action Strip -->
+    <section class="py-24 bg-gradient-to-r from-brass-300 to-brass-500 text-navy-950 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-full h-full opacity-10" style="background-image: url('data:image/svg+xml,%3Csvg width=\'40\' height=\'40\' viewBox=\'0 0 40 40\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23000000\' fill-opacity=\'1\' fill-rule=\'evenodd\'%3E%3Cpath d=\'M0 40L40 0H20L0 20M40 40V20L20 40\'/%3E%3C/g%3E%3C/svg%3E');"></div>
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 text-center relative z-10">
+            <h2 class="font-serif text-4xl md:text-5xl font-bold mb-6 text-navy-950">Ready to capitalize on your potential?</h2>
+            <p class="mb-10 max-w-2xl mx-auto text-navy-900/80 font-medium text-lg">Join thousands of discerning business owners who trust Sutton Funding for their capital needs.</p>
+            <a href="sutton_funding_app.html" class="inline-block bg-navy-950 text-ivory-50 px-12 py-5 text-sm uppercase tracking-[0.2em] font-bold rounded-sm hover:bg-navy-900 transition-colors shadow-2xl hover:shadow-xl transform hover:-translate-y-1">
+                Begin Application
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-navy-950 border-t border-brass-400/10 pt-24 pb-12">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-12 mb-20">
+                <div class="col-span-1 md:col-span-1">
+                     <div class="flex items-center gap-3 mb-6">
+                        <img src="https://i.imgur.com/MXMqYLc.png" alt="Sutton Funding" class="h-8 w-auto opacity-70">
+                        <span class="font-serif text-xl text-ivory-100 font-bold">Sutton Funding</span>
+                    </div>
+                    <p class="text-ivory-300/40 text-sm leading-relaxed mb-6">
+                        Empowering the next generation of business with fast, fair, and flexible capital solutions.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="text-brass-300 hover:text-ivory-100 transition-colors"><i data-lucide="linkedin" class="w-5 h-5"></i></a>
+                        <a href="#" class="text-brass-300 hover:text-ivory-100 transition-colors"><i data-lucide="twitter" class="w-5 h-5"></i></a>
+                        <a href="#" class="text-brass-300 hover:text-ivory-100 transition-colors"><i data-lucide="facebook" class="w-5 h-5"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-brass-300 text-xs uppercase tracking-[0.2em] mb-6 font-bold">Solutions</h4>
+                    <ul class="space-y-4">
+                        <li><a href="#services" class="text-ivory-300/50 hover:text-ivory-100 text-sm transition-colors">Merchant Cash Advance</a></li>
+                        <li><a href="#services" class="text-ivory-300/50 hover:text-ivory-100 text-sm transition-colors">Bridge Financing</a></li>
+                        <li><a href="#services" class="text-ivory-300/50 hover:text-ivory-100 text-sm transition-colors">Line of Credit</a></li>
+                        <li><a href="#services" class="text-ivory-300/50 hover:text-ivory-100 text-sm transition-colors">Equipment Finance</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-brass-300 text-xs uppercase tracking-[0.2em] mb-6 font-bold">Company</h4>
+                    <ul class="space-y-4">
+                        <li><a href="#about" class="text-ivory-300/50 hover:text-ivory-100 text-sm transition-colors">Mission & Values</a></li>
+                        <li><a href="#process" class="text-ivory-300/50 hover:text-ivory-100 text-sm transition-colors">Funding Process</a></li>
+                        <li><a href="sutton_funding_app.html" class="text-ivory-300/50 hover:text-ivory-100 text-sm transition-colors">Apply Now</a></li>
+                        <li><a href="sutton_funding_app.html" class="text-ivory-300/50 hover:text-ivory-100 text-sm transition-colors">Client Portal</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-brass-300 text-xs uppercase tracking-[0.2em] mb-6 font-bold">Contact</h4>
+                    <ul class="space-y-4 text-sm text-ivory-300/50">
+                        <li class="flex items-start gap-3"><i data-lucide="phone" class="w-4 h-4 mt-1 text-brass-300"></i> (877) 578-8866</li>
+                        <li class="flex items-start gap-3"><i data-lucide="mail" class="w-4 h-4 mt-1 text-brass-300"></i> info@suttonfunding.com</li>
+                        <li class="flex items-start gap-3"><i data-lucide="map-pin" class="w-4 h-4 mt-1 text-brass-300"></i> 261 Madison Ave, 10th Flr<br>New York, NY 10016</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-brass-400/10 pt-10 text-center flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-ivory-300/20 text-xs tracking-wider">
+                    &copy; 2025 Sutton Funding. All rights reserved. | <a href="https://suttonfunding.com/privacy-policy" class="hover:text-brass-300">Privacy & Terms</a>
+                </p>
+                <div class="flex gap-6 text-xs text-ivory-300/40">
+                    <a href="#" class="hover:text-brass-300 transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-brass-300 transition-colors">Terms of Service</a>
+                    <a href="#" class="hover:text-brass-300 transition-colors">Disclosures</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Currency Formatter
+        const formatCurrency = (amount) => {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        };
+
+        // Calculator Logic
+        const revenueSlider = document.getElementById('revenueSlider');
+        const currentRevenue = document.getElementById('currentRevenue');
+        const qualificationAmount = document.getElementById('qualificationAmount');
+
+        if (revenueSlider) {
+            revenueSlider.addEventListener('input', function() {
+                const val = parseInt(this.value);
+                currentRevenue.textContent = formatCurrency(val);
+                // 3x multiplier logic
+                qualificationAmount.textContent = formatCurrency(val * 3);
+            });
+        }
+
+        // Initialize Lucide Icons
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+
+        // Sticky Header Effect
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                header.classList.add('py-0');
+            } else {
+                header.classList.remove('py-0');
+            }
+        });
+    </script>
+</body>
+</html>
