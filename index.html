@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AblesAI - Automated Underwriting</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 64 64' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cellipse cx='32' cy='32' rx='28' ry='8' stroke='%23ea580c' stroke-width='2.5' fill='none' transform='rotate(-20 32 32)' stroke-dasharray='70 140'/%3E%3Ccircle cx='32' cy='32' r='12' fill='%23eab308'/%3E%3Cellipse cx='32' cy='32' rx='28' ry='8' stroke='%23ea580c' stroke-width='2.5' fill='none' transform='rotate(-20 32 32)' stroke-dasharray='70 140' stroke-dashoffset='-70'/%3E%3Ccircle cx='58' cy='32' r='4' fill='%23a855f7'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 64 64' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3CradialGradient id='pg' cx='35%25' cy='35%25' r='60%25'%3E%3Cstop offset='0%25' stop-color='%23fcd34d'/%3E%3Cstop offset='50%25' stop-color='%23eab308'/%3E%3Cstop offset='100%25' stop-color='%23ca8a04'/%3E%3C/radialGradient%3E%3ClinearGradient id='rg' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23f97316'/%3E%3Cstop offset='100%25' stop-color='%23dc2626'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cellipse cx='32' cy='32' rx='28' ry='8' stroke='url(%23rg)' stroke-width='2.5' fill='none' transform='rotate(-20 32 32)' stroke-dasharray='70 140' opacity='0.6'/%3E%3Ccircle cx='32' cy='32' r='12' fill='url(%23pg)'/%3E%3Cellipse cx='28' cy='28' rx='4' ry='3' fill='%23fef3c7' opacity='0.4'/%3E%3Cellipse cx='32' cy='32' rx='28' ry='8' stroke='url(%23rg)' stroke-width='2.5' fill='none' transform='rotate(-20 32 32)' stroke-dasharray='70 140' stroke-dashoffset='-70'/%3E%3Ccircle cx='58' cy='28' r='4' fill='%23a855f7'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -32,6 +32,1120 @@
       --tier-d: #f97316;
       --tier-e: #ef4444;
       --accent-blue: #3b82f6;
+    }
+
+    /* Light Theme */
+    [data-theme="light"] {
+      --bg-main: #f5f5f5;
+      --bg-card: #ffffff;
+      --bg-card-inner: #f3f4f6;
+      --bg-option-card: #ffffff;
+      --border-primary: #d1d5db;
+      --border-secondary: #e5e7eb;
+      --text-primary: #111827;
+      --text-secondary: #374151;
+      --text-muted: #6b7280;
+    }
+
+    [data-theme="light"] header {
+      background: rgba(255,255,255,0.95);
+      border-color: var(--border-primary);
+    }
+
+    [data-theme="light"] .header-logo h1 {
+      color: #111827;
+    }
+
+    [data-theme="light"] .header-logo h1 span {
+      color: var(--accent);
+    }
+
+    [data-theme="light"] .footer-logo svg {
+      /* Light mode uses different moon colors via keyframes below */
+    }
+
+    /* Light mode SVG moon color cycle: green, blue, pink, purple, yellow */
+    [data-theme="light"] .moon-base {
+      animation-name: orbit, moonColorLight, moonBackOpacity !important;
+    }
+    [data-theme="light"] .moon-front {
+      animation-name: orbit, moonColorLight, moonFrontOpacity !important;
+    }
+    @keyframes moonColorLight {
+      0%, 100% { fill: #10b981; }
+      20% { fill: #3b82f6; }
+      40% { fill: #ec4899; }
+      60% { fill: #a855f7; }
+      80% { fill: #eab308; }
+    }
+
+    [data-theme="light"] .tab-btn {
+      color: #374151;
+    }
+
+    [data-theme="light"] .tab-btn:hover {
+      background: rgba(0,0,0,0.05);
+      color: #111827;
+    }
+
+    [data-theme="light"] .tab-btn.active {
+      background: rgba(234, 179, 8, 0.15);
+      color: #b45309;
+    }
+
+    [data-theme="light"] .theme-toggle {
+      color: #4b5563;
+    }
+
+    [data-theme="light"] .theme-toggle:hover {
+      color: #111827;
+    }
+
+    [data-theme="light"] .model-modal {
+      background: rgba(0,0,0,0.5);
+    }
+
+    [data-theme="light"] .login-backdrop {
+      background: rgba(0,0,0,0.5);
+    }
+
+    [data-theme="light"] .hero-label {
+      background: transparent;
+    }
+
+    [data-theme="light"] .hero-label::before {
+      background: linear-gradient(90deg, #10b981, #f59e0b);
+    }
+
+    [data-theme="light"] .hero-label span {
+      background: linear-gradient(90deg, #10b981, #f59e0b, #ea580c);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    [data-theme="light"] .hero-title,
+    [data-theme="light"] .hero-subtitle,
+    [data-theme="light"] .section-title,
+    [data-theme="light"] .feature-title,
+    [data-theme="light"] .step-title {
+      color: #111827;
+    }
+
+    [data-theme="light"] .hero-description,
+    [data-theme="light"] .section-subtitle,
+    [data-theme="light"] .feature-description,
+    [data-theme="light"] .step-description {
+      color: #4b5563;
+    }
+
+    [data-theme="light"] .preview-card,
+    [data-theme="light"] .expanded-card,
+    [data-theme="light"] .feature-card,
+    [data-theme="light"] .step-card {
+      background: #ffffff;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .card-title,
+    [data-theme="light"] .metric-value,
+    [data-theme="light"] .constraint-value {
+      color: #111827;
+    }
+
+    [data-theme="light"] .card-subtitle,
+    [data-theme="light"] .metric-label,
+    [data-theme="light"] .constraint-label {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .slider-track {
+      background: #e5e7eb;
+    }
+
+    [data-theme="light"] .metric-row,
+    [data-theme="light"] .constraint-group {
+      background: #f9fafb;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .model-content,
+    [data-theme="light"] .login-container {
+      background: #ffffff;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .model-header h2,
+    [data-theme="light"] .login-title {
+      color: #111827;
+    }
+
+    [data-theme="light"] .score-card,
+    [data-theme="light"] .calc-card {
+      background: #f9fafb;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .tier-info h3,
+    [data-theme="light"] .calc-title {
+      color: #111827;
+    }
+
+    [data-theme="light"] .tier-info p,
+    [data-theme="light"] .rule-text {
+      color: #4b5563;
+    }
+
+    [data-theme="light"] .tier-row {
+      background: #f3f4f6;
+    }
+
+    [data-theme="light"] .tier-name {
+      color: #111827;
+    }
+
+    [data-theme="light"] .tier-details,
+    [data-theme="light"] .tier-range {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .weight-item {
+      color: #374151;
+    }
+
+    [data-theme="light"] .weight-info h4 {
+      color: #111827;
+    }
+
+    [data-theme="light"] .weight-info p {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .component-row {
+      background: #ffffff;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .component-name,
+    [data-theme="light"] .weight-value {
+      color: #374151;
+    }
+
+    [data-theme="light"] .dashboard-section {
+      background: #ffffff;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .dashboard-title {
+      color: #111827;
+    }
+
+    [data-theme="light"] .dashboard-view-label {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .kanban-column {
+      background: #f9fafb;
+    }
+
+    [data-theme="light"] .kanban-header {
+      color: #111827;
+    }
+
+    [data-theme="light"] .kanban-card {
+      background: #ffffff;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .kanban-card:hover {
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    [data-theme="light"] .kanban-card h4,
+    [data-theme="light"] .kanban-card-name {
+      color: #111827;
+    }
+
+    [data-theme="light"] .kanban-card-amount {
+      color: #b45309;
+    }
+
+    [data-theme="light"] .kanban-card p,
+    [data-theme="light"] .kanban-card-meta {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .kanban-column-title {
+      color: #374151;
+    }
+
+    [data-theme="light"] .kanban-count {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    [data-theme="light"] .tracker-table th {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    [data-theme="light"] .tracker-table td {
+      color: #111827;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .tracker-table tbody tr:hover {
+      background: #f9fafb;
+    }
+
+    [data-theme="light"] .tracker-table {
+      background: #ffffff;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .integration-item {
+      background: #ffffff;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .integration-name {
+      color: #111827;
+    }
+
+    [data-theme="light"] .main-footer {
+      background: #f9fafb;
+      border-top-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .footer-brand p,
+    [data-theme="light"] .footer-link,
+    [data-theme="light"] .footer-tagline {
+      color: #4b5563;
+    }
+
+    [data-theme="light"] .footer-column h3 {
+      color: #111827;
+    }
+
+    [data-theme="light"] .footer-link:hover {
+      color: #111827;
+    }
+
+    [data-theme="light"] .footer-bottom {
+      border-color: #d1d5db;
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .footer-logo h2 {
+      color: #111827;
+    }
+
+    [data-theme="light"] .footer-logo h2 span {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .login-input {
+      background: #f9fafb;
+      border-color: #d1d5db;
+      color: #111827;
+    }
+
+    [data-theme="light"] .login-input:focus {
+      border-color: var(--accent);
+      background: #ffffff;
+    }
+
+    [data-theme="light"] .login-label {
+      color: #374151;
+    }
+
+    [data-theme="light"] .view-tabs {
+      background: #f3f4f6;
+    }
+
+    [data-theme="light"] .view-tab {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .view-tab.active {
+      background: #ffffff;
+      color: #111827;
+    }
+
+    [data-theme="light"] .card-modal-content {
+      background: #ffffff;
+    }
+
+    [data-theme="light"] .expanded-header {
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .expanded-title {
+      color: #111827;
+    }
+
+    [data-theme="light"] .expanded-subtitle {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .score-panel {
+      background: #ffffff;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .score-label {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .component-item {
+      color: #374151;
+    }
+
+    [data-theme="light"] .decision-card {
+      background: #f9fafb;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .rule-item {
+      background: #ffffff;
+      border-color: #e5e7eb;
+    }
+
+    /* Light theme - Model modal backgrounds */
+    [data-theme="light"] .model-body {
+      background: #ffffff;
+    }
+
+    [data-theme="light"] .engine-score-card {
+      background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+      border: 1px solid #e5e7eb;
+    }
+
+    [data-theme="light"] .engine-score-gradient {
+      background: linear-gradient(90deg, transparent 0%, rgba(234,179,8,0.1) 50%, rgba(16,185,129,0.08) 100%);
+    }
+
+    [data-theme="light"] .engine-score-label,
+    [data-theme="light"] .breakdown-header {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .engine-score-num {
+      color: #b45309;
+    }
+
+    [data-theme="light"] .engine-score-max {
+      color: #9ca3af;
+    }
+
+    [data-theme="light"] .engine-tier-letter {
+      color: #059669;
+    }
+
+    [data-theme="light"] .engine-tier-name {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .engine-title {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .score-calculator {
+      background: #f9fafb;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .calc-title {
+      color: #111827;
+    }
+
+    [data-theme="light"] .calc-subtitle {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .calc-tier-scale {
+      background: #f3f4f6;
+    }
+
+    [data-theme="light"] .calc-input-group {
+      background: #ffffff;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .calc-input-group:hover {
+      border-color: #ca8a04;
+    }
+
+    [data-theme="light"] .calc-input-label {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .calc-input-value {
+      color: #111827;
+    }
+
+    [data-theme="light"] .calc-input-group input[type="range"] {
+      background: #e5e7eb;
+    }
+
+    [data-theme="light"] .breakdown-bar-container {
+      background: #e5e7eb;
+    }
+
+    [data-theme="light"] .model-section {
+      background: #f9fafb;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .model-section-title {
+      color: #111827;
+    }
+
+    [data-theme="light"] .credit-engine-section {
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .model-header {
+      background: #ffffff;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .model-version {
+      background: rgba(234,179,8,0.15);
+      color: #b45309;
+    }
+
+    [data-theme="light"] .model-close {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .model-close:hover {
+      color: #111827;
+      background: #f3f4f6;
+    }
+
+    /* Light theme - Score panel */
+    [data-theme="light"] .score-panel {
+      background: #ffffff;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .score-header {
+      background: #ffffff;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .score-value {
+      color: #b45309 !important;
+      text-shadow: none;
+    }
+
+    [data-theme="light"] .score-label {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .score-tier {
+      color: #ca8a04;
+    }
+
+    [data-theme="light"] .score-body {
+      background: #ffffff;
+    }
+
+    [data-theme="light"] .breakdown-label {
+      color: #374151;
+    }
+
+    [data-theme="light"] .breakdown-value {
+      color: #111827;
+    }
+
+    [data-theme="light"] .breakdown-bar-track {
+      background: #e5e7eb;
+    }
+
+    [data-theme="light"] .result-preview {
+      background: #ffffff;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .result-cell-label {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .result-cell-value {
+      color: #111827;
+    }
+
+    [data-theme="light"] .result-cell-value.green {
+      color: #059669;
+    }
+
+    [data-theme="light"] .result-cell-value.yellow {
+      color: #ca8a04;
+    }
+
+    [data-theme="light"] .score-number {
+      color: #111827 !important;
+    }
+
+    [data-theme="light"] .score-number.tier-c {
+      color: #ca8a04 !important;
+    }
+
+    [data-theme="light"] .tier-text {
+      color: #ca8a04;
+    }
+
+    [data-theme="light"] .component-label,
+    [data-theme="light"] .component-value {
+      color: #374151;
+    }
+
+    /* Light theme - Cards preview and expanded */
+    [data-theme="light"] .stat-value,
+    [data-theme="light"] .stat-value-large,
+    [data-theme="light"] .expanded-amount,
+    [data-theme="light"] .metric-value {
+      color: #111827 !important;
+    }
+
+    [data-theme="light"] .stat-value-large.green,
+    [data-theme="light"] .expanded-amount.green {
+      color: #059669 !important;
+    }
+
+    [data-theme="light"] .stat-value-large.purple,
+    [data-theme="light"] .expanded-amount.purple {
+      color: #7c3aed !important;
+    }
+
+    [data-theme="light"] .stat-value-large.orange,
+    [data-theme="light"] .expanded-amount.orange {
+      color: #ea580c !important;
+    }
+
+    [data-theme="light"] .stat-label,
+    [data-theme="light"] .expanded-label,
+    [data-theme="light"] .header-label {
+      color: #6b7280 !important;
+    }
+
+    [data-theme="light"] .view-badge,
+    [data-theme="light"] .expanded-badge {
+      background: #f3f4f6;
+      border-color: #d1d5db;
+      color: #374151;
+    }
+
+    [data-theme="light"] .view-badge.iso,
+    [data-theme="light"] .expanded-badge.iso {
+      background: rgba(139, 92, 246, 0.15);
+      color: #7c3aed !important;
+    }
+
+    [data-theme="light"] .view-badge.client,
+    [data-theme="light"] .expanded-badge.client {
+      background: rgba(249, 115, 22, 0.15);
+      color: #ea580c !important;
+    }
+
+    [data-theme="light"] .view-badge.lender,
+    [data-theme="light"] .expanded-badge.lender {
+      background: rgba(234, 179, 8, 0.15);
+      color: #b45309 !important;
+    }
+
+    [data-theme="light"] .preview-header,
+    [data-theme="light"] .expanded-header {
+      background: #f9fafb;
+    }
+
+    [data-theme="light"] .view-badge.iso,
+    [data-theme="light"] .expanded-badge.iso {
+      background: rgba(139, 92, 246, 0.1);
+      color: #7c3aed;
+    }
+
+    [data-theme="light"] .view-badge.client,
+    [data-theme="light"] .expanded-badge.client {
+      background: rgba(249, 115, 22, 0.1);
+      color: #ea580c;
+    }
+
+    [data-theme="light"] .view-badge.lender,
+    [data-theme="light"] .expanded-badge.lender {
+      background: rgba(234, 179, 8, 0.1);
+      color: #b45309;
+    }
+
+    /* Light theme - Result rows */
+    [data-theme="light"] .result-row {
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .result-row span {
+      color: #374151 !important;
+    }
+
+    [data-theme="light"] .result-row span:last-child {
+      color: #111827 !important;
+      font-weight: 700;
+    }
+
+    /* Light theme - Slider values and labels */
+    [data-theme="light"] .slider-value {
+      color: #111827 !important;
+    }
+
+    [data-theme="light"] .slider-label {
+      color: #4b5563;
+    }
+
+    [data-theme="light"] .expanded-body {
+      background: #ffffff;
+    }
+
+    [data-theme="light"] .result-summary {
+      background: #f9fafb;
+      border-color: #e5e7eb;
+    }
+
+    /* Light theme - Slider tracks */
+    [data-theme="light"] .slider-track {
+      background: #d1d5db;
+    }
+
+    [data-theme="light"] .amount-slider-track {
+      background: #d1d5db;
+    }
+
+    /* Light theme - Section indicators and titles */
+    [data-theme="light"] .section-indicator {
+      background: #f3f4f6;
+      border-color: #d1d5db;
+      color: #374151;
+    }
+
+    [data-theme="light"] .section-title,
+    [data-theme="light"] .section-title .accent {
+      color: #111827;
+    }
+
+    [data-theme="light"] .section-subtitle {
+      color: #4b5563;
+    }
+
+    /* Light theme - Approval cards calculator section */
+    [data-theme="light"] .approval-cards {
+      background: #f9fafb;
+    }
+
+    [data-theme="light"] .approval-cards .approval-cards-title {
+      color: #111827;
+    }
+
+    [data-theme="light"] .approval-cards .section-indicator {
+      background: #ffffff;
+      border-color: #d1d5db;
+      color: #374151;
+    }
+
+    [data-theme="light"] .view-tabs {
+      background: #f3f4f6;
+      border-color: #d1d5db;
+    }
+
+    [data-theme="light"] .view-tab {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .view-tab:hover {
+      color: #374151;
+      background: #e5e7eb;
+    }
+
+    [data-theme="light"] .view-tab.active {
+      color: #111827;
+      background: #ffffff;
+    }
+
+    [data-theme="light"] .view-tab[data-tab="lender"].active {
+      color: #b45309;
+      background: rgba(234, 179, 8, 0.1);
+    }
+
+    [data-theme="light"] .view-tab[data-tab="iso"].active {
+      color: #7c3aed;
+      background: rgba(139, 92, 246, 0.1);
+    }
+
+    [data-theme="light"] .view-tab[data-tab="client"].active {
+      color: #ea580c;
+      background: rgba(249, 115, 22, 0.1);
+    }
+
+    /* Light theme - Feature sections with dark backgrounds need to stay dark */
+    [data-theme="light"] .feature-section,
+    [data-theme="light"] .features-section {
+      background: #f9fafb !important;
+    }
+
+    [data-theme="light"] .feature-section.iso-section {
+      background: linear-gradient(180deg, #f5f3ff 0%, #ede9fe 100%) !important;
+    }
+
+    [data-theme="light"] .feature-section.iso-section .approval-cards-title {
+      color: #111827 !important;
+    }
+
+    [data-theme="light"] .feature-section.iso-section .hero-desc {
+      color: #4b5563 !important;
+    }
+
+    [data-theme="light"] .feature-section.iso-section .section-indicator {
+      background: #ffffff;
+      border-color: #d1d5db;
+      color: #374151 !important;
+    }
+
+    [data-theme="light"] .feature-section.client-section {
+      background: linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%) !important;
+    }
+
+    [data-theme="light"] .feature-section.client-section .approval-cards-title {
+      color: #111827 !important;
+    }
+
+    [data-theme="light"] .feature-section.client-section .hero-desc {
+      color: #4b5563 !important;
+    }
+
+    [data-theme="light"] .feature-section.client-section .section-indicator {
+      background: #ffffff;
+      border-color: #d1d5db;
+      color: #374151 !important;
+    }
+
+    [data-theme="light"] .feature-section .section-indicator,
+    [data-theme="light"] .features-section .section-indicator {
+      background: #ffffff;
+      border-color: #d1d5db;
+      color: #374151 !important;
+    }
+
+    [data-theme="light"] .feature-section .approval-cards-title,
+    [data-theme="light"] .features-section .approval-cards-title {
+      color: #111827 !important;
+    }
+
+    [data-theme="light"] .feature-section .hero-desc,
+    [data-theme="light"] .features-section .hero-desc {
+      color: #4b5563 !important;
+    }
+
+    /* Light theme - Feature cards in light sections */
+    [data-theme="light"] .features-section .feature-card {
+      background: #ffffff;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .features-section .feature-card:hover {
+      background: #ffffff;
+      border-color: rgba(234, 179, 8, 0.5);
+    }
+
+    [data-theme="light"] .features-section .feature-title {
+      color: #111827 !important;
+    }
+
+    [data-theme="light"] .features-section .feature-desc {
+      color: #4b5563 !important;
+    }
+
+    [data-theme="light"] .features-section .feature-icon {
+      background: rgba(234, 179, 8, 0.1);
+    }
+
+    [data-theme="light"] .features-section .feature-icon svg {
+      stroke: #b45309;
+    }
+
+    [data-theme="light"] .feature-card-display {
+      background: #ffffff;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .feature-card-display .expanded-badge {
+      background: #f3f4f6;
+      border-color: #d1d5db;
+      color: #374151;
+    }
+
+    [data-theme="light"] .feature-card-display .expanded-badge.iso {
+      background: rgba(139, 92, 246, 0.15);
+      color: #7c3aed !important;
+    }
+
+    [data-theme="light"] .feature-card-display .expanded-badge.client {
+      background: rgba(249, 115, 22, 0.15);
+      color: #ea580c !important;
+    }
+
+    [data-theme="light"] .feature-card-display .expanded-amount {
+      color: #111827 !important;
+    }
+
+    [data-theme="light"] .feature-card-display .expanded-amount.purple {
+      color: #7c3aed !important;
+    }
+
+    [data-theme="light"] .feature-card-display .expanded-amount.green,
+    [data-theme="light"] .feature-card-display .expanded-amount.orange {
+      color: #059669 !important;
+    }
+
+    [data-theme="light"] .feature-card-display .expanded-label {
+      color: #6b7280 !important;
+    }
+
+    [data-theme="light"] .feature-card-display .slider-value {
+      color: #111827 !important;
+    }
+
+    [data-theme="light"] .feature-card-display .slider-label {
+      color: #4b5563 !important;
+    }
+
+    [data-theme="light"] .feature-card-display .chart-main {
+      color: #111827 !important;
+    }
+
+    [data-theme="light"] .feature-card-display .chart-sub {
+      color: #6b7280 !important;
+    }
+
+    [data-theme="light"] .feature-card-display .result-row span {
+      color: #4b5563 !important;
+    }
+
+    [data-theme="light"] .feature-card-display .result-row span:last-child {
+      color: #111827 !important;
+    }
+
+    [data-theme="light"] .feature-card-display .expanded-header {
+      background: #f9fafb;
+    }
+
+    [data-theme="light"] .feature-card-display .expanded-body {
+      background: #ffffff;
+    }
+
+    [data-theme="light"] .feature-card-display .expanded-results {
+      background: #f9fafb;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .feature-card-display .slider-range span {
+      color: #6b7280 !important;
+    }
+
+    /* Light theme - Card action text */
+    [data-theme="light"] .card-action {
+      color: #6b7280;
+    }
+
+    /* Light theme - Manage fees text */
+    [data-theme="light"] .manage-fees-text {
+      color: #6b7280;
+    }
+
+    /* Light theme - Expanded CTA buttons */
+    [data-theme="light"] .expanded-cta {
+      background: #f3f4f6;
+      color: #111827;
+      border: 1px solid #d1d5db;
+    }
+
+    [data-theme="light"] .expanded-cta:hover {
+      background: #e5e7eb;
+      border-color: #9ca3af;
+    }
+
+    [data-theme="light"] .expanded-cta.lender-cta {
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      border-color: #f59e0b;
+      color: #92400e;
+    }
+
+    [data-theme="light"] .expanded-cta.lender-cta:hover {
+      background: linear-gradient(135deg, #fde68a, #fcd34d);
+    }
+
+    [data-theme="light"] .expanded-cta.iso-cta {
+      background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+      border-color: #a855f7;
+      color: #6b21a8;
+    }
+
+    [data-theme="light"] .expanded-cta.iso-cta:hover {
+      background: linear-gradient(135deg, #e9d5ff, #d8b4fe);
+    }
+
+    [data-theme="light"] .expanded-cta.client-cta {
+      background: linear-gradient(135deg, #ffedd5, #fed7aa);
+      border-color: #f97316;
+      color: #9a3412;
+    }
+
+    [data-theme="light"] .expanded-cta.client-cta:hover {
+      background: linear-gradient(135deg, #fed7aa, #fdba74);
+    }
+
+    /* Light theme - Hero card backgrounds */
+    [data-theme="light"] .hero-card {
+      background: #ffffff;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .hero-desc {
+      color: #4b5563;
+    }
+
+    /* Light theme - How it works section */
+    [data-theme="light"] .steps-section {
+      background: #f9fafb;
+    }
+
+    [data-theme="light"] .steps-section .section-indicator {
+      background: #ffffff;
+      border-color: #d1d5db;
+      color: #374151;
+    }
+
+    [data-theme="light"] .steps-section .approval-cards-title {
+      color: #111827;
+    }
+
+    [data-theme="light"] .steps-section .hero-desc {
+      color: #4b5563;
+    }
+
+    [data-theme="light"] .step-card {
+      background: #ffffff;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .step-number {
+      color: var(--accent);
+    }
+
+    [data-theme="light"] .step-title {
+      color: #111827;
+    }
+
+    [data-theme="light"] .step-description {
+      color: #4b5563;
+    }
+
+    /* Light theme - Integrations */
+    [data-theme="light"] .integrations-section {
+      background: #ffffff;
+    }
+
+    [data-theme="light"] .integrations-content {
+      background: #f9fafb;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .integrations-section .section-indicator {
+      background: #f3f4f6;
+      border-color: #d1d5db;
+      color: #374151;
+    }
+
+    [data-theme="light"] .integrations-section .approval-cards-title {
+      color: #111827;
+    }
+
+    [data-theme="light"] .integrations-section .hero-desc {
+      color: #4b5563;
+    }
+
+    [data-theme="light"] .integration-category {
+      color: #374151;
+    }
+
+    [data-theme="light"] .integration-logo {
+      background: #f3f4f6;
+    }
+
+    /* Light theme - All remaining white text elements */
+    [data-theme="light"] .header-amount {
+      color: #111827 !important;
+    }
+
+    [data-theme="light"] .chart-main {
+      color: #111827 !important;
+    }
+
+    [data-theme="light"] .chart-sub {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .legend-text strong {
+      color: #111827;
+    }
+
+    [data-theme="light"] .constraint-value {
+      color: #111827 !important;
+    }
+
+    [data-theme="light"] .constraint-label {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .constraint-desc {
+      color: #9ca3af;
+    }
+
+    [data-theme="light"] .preview-card:hover .card-action {
+      color: #111827;
+    }
+
+    [data-theme="light"] .view-tab.active {
+      color: #111827;
+      background: #ffffff;
+    }
+
+    [data-theme="light"] .chart-overlay {
+      background: rgba(255,255,255,0.95);
+    }
+
+    [data-theme="light"] .constraint-group {
+      background: #f9fafb;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .fee-hint {
+      color: #9ca3af;
+    }
+
+    [data-theme="light"] .fee-value {
+      color: #111827;
+    }
+
+    [data-theme="light"] .metric-row {
+      background: #f9fafb;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .stacked-bar {
+      background: #e5e7eb;
+    }
+
+    [data-theme="light"] .bar-label {
+      color: #111827 !important;
     }
 
     html { scroll-behavior: smooth; }
@@ -116,6 +1230,52 @@
       color: var(--accent);
     }
 
+    /* Theme Toggle */
+    .theme-toggle {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      margin-left: 8px;
+    }
+
+    .theme-toggle:focus {
+      outline: none;
+    }
+
+    .theme-toggle:hover {
+      background: rgba(255,255,255,0.1);
+      color: var(--text-primary);
+    }
+
+    [data-theme="light"] .theme-toggle:hover {
+      background: rgba(0,0,0,0.08);
+    }
+
+    .theme-toggle svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .theme-toggle .moon-icon {
+      display: none;
+    }
+
+    [data-theme="light"] .theme-toggle .sun-icon {
+      display: none;
+    }
+
+    [data-theme="light"] .theme-toggle .moon-icon {
+      display: block;
+    }
+
     /* ============================================
        HERO SECTION
     ============================================ */
@@ -155,15 +1315,18 @@
       content: '';
       width: 24px;
       height: 2px;
-      background: var(--accent);
+      background: linear-gradient(90deg, #10b981, #f59e0b);
     }
 
     .hero-label span {
       font-size: 13px;
       font-weight: 700;
-      color: var(--accent);
       text-transform: uppercase;
       letter-spacing: 2px;
+      background: linear-gradient(90deg, #10b981, #f59e0b, #ea580c);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .hero-title {
@@ -673,12 +1836,12 @@
     }
 
     .feature-section.client-section {
-        background: linear-gradient(180deg, #1a0b0b 0%, #0d0d0d 100%);
-        border-top: 1px solid rgba(249, 115, 22, 0.1);
+        background: linear-gradient(180deg, #052e16 0%, #0d0d0d 100%);
+        border-top: 1px solid rgba(34, 197, 94, 0.2);
     }
 
     .feature-card-display.client-card {
-        border-top: 4px solid #f97316;
+        border-top: 4px solid #22c55e;
     }
 
     /* Client Breakdown Styles */
@@ -879,6 +2042,75 @@
       margin-bottom: 24px;
     }
 
+    /* Payment Frequency Toggle */
+    .frequency-group {
+      margin-bottom: 24px;
+    }
+
+    .frequency-toggle {
+      display: flex;
+      gap: 8px;
+    }
+
+    .frequency-toggle-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+
+    .frequency-btn {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      background: var(--bg-card-inner);
+      border: 1px solid var(--border-secondary);
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+    }
+
+    .frequency-btn:hover {
+      border-color: var(--border-primary);
+      color: var(--text-primary);
+    }
+
+    .frequency-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #000;
+    }
+
+    .frequency-btn.active.iso {
+      background: #a855f7;
+      border-color: #a855f7;
+      color: #fff;
+    }
+
+    [data-theme="light"] .frequency-btn {
+      background: #f3f4f6;
+      border-color: #d1d5db;
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .frequency-btn:hover {
+      border-color: #9ca3af;
+      color: #374151;
+    }
+
+    [data-theme="light"] .frequency-btn.active {
+      background: #eab308;
+      border-color: #eab308;
+      color: #000;
+    }
+
+    [data-theme="light"] .frequency-btn.active.iso {
+      background: #a855f7;
+      border-color: #a855f7;
+      color: #fff;
+    }
+
     .slider-header {
       display: flex;
       justify-content: space-between;
@@ -1027,6 +2259,41 @@
 
     .expanded-cta.iso-cta:hover .send-icon {
       transform: translateX(4px);
+    }
+
+    /* Viewed by Client Indicator */
+    .viewed-indicator {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 12px;
+      padding: 8px 16px;
+      background: rgba(168, 85, 247, 0.1);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      border-radius: 8px;
+      color: #a855f7;
+      font-size: 12px;
+      font-weight: 600;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .viewed-indicator.visible {
+      display: flex;
+    }
+
+    .viewed-indicator svg {
+      flex-shrink: 0;
+    }
+
+    [data-theme="light"] .viewed-indicator {
+      background: rgba(168, 85, 247, 0.08);
+      border-color: rgba(168, 85, 247, 0.25);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* Client Button - Confetti Ready */
@@ -1482,6 +2749,36 @@
       height: 20px;
     }
 
+    .integration-logo img {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+      filter: invert(1) brightness(2);
+    }
+
+    [data-theme="light"] .integration-logo img {
+      filter: none;
+    }
+
+    [data-theme="light"] .component-card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+    }
+
+    [data-theme="light"] .component-formula {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    [data-theme="light"] .constraint-box {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+    }
+
+    [data-theme="light"] .constraint-name {
+      color: #111827;
+    }
+
     .integration-name {
       font-size: 14px;
       font-weight: 700;
@@ -1789,15 +3086,20 @@
       margin-bottom: 32px;
       flex-wrap: wrap;
       gap: 16px;
+      position: relative;
     }
 
     .dashboard-title {
       font-size: 2rem;
       font-weight: 800;
       letter-spacing: -1px;
+      flex: 1;
+      text-align: center;
     }
 
     .dashboard-controls {
+      position: absolute;
+      right: 0;
       display: flex;
       gap: 12px;
       align-items: center;
@@ -1922,13 +3224,27 @@
       border-radius: 8px;
       padding: 14px;
       border: 1px solid var(--border-secondary);
-      cursor: pointer;
+      cursor: grab;
       transition: all 0.2s ease;
+      user-select: none;
     }
 
     .kanban-card:hover {
       border-color: var(--border-primary);
       transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    .kanban-card:active {
+      cursor: grabbing;
+      transform: scale(1.02);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+      z-index: 10;
+    }
+
+    .kanban-card.dragging {
+      opacity: 0.7;
+      border-color: var(--accent);
     }
 
     .kanban-card-header {
@@ -1972,15 +3288,29 @@
 
     /* Tracker Table */
     .tracker-view {
-      display: none;
-    }
-
-    .tracker-view.active {
       display: block;
+      margin-top: 40px;
     }
 
-    .kanban-view.active {
+    .kanban-view {
       display: grid;
+    }
+
+    .dashboard-view-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dashboard-view-label svg {
+      width: 18px;
+      height: 18px;
     }
 
     .tracker-table {
@@ -2651,8 +3981,8 @@
 
     /* Scoring Calculator */
     .score-calculator {
-      background: linear-gradient(135deg, rgba(234,179,8,0.08), rgba(234,179,8,0.02));
-      border: 1px solid rgba(234,179,8,0.2);
+      background: var(--bg-card-inner);
+      border: 1px solid var(--border-secondary);
       border-radius: 16px;
       padding: 24px;
       margin-bottom: 24px;
@@ -2686,6 +4016,8 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
+      flex: 1;
+      max-width: 500px;
     }
 
     .calc-score-display {
@@ -2761,6 +4093,7 @@
       overflow: hidden;
       position: relative;
       height: 32px;
+      width: 100%;
     }
 
     .tier-segment {
@@ -3001,6 +4334,12 @@
         font-size: 11px;
         white-space: nowrap;
       }
+      .theme-toggle {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+        margin-right: 4px;
+      }
       .steps-grid { grid-template-columns: 1fr; }
       .features-grid { grid-template-columns: 1fr; }
       .footer-grid { grid-template-columns: 1fr; gap: 32px; }
@@ -3018,21 +4357,70 @@
   <header class="main-header">
     <div class="header-logo">
       <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Planet gradient -->
+          <radialGradient id="planetGrad" cx="35%" cy="35%" r="60%">
+            <stop offset="0%" stop-color="#fcd34d"/>
+            <stop offset="50%" stop-color="#eab308"/>
+            <stop offset="100%" stop-color="#ca8a04"/>
+          </radialGradient>
+          <!-- Planet glow -->
+          <filter id="planetGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2" result="glow"/>
+            <feMerge>
+              <feMergeNode in="glow"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          <!-- Ring gradient -->
+          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ffab40"/>
+            <stop offset="50%" stop-color="#ff8c00"/>
+            <stop offset="100%" stop-color="#ff6d00"/>
+          </linearGradient>
+          <!-- Moon glow -->
+          <filter id="moonGlow" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="1.5" result="glow"/>
+            <feMerge>
+              <feMergeNode in="glow"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
         <style>
-          .orbiting-moon {
+          .moon-base {
             transform-origin: 32px 32px;
             animation: orbit 3s linear infinite, moonColor 2s ease-in-out infinite;
+            filter: url(#moonGlow);
+          }
+          .moon-back {
+            animation: orbit 3s linear infinite, moonColor 2s ease-in-out infinite, moonBackOpacity 3s linear infinite;
+          }
+          .moon-front {
+            animation: orbit 3s linear infinite, moonColor 2s ease-in-out infinite, moonFrontOpacity 3s linear infinite;
           }
           @keyframes orbit {
-            0% { transform: rotate(-20deg) translate(26px, 0) scale(1); opacity: 1; }
-            12.5% { transform: rotate(-20deg) translate(18px, 5px) scale(0.9); opacity: 1; }
-            25% { transform: rotate(-20deg) translate(0, 7px) scale(0.75); opacity: 0.7; }
-            37.5% { transform: rotate(-20deg) translate(-18px, 5px) scale(0.6); opacity: 0.5; }
-            50% { transform: rotate(-20deg) translate(-26px, 0) scale(0.5); opacity: 0.4; }
-            62.5% { transform: rotate(-20deg) translate(-18px, -5px) scale(0.6); opacity: 0.5; }
-            75% { transform: rotate(-20deg) translate(0, -7px) scale(0.75); opacity: 0.7; }
-            87.5% { transform: rotate(-20deg) translate(18px, -5px) scale(0.9); opacity: 1; }
-            100% { transform: rotate(-20deg) translate(26px, 0) scale(1); opacity: 1; }
+            0% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
+            12.5% { transform: rotate(-20deg) translate(18px, 5px) scale(0.85); }
+            25% { transform: rotate(-20deg) translate(0, 7px) scale(0.7); }
+            37.5% { transform: rotate(-20deg) translate(-18px, 5px) scale(0.55); }
+            50% { transform: rotate(-20deg) translate(-26px, 0) scale(0.5); }
+            62.5% { transform: rotate(-20deg) translate(-18px, -5px) scale(0.55); }
+            75% { transform: rotate(-20deg) translate(0, -7px) scale(0.7); }
+            87.5% { transform: rotate(-20deg) translate(18px, -5px) scale(0.85); }
+            100% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
+          }
+          @keyframes moonBackOpacity {
+            0%, 15% { opacity: 0; }
+            25% { opacity: 1; }
+            75% { opacity: 1; }
+            85%, 100% { opacity: 0; }
+          }
+          @keyframes moonFrontOpacity {
+            0%, 15% { opacity: 1; }
+            25% { opacity: 0; }
+            75% { opacity: 0; }
+            85%, 100% { opacity: 1; }
           }
           @keyframes moonColor {
             0%, 100% { fill: #a855f7; }
@@ -3042,20 +4430,36 @@
           }
         </style>
         <!-- Back half of ring (behind planet) -->
-        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
+        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#ringGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" opacity="0.6"/>
+        <!-- Moon behind planet (rendered before planet) -->
+        <circle class="moon-base moon-back" cx="32" cy="32" r="4" fill="#a855f7"/>
+        <!-- Planet shadow/atmosphere -->
+        <circle cx="32" cy="32" r="14" fill="#eab308" opacity="0.2" filter="url(#planetGlow)"/>
         <!-- Planet -->
-        <circle cx="32" cy="32" r="12" fill="#eab308"/>
+        <circle cx="32" cy="32" r="12" fill="url(#planetGrad)" filter="url(#planetGlow)"/>
+        <!-- Planet highlight -->
+        <ellipse cx="28" cy="28" rx="4" ry="3" fill="#fef3c7" opacity="0.4"/>
         <!-- Front half of ring (in front of planet) -->
-        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
-        <circle class="orbiting-moon" cx="32" cy="32" r="4" fill="#a855f7"/>
+        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#ringGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
+        <!-- Moon in front of planet (rendered after planet) -->
+        <circle class="moon-base moon-front" cx="32" cy="32" r="4" fill="#a855f7"/>
       </svg>
       <h1>Ables<span>AI</span></h1>
+      <button class="theme-toggle" id="themeToggle" title="Toggle light/dark mode">
+        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
     </div>
     <nav class="tab-nav">
-      <button class="tab-btn active" id="headerModelBtn">Model</button>
+      <button class="tab-btn" id="headerModelBtn">Model</button>
       <a href="https://ables.ai/calculator.html" class="tab-btn">Calculator</a>
       <a href="https://ables.ai/toolbox.html" class="tab-btn">Toolbox</a>
-      <button class="tab-btn" id="loginBtn">Login</button>
+      <button class="tab-btn active" id="loginBtn">Login</button>
     </nav>
   </header>
 
@@ -3374,8 +4778,12 @@
             </div>
           </div>
           <div class="slider-group">
-            <div class="slider-header"><span class="slider-label">Upsell Points</span><span class="slider-value" id="staticIsoUpsellValue">+0.00 pts</span></div>
-            <input type="range" class="slider iso-slider" id="staticIsoUpsellSlider" min="0" max="10" step="0.5" value="0">
+            <div class="slider-header"><span class="slider-label">Upsell Points</span><span class="slider-value" id="staticIsoUpsellValue">+0 pts</span></div>
+            <input type="range" class="slider iso-slider" id="staticIsoUpsellSlider" min="0" max="8" step="0.5" value="0">
+            <div class="slider-range">
+                <span>0 pts</span>
+                <span class="upsell-max-label">Max: 8 pts</span>
+            </div>
           </div>
           <div class="expanded-results">
             <div class="result-row"><span>Sell Rate</span><span id="staticIsoSellRate">1.28x</span></div>
@@ -3383,6 +4791,13 @@
             <div class="result-row"><span>Net to Merchant</span><span id="staticIsoNet">$151,900</span></div>
           </div>
           <button class="expanded-cta iso-cta" id="staticIsoCta">Share Proposed Terms with Client</button>
+          <div class="viewed-indicator" id="staticViewedIndicator">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <span>Viewed by Client</span>
+          </div>
         </div>
     </div>
   </section>
@@ -3482,10 +4897,6 @@
       <div class="dashboard-header">
         <h2 class="dashboard-title">Underwriting Dashboard</h2>
         <div class="dashboard-controls">
-          <div class="view-toggle">
-            <button class="view-toggle-btn active" data-view="kanban">Kanban</button>
-            <button class="view-toggle-btn" data-view="tracker">Tracker</button>
-          </div>
           <button class="model-btn" id="openModelBtn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10"/>
@@ -3497,7 +4908,14 @@
       </div>
 
       <!-- Kanban View -->
-      <div class="kanban-board kanban-view active">
+      <div class="dashboard-view-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+        </svg>
+        Pipeline Board
+      </div>
+      <div class="kanban-board kanban-view">
         <div class="kanban-column">
           <div class="kanban-column-header">
             <div class="kanban-column-title">
@@ -3704,6 +5122,12 @@
 
       <!-- Tracker View -->
       <div class="tracker-view">
+        <div class="dashboard-view-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 3h18v18H3z"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/>
+          </svg>
+          Deal Tracker
+        </div>
         <div class="tracker-table">
           <table>
             <thead>
@@ -4421,44 +5845,39 @@
         <!-- Row 1 -->
         <div class="integration-item">
           <div class="integration-logo">
-            <svg viewBox="0 0 24 24" fill="#f97316">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-            </svg>
+            <img src="https://cdn.simpleicons.org/zoho" alt="Zoho" width="32" height="32">
           </div>
           <span class="integration-name">Zoho CRM</span>
         </div>
 
         <div class="integration-item">
           <div class="integration-logo">
-            <svg viewBox="0 0 24 24" fill="#10b981">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-            </svg>
+            <img src="https://cdn.simpleicons.org/plaid" alt="Plaid" width="32" height="32">
           </div>
           <span class="integration-name">Plaid</span>
         </div>
 
         <div class="integration-item">
           <div class="integration-logo">
-            <svg viewBox="0 0 24 24" fill="#3b82f6">
-              <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/>
-            </svg>
+            <img src="https://cdn.simpleicons.org/googledrive" alt="Google Drive" width="32" height="32">
           </div>
           <span class="integration-name">Google Drive</span>
         </div>
 
         <div class="integration-item">
           <div class="integration-logo">
-            <svg viewBox="0 0 24 24" fill="#eab308">
-              <path d="M13 3L4 14h7l-2 7 9-11h-7l2-7z"/>
-            </svg>
+            <img src="https://cdn.simpleicons.org/zapier" alt="Zapier" width="32" height="32">
           </div>
           <span class="integration-name">Zapier</span>
         </div>
 
         <div class="integration-item">
           <div class="integration-logo">
-            <svg viewBox="0 0 24 24" fill="#a855f7">
-              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            <!-- MoneyThumb - Custom (not in Simple Icons) -->
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="2" y="2" width="20" height="20" rx="4" fill="#9333ea"/>
+              <path d="M8 12h8M12 8v8" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="12" cy="12" r="6" stroke="#fff" stroke-width="2" fill="none"/>
             </svg>
           </div>
           <span class="integration-name">MoneyThumb</span>
@@ -4466,9 +5885,7 @@
 
         <div class="integration-item">
           <div class="integration-logo">
-            <svg viewBox="0 0 24 24" fill="#4285f4">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-            </svg>
+            <img src="https://cdn.simpleicons.org/googlegemini" alt="Gemini" width="32" height="32">
           </div>
           <span class="integration-name">Gemini</span>
         </div>
@@ -4476,54 +5893,42 @@
         <!-- Row 2 -->
         <div class="integration-item">
           <div class="integration-logo">
-            <svg viewBox="0 0 24 24" fill="#d97757">
-              <path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18l6.9 3.45L12 11.09 5.1 7.63 12 4.18zM4 8.82l7 3.5v7.36l-7-3.5V8.82zm9 10.86v-7.36l7-3.5v7.36l-7 3.5z"/>
-            </svg>
+            <img src="https://cdn.simpleicons.org/anthropic" alt="Anthropic" width="32" height="32">
           </div>
           <span class="integration-name">Anthropic</span>
         </div>
 
         <div class="integration-item">
           <div class="integration-logo">
-            <svg viewBox="0 0 24 24" fill="#10a37f">
-              <path d="M22.28 14.38a5.5 5.5 0 0 1-.47 4.49 5.56 5.56 0 0 1-6 2.67 5.5 5.5 0 0 1-4.12 1.84 5.56 5.56 0 0 1-5.3-3.83 5.5 5.5 0 0 1-3.68-2.67 5.56 5.56 0 0 1 .68-6.52A5.5 5.5 0 0 1 3.86 5.87a5.56 5.56 0 0 1 6-2.67 5.5 5.5 0 0 1 4.12-1.84 5.56 5.56 0 0 1 5.3 3.83 5.5 5.5 0 0 1 3.68 2.67 5.56 5.56 0 0 1-.68 6.52z"/>
-            </svg>
+            <img src="https://cdn.simpleicons.org/openai" alt="OpenAI" width="32" height="32">
           </div>
           <span class="integration-name">OpenAI</span>
         </div>
 
         <div class="integration-item">
           <div class="integration-logo">
-            <svg viewBox="0 0 24 24" fill="#00a1e0">
-              <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/>
-            </svg>
+            <img src="https://cdn.simpleicons.org/salesforce" alt="Salesforce" width="32" height="32">
           </div>
           <span class="integration-name">Salesforce</span>
         </div>
 
         <div class="integration-item">
           <div class="integration-logo">
-            <svg viewBox="0 0 24 24" fill="#ff7a59">
-              <path d="M22.21 6.71c-.4-1.27-1.56-2.07-2.88-2.07-.38 0-.76.07-1.12.21C17.1 3.71 15.64 3 14 3c-1.97 0-3.68 1.1-4.56 2.72-.36-.09-.73-.15-1.12-.15-2.45 0-4.44 1.99-4.44 4.44 0 .54.1 1.06.28 1.53C2.31 12.09 1 13.79 1 15.78c0 2.45 1.99 4.44 4.44 4.44h12.89c2.45 0 4.44-1.99 4.44-4.44 0-1.51-.76-2.84-1.91-3.64.23-.45.36-.96.36-1.49 0-1.72-1.28-3.14-2.94-3.36-.03-.21-.07-.41-.07-.58z"/>
-            </svg>
+            <img src="https://cdn.simpleicons.org/hubspot" alt="HubSpot" width="32" height="32">
           </div>
           <span class="integration-name">HubSpot</span>
         </div>
 
         <div class="integration-item">
           <div class="integration-logo">
-            <svg viewBox="0 0 24 24" fill="#d83b01">
-              <path d="M21 5H3c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 9H3V7h9v7zm9 0h-8V7h8v7z"/>
-            </svg>
+            <img src="https://cdn.simpleicons.org/microsoft" alt="Microsoft 365" width="32" height="32">
           </div>
           <span class="integration-name">Office 365</span>
         </div>
 
         <div class="integration-item">
           <div class="integration-logo">
-            <svg viewBox="0 0 24 24" fill="#fff">
-              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-            </svg>
+            <img src="https://cdn.simpleicons.org/github" alt="GitHub" width="32" height="32">
           </div>
           <span class="integration-name">GitHub</span>
         </div>
@@ -4531,8 +5936,10 @@
         <!-- Row 3 -->
         <div class="integration-item">
           <div class="integration-logo">
-            <svg viewBox="0 0 24 24" fill="#00bcd4">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+            <!-- Aquamark - Custom (not in Simple Icons) -->
+            <svg viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="10" fill="#0891b2"/>
+              <path d="M12 6c-2 2-3 4-3 6s1 4 3 6c2-2 3-4 3-6s-1-4-3-6z" fill="#fff"/>
             </svg>
           </div>
           <span class="integration-name">Aquamark</span>
@@ -4540,8 +5947,10 @@
 
         <div class="integration-item">
           <div class="integration-logo">
-            <svg viewBox="0 0 24 24" fill="#4caf50">
-              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            <!-- Clear - Custom (not in Simple Icons) -->
+            <svg viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="10" fill="#059669"/>
+              <path d="M8 12l3 3 5-6" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
             </svg>
           </div>
           <span class="integration-name">Clear</span>
@@ -4549,26 +5958,24 @@
 
         <div class="integration-item">
           <div class="integration-logo">
-            <svg viewBox="0 0 24 24" fill="#e91e63">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-            </svg>
+            <img src="https://cdn.simpleicons.org/experian" alt="Experian" width="32" height="32">
           </div>
           <span class="integration-name">Experian</span>
         </div>
 
         <div class="integration-item">
           <div class="integration-logo">
-            <svg viewBox="0 0 24 24" fill="#2196f3">
-              <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
-            </svg>
+            <img src="https://cdn.simpleicons.org/equifax" alt="Equifax" width="32" height="32">
           </div>
           <span class="integration-name">Equifax</span>
         </div>
 
         <div class="integration-item">
           <div class="integration-logo">
-            <svg viewBox="0 0 24 24" fill="#ff5722">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+            <!-- TransUnion - Custom (not in Simple Icons) -->
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="2" y="2" width="20" height="20" rx="4" fill="#00a5e0"/>
+              <path d="M7 8h10M12 8v10" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
             </svg>
           </div>
           <span class="integration-name">TransUnion</span>
@@ -4576,9 +5983,7 @@
 
         <div class="integration-item">
           <div class="integration-logo">
-            <svg viewBox="0 0 24 24" fill="#9c27b0">
-              <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/>
-            </svg>
+            <img src="https://cdn.simpleicons.org/gmail" alt="Gmail" width="32" height="32">
           </div>
           <span class="integration-name">Gmail</span>
         </div>
@@ -4593,21 +5998,70 @@
         <div class="footer-brand">
           <div class="footer-logo">
             <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <!-- Planet gradient -->
+                <radialGradient id="planetGradFooter" cx="35%" cy="35%" r="60%">
+                  <stop offset="0%" stop-color="#fcd34d"/>
+                  <stop offset="50%" stop-color="#eab308"/>
+                  <stop offset="100%" stop-color="#ca8a04"/>
+                </radialGradient>
+                <!-- Planet glow -->
+                <filter id="planetGlowFooter" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="2" result="glow"/>
+                  <feMerge>
+                    <feMergeNode in="glow"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+                <!-- Ring gradient -->
+                <linearGradient id="ringGradFooter" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#ffab40"/>
+                  <stop offset="50%" stop-color="#ff8c00"/>
+                  <stop offset="100%" stop-color="#ff6d00"/>
+                </linearGradient>
+                <!-- Moon glow -->
+                <filter id="moonGlowFooter" x="-100%" y="-100%" width="300%" height="300%">
+                  <feGaussianBlur stdDeviation="1.5" result="glow"/>
+                  <feMerge>
+                    <feMergeNode in="glow"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
               <style>
-                .orbiting-moon-footer {
+                .moon-base-footer {
                   transform-origin: 32px 32px;
                   animation: orbitFooter 3s linear infinite, moonColorFooter 2s ease-in-out infinite;
+                  filter: url(#moonGlowFooter);
+                }
+                .moon-back-footer {
+                  animation: orbitFooter 3s linear infinite, moonColorFooter 2s ease-in-out infinite, moonBackOpacityFooter 3s linear infinite;
+                }
+                .moon-front-footer {
+                  animation: orbitFooter 3s linear infinite, moonColorFooter 2s ease-in-out infinite, moonFrontOpacityFooter 3s linear infinite;
                 }
                 @keyframes orbitFooter {
-                  0% { transform: rotate(-20deg) translate(26px, 0) scale(1); opacity: 1; }
-                  12.5% { transform: rotate(-20deg) translate(18px, 5px) scale(0.9); opacity: 1; }
-                  25% { transform: rotate(-20deg) translate(0, 7px) scale(0.75); opacity: 0.7; }
-                  37.5% { transform: rotate(-20deg) translate(-18px, 5px) scale(0.6); opacity: 0.5; }
-                  50% { transform: rotate(-20deg) translate(-26px, 0) scale(0.5); opacity: 0.4; }
-                  62.5% { transform: rotate(-20deg) translate(-18px, -5px) scale(0.6); opacity: 0.5; }
-                  75% { transform: rotate(-20deg) translate(0, -7px) scale(0.75); opacity: 0.7; }
-                  87.5% { transform: rotate(-20deg) translate(18px, -5px) scale(0.9); opacity: 1; }
-                  100% { transform: rotate(-20deg) translate(26px, 0) scale(1); opacity: 1; }
+                  0% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
+                  12.5% { transform: rotate(-20deg) translate(18px, 5px) scale(0.85); }
+                  25% { transform: rotate(-20deg) translate(0, 7px) scale(0.7); }
+                  37.5% { transform: rotate(-20deg) translate(-18px, 5px) scale(0.55); }
+                  50% { transform: rotate(-20deg) translate(-26px, 0) scale(0.5); }
+                  62.5% { transform: rotate(-20deg) translate(-18px, -5px) scale(0.55); }
+                  75% { transform: rotate(-20deg) translate(0, -7px) scale(0.7); }
+                  87.5% { transform: rotate(-20deg) translate(18px, -5px) scale(0.85); }
+                  100% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
+                }
+                @keyframes moonBackOpacityFooter {
+                  0%, 15% { opacity: 0; }
+                  25% { opacity: 1; }
+                  75% { opacity: 1; }
+                  85%, 100% { opacity: 0; }
+                }
+                @keyframes moonFrontOpacityFooter {
+                  0%, 15% { opacity: 1; }
+                  25% { opacity: 0; }
+                  75% { opacity: 0; }
+                  85%, 100% { opacity: 1; }
                 }
                 @keyframes moonColorFooter {
                   0%, 100% { fill: #a855f7; }
@@ -4617,12 +6071,19 @@
                 }
               </style>
               <!-- Back half of ring (behind planet) -->
-              <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
+              <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#ringGradFooter)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" opacity="0.6"/>
+              <!-- Moon behind planet -->
+              <circle class="moon-base-footer moon-back-footer" cx="32" cy="32" r="4" fill="#a855f7"/>
+              <!-- Planet shadow/atmosphere -->
+              <circle cx="32" cy="32" r="14" fill="#eab308" opacity="0.2" filter="url(#planetGlowFooter)"/>
               <!-- Planet -->
-              <circle cx="32" cy="32" r="12" fill="#eab308"/>
+              <circle cx="32" cy="32" r="12" fill="url(#planetGradFooter)" filter="url(#planetGlowFooter)"/>
+              <!-- Planet highlight -->
+              <ellipse cx="28" cy="28" rx="4" ry="3" fill="#fef3c7" opacity="0.4"/>
               <!-- Front half of ring (in front of planet) -->
-              <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
-              <circle class="orbiting-moon-footer" cx="32" cy="32" r="4" fill="#a855f7"/>
+              <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#ringGradFooter)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
+              <!-- Moon in front of planet -->
+              <circle class="moon-base-footer moon-front-footer" cx="32" cy="32" r="4" fill="#a855f7"/>
             </svg>
             <h2>Ables<span>AI</span></h2>
           </div>
@@ -4715,6 +6176,13 @@
             <div class="slider-header"><span class="slider-label">Max Term Length</span><span class="slider-value" id="termValue">10 Months</span></div>
             <input type="range" class="slider" id="termSlider" min="3" max="24" step="1" value="10">
           </div>
+          <div class="frequency-group">
+            <div class="frequency-toggle-label">Payment Frequency</div>
+            <div class="frequency-toggle">
+              <button class="frequency-btn active" data-freq="daily" data-card="lender">Daily</button>
+              <button class="frequency-btn" data-freq="weekly" data-card="lender">Weekly</button>
+            </div>
+          </div>
           <div class="slider-group">
             <div class="slider-header"><span class="slider-label">Factor Rate</span><span class="slider-value" id="factorValue">1.28x</span></div>
             <input type="range" class="slider" id="factorSlider" min="1.10" max="1.55" step="0.01" value="1.28">
@@ -4802,9 +6270,20 @@
                 <span id="isoMaxTerm">Max: 10 mo</span>
             </div>
           </div>
+          <div class="frequency-group">
+            <div class="frequency-toggle-label">Payment Frequency</div>
+            <div class="frequency-toggle">
+              <button class="frequency-btn iso active" data-freq="daily" data-card="iso">Daily</button>
+              <button class="frequency-btn iso" data-freq="weekly" data-card="iso">Weekly</button>
+            </div>
+          </div>
           <div class="slider-group">
-            <div class="slider-header"><span class="slider-label">Upsell Points</span><span class="slider-value" id="isoUpsellValue">+0.00 pts</span></div>
-            <input type="range" class="slider iso-slider" id="isoUpsellSlider" min="0" max="10" step="0.5" value="0">
+            <div class="slider-header"><span class="slider-label">Upsell Points</span><span class="slider-value" id="isoUpsellValue">+0 pts</span></div>
+            <input type="range" class="slider iso-slider" id="isoUpsellSlider" min="0" max="8" step="0.5" value="0">
+            <div class="slider-range">
+                <span>0 pts</span>
+                <span class="upsell-max-label">Max: 8 pts</span>
+            </div>
           </div>
           <div class="expanded-results">
             <div class="result-row"><span>Sell Rate</span><span id="isoSellRate">1.28x</span></div>
@@ -4812,6 +6291,13 @@
             <div class="result-row"><span>Net to Merchant</span><span id="isoNet">$151,900</span></div>
           </div>
           <button class="expanded-cta iso-cta" id="carouselIsoCta">Share Proposed Terms with Client</button>
+          <div class="viewed-indicator" id="carouselViewedIndicator">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <span>Viewed by Client</span>
+          </div>
         </div>
       </div>
     </div>
@@ -4819,6 +6305,27 @@
 
   <script>
     (function() {
+      // Theme Toggle
+      const themeToggle = document.getElementById('themeToggle');
+      const savedTheme = localStorage.getItem('ablesai-theme') || 'dark';
+      
+      if (savedTheme === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+      
+      themeToggle.addEventListener('click', function() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        
+        if (newTheme === 'light') {
+          document.documentElement.setAttribute('data-theme', 'light');
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+        }
+        
+        localStorage.setItem('ablesai-theme', newTheme);
+      });
+
       const cards = document.querySelectorAll('.preview-card-wrapper');
       const modal = document.getElementById('cardModal');
       const expandedCards = document.querySelectorAll('.expanded-card');
@@ -5027,7 +6534,7 @@
             { id: 'isoTermValue', val: deal.isoTerm + ' Months' },
             { id: 'isoMaxAmount', val: 'Max: ' + formatK(deal.maxAmount) },
             { id: 'isoMaxTerm', val: 'Max: ' + deal.maxTerm + ' mo' },
-            { id: 'isoUpsellValue', val: '+' + deal.isoUpsellPoints.toFixed(2) + ' pts' },
+            { id: 'isoUpsellValue', val: '+' + Math.round(deal.isoUpsellPoints) + ' pts' },
             { id: 'isoSellRate', val: calc.sellRate.toFixed(2) + 'x' },
             { id: 'isoPoints', val: formatCurrency(calc.pointsIncome) },
             { id: 'isoNet', val: formatCurrency(calc.netToMerchant) },
@@ -5037,7 +6544,7 @@
             { id: 'staticIsoTermValue', val: deal.isoTerm + ' Months' },
             { id: 'staticIsoMaxAmount', val: 'Max: ' + formatK(deal.maxAmount) },
             { id: 'staticIsoMaxTerm', val: 'Max: ' + deal.maxTerm + ' mo' },
-            { id: 'staticIsoUpsellValue', val: '+' + deal.isoUpsellPoints.toFixed(2) + ' pts' },
+            { id: 'staticIsoUpsellValue', val: '+' + Math.round(deal.isoUpsellPoints) + ' pts' },
             { id: 'staticIsoSellRate', val: calc.sellRate.toFixed(2) + 'x' },
             { id: 'staticIsoPoints', val: formatCurrency(calc.pointsIncome) },
             { id: 'staticIsoNet', val: formatCurrency(calc.netToMerchant) },
@@ -5063,6 +6570,35 @@
                 el.max = deal.maxTerm;
                 el.value = deal.isoTerm;
             }
+        });
+        
+        // Sync sellRate sliders when constrained by buyRate
+        ['sellRateSlider', 'staticSellRateSlider', 'factorSlider'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) {
+                el.min = deal.buyRate;
+                el.value = deal.sellRate;
+            }
+        });
+        
+        // Update factor value display
+        const factorValueEl = document.getElementById('factorValue');
+        if(factorValueEl) factorValueEl.textContent = deal.sellRate.toFixed(2) + 'x';
+        
+        // Cap ISO upsell based on sell-buy rate spread
+        const maxUpsellPoints = Math.round((deal.sellRate - deal.buyRate) * 100);
+        if(deal.isoUpsellPoints > maxUpsellPoints) deal.isoUpsellPoints = maxUpsellPoints;
+        ['isoUpsellSlider', 'staticIsoUpsellSlider'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) {
+                el.max = maxUpsellPoints;
+                el.value = deal.isoUpsellPoints;
+            }
+        });
+        // Update upsell max label
+        const upsellMaxLabels = document.querySelectorAll('.upsell-max-label');
+        upsellMaxLabels.forEach(el => {
+            el.textContent = 'Max: ' + maxUpsellPoints + ' pts';
         });
 
         // Client View Elements
@@ -5097,7 +6633,7 @@
             { id: 'previewClientTerm', val: deal.isoTerm + ' Mo' },
             { id: 'previewIsoComm', val: formatCurrency(calc.totalEarnings) },
             { id: 'previewIsoSell', val: calc.sellRate.toFixed(2) + 'x' },
-            { id: 'previewIsoPoints', val: deal.isoUpsellPoints.toFixed(1) },
+            { id: 'previewIsoPoints', val: Math.round(deal.isoUpsellPoints) },
         ];
         clientElems.forEach(el => {
             const dom = document.getElementById(el.id);
@@ -5180,7 +6716,7 @@
           const el = document.getElementById(id);
           if (el) el.addEventListener('input', (e) => updateLender('buyRate', parseFloat(e.target.value)));
       });
-      ['sellRateSlider', 'staticSellRateSlider'].forEach(id => {
+      ['sellRateSlider', 'staticSellRateSlider', 'factorSlider'].forEach(id => {
           const el = document.getElementById(id);
           if (el) el.addEventListener('input', (e) => updateLender('sellRate', parseFloat(e.target.value)));
       });
@@ -5251,23 +6787,75 @@
         });
       });
 
-      // Dashboard View Toggle
-      const viewToggleBtns = document.querySelectorAll('.view-toggle-btn');
-      const kanbanView = document.querySelector('.kanban-view');
-      const trackerView = document.querySelector('.tracker-view');
+      // Payment Frequency Toggle
+      const frequencyBtns = document.querySelectorAll('.frequency-btn');
+      let lenderFrequency = 'daily';
+      let isoFrequency = 'daily';
 
-      viewToggleBtns.forEach(btn => {
+      frequencyBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-          viewToggleBtns.forEach(b => b.classList.remove('active'));
+          const card = btn.dataset.card;
+          const freq = btn.dataset.freq;
+          
+          // Update active state for this card's buttons
+          document.querySelectorAll(`.frequency-btn[data-card="${card}"]`).forEach(b => {
+            b.classList.remove('active');
+          });
           btn.classList.add('active');
           
-          const view = btn.dataset.view;
-          if (view === 'kanban') {
-            kanbanView.classList.add('active');
-            trackerView.classList.remove('active');
-          } else {
-            kanbanView.classList.remove('active');
-            trackerView.classList.add('active');
+          // Store frequency and recalculate
+          if (card === 'lender') {
+            lenderFrequency = freq;
+            const fundingEl = document.getElementById('fundingSlider');
+            const termEl = document.getElementById('termSlider');
+            const factorEl = document.getElementById('factorSlider');
+            
+            if (fundingEl && termEl && factorEl) {
+              const funding = parseInt(fundingEl.value);
+              const term = parseInt(termEl.value);
+              const factor = parseFloat(factorEl.value);
+              const payback = Math.round(funding * factor);
+              const totalDays = term * 21; // business days
+              const weeks = Math.ceil(totalDays / 5);
+              
+              const paymentLabel = document.querySelector('.expanded-card[data-expand="lender"] .result-row:nth-child(2) span:first-child');
+              if (freq === 'daily') {
+                document.getElementById('lenderDaily').textContent = '$' + Math.round(payback / totalDays).toLocaleString();
+                if (paymentLabel) paymentLabel.textContent = 'Daily Payment';
+              } else {
+                document.getElementById('lenderDaily').textContent = '$' + Math.round(payback / weeks).toLocaleString();
+                if (paymentLabel) paymentLabel.textContent = 'Weekly Payment';
+              }
+            }
+          } else if (card === 'iso') {
+            isoFrequency = freq;
+            // ISO uses same values from deal state
+          }
+        });
+      });
+
+      // Kanban Card Drag Interactions
+      const kanbanCards = document.querySelectorAll('.kanban-card');
+      kanbanCards.forEach(card => {
+        card.setAttribute('draggable', 'true');
+        
+        card.addEventListener('dragstart', (e) => {
+          card.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+        
+        card.addEventListener('dragend', () => {
+          card.classList.remove('dragging');
+        });
+      });
+
+      const kanbanColumns = document.querySelectorAll('.kanban-cards');
+      kanbanColumns.forEach(col => {
+        col.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          const dragging = document.querySelector('.dragging');
+          if (dragging) {
+            col.appendChild(dragging);
           }
         });
       });
@@ -5689,13 +7277,21 @@
 
       // ISO Button - Send Animation
       const isoCta = document.getElementById('staticIsoCta');
+      const staticViewedIndicator = document.getElementById('staticViewedIndicator');
       if (isoCta) {
         isoCta.addEventListener('click', function() {
           if (this.classList.contains('sent')) {
             this.classList.remove('sent');
             this.textContent = 'Share Proposed Terms with Client';
+            if (staticViewedIndicator) staticViewedIndicator.classList.remove('visible');
           } else {
             this.classList.add('sent');
+            // Show viewed indicator after 2 seconds
+            setTimeout(() => {
+              if (staticViewedIndicator && this.classList.contains('sent')) {
+                staticViewedIndicator.classList.add('visible');
+              }
+            }, 2000);
           }
         });
       }
@@ -5729,13 +7325,21 @@
 
       // Carousel ISO Button
       const carouselIsoCta = document.getElementById('carouselIsoCta');
+      const carouselViewedIndicator = document.getElementById('carouselViewedIndicator');
       if (carouselIsoCta) {
         carouselIsoCta.addEventListener('click', function() {
           if (this.classList.contains('sent')) {
             this.classList.remove('sent');
             this.textContent = 'Share Proposed Terms with Client';
+            if (carouselViewedIndicator) carouselViewedIndicator.classList.remove('visible');
           } else {
             this.classList.add('sent');
+            // Show viewed indicator after 2 seconds
+            setTimeout(() => {
+              if (carouselViewedIndicator && this.classList.contains('sent')) {
+                carouselViewedIndicator.classList.add('visible');
+              }
+            }, 2000);
           }
         });
       }
