@@ -2984,7 +2984,23 @@
     }
 
     @media (max-width: 768px) {
-      .tab-nav { display: none; }
+      .main-header {
+        padding: 12px 16px;
+      }
+      .header-logo h1 {
+        font-size: 1rem;
+      }
+      .tab-nav { 
+        gap: 4px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 0 4px;
+      }
+      .tab-btn {
+        padding: 8px 12px;
+        font-size: 11px;
+        white-space: nowrap;
+      }
       .steps-grid { grid-template-columns: 1fr; }
       .features-grid { grid-template-columns: 1fr; }
       .footer-grid { grid-template-columns: 1fr; gap: 32px; }
@@ -3036,10 +3052,10 @@
       <h1>Ables<span>AI</span></h1>
     </div>
     <nav class="tab-nav">
-      <a href="#demo" class="tab-btn active">Calculator</a>
-      <a href="#dashboard" class="tab-btn">Dashboard</a>
-      <button class="tab-btn" id="headerModelBtn">Model</button>
-      <button class="tab-btn login-btn" id="loginBtn">Login</button>
+      <button class="tab-btn active" id="headerModelBtn">Model</button>
+      <a href="https://ables.ai/calculator.html" class="tab-btn">Calculator</a>
+      <a href="https://ables.ai/toolbox.html" class="tab-btn">Toolbox</a>
+      <button class="tab-btn" id="loginBtn">Login</button>
     </nav>
   </header>
 
@@ -3160,8 +3176,8 @@
         
         <div class="view-tabs">
           <button class="view-tab" data-tab="lender">Lender</button>
-          <button class="view-tab active" data-tab="client">Client</button>
-          <button class="view-tab" data-tab="iso">ISO</button>
+          <button class="view-tab active" data-tab="iso">ISO</button>
+          <button class="view-tab" data-tab="client">Client</button>
         </div>
       </div>
       
@@ -3195,40 +3211,13 @@
             </div>
           </div>
 
-          <!-- Client Card (Center) -->
-          <div class="preview-card-wrapper active" data-view="client">
-            <div class="preview-card">
-              <div class="preview-header">
-                <span class="view-badge client">Client View</span>
-                <span class="header-label">You Get</span>
-                <span class="header-amount" id="previewClientAmt">$155,000</span>
-                <div class="header-slider">
-                  <div class="slider-track"><div class="slider-fill client" style="width: 100%"></div><div class="slider-thumb" style="left: 100%"></div></div>
-                </div>
-              </div>
-              <div class="preview-stats">
-                <div class="stats-row">
-                  <div class="stat-cell">
-                    <span class="stat-label">Daily Payment</span>
-                    <span class="stat-value-large green" id="previewClientDaily">$945</span>
-                  </div>
-                  <div class="stat-cell">
-                    <span class="stat-label">Term</span>
-                    <span class="stat-value-large" id="previewClientTerm">10 Mo</span>
-                  </div>
-                </div>
-              </div>
-              <div class="card-action">Click to Accept Offer</div>
-            </div>
-          </div>
-
-          <!-- ISO Card -->
-          <div class="preview-card-wrapper" data-view="iso">
+          <!-- ISO Card (Center) -->
+          <div class="preview-card-wrapper active" data-view="iso">
             <div class="preview-card">
               <div class="preview-header">
                 <span class="view-badge iso">ISO View</span>
                 <span class="header-label">Total Commission</span>
-                <span class="header-amount" id="previewIsoComm">$24,800</span>
+                <span class="header-amount" id="previewIsoComm">$0</span>
                 <div class="header-slider">
                   <div class="slider-track"><div class="slider-fill iso" style="width: 60%"></div><div class="slider-thumb" style="left: 60%"></div></div>
                 </div>
@@ -3246,6 +3235,33 @@
                 </div>
               </div>
               <div class="card-action">Click to Manage Fees</div>
+            </div>
+          </div>
+
+          <!-- Client Card -->
+          <div class="preview-card-wrapper" data-view="client">
+            <div class="preview-card">
+              <div class="preview-header">
+                <span class="view-badge client">Client View</span>
+                <span class="header-label">You Get</span>
+                <span class="header-amount" id="previewClientAmt">$151,900</span>
+                <div class="header-slider">
+                  <div class="slider-track"><div class="slider-fill client" style="width: 100%"></div><div class="slider-thumb" style="left: 100%"></div></div>
+                </div>
+              </div>
+              <div class="preview-stats">
+                <div class="stats-row">
+                  <div class="stat-cell">
+                    <span class="stat-label">Daily Payment</span>
+                    <span class="stat-value-large green" id="previewClientDaily">$945</span>
+                  </div>
+                  <div class="stat-cell">
+                    <span class="stat-label">Term</span>
+                    <span class="stat-value-large" id="previewClientTerm">10 Mo</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card-action">Click to Accept Offer</div>
             </div>
           </div>
 
@@ -3306,8 +3322,8 @@
           <div class="expanded-results">
             <div class="result-row"><span>Total Payback</span><span id="staticLenderPayback">$198,400</span></div>
             <div class="result-row"><span>Daily Payment</span><span id="staticLenderDaily">$945</span></div>
-            <div class="result-row"><span>Lender Profit</span><span id="staticLenderProfit">$31,000</span></div>
-            <div class="result-row"><span>ISO Commission</span><span id="staticLenderPoints">$15,400</span></div>
+            <div class="result-row"><span>Lender Profit</span><span id="staticLenderProfit">$15,500</span></div>
+            <div class="result-row"><span>ISO Commission</span><span id="staticLenderPoints">$0</span></div>
           </div>
           <button class="expanded-cta lender-cta" id="staticLenderCta">Lock & Share Offer</button>
         </div>
@@ -3334,10 +3350,10 @@
              </svg>
              <div class="chart-text">
                 <div class="chart-sub">Earnings</div>
-                <div class="chart-main" id="staticIsoTotalDisplay">$24k</div>
+                <div class="chart-main" id="staticIsoTotalDisplay">$0</div>
              </div>
           </div>
-          <div class="expanded-amount purple" id="staticIsoCommission">$24,800</div>
+          <div class="expanded-amount purple" id="staticIsoCommission">$0</div>
           <div class="expanded-label">Total Commission</div>
         </div>
         <div class="expanded-body">
@@ -3364,7 +3380,7 @@
           <div class="expanded-results">
             <div class="result-row"><span>Sell Rate</span><span id="staticIsoSellRate">1.28x</span></div>
             <div class="result-row"><span>Points Income</span><span id="staticIsoPoints">$0</span></div>
-            <div class="result-row"><span>Net to Merchant</span><span id="staticIsoNet">$155,000</span></div>
+            <div class="result-row"><span>Net to Merchant</span><span id="staticIsoNet">$151,900</span></div>
           </div>
           <button class="expanded-cta iso-cta" id="staticIsoCta">Share Proposed Terms with Client</button>
         </div>
@@ -3394,7 +3410,7 @@
                 <div class="chart-main" id="staticClientPaybackDisplay">$198k</div>
              </div>
           </div>
-          <div class="expanded-amount green" id="staticClientReceive">$155,000</div>
+          <div class="expanded-amount green" id="staticClientReceive">$151,900</div>
           <div class="expanded-label">You Receive</div>
         </div>
         <div class="expanded-body">
@@ -3426,11 +3442,11 @@
               <div class="breakdown-legend">
                 <div class="legend-item">
                   <span class="legend-dot principal"></span>
-                  <span class="legend-text">Principal: <strong id="staticClientPrincipal">$155,000</strong></span>
+                  <span class="legend-text">Principal: <strong id="staticClientPrincipal">$151,900</strong></span>
                 </div>
                 <div class="legend-item">
                   <span class="legend-dot cost"></span>
-                  <span class="legend-text">Funding Cost: <strong id="staticClientFundingCost">$43,400</strong></span>
+                  <span class="legend-text">Funding Cost: <strong id="staticClientFundingCost">$46,500</strong></span>
                 </div>
               </div>
             </div>
@@ -3447,11 +3463,11 @@
             </div>
             <div class="result-row">
               <span>Total Cost of Funding</span>
-              <span id="staticClientCost">$43,400</span>
+              <span id="staticClientCost">$46,500</span>
             </div>
             <div class="result-row">
               <span>Estimated APR</span>
-              <span id="staticClientAPR">33%</span>
+              <span id="staticClientAPR">37%</span>
             </div>
           </div>
           <button class="expanded-cta client-cta" id="staticClientCta">Accept This Offer</button>
@@ -4706,7 +4722,7 @@
           <div class="expanded-results">
             <div class="result-row"><span>Total Payback</span><span id="lenderPayback">$198,400</span></div>
             <div class="result-row"><span>Daily Payment</span><span id="lenderDaily">$945</span></div>
-            <div class="result-row"><span>ISO Commission</span><span id="lenderPoints">$24,800</span></div>
+            <div class="result-row"><span>ISO Commission</span><span id="lenderPoints">$0</span></div>
           </div>
           <button class="expanded-cta lender-cta" id="carouselLenderCta">Lock & Share Offer</button>
         </div>
@@ -4726,7 +4742,7 @@
                 <div class="chart-main" id="clientPaybackDisplay">$198k</div>
              </div>
           </div>
-          <div class="expanded-amount green" id="clientReceive">$155,000</div>
+          <div class="expanded-amount green" id="clientReceive">$151,900</div>
           <div class="expanded-label">Funding Amount</div>
         </div>
         <div class="expanded-body">
@@ -4745,8 +4761,8 @@
           </div>
           <div class="expanded-results">
             <div class="result-row"><span>Daily Payment</span><span id="clientDaily">$945</span></div>
-            <div class="result-row"><span>Total Cost</span><span id="clientCost">$43,400</span></div>
-            <div class="result-row"><span>APR (Est)</span><span id="clientAPR">33%</span></div>
+            <div class="result-row"><span>Total Cost</span><span id="clientCost">$46,500</span></div>
+            <div class="result-row"><span>APR (Est)</span><span id="clientAPR">37%</span></div>
           </div>
           <button class="expanded-cta client-cta" id="carouselClientCta">Accept Offer</button>
         </div>
@@ -4763,10 +4779,10 @@
              </svg>
              <div class="chart-text">
                 <div class="chart-sub">Earnings</div>
-                <div class="chart-main" id="isoTotalDisplay">$24k</div>
+                <div class="chart-main" id="isoTotalDisplay">$0</div>
              </div>
           </div>
-          <div class="expanded-amount purple" id="isoCommission">$24,800</div>
+          <div class="expanded-amount purple" id="isoCommission">$0</div>
           <div class="expanded-label">Total Commission</div>
         </div>
         <div class="expanded-body">
@@ -4793,7 +4809,7 @@
           <div class="expanded-results">
             <div class="result-row"><span>Sell Rate</span><span id="isoSellRate">1.28x</span></div>
             <div class="result-row"><span>Points Income</span><span id="isoPoints">$0</span></div>
-            <div class="result-row"><span>Net to Merchant</span><span id="isoNet">$155,000</span></div>
+            <div class="result-row"><span>Net to Merchant</span><span id="isoNet">$151,900</span></div>
           </div>
           <button class="expanded-cta iso-cta" id="carouselIsoCta">Share Proposed Terms with Client</button>
         </div>
@@ -4936,21 +4952,26 @@
         if (deal.clientAmount > deal.isoAmount) deal.clientAmount = deal.isoAmount;
         if (deal.sellRate < deal.buyRate) deal.sellRate = deal.buyRate;
 
-        const effectiveSellRate = deal.sellRate + (deal.isoUpsellPoints * 0.01);
-        const clientPayback = deal.clientAmount * effectiveSellRate;
-        const clientDaily = clientPayback / (deal.isoTerm * 21);
-        const clientCost = clientPayback - deal.clientAmount;
-        const clientAPR = ((clientPayback - deal.clientAmount) / deal.clientAmount) * (12/deal.isoTerm) * 100;
-
         const fundedAmount = deal.clientAmount;
         const origFeeAmount = fundedAmount * (deal.origFee / 100);
-        const lenderPayback = fundedAmount * deal.buyRate;
-        const lenderProfit = lenderPayback - fundedAmount + origFeeAmount;
-        const isoSpread = deal.sellRate - deal.buyRate;
-        const baseCommission = fundedAmount * isoSpread;
-        const pointsIncome = (deal.isoUpsellPoints * 0.01) * fundedAmount;
-        const totalEarnings = baseCommission + pointsIncome; 
-        const netToMerchant = fundedAmount - origFeeAmount; 
+        const isoPointsAmount = (deal.isoUpsellPoints / 100) * fundedAmount;
+        const totalFeesDeducted = origFeeAmount + isoPointsAmount;
+        const netToMerchant = fundedAmount - totalFeesDeducted;
+        
+        const effectiveSellRate = deal.sellRate + (deal.isoUpsellPoints * 0.01);
+        const clientPayback = fundedAmount * effectiveSellRate;
+        const clientDaily = clientPayback / (deal.isoTerm * 21);
+        const clientCost = clientPayback - netToMerchant;
+        const clientAPR = (clientCost / netToMerchant) * (12 / deal.isoTerm) * 100;
+
+        // Lender earns: spread (sellRate - buyRate) + origination fee
+        const lenderSpread = (deal.sellRate - deal.buyRate) * fundedAmount;
+        const lenderPayback = fundedAmount * deal.sellRate;
+        const lenderProfit = lenderSpread + origFeeAmount;
+        
+        // ISO earns: only from upsell points they add
+        const pointsIncome = isoPointsAmount;
+        const totalEarnings = pointsIncome; 
 
         return { 
             sellRate: effectiveSellRate, 
@@ -4959,12 +4980,13 @@
             clientCost, 
             clientAPR, 
             totalEarnings,
-            baseCommission,
+            lenderSpread,
             pointsIncome,
             netToMerchant,
             lenderPayback,
             lenderProfit,
-            origFeeAmount
+            origFeeAmount,
+            totalFeesDeducted
         };
       }
 
@@ -5048,14 +5070,14 @@
             { id: 'clientDaily', val: formatCurrency(calc.clientDaily) },
             { id: 'clientFundingValue', val: formatCurrency(deal.clientAmount) },
             { id: 'clientTermValue', val: deal.isoTerm + ' Months' },
-            { id: 'clientReceive', val: formatCurrency(deal.clientAmount) },
+            { id: 'clientReceive', val: formatCurrency(calc.netToMerchant) },
             { id: 'clientPayback', val: formatCurrency(calc.clientPayback) },
             { id: 'clientPaybackDisplay', val: formatK(calc.clientPayback) },
             { id: 'clientCost', val: formatCurrency(calc.clientCost) },
             { id: 'clientAPR', val: Math.round(calc.clientAPR) + '%' },
             { id: 'clientMaxLabel', val: 'Max: ' + formatK(deal.isoAmount) },
             // Static Client Section
-            { id: 'staticClientReceive', val: formatCurrency(deal.clientAmount) },
+            { id: 'staticClientReceive', val: formatCurrency(calc.netToMerchant) },
             { id: 'staticClientFundingValue', val: formatCurrency(deal.clientAmount) },
             { id: 'staticClientTermValue', val: deal.isoTerm + ' Months' },
             { id: 'staticClientMaxLabel', val: 'Max: ' + formatK(deal.isoAmount) },
@@ -5064,13 +5086,13 @@
             { id: 'staticClientTotalPayback', val: formatCurrency(calc.clientPayback) },
             { id: 'staticClientCost', val: formatCurrency(calc.clientCost) },
             { id: 'staticClientAPR', val: Math.round(calc.clientAPR) + '%' },
-            { id: 'staticClientPrincipal', val: formatCurrency(deal.clientAmount) },
+            { id: 'staticClientPrincipal', val: formatCurrency(calc.netToMerchant) },
             { id: 'staticClientFundingCost', val: formatCurrency(calc.clientCost) },
             // Preview Cards
             { id: 'previewLenderAmt', val: formatCurrency(deal.maxAmount) },
             { id: 'previewLenderFactor', val: deal.sellRate.toFixed(2) + 'x' },
             { id: 'previewLenderTerm', val: deal.maxTerm + ' Mo' },
-            { id: 'previewClientAmt', val: formatCurrency(deal.clientAmount) },
+            { id: 'previewClientAmt', val: formatCurrency(calc.netToMerchant) },
             { id: 'previewClientDaily', val: formatCurrency(calc.clientDaily) },
             { id: 'previewClientTerm', val: deal.isoTerm + ' Mo' },
             { id: 'previewIsoComm', val: formatCurrency(calc.totalEarnings) },
