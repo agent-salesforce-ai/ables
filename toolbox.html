@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Approval Toolbox | TrustBureau.ai</title>
+  <title>Approval Toolbox | AblesAI</title>
   
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><path d=%22M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z%22 fill=%22%2310b981%22/><path d=%22M10 17l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z%22 fill=%22white%22/></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><ellipse cx=%2232%22 cy=%2232%22 rx=%2228%22 ry=%228%22 stroke=%22%23ea580c%22 stroke-width=%222.5%22 fill=%22none%22 transform=%22rotate(-20 32 32)%22 stroke-dasharray=%2270 140%22/><circle cx=%2232%22 cy=%2232%22 r=%2212%22 fill=%22%23eab308%22/><ellipse cx=%2232%22 cy=%2232%22 rx=%2228%22 ry=%228%22 stroke=%22%23ea580c%22 stroke-width=%222.5%22 fill=%22none%22 transform=%22rotate(-20 32 32)%22 stroke-dasharray=%2270 140%22 stroke-dashoffset=%22-70%22/><circle cx=%2254%22 cy=%2228%22 r=%224%22 fill=%22%23a855f7%22/></svg>">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
@@ -35,6 +35,57 @@
   </script>
 
   <style>
+    /* ============================================
+       ABLES.AI HEADER LOGO STYLES
+       ============================================ */
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header-logo svg {
+      width: 32px;
+      height: 32px;
+    }
+    .header-logo h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+      margin: 0;
+    }
+    .header-logo h1 span {
+      color: #888;
+    }
+    .header-logo-sm svg {
+      width: 24px;
+      height: 24px;
+    }
+    .header-logo-sm h1 {
+      font-size: 0.875rem;
+    }
+    .orbiting-moon {
+      transform-origin: 32px 32px;
+      animation: orbit 3s linear infinite, moonColor 2s ease-in-out infinite;
+    }
+    @keyframes orbit {
+      0% { transform: rotate(-20deg) translate(26px, 0) scale(1); opacity: 1; }
+      12.5% { transform: rotate(-20deg) translate(18px, 5px) scale(0.9); opacity: 1; }
+      25% { transform: rotate(-20deg) translate(0, 7px) scale(0.75); opacity: 0.7; }
+      37.5% { transform: rotate(-20deg) translate(-18px, 5px) scale(0.6); opacity: 0.5; }
+      50% { transform: rotate(-20deg) translate(-26px, 0) scale(0.5); opacity: 0.4; }
+      62.5% { transform: rotate(-20deg) translate(-18px, -5px) scale(0.6); opacity: 0.5; }
+      75% { transform: rotate(-20deg) translate(0, -7px) scale(0.75); opacity: 0.7; }
+      87.5% { transform: rotate(-20deg) translate(18px, -5px) scale(0.9); opacity: 1; }
+      100% { transform: rotate(-20deg) translate(26px, 0) scale(1); opacity: 1; }
+    }
+    @keyframes moonColor {
+      0%, 100% { fill: #a855f7; }
+      25% { fill: #3b82f6; }
+      50% { fill: #ec4899; }
+      75% { fill: #10b981; }
+    }
+    
     /* ============================================
        DESIGN SYSTEM VARIABLES - LIGHT THEME (DEFAULT)
        ============================================ */
@@ -1276,8 +1327,8 @@
     }
     
     .welcome-logo {
-      width: 64px;
-      height: 64px;
+      width: 100px;
+      height: 100px;
       margin: 0 auto 20px;
       color: var(--accent);
       transition: color 0.8s ease, transform 0.2s ease;
@@ -1296,7 +1347,7 @@
     }
 
     .welcome-title {
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 800;
       color: var(--text-primary);
       margin: 0 0 8px 0;
@@ -1493,18 +1544,33 @@
     }
     
     .welcome-toggle-wrapper {
-      background: var(--accent-glow);
-      border: 1px solid var(--accent);
+      width: 100%;
+      background: #000000;
+      border: 1px solid var(--border-primary);
       transition: background 0.8s ease, border-color 0.8s ease;
+      display: flex;
+      border-radius: 12px;
     }
     
     .welcome-toggle-btn {
-      color: var(--accent);
-      transition: color 0.8s ease;
+      flex: 1;
+      color: var(--text-secondary);
+      background: transparent;
+      transition: all 0.3s ease;
+      justify-content: center;
+    }
+    
+    .welcome-toggle-btn.active {
+      color: #000000;
+      background: var(--accent);
+    }
+    
+    .welcome-toggle-btn:hover:not(.active) {
+      color: var(--accent-light);
     }
     
     .welcome-toggle-divider {
-      background: var(--accent);
+      background: var(--border-primary);
       transition: background 0.8s ease;
     }
     
@@ -1614,8 +1680,8 @@
     }
 
     .login-modal-icon {
-      width: 64px;
-      height: 64px;
+      width: 100px;
+      height: 100px;
       margin: 0 auto 20px;
       color: var(--accent);
     }
@@ -1626,7 +1692,7 @@
     }
 
     .login-modal-title {
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 800;
       color: var(--text-primary);
       margin: 0 0 8px 0;
@@ -3963,42 +4029,43 @@
   <div id="welcomeScreen" class="welcome-screen">
     <div class="welcome-card">
       <!-- Icon -->
-      <a href="index.html" class="welcome-logo" title="Back to Home">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
-          <path d="M9 12l2 2 4-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <a href="index.html" class="welcome-logo header-logo" title="Back to Home">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Back half of ring (behind planet) -->
+          <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
+          <!-- Planet -->
+          <circle cx="32" cy="32" r="12" fill="#eab308"/>
+          <!-- Front half of ring (in front of planet) -->
+          <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
+          <!-- Orbiting moon -->
+          <circle class="orbiting-moon" cx="32" cy="32" r="4" fill="#a855f7"/>
         </svg>
       </a>
       
       <!-- Title -->
-      <h1 class="welcome-title">Approval Toolbox</h1>
+      <h1 class="welcome-title">Ables<span style="color: #888;">AI</span></h1>
       <p class="welcome-subtitle">&nbsp;</p>
-      
-      <!-- Mode Toggle -->
-      <div class="welcome-mode-toggle">
-        <div class="welcome-mode-label">I am a:</div>
-        <div class="welcome-toggle-wrapper flex items-center rounded-full overflow-hidden" style="padding: 6px 4px;">
-          <button id="welcomeLenderModeBtn" onclick="setClientModeWelcome('lender')" class="mode-toggle-btn welcome-toggle-btn flex items-center gap-2 transition-all" style="padding: 0 8px; font-size: 12px; font-weight: 600;">
-            <svg xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-            </svg>
-            Lender
-          </button>
-          <div class="welcome-toggle-divider" style="width: 1px; height: 14px; opacity: 0.3; margin: 0 4px;"></div>
-          <button id="welcomeIsoModeBtn" onclick="setClientModeWelcome('iso')" class="mode-toggle-btn welcome-toggle-btn active flex items-center gap-2 transition-all" style="padding: 0 8px; font-size: 12px; font-weight: 600;">
-            <svg xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            ISO
-          </button>
-        </div>
-      </div>
       
       <!-- Form -->
       <div class="welcome-form">
         <input type="text" id="welcomeUsername" class="welcome-input" placeholder="Username" autocomplete="username" />
         <input type="password" id="welcomePassword" class="welcome-input" placeholder="Password" autocomplete="current-password" />
         <div id="welcomeError" class="welcome-error">Invalid username or password</div>
+        <!-- Mode Toggle -->
+        <div class="welcome-toggle-wrapper flex items-center overflow-hidden" style="padding: 4px;">
+          <button id="welcomeLenderModeBtn" onclick="setClientModeWelcome('lender')" class="mode-toggle-btn welcome-toggle-btn flex items-center gap-2 transition-all" style="padding: 12px 16px; font-size: 14px; font-weight: 600; border-radius: 8px;">
+            <svg xmlns="http://www.w3.org/2000/svg" style="width: 16px; height: 16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+            Lender
+          </button>
+          <button id="welcomeIsoModeBtn" onclick="setClientModeWelcome('iso')" class="mode-toggle-btn welcome-toggle-btn active flex items-center gap-2 transition-all" style="padding: 12px 16px; font-size: 14px; font-weight: 600; border-radius: 8px;">
+            <svg xmlns="http://www.w3.org/2000/svg" style="width: 16px; height: 16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            ISO
+          </button>
+        </div>
         <button onclick="handleWelcomeLogin()" class="welcome-btn-primary">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
@@ -4060,15 +4127,21 @@
       <!-- Content -->
       <div class="login-modal-content">
         <!-- Icon -->
-        <div class="login-modal-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
-            <path d="M9 12l2 2 4-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <div class="login-modal-icon header-logo" style="justify-content: center;">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Back half of ring (behind planet) -->
+            <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
+            <!-- Planet -->
+            <circle cx="32" cy="32" r="12" fill="#eab308"/>
+            <!-- Front half of ring (in front of planet) -->
+            <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
+            <!-- Orbiting moon -->
+            <circle class="orbiting-moon" cx="32" cy="32" r="4" fill="#a855f7"/>
           </svg>
         </div>
         
         <!-- Title -->
-        <h2 class="login-modal-title">Approval Toolbox</h2>
+        <h2 class="login-modal-title">Ables<span style="color: #888;">AI</span></h2>
         <p class="login-modal-subtitle">&nbsp;</p>
         
         <!-- Form -->
@@ -4295,14 +4368,20 @@
           <!-- HEADER -->
           <header class="header-main flex flex-wrap items-center justify-between gap-3 mb-4 py-2 sticky top-0 z-30" style="background: var(--bg-card); position: relative;">
                 <!-- Logo and Title -->
-                <div class="header-brand flex items-center gap-2">
+                <div class="header-brand header-logo header-logo-sm flex items-center gap-2">
                     <a href="index.html" class="transition-transform hover:scale-105" title="Back to Home">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5">
-                          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
-                          <path d="M9 12l2 2 4-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <!-- Back half of ring (behind planet) -->
+                          <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
+                          <!-- Planet -->
+                          <circle cx="32" cy="32" r="12" fill="#eab308"/>
+                          <!-- Front half of ring (in front of planet) -->
+                          <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
+                          <!-- Orbiting moon -->
+                          <circle class="orbiting-moon" cx="32" cy="32" r="4" fill="#a855f7"/>
                         </svg>
                     </a>
-                    <h1 class="text-sm font-bold" style="color: var(--text-primary);">Approval Toolbox</h1>
+                    <h1>Ables<span>AI</span></h1>
                 </div>
                 <div id="userBadge" class="user-badge hidden" style="cursor: pointer;" onclick="handleLogout()" title="Click to logout">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
