@@ -831,6 +831,38 @@
     }
 
     /* ============================================
+       EDITABLE INPUT VALUES
+       ============================================ */
+    .editable-value {
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      outline: none;
+      padding: 0;
+      margin: 0;
+      width: auto;
+      min-width: 60px;
+      max-width: 150px;
+      cursor: text;
+      transition: border-color 0.2s ease;
+    }
+    
+    .editable-value:hover {
+      border-bottom-color: var(--text-muted);
+    }
+    
+    .editable-value:focus {
+      border-bottom-color: var(--accent);
+    }
+    
+    .editable-value::placeholder {
+      color: var(--text-muted);
+    }
+
+    /* ============================================
        CALCULATOR RESULT PREVIEW
        ============================================ */
     .calc-result-preview {
@@ -2644,7 +2676,10 @@
           <div class="rounded-xl p-3 border mb-2" style="background: var(--bg-option-card); border-color: var(--border-secondary);">
             <label class="text-xs font-bold uppercase tracking-wide block" style="color: var(--text-muted);">Credit Score (FICO)</label>
             <div class="flex items-baseline gap-1.5 mb-2 mt-1">
-              <span class="text-2xl font-extrabold" style="color: var(--text-primary);" id="creditDisplay">650</span>
+              <input type="text" class="editable-value" id="creditDisplay" value="650" 
+                     onchange="updateFromInput('creditScore', this.value, 450, 850)" 
+                     onkeydown="if(event.key==='Enter'){this.blur()}"
+                     style="width: 70px;">
             </div>
             <input type="range" class="slider w-full" id="creditScore" min="450" max="850" step="5" value="650" oninput="calculate()">
             <div class="flex justify-between text-[10px] font-semibold mt-1 uppercase tracking-wider" style="color: var(--text-muted);">
@@ -2656,7 +2691,10 @@
           <div class="rounded-xl p-3 border mb-2" style="background: var(--bg-option-card); border-color: var(--border-secondary);">
             <label class="text-xs font-bold uppercase tracking-wide block" style="color: var(--text-muted);">Monthly Revenue</label>
             <div class="flex items-baseline gap-1.5 mb-2 mt-1">
-              <span class="text-2xl font-extrabold" style="color: var(--text-primary);" id="revenueDisplay">$50,000</span>
+              <input type="text" class="editable-value" id="revenueDisplay" value="$50,000" 
+                     onchange="updateFromInput('monthlyRevenue', this.value, 5000, 500000, true)" 
+                     onkeydown="if(event.key==='Enter'){this.blur()}"
+                     style="width: 120px;">
             </div>
             <input type="range" class="slider w-full" id="monthlyRevenue" min="5000" max="500000" step="1" value="50000" oninput="calculate()">
             <div class="flex justify-between text-[10px] font-semibold mt-1 uppercase tracking-wider" style="color: var(--text-muted);">
@@ -2668,7 +2706,10 @@
           <div class="rounded-xl p-3 border mb-2" style="background: var(--bg-option-card); border-color: var(--border-secondary);">
             <label class="text-xs font-bold uppercase tracking-wide block" style="color: var(--text-muted);">Average Daily Balance</label>
             <div class="flex items-baseline gap-1.5 mb-2 mt-1">
-              <span class="text-2xl font-extrabold" style="color: var(--text-primary);" id="balanceDisplay">$8,000</span>
+              <input type="text" class="editable-value" id="balanceDisplay" value="$8,000" 
+                     onchange="updateFromInput('avgDailyBalance', this.value, 500, 100000, true)" 
+                     onkeydown="if(event.key==='Enter'){this.blur()}"
+                     style="width: 110px;">
             </div>
             <input type="range" class="slider w-full" id="avgDailyBalance" min="500" max="100000" step="1" value="8000" oninput="calculate()">
             <div class="flex justify-between text-[10px] font-semibold mt-1 uppercase tracking-wider" style="color: var(--text-muted);">
@@ -2680,7 +2721,11 @@
           <div class="rounded-xl p-3 border mb-2" style="background: var(--bg-option-card); border-color: var(--border-secondary);">
             <label class="text-xs font-bold uppercase tracking-wide block" style="color: var(--text-muted);">Time in Business</label>
             <div class="flex items-baseline gap-1.5 mb-2 mt-1">
-              <span class="text-2xl font-extrabold" style="color: var(--text-primary);" id="tibDisplay">24 mo</span>
+              <input type="text" class="editable-value" id="tibDisplay" value="24" 
+                     onchange="updateFromInput('timeInBusiness', this.value, 3, 120)" 
+                     onkeydown="if(event.key==='Enter'){this.blur()}"
+                     style="width: 60px;">
+              <span class="text-sm font-semibold" style="color: var(--text-muted);">mo</span>
             </div>
             <input type="range" class="slider w-full" id="timeInBusiness" min="3" max="120" step="1" value="24" oninput="calculate()">
             <div class="flex justify-between text-[10px] font-semibold mt-1 uppercase tracking-wider" style="color: var(--text-muted);">
@@ -2693,7 +2738,10 @@
             <div class="rounded-xl p-3 border" style="background: var(--bg-option-card); border-color: var(--border-secondary);">
               <label class="text-xs font-bold uppercase tracking-wide block" style="color: var(--text-muted);">NSF / Overdrafts <span style="font-weight: 500; opacity: 0.7;">(90 Days)</span></label>
               <div class="flex items-baseline gap-1.5 mb-2 mt-1">
-                <span class="text-2xl font-extrabold" style="color: var(--text-primary);" id="nsfDisplay">2</span>
+                <input type="text" class="editable-value" id="nsfDisplay" value="2" 
+                       onchange="updateFromInput('nsfCount', this.value, 0, 15)" 
+                       onkeydown="if(event.key==='Enter'){this.blur()}"
+                       style="width: 50px;">
               </div>
               <input type="range" class="slider w-full" id="nsfCount" min="0" max="15" step="1" value="2" oninput="calculate()">
               <div class="flex justify-between text-[10px] font-semibold mt-1 uppercase tracking-wider" style="color: var(--text-muted);">
@@ -2705,7 +2753,11 @@
             <div class="rounded-xl p-3 border" style="background: var(--bg-option-card); border-color: var(--border-secondary);">
               <label class="text-xs font-bold uppercase tracking-wide block" style="color: var(--text-muted);">Negative Days <span style="font-weight: 500; opacity: 0.7;">(90 Days)</span></label>
               <div class="flex items-baseline gap-1.5 mb-2 mt-1">
-                <span class="text-2xl font-extrabold" style="color: var(--text-primary);" id="negDaysDisplay">1 days</span>
+                <input type="text" class="editable-value" id="negDaysDisplay" value="1" 
+                       onchange="updateFromInput('negativeDays', this.value, 0, 15)" 
+                       onkeydown="if(event.key==='Enter'){this.blur()}"
+                       style="width: 50px;">
+                <span class="text-sm font-semibold" style="color: var(--text-muted);">days</span>
               </div>
               <input type="range" class="slider w-full" id="negativeDays" min="0" max="15" step="1" value="1" oninput="calculate()">
               <div class="flex justify-between text-[10px] font-semibold mt-1 uppercase tracking-wider" style="color: var(--text-muted);">
@@ -2729,7 +2781,10 @@
               </div>
             </div>
             <div class="flex items-baseline gap-1.5 mb-2">
-              <span class="text-2xl font-extrabold" style="color: var(--text-primary);" id="existingDebtDisplay">$0</span>
+              <input type="text" class="editable-value" id="existingDebtDisplay" value="$0" 
+                     onchange="updateFromInput('existingDebt', this.value, 0, 15000, true)" 
+                     onkeydown="if(event.key==='Enter'){this.blur()}"
+                     style="width: 100px;">
               <span class="text-xs font-semibold" style="color: var(--text-muted);" id="existingDebtFreqLabel">/day</span>
             </div>
             <input type="range" class="slider w-full" id="existingDebt" min="0" max="15000" step="50" value="0" oninput="calculate()">
@@ -3982,42 +4037,66 @@
           <!-- Credit -->
           <div class="slider-cell">
             <label>Credit Score</label>
-            <div class="value" id="modalCreditDisplay">650</div>
+            <input type="text" class="value editable-value" id="modalCreditDisplay" value="650" 
+                   onchange="updateFromModalInput('creditScore', 'modalCreditScore', this.value, 450, 850)"
+                   onkeydown="if(event.key==='Enter'){this.blur()}"
+                   style="width: 70px; font-size: 18px;">
             <input type="range" class="slider" id="modalCreditScore" min="450" max="850" step="5" value="650" oninput="syncSlider('creditScore', this.value)">
           </div>
           
           <!-- Revenue -->
           <div class="slider-cell">
             <label>Monthly Revenue</label>
-            <div class="value" id="modalRevenueDisplay">$50,000</div>
+            <input type="text" class="value editable-value" id="modalRevenueDisplay" value="$50,000" 
+                   onchange="updateFromModalInput('monthlyRevenue', 'modalMonthlyRevenue', this.value, 5000, 500000, true)"
+                   onkeydown="if(event.key==='Enter'){this.blur()}"
+                   style="width: 100px; font-size: 18px;">
             <input type="range" class="slider" id="modalMonthlyRevenue" min="5000" max="500000" step="1" value="50000" oninput="syncSlider('monthlyRevenue', this.value)">
           </div>
           
           <!-- Balance -->
           <div class="slider-cell">
             <label>Avg Daily Balance</label>
-            <div class="value" id="modalBalanceDisplay">$8,000</div>
+            <input type="text" class="value editable-value" id="modalBalanceDisplay" value="$8,000" 
+                   onchange="updateFromModalInput('avgDailyBalance', 'modalAvgDailyBalance', this.value, 500, 100000, true)"
+                   onkeydown="if(event.key==='Enter'){this.blur()}"
+                   style="width: 90px; font-size: 18px;">
             <input type="range" class="slider" id="modalAvgDailyBalance" min="500" max="100000" step="1" value="8000" oninput="syncSlider('avgDailyBalance', this.value)">
           </div>
           
           <!-- TIB -->
           <div class="slider-cell">
             <label>Time in Business</label>
-            <div class="value" id="modalTibDisplay">24 mo</div>
+            <div style="display: flex; align-items: baseline; gap: 4px;">
+              <input type="text" class="value editable-value" id="modalTibDisplay" value="24" 
+                     onchange="updateFromModalInput('timeInBusiness', 'modalTimeInBusiness', this.value, 3, 120)"
+                     onkeydown="if(event.key==='Enter'){this.blur()}"
+                     style="width: 50px; font-size: 18px;">
+              <span style="font-size: 12px; color: var(--text-muted);">mo</span>
+            </div>
             <input type="range" class="slider" id="modalTimeInBusiness" min="3" max="120" step="1" value="24" oninput="syncSlider('timeInBusiness', this.value)">
           </div>
           
           <!-- NSF -->
           <div class="slider-cell">
             <label>NSF / Overdrafts <span style="font-weight: 400; opacity: 0.6;">(90 Days)</span></label>
-            <div class="value" id="modalNsfDisplay">2</div>
+            <input type="text" class="value editable-value" id="modalNsfDisplay" value="2" 
+                   onchange="updateFromModalInput('nsfCount', 'modalNsfCount', this.value, 0, 15)"
+                   onkeydown="if(event.key==='Enter'){this.blur()}"
+                   style="width: 40px; font-size: 18px;">
             <input type="range" class="slider" id="modalNsfCount" min="0" max="15" step="1" value="2" oninput="syncSlider('nsfCount', this.value)">
           </div>
           
           <!-- Negative Days -->
           <div class="slider-cell">
             <label>Negative Days <span style="font-weight: 400; opacity: 0.6;">(90 Days)</span></label>
-            <div class="value" id="modalNegDaysDisplay">1 days</div>
+            <div style="display: flex; align-items: baseline; gap: 4px;">
+              <input type="text" class="value editable-value" id="modalNegDaysDisplay" value="1" 
+                     onchange="updateFromModalInput('negativeDays', 'modalNegativeDays', this.value, 0, 15)"
+                     onkeydown="if(event.key==='Enter'){this.blur()}"
+                     style="width: 40px; font-size: 18px;">
+              <span style="font-size: 12px; color: var(--text-muted);">days</span>
+            </div>
             <input type="range" class="slider" id="modalNegativeDays" min="0" max="30" step="1" value="1" oninput="syncSlider('negativeDays', this.value)">
           </div>
         </div>
@@ -4035,7 +4114,10 @@
               </select>
             </div>
           </div>
-          <div class="value" id="modalExistingDebtDisplay">$0/day</div>
+          <input type="text" class="value editable-value" id="modalExistingDebtDisplay" value="$0" 
+                 onchange="updateFromModalInput('existingDebt', 'modalExistingDebt', this.value, 0, 15000, true)"
+                 onkeydown="if(event.key==='Enter'){this.blur()}"
+                 style="width: 90px; font-size: 18px;">
           <input type="range" class="slider" id="modalExistingDebt" min="0" max="15000" step="50" value="0" oninput="syncSlider('existingDebt', this.value)">
           <!-- Hidden radios for compatibility -->
           <div style="display: none;">
@@ -4491,6 +4573,62 @@
     function formatCurrency(val) {
       return '$' + Math.round(val).toLocaleString();
     }
+    
+    // Update slider from text input
+    function updateFromInput(sliderId, inputValue, min, max, isCurrency = false) {
+      // Parse value - remove currency symbols and commas
+      let value = inputValue.replace(/[$,\s]/g, '').replace(/mo|days?/gi, '').trim();
+      value = parseFloat(value) || 0;
+      
+      // Clamp to valid range
+      value = Math.max(min, Math.min(max, value));
+      
+      // Round appropriately
+      if (sliderId === 'creditScore') {
+        value = Math.round(value / 5) * 5; // Round to nearest 5
+      } else if (sliderId === 'existingDebt') {
+        value = Math.round(value / 50) * 50; // Round to nearest 50
+      } else {
+        value = Math.round(value);
+      }
+      
+      // Update slider
+      const slider = document.getElementById(sliderId);
+      if (slider) {
+        slider.value = value;
+      }
+      
+      // Trigger recalculation
+      calculate();
+    }
+    
+    // Update from modal text input (syncs both modal and main sliders)
+    function updateFromModalInput(mainSliderId, modalSliderId, inputValue, min, max, isCurrency = false) {
+      // Parse value - remove currency symbols and commas
+      let value = inputValue.replace(/[$,\s]/g, '').replace(/mo|days?/gi, '').trim();
+      value = parseFloat(value) || 0;
+      
+      // Clamp to valid range
+      value = Math.max(min, Math.min(max, value));
+      
+      // Round appropriately
+      if (mainSliderId === 'creditScore') {
+        value = Math.round(value / 5) * 5;
+      } else if (mainSliderId === 'existingDebt') {
+        value = Math.round(value / 50) * 50;
+      } else {
+        value = Math.round(value);
+      }
+      
+      // Update both sliders
+      const mainSlider = document.getElementById(mainSliderId);
+      const modalSlider = document.getElementById(modalSliderId);
+      if (mainSlider) mainSlider.value = value;
+      if (modalSlider) modalSlider.value = value;
+      
+      // Trigger recalculation
+      calculate();
+    }
 
     // Update indicator box styling based on color
     function updateIndicatorBox(elementId, color) {
@@ -4898,13 +5036,13 @@
       const debtFreqLabels = { daily: '/day', weekly: '/wk', monthly: '/mo' };
       
       const el = (id) => document.getElementById(id);
-      if (el('modalRevenueDisplay')) el('modalRevenueDisplay').textContent = formatCurrency(revenue);
-      if (el('modalBalanceDisplay')) el('modalBalanceDisplay').textContent = formatCurrency(balance);
-      if (el('modalCreditDisplay')) el('modalCreditDisplay').textContent = credit;
-      if (el('modalTibDisplay')) el('modalTibDisplay').textContent = tib + ' mo';
-      if (el('modalNsfDisplay')) el('modalNsfDisplay').textContent = nsf;
-      if (el('modalNegDaysDisplay')) el('modalNegDaysDisplay').textContent = negDays + ' days';
-      if (el('modalExistingDebtDisplay')) el('modalExistingDebtDisplay').textContent = formatCurrency(existingDebtRaw) + debtFreqLabels[existingDebtFreq];
+      if (el('modalRevenueDisplay')) el('modalRevenueDisplay').value = formatCurrency(revenue);
+      if (el('modalBalanceDisplay')) el('modalBalanceDisplay').value = formatCurrency(balance);
+      if (el('modalCreditDisplay')) el('modalCreditDisplay').value = credit;
+      if (el('modalTibDisplay')) el('modalTibDisplay').value = tib;
+      if (el('modalNsfDisplay')) el('modalNsfDisplay').value = nsf;
+      if (el('modalNegDaysDisplay')) el('modalNegDaysDisplay').value = negDays;
+      if (el('modalExistingDebtDisplay')) el('modalExistingDebtDisplay').value = formatCurrency(existingDebtRaw);
       
       // Update offer terms from calcOffer (MODEL SCORE modal)
       if (window.calcOffer) {
@@ -5098,17 +5236,17 @@
         fleetWarning.style.display = fleetSize < 5 ? 'block' : 'none';
       }
 
-      // Update displays
-      document.getElementById('revenueDisplay').textContent = formatCurrency(revenue);
-      document.getElementById('balanceDisplay').textContent = formatCurrency(balance);
-      document.getElementById('creditDisplay').textContent = credit;
-      document.getElementById('tibDisplay').textContent = tib + ' mo';
-      document.getElementById('nsfDisplay').textContent = nsf;
-      document.getElementById('negDaysDisplay').textContent = negDays + ' days';
+      // Update displays (using .value for editable inputs)
+      document.getElementById('revenueDisplay').value = formatCurrency(revenue);
+      document.getElementById('balanceDisplay').value = formatCurrency(balance);
+      document.getElementById('creditDisplay').value = credit;
+      document.getElementById('tibDisplay').value = tib;
+      document.getElementById('nsfDisplay').value = nsf;
+      document.getElementById('negDaysDisplay').value = negDays;
       
       // Update existing debt display with frequency label
       const debtFreqLabels = { daily: '/day', weekly: '/wk', monthly: '/mo' };
-      document.getElementById('existingDebtDisplay').textContent = formatCurrency(existingDebtRaw);
+      document.getElementById('existingDebtDisplay').value = formatCurrency(existingDebtRaw);
       document.getElementById('existingDebtFreqLabel').textContent = debtFreqLabels[existingDebtFreq];
 
       // Calculate AblesAI score components using MODEL_WEIGHTS
