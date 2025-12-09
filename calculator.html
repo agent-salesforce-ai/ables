@@ -7381,10 +7381,10 @@ Government Issued ID</textarea>
     // ============================================
     function calculate(a, f, t, fr, fe) { 
         const tp = a * f; 
-        const tc = tp - a; 
-        const p = tp / t; 
         const fa = a * (fe / 100); 
         const net = a - fa; 
+        const tc = tp - net; 
+        const p = tp / t; 
         return { amount: a, factor: f, term: t, frequency: fr, fee: fe, feeAmount: fa, net: net, totalPayback: tp, totalCost: tc, payment: p }; 
     }
     
