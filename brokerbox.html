@@ -148,6 +148,85 @@
     }
 
     /* ============================================
+       LIGHT THEME
+       ============================================ */
+    body.light-theme {
+      --bg-body: #f8fafc;
+      --bg-body-gradient: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      --bg-card: #ffffff;
+      --bg-card-inner: #f1f5f9;
+      --bg-input: #e2e8f0;
+      --bg-toggle: #e2e8f0;
+      --bg-option-card: #f8fafc;
+      --bg-stat-hover: rgba(234, 179, 8, 0.15);
+      --border-primary: #cbd5e1;
+      --border-secondary: #e2e8f0;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --slider-track: #cbd5e1;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+      --preview-header-bg: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%);
+      --preview-header-text: #0f172a;
+      --pattern-color: rgba(0,0,0,0.02);
+      --chart-bg: #f1f5f9;
+      --modal-overlay: rgba(0, 0, 0, 0.4);
+    }
+
+    body.light-theme .main-header {
+      background: #ffffff;
+      border-bottom-color: #e2e8f0;
+    }
+
+    body.light-theme .main-header h1 {
+      color: #0f172a;
+    }
+
+    body.light-theme .settings-btn {
+      color: #64748b;
+    }
+
+    body.light-theme .settings-btn:hover {
+      color: var(--accent);
+    }
+
+    body.light-theme .settings-modal {
+      background: #ffffff;
+      border-color: #e2e8f0;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+    }
+
+    body.light-theme .settings-header {
+      border-bottom-color: #e2e8f0;
+    }
+
+    body.light-theme .settings-row {
+      background: #f8fafc;
+    }
+
+    body.light-theme .toggle-switch {
+      background: #cbd5e1;
+    }
+
+    body.light-theme .toggle-switch.active {
+      background: var(--accent);
+    }
+
+    body.light-theme .card {
+      background: #ffffff !important;
+      border-color: #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    body.light-theme .preview-card {
+      background: #ffffff;
+      border-color: var(--accent);
+    }
+
+    /* ============================================
        FORM ELEMENTS
        ============================================ */
     input[type=number]::-webkit-inner-spin-button, 
@@ -1212,6 +1291,201 @@
     .brand-lock-text {
       font-size: 10px;
       color: var(--text-muted);
+    }
+
+    /* ============================================
+       HEADER & SETTINGS BUTTON
+       ============================================ */
+    .main-header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 24px;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-primary);
+      position: relative;
+      z-index: 100;
+    }
+
+    .main-header svg:first-of-type {
+      width: 24px;
+      height: 24px;
+    }
+
+    .main-header h1 {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      color: var(--text-primary);
+    }
+
+    .settings-btn {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      padding: 8px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: color 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .settings-btn:hover {
+      color: var(--accent);
+    }
+
+    .settings-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Settings Modal */
+    .settings-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .settings-overlay.active {
+      display: flex;
+    }
+
+    .settings-modal {
+      background: var(--bg-card);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      border: 1px solid var(--border-primary);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .settings-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-secondary);
+    }
+
+    .settings-header h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .settings-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s ease;
+    }
+
+    .settings-close:hover {
+      color: var(--text-primary);
+    }
+
+    .settings-close svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .settings-body {
+      padding: 20px;
+    }
+
+    .settings-section {
+      margin-bottom: 24px;
+    }
+
+    .settings-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .settings-section-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: var(--bg-card-inner);
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .settings-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .settings-row-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .settings-row-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Toggle Switch */
+    .toggle-switch {
+      position: relative;
+      width: 48px;
+      height: 26px;
+      background: var(--bg-input);
+      border-radius: 13px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .toggle-switch.active {
+      background: var(--accent);
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s ease;
+    }
+
+    .toggle-switch.active::after {
+      transform: translateX(22px);
     }
 
     /* Welcome/Login Screen */
@@ -5570,6 +5844,26 @@
   </style>
 </head>
 <body class="min-h-screen">
+
+  <!-- HEADER -->
+  <header class="main-header">
+    <svg viewBox='0 0 70 70' xmlns='http://www.w3.org/2000/svg'>
+      <circle cx='32' cy='32' r='24' stroke='#10b981' stroke-width='6' fill='none'/>
+      <line x1='8' y1='56' x2='56' y2='8' stroke='#34d399' stroke-width='5' stroke-linecap='round'/>
+      <circle cx='56' cy='8' r='4' fill='#34d399'/>
+      <circle cx='8' cy='56' r='3' fill='#10b981'/>
+      <g class='orbit-path' style='transform:rotate(45deg);transform-origin:32px 32px'>
+        <circle class='moon-color' cx='64' cy='32' r='2'/>
+      </g>
+    </svg>
+    <h1>Offer Builder</h1>
+    <button class="settings-btn" onclick="openSettings()" title="Settings">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M12 1v6m0 6v6m-9-5h6m6 0h6m-2.636-6.364l-4.243 4.243m0 0l-4.242 4.242m12.728 0l-4.242-4.242m0 0l-4.243-4.243"></path>
+      </svg>
+    </button>
+  </header>
 
   <!-- SVG GRADIENT DEFINITION -->
   <svg width="0" height="0" style="position:absolute">
@@ -19429,6 +19723,73 @@ Government Issued ID</textarea>
         }
       }
     };
+
+    // ============================================
+    // SETTINGS MODAL FUNCTIONS
+    // ============================================
+    function openSettings() {
+      document.getElementById('settingsOverlay').classList.add('active');
+    }
+
+    function closeSettings() {
+      document.getElementById('settingsOverlay').classList.remove('active');
+    }
+
+    function toggleTheme() {
+      const toggle = document.getElementById('themeToggle');
+      const isLight = document.body.classList.toggle('light-theme');
+      toggle.classList.toggle('active', isLight);
+      localStorage.setItem('ab_theme', isLight ? 'light' : 'dark');
+    }
+
+    // Load saved theme on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('ab_theme');
+      if (savedTheme === 'light') {
+        document.body.classList.add('light-theme');
+        document.getElementById('themeToggle')?.classList.add('active');
+      }
+    });
   </script>
+
+  <!-- Settings Modal -->
+  <div class="settings-overlay" id="settingsOverlay" onclick="if(event.target === this) closeSettings()">
+    <div class="settings-modal">
+      <div class="settings-header">
+        <h2>Settings</h2>
+        <button class="settings-close" onclick="closeSettings()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="settings-body">
+        <!-- Appearance Section -->
+        <div class="settings-section">
+          <div class="settings-section-title">Appearance</div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Light Theme</div>
+              <div class="settings-row-desc">Switch to light mode for better visibility</div>
+            </div>
+            <div class="toggle-switch" id="themeToggle" onclick="toggleTheme()"></div>
+          </div>
+        </div>
+
+        <!-- Info Section -->
+        <div class="settings-section">
+          <div class="settings-section-title">About</div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Offer Builder</div>
+              <div class="settings-row-desc">Create, customize, and share funding offers with clients</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
