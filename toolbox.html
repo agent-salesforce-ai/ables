@@ -5610,7 +5610,8 @@ Government Issued ID</textarea>
     </div>
   </div>
 
-  <!-- Upgrade Modal (shown when lite limit reached) -->
+  <!-- Upgrade Modal (DISABLED - monthly limit removed) -->
+  <!--
   <div id="upgradeModal" class="login-modal-overlay">
     <div class="login-modal rounded-2xl w-full max-w-md shadow-2xl p-8 text-center">
       <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
@@ -5640,6 +5641,7 @@ Government Issued ID</textarea>
       <p class="text-xs mt-6" style="color: var(--text-muted);">Your limit resets on the 1st of each month.</p>
     </div>
   </div>
+  -->
 
   <!-- Toast -->
   <div id="toast" class="toast fixed bottom-6 right-6 text-white px-6 py-4 rounded-xl shadow-2xl z-50 flex items-center gap-3" style="background: var(--bg-card);">
@@ -7102,7 +7104,7 @@ Government Issued ID</textarea>
     // ============================================
     // LITE VERSION USAGE TRACKING
     // ============================================
-    const LITE_MONTHLY_LIMIT = 25;
+    const LITE_MONTHLY_LIMIT = Infinity; // Disabled: was 25
     
     function getLiteUsage() {
         try {
