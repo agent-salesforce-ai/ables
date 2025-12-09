@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Domicile Router | Entity Resolution Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0b0d;
+            --bg-secondary: #12141a;
+            --bg-tertiary: #1a1d26;
+            --bg-card: #15171f;
+            --text-primary: #f0f2f5;
+            --text-secondary: #8b919e;
+            --text-muted: #5a6070;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #22d3ee;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-purple: #a855f7;
+            --border-color: rgba(255,255,255,0.08);
+            --glow-blue: rgba(59, 130, 246, 0.15);
+            --glow-cyan: rgba(34, 211, 238, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Background Grid Pattern */
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 600px;
+            background: radial-gradient(ellipse 80% 50% at 50% 0%, var(--glow-blue), transparent);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-top: 2rem;
+        }
+
+        .logo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-cyan);
+            margin-bottom: 1.5rem;
+        }
+
+        .logo-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        h1 {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 400;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Main Layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            gap: 2rem;
+        }
+
+        @media (max-width: 1100px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-title svg {
+            width: 16px;
+            height: 16px;
+            opacity: 0.6;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Search Section */
+        .search-section {
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px var(--glow-blue);
+        }
+
+        .input-wrapper input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .api-key-input {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .api-key-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .api-key-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+
+        .api-key-wrapper input {
+            border-radius: 10px 0 0 10px;
+            flex: 1;
+        }
+
+        .api-key-buttons {
+            display: flex;
+            background: var(--surface-elevated);
+            border: 1px solid var(--border-color);
+            border-left: none;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .key-btn {
+            width: 40px;
+            height: 48px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            border-left: 1px solid var(--border-color);
+        }
+
+        .key-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .key-btn.save:hover {
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .key-btn.clear:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .key-icon {
+            font-size: 1rem;
+            opacity: 0.7;
+        }
+
+        .key-btn:hover .key-icon {
+            opacity: 1;
+        }
+
+        .key-status {
+            font-size: 0.75rem;
+            font-family: 'IBM Plex Mono', monospace;
+            padding-left: 0.5rem;
+            min-height: 1rem;
+        }
+
+        .key-status.saved {
+            color: var(--success);
+        }
+
+        .key-status.cleared {
+            color: var(--text-muted);
+        }
+
+        .key-status.loaded {
+            color: var(--accent-cyan);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--accent-blue) 0%, #2563eb 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-primary svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Results Section */
+        .results-section {
+            display: none;
+        }
+
+        .results-section.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Prediction Card */
+        .prediction-card {
+            background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-card) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .prediction-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue), var(--accent-purple));
+        }
+
+        .prediction-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .state-badge {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .state-code {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 3rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            line-height: 1;
+        }
+
+        .state-name {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .state-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+
+        .confidence-meter {
+            text-align: right;
+        }
+
+        .confidence-value {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--accent-green);
+        }
+
+        .confidence-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+
+        /* Entity Profile */
+        .entity-profile {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-item {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .profile-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 0.35rem;
+        }
+
+        .profile-value {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* Reasoning Section */
+        .reasoning-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+
+        .reasoning-title {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent-blue);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .reasoning-text {
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+
+        /* Routing Queue */
+        .routing-queue {
+            margin-top: 1.5rem;
+        }
+
+        .queue-title {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .queue-items {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .queue-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .queue-item .rank {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .queue-item .state {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .queue-item.primary {
+            border-color: var(--accent-cyan);
+            background: rgba(34, 211, 238, 0.1);
+        }
+
+        .queue-item.primary .state {
+            color: var(--accent-cyan);
+        }
+
+        /* Sidebar - Heuristics Reference */
+        .sidebar {
+            position: sticky;
+            top: 2rem;
+        }
+
+        .heuristics-list {
+            list-style: none;
+        }
+
+        .heuristic-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+            display: grid;
+            grid-template-columns: 80px 1fr 80px;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .heuristic-item:last-child {
+            border-bottom: none;
+        }
+
+        .heuristic-signal {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent-yellow);
+            background: rgba(245, 158, 11, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .heuristic-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .heuristic-route {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            text-align: right;
+        }
+
+        /* Loading State */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 11, 13, 0.9);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent-cyan);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .loading-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .loading-step {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+
+        .loading-step.active {
+            color: var(--accent-cyan);
+        }
+
+        .loading-step.complete {
+            color: var(--accent-green);
+        }
+
+        .loading-step .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+        }
+
+        .loading-step.active .dot {
+            background: var(--accent-cyan);
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        .loading-step.complete .dot {
+            background: var(--accent-green);
+        }
+
+        /* Error State */
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            color: var(--accent-red);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+
+        /* Grounding Sources */
+        .sources-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .sources-title {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .source-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .source-item a {
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+
+        .source-item a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 0 2rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        footer a {
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-gradient"></div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader"></div>
+        <div class="loading-text">Analyzing Entity...</div>
+        <div class="loading-steps">
+            <div class="loading-step" id="step1">
+                <span class="dot"></span>
+                <span>Grounding: Searching web for entity context</span>
+            </div>
+            <div class="loading-step" id="step2">
+                <span class="dot"></span>
+                <span>Profiling: Identifying industry & structure</span>
+            </div>
+            <div class="loading-step" id="step3">
+                <span class="dot"></span>
+                <span>Routing: Calculating domicile probability</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="logo-badge">
+                <span>Gemini-Powered Entity Resolution</span>
+            </div>
+            <h1>Corporate Domicile Router</h1>
+            <p class="subtitle">
+                AI-powered predictive routing for U.S. corporate entity searches. 
+                Transform the N+1 registry problem into an O(1) prediction task.
+            </p>
+        </header>
+
+        <div class="main-grid">
+            <main>
+                <section class="search-section card">
+                    <div class="card-header">
+                        <span class="card-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            Entity Search
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <div class="error-message" id="errorMessage"></div>
+                        
+                        <div class="input-group">
+                            <label>Gemini API Key</label>
+                            <div class="api-key-container">
+                                <div class="input-wrapper api-key-wrapper">
+                                    <input 
+                                        type="password" 
+                                        id="apiKey" 
+                                        class="api-key-input"
+                                        placeholder="Enter your Gemini API key"
+                                    >
+                                    <div class="api-key-buttons">
+                                        <button type="button" id="toggleKey" class="key-btn" title="Show/Hide">
+                                            <span class="key-icon">[O]</span>
+                                        </button>
+                                        <button type="button" id="saveKey" class="key-btn save" title="Save to Browser">
+                                            <span class="key-icon">[S]</span>
+                                        </button>
+                                        <button type="button" id="clearKey" class="key-btn clear" title="Clear Saved">
+                                            <span class="key-icon">[X]</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="keyStatus" class="key-status"></div>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Entity Name</label>
+                            <div class="input-wrapper">
+                                <input 
+                                    type="text" 
+                                    id="entityName" 
+                                    placeholder="e.g., Stripe, Inc. or Blue Bottle Coffee LLC"
+                                >
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Additional Context (Optional)</label>
+                            <div class="input-wrapper">
+                                <input 
+                                    type="text" 
+                                    id="additionalContext" 
+                                    placeholder="e.g., headquartered in Austin, TX or fintech company"
+                                >
+                            </div>
+                        </div>
+
+                        <button class="btn-primary" id="searchBtn" onclick="analyzeEntity()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                            </svg>
+                            Analyze & Route Entity
+                        </button>
+                    </div>
+                </section>
+
+                <section class="results-section" id="resultsSection">
+                    <div class="prediction-card" id="predictionCard">
+                        <div class="prediction-header">
+                            <div class="state-badge">
+                                <div class="state-code" id="stateCode">--</div>
+                                <div>
+                                    <div class="state-name" id="stateName">--</div>
+                                    <div class="state-label">Primary Jurisdiction</div>
+                                </div>
+                            </div>
+                            <div class="confidence-meter">
+                                <div class="confidence-value" id="confidenceValue">--%</div>
+                                <div class="confidence-label">Confidence</div>
+                            </div>
+                        </div>
+
+                        <div class="entity-profile" id="entityProfile">
+                            <div class="profile-item">
+                                <div class="profile-label">Entity Type</div>
+                                <div class="profile-value" id="entityType">--</div>
+                            </div>
+                            <div class="profile-item">
+                                <div class="profile-label">Industry</div>
+                                <div class="profile-value" id="industry">--</div>
+                            </div>
+                            <div class="profile-item">
+                                <div class="profile-label">HQ Location</div>
+                                <div class="profile-value" id="hqLocation">--</div>
+                            </div>
+                        </div>
+
+                        <div class="reasoning-box">
+                            <div class="reasoning-title">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"></path>
+                                    <path d="M12 16v-4"></path>
+                                    <path d="M12 8h.01"></path>
+                                </svg>
+                                Chain of Thought Reasoning
+                            </div>
+                            <div class="reasoning-text" id="reasoningText">--</div>
+                        </div>
+
+                        <div class="routing-queue">
+                            <div class="queue-title">Priority Search Queue</div>
+                            <div class="queue-items" id="queueItems">
+                                <!-- Dynamically populated -->
+                            </div>
+                        </div>
+
+                        <div class="sources-section" id="sourcesSection" style="display: none;">
+                            <div class="sources-title">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                </svg>
+                                Grounding Sources
+                            </div>
+                            <div id="sourcesList"></div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <aside class="sidebar">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            </svg>
+                            Routing Heuristics
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <ul class="heuristics-list">
+                            <li class="heuristic-item">
+                                <span class="heuristic-signal">Inc. + Tech</span>
+                                <span class="heuristic-desc">VC-backed startups & public corps</span>
+                                <span class="heuristic-route">→ DE</span>
+                            </li>
+                            <li class="heuristic-item">
+                                <span class="heuristic-signal">LLC + RE</span>
+                                <span class="heuristic-desc">Real estate holding entities</span>
+                                <span class="heuristic-route">→ Situs</span>
+                            </li>
+                            <li class="heuristic-item">
+                                <span class="heuristic-signal">Crypto/DAO</span>
+                                <span class="heuristic-desc">Digital asset organizations</span>
+                                <span class="heuristic-route">→ WY</span>
+                            </li>
+                            <li class="heuristic-item">
+                                <span class="heuristic-signal">Local Biz</span>
+                                <span class="heuristic-desc">Single-state operations</span>
+                                <span class="heuristic-route">→ HQ State</span>
+                            </li>
+                            <li class="heuristic-item">
+                                <span class="heuristic-signal">DExit</span>
+                                <span class="heuristic-desc">Recent reincorporation signals</span>
+                                <span class="heuristic-route">→ TX/NV</span>
+                            </li>
+                            <li class="heuristic-item">
+                                <span class="heuristic-signal">Privacy</span>
+                                <span class="heuristic-desc">Anonymous LLC structures</span>
+                                <span class="heuristic-route">→ WY/NV</span>
+                            </li>
+                            <li class="heuristic-item">
+                                <span class="heuristic-signal">Fortune 500</span>
+                                <span class="heuristic-desc">Large public corporations</span>
+                                <span class="heuristic-route">→ DE (99%)</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 1.5rem;">
+                    <div class="card-header">
+                        <span class="card-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            The Delaware Singularity
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <div style="text-align: center; margin-bottom: 1rem;">
+                            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 2.5rem; color: var(--accent-cyan);">68%</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">of Fortune 500</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 2.5rem; color: var(--accent-purple);">81.4%</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">of 2024 IPOs</div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <footer>
+            Powered by <a href="https://ai.google.dev/" target="_blank">Gemini API</a> with Search Grounding | 
+            Based on ReAct Agent Architecture
+        </footer>
+    </div>
+
+    <script>
+        // State name mapping
+        const STATE_NAMES = {
+            'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas',
+            'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut', 'DE': 'Delaware',
+            'FL': 'Florida', 'GA': 'Georgia', 'HI': 'Hawaii', 'ID': 'Idaho',
+            'IL': 'Illinois', 'IN': 'Indiana', 'IA': 'Iowa', 'KS': 'Kansas',
+            'KY': 'Kentucky', 'LA': 'Louisiana', 'ME': 'Maine', 'MD': 'Maryland',
+            'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota', 'MS': 'Mississippi',
+            'MO': 'Missouri', 'MT': 'Montana', 'NE': 'Nebraska', 'NV': 'Nevada',
+            'NH': 'New Hampshire', 'NJ': 'New Jersey', 'NM': 'New Mexico', 'NY': 'New York',
+            'NC': 'North Carolina', 'ND': 'North Dakota', 'OH': 'Ohio', 'OK': 'Oklahoma',
+            'OR': 'Oregon', 'PA': 'Pennsylvania', 'RI': 'Rhode Island', 'SC': 'South Carolina',
+            'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah',
+            'VT': 'Vermont', 'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia',
+            'WI': 'Wisconsin', 'WY': 'Wyoming', 'DC': 'District of Columbia'
+        };
+
+        // API Key Storage
+        const API_KEY_STORAGE_KEY = 'gemini_api_key_corporate_router';
+
+        function loadSavedApiKey() {
+            const savedKey = localStorage.getItem(API_KEY_STORAGE_KEY);
+            if (savedKey) {
+                document.getElementById('apiKey').value = savedKey;
+                showKeyStatus('Key loaded from browser storage', 'loaded');
+            }
+        }
+
+        function saveApiKey() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            if (apiKey) {
+                localStorage.setItem(API_KEY_STORAGE_KEY, apiKey);
+                showKeyStatus('Key saved to browser storage', 'saved');
+            } else {
+                showKeyStatus('Enter a key first', 'cleared');
+            }
+        }
+
+        function clearApiKey() {
+            localStorage.removeItem(API_KEY_STORAGE_KEY);
+            document.getElementById('apiKey').value = '';
+            showKeyStatus('Saved key cleared', 'cleared');
+        }
+
+        function toggleKeyVisibility() {
+            const input = document.getElementById('apiKey');
+            const btn = document.getElementById('toggleKey');
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.querySelector('.key-icon').textContent = '[*]';
+            } else {
+                input.type = 'password';
+                btn.querySelector('.key-icon').textContent = '[O]';
+            }
+        }
+
+        function showKeyStatus(message, type) {
+            const status = document.getElementById('keyStatus');
+            status.textContent = message;
+            status.className = 'key-status ' + type;
+            setTimeout(() => {
+                status.textContent = '';
+                status.className = 'key-status';
+            }, 3000);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedApiKey();
+            
+            document.getElementById('toggleKey').addEventListener('click', toggleKeyVisibility);
+            document.getElementById('saveKey').addEventListener('click', saveApiKey);
+            document.getElementById('clearKey').addEventListener('click', clearApiKey);
+        });
+
+        function showLoading(show) {
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.classList.toggle('active', show);
+            
+            // Reset steps
+            ['step1', 'step2', 'step3'].forEach(id => {
+                document.getElementById(id).classList.remove('active', 'complete');
+            });
+        }
+
+        function updateLoadingStep(stepNum, status) {
+            const step = document.getElementById(`step${stepNum}`);
+            step.classList.remove('active', 'complete');
+            step.classList.add(status);
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.classList.add('active');
+        }
+
+        function hideError() {
+            document.getElementById('errorMessage').classList.remove('active');
+        }
+
+        function showNotFound(entityName) {
+            const resultsSection = document.getElementById('resultsSection');
+            resultsSection.classList.add('active');
+            
+            document.getElementById('stateCode').textContent = '--';
+            document.getElementById('stateName').textContent = 'NO EXACT MATCH';
+            document.getElementById('confidenceValue').textContent = '0%';
+            document.getElementById('confidenceFill').style.width = '0%';
+            document.getElementById('confidenceFill').className = 'confidence-fill';
+            
+            document.getElementById('entityType').textContent = '--';
+            document.getElementById('industry').textContent = '--';
+            document.getElementById('hqLocation').textContent = '--';
+            
+            document.getElementById('reasoningText').innerHTML = 
+                'No exact match found for: "' + entityName + '"';
+            
+            document.getElementById('routingQueue').innerHTML = '';
+            document.getElementById('sourcesList').innerHTML = '';
+        }
+
+        async function analyzeEntity() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const entityName = document.getElementById('entityName').value.trim();
+            const additionalContext = document.getElementById('additionalContext').value.trim();
+
+            hideError();
+
+            if (!apiKey) {
+                showError('Please enter your Gemini API key');
+                return;
+            }
+
+            if (!entityName) {
+                showError('Please enter an entity name to search');
+                return;
+            }
+
+            showLoading(true);
+            updateLoadingStep(1, 'active');
+
+            try {
+                // Step 1: Grounding - Search for exact entity name
+                const groundingPrompt = `Search for this business entity: "${entityName}"
+${additionalContext ? `Additional Context: ${additionalContext}` : ''}
+
+SEARCH IN THIS ORDER:
+1. State business registries / Secretary of State databases for "${entityName}"
+2. OpenCorporates.com for "${entityName}"
+3. SEC EDGAR filings for "${entityName}"
+4. General web presence (company website, LinkedIn, news)
+
+Report what you find:
+- Exact legal name as registered
+- State of incorporation (if found)
+- Headquarters location
+- Industry/business type
+- Entity type (Corp, LLC, LP)
+- Source of information
+
+Be thorough. Search multiple sources.`;
+
+                const groundingResponse = await callGeminiWithGrounding(apiKey, groundingPrompt);
+                
+                updateLoadingStep(1, 'complete');
+                updateLoadingStep(2, 'active');
+
+                // Step 2: Routing Prediction with confidence scoring
+                const routingPrompt = `Predict state of incorporation for "${entityName}".
+
+Research:
+${groundingResponse.text}
+
+CONFIDENCE SCORING (out of 100):
+- 90-100: Found exact registration in state database or SEC filing
+- 70-89: Found on OpenCorporates or official company documents
+- 50-69: Inferred from HQ location, industry patterns, web presence
+- 30-49: Educated guess based on heuristics only
+- 0-29: Very low confidence, minimal information found
+
+HEURISTICS FOR EDUCATED GUESSES:
+- Delaware: VC-backed, public companies, tech startups, "Inc." suffix
+- Home State: Local businesses typically incorporate where HQ is
+- Wyoming/Nevada: Privacy-focused, crypto, anonymous LLCs
+- Texas: Recent DExit trend for some companies
+
+JSON RESPONSE:
+{
+    "predicted_state": "XX",
+    "state_name": "Full State Name",
+    "confidence": 0-100,
+    "source_quality": "registry/opencorporates/sec/web/heuristic",
+    "entity_type": "C-Corp/LLC/LP/Unknown",
+    "industry": "Industry",
+    "hq_location": "City, State",
+    "reasoning": "Explain what was found and why this state was predicted...",
+    "routing_queue": ["XX", "YY", "ZZ"]
+}
+
+Always make a prediction. Use heuristics if no direct information found. Set confidence accordingly.`;
+
+                const routingResponse = await callGemini(apiKey, routingPrompt);
+                
+                updateLoadingStep(2, 'complete');
+                updateLoadingStep(3, 'active');
+
+                // Parse the response
+                let prediction;
+                try {
+                    // Extract JSON from response
+                    const jsonMatch = routingResponse.match(/\{[\s\S]*\}/);
+                    if (jsonMatch) {
+                        prediction = JSON.parse(jsonMatch[0]);
+                    } else {
+                        throw new Error('No JSON found in response');
+                    }
+                } catch (e) {
+                    console.error('Parse error:', e, routingResponse);
+                    throw new Error('Failed to parse AI response. Please try again.');
+                }
+
+                updateLoadingStep(3, 'complete');
+                
+                // Display results
+                displayResults(prediction, groundingResponse.sources);
+
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message || 'An error occurred while analyzing the entity');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function callGeminiWithGrounding(apiKey, prompt) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent?key=${apiKey}`;
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{ text: prompt }]
+                    }],
+                    tools: [{
+                        google_search: {}
+                    }]
+                })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error?.message || 'API request failed');
+            }
+
+            const data = await response.json();
+            
+            // Extract text and grounding sources
+            const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+            const groundingMetadata = data.candidates?.[0]?.groundingMetadata;
+            
+            // Handle different source formats from the API
+            let sources = [];
+            if (groundingMetadata?.groundingChunks) {
+                sources = groundingMetadata.groundingChunks.map(chunk => ({
+                    title: chunk.web?.title || 'Source',
+                    uri: chunk.web?.uri || '#'
+                }));
+            } else if (groundingMetadata?.searchEntryPoint?.renderedContent) {
+                // Alternative format - extract from rendered content if available
+                sources = [{
+                    title: 'Google Search Results',
+                    uri: '#'
+                }];
+            } else if (groundingMetadata?.webSearchQueries) {
+                sources = groundingMetadata.webSearchQueries.map(query => ({
+                    title: `Search: ${query}`,
+                    uri: `https://www.google.com/search?q=${encodeURIComponent(query)}`
+                }));
+            }
+
+            return { text, sources };
+        }
+
+        async function callGemini(apiKey, prompt) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent?key=${apiKey}`;
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{ text: prompt }]
+                    }],
+                    generationConfig: {
+                        temperature: 0.2,
+                        topP: 0.8,
+                        topK: 40
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error?.message || 'API request failed');
+            }
+
+            const data = await response.json();
+            return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        }
+
+        function displayResults(prediction, sources) {
+            const resultsSection = document.getElementById('resultsSection');
+            resultsSection.classList.add('active');
+
+            // Update state display
+            document.getElementById('stateCode').textContent = prediction.predicted_state || '--';
+            document.getElementById('stateName').textContent = 
+                prediction.state_name || STATE_NAMES[prediction.predicted_state] || '--';
+
+            // Update confidence (now 0-100 scale)
+            const confidence = Math.round(prediction.confidence || 0);
+            const confidenceEl = document.getElementById('confidenceValue');
+            confidenceEl.textContent = `${confidence}%`;
+            
+            if (confidence >= 70) {
+                confidenceEl.style.color = 'var(--accent-green)';
+            } else if (confidence >= 50) {
+                confidenceEl.style.color = 'var(--accent-yellow)';
+            } else {
+                confidenceEl.style.color = 'var(--accent-red)';
+            }
+
+            // Update entity profile
+            document.getElementById('entityType').textContent = prediction.entity_type || 'Unknown';
+            document.getElementById('industry').textContent = prediction.industry || 'Unknown';
+            document.getElementById('hqLocation').textContent = prediction.hq_location || 'Unknown';
+
+            // Update reasoning with source quality badge
+            const sourceQuality = prediction.source_quality || 'unknown';
+            const qualityBadge = {
+                'registry': '<span style="color:var(--accent-green);font-weight:600;">[STATE REGISTRY]</span>',
+                'sec': '<span style="color:var(--accent-green);font-weight:600;">[SEC FILING]</span>',
+                'opencorporates': '<span style="color:var(--accent-yellow);font-weight:600;">[OPENCORPORATES]</span>',
+                'web': '<span style="color:var(--accent-yellow);font-weight:600;">[WEB PRESENCE]</span>',
+                'heuristic': '<span style="color:var(--accent-red);font-weight:600;">[HEURISTIC GUESS]</span>'
+            }[sourceQuality] || '';
+            
+            document.getElementById('reasoningText').innerHTML = 
+                (qualityBadge ? qualityBadge + '<br><br>' : '') + (prediction.reasoning || 'No reasoning provided');
+
+            // Update routing queue
+            const queueItems = document.getElementById('queueItems');
+            queueItems.innerHTML = '';
+            
+            const queue = prediction.routing_queue || [prediction.predicted_state];
+            queue.forEach((state, index) => {
+                const item = document.createElement('div');
+                item.className = `queue-item ${index === 0 ? 'primary' : ''}`;
+                item.innerHTML = `
+                    <span class="rank">#${index + 1}</span>
+                    <span class="state">${state}</span>
+                `;
+                queueItems.appendChild(item);
+            });
+
+            // Update sources
+            const sourcesSection = document.getElementById('sourcesSection');
+            const sourcesList = document.getElementById('sourcesList');
+            
+            if (sources && sources.length > 0) {
+                sourcesSection.style.display = 'block';
+                sourcesList.innerHTML = sources.slice(0, 5).map(source => `
+                    <div class="source-item">
+                        <a href="${source.uri}" target="_blank">${source.title}</a>
+                    </div>
+                `).join('');
+            } else {
+                sourcesSection.style.display = 'none';
+            }
+
+            // Scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Allow Enter key to trigger search
+        document.getElementById('entityName').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') analyzeEntity();
+        });
+    </script>
+</body>
+</html>
