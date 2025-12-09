@@ -2681,7 +2681,7 @@
                      onkeydown="if(event.key==='Enter'){this.blur()}"
                      style="width: 70px;">
             </div>
-            <input type="range" class="slider w-full" id="creditScore" min="450" max="850" step="5" value="650" oninput="calculate()">
+            <input type="range" class="slider w-full" id="creditScore" min="450" max="850" step="1" value="650" oninput="calculate()">
             <div class="flex justify-between text-[10px] font-semibold mt-1 uppercase tracking-wider" style="color: var(--text-muted);">
               <span>450</span>
               <span>850</span>
@@ -2787,7 +2787,7 @@
                      style="width: 100px;">
               <span class="text-xs font-semibold" style="color: var(--text-muted);" id="existingDebtFreqLabel">/day</span>
             </div>
-            <input type="range" class="slider w-full" id="existingDebt" min="0" max="15000" step="50" value="0" oninput="calculate()">
+            <input type="range" class="slider w-full" id="existingDebt" min="0" max="15000" step="1" value="0" oninput="calculate()">
             <div class="flex justify-between text-[10px] font-semibold mt-1 uppercase tracking-wider" style="color: var(--text-muted);">
               <span>$0</span>
               <span>$15,000</span>
@@ -4041,7 +4041,7 @@
                    onchange="updateFromModalInput('creditScore', 'modalCreditScore', this.value, 450, 850)"
                    onkeydown="if(event.key==='Enter'){this.blur()}"
                    style="width: 70px; font-size: 18px;">
-            <input type="range" class="slider" id="modalCreditScore" min="450" max="850" step="5" value="650" oninput="syncSlider('creditScore', this.value)">
+            <input type="range" class="slider" id="modalCreditScore" min="450" max="850" step="1" value="650" oninput="syncSlider('creditScore', this.value)">
           </div>
           
           <!-- Revenue -->
@@ -4118,7 +4118,7 @@
                  onchange="updateFromModalInput('existingDebt', 'modalExistingDebt', this.value, 0, 15000, true)"
                  onkeydown="if(event.key==='Enter'){this.blur()}"
                  style="width: 90px; font-size: 18px;">
-          <input type="range" class="slider" id="modalExistingDebt" min="0" max="15000" step="50" value="0" oninput="syncSlider('existingDebt', this.value)">
+          <input type="range" class="slider" id="modalExistingDebt" min="0" max="15000" step="1" value="0" oninput="syncSlider('existingDebt', this.value)">
           <!-- Hidden radios for compatibility -->
           <div style="display: none;">
             <input type="radio" name="modalExistingDebtFreq" value="daily" checked>
@@ -4571,7 +4571,7 @@
     }
 
     function formatCurrency(val) {
-      return '$' + Math.round(val).toLocaleString();
+      return '$' + Math.floor(val).toLocaleString();
     }
     
     // Update slider from text input
@@ -4582,15 +4582,6 @@
       
       // Clamp to valid range
       value = Math.max(min, Math.min(max, value));
-      
-      // Round appropriately
-      if (sliderId === 'creditScore') {
-        value = Math.round(value / 5) * 5; // Round to nearest 5
-      } else if (sliderId === 'existingDebt') {
-        value = Math.round(value / 50) * 50; // Round to nearest 50
-      } else {
-        value = Math.round(value);
-      }
       
       // Update slider
       const slider = document.getElementById(sliderId);
@@ -4610,15 +4601,6 @@
       
       // Clamp to valid range
       value = Math.max(min, Math.min(max, value));
-      
-      // Round appropriately
-      if (mainSliderId === 'creditScore') {
-        value = Math.round(value / 5) * 5;
-      } else if (mainSliderId === 'existingDebt') {
-        value = Math.round(value / 50) * 50;
-      } else {
-        value = Math.round(value);
-      }
       
       // Update both sliders
       const mainSlider = document.getElementById(mainSliderId);
@@ -4808,7 +4790,7 @@
       const dscr = calc.revenue / totalMonthlyDebt;
       
       if (el('modalDscrRevenue')) el('modalDscrRevenue').textContent = formatCurrency(calc.revenue);
-      if (el('modalDscrDebt')) el('modalDscrDebt').textContent = formatCurrency(Math.round(totalMonthlyDebt)) + (existingDebt > 0 ? ' (incl. existing)' : '');
+      if (el('modalDscrDebt')) el('modalDscrDebt').textContent = formatCurrency(Math.floor(totalMonthlyDebt)) + (existingDebt > 0 ? ' (incl. existing)' : '');
       if (el('modalDscrRatio')) el('modalDscrRatio').textContent = dscr.toFixed(2) + 'x';
       if (el('modalDscrBarValue')) el('modalDscrBarValue').textContent = dscr.toFixed(2) + 'x';
       
@@ -5222,7 +5204,7 @@
       } else if (existingDebtFreq === 'weekly') {
         existingDebt = existingDebtRaw * 4.33; // ~4.33 weeks/month
       }
-      existingDebt = Math.round(existingDebt);
+      existingDebt = Math.floor(existingDebt);
       
       // Get industry and check status
       const industry = document.getElementById('industrySelect').value;
@@ -5432,7 +5414,7 @@
       // Apply +10% premium over RC
       fundingMult *= 1.04;
       
-      let funding = Math.round(revenue * fundingMult);
+      let funding = Math.floor(revenue * fundingMult);
       
       // Cap at $165k (10% above RC's typical $150k cap)
       funding = Math.min(funding, 165000);
@@ -5456,7 +5438,7 @@
         
         // Apply debt-based cap (but don't go below $10k if otherwise qualified)
         if (maxFundingFromDebt < funding) {
-          funding = Math.max(10000, Math.round(maxFundingFromDebt));
+          funding = Math.max(10000, Math.floor(maxFundingFromDebt));
         }
         
         // If existing debt already exceeds capacity, decline
@@ -5497,10 +5479,10 @@
         document.getElementById('resultLabel').textContent = `AblesAI Tier ${tier} - Approved`;
 
         // Calculate offer amounts first (needed for cash flow analysis)
-        const payback = Math.round(funding * tierData.factor);
+        const payback = Math.floor(funding * tierData.factor);
         const termDays = tierData.termMonths * 22;
-        const dailyPayment = Math.round(payback / termDays * 100) / 100;
-        const weeklyPayment = Math.round(payback / (tierData.termMonths * 4.33) * 100) / 100;
+        const dailyPayment = Math.floor(payback / termDays * 100) / 100;
+        const weeklyPayment = Math.floor(payback / (tierData.termMonths * 4.33) * 100) / 100;
         const holdback = ((dailyPayment / dailyRevenue) * 100).toFixed(2);
 
         // Calculate monthly payment amounts for DSCR
@@ -5557,7 +5539,7 @@
         apr = apr.toFixed(1);
 
         // Closing fees
-        const origFee = Math.round(funding * 0.03);
+        const origFee = Math.floor(funding * 0.03);
         const adminFee = 995;
         const wireFee = 50;
         const netWire = funding - origFee - adminFee - wireFee;
@@ -5567,7 +5549,7 @@
         document.getElementById('offerFactor').textContent = tierData.factor.toFixed(2) + 'x';
         document.getElementById('offerTerm').textContent = tierData.termMonths + ' Months';
         document.getElementById('offerPayback').textContent = formatCurrency(payback);
-        document.getElementById('offerPayment').textContent = formatCurrency(Math.round(payment));
+        document.getElementById('offerPayment').textContent = formatCurrency(Math.floor(payment));
         document.getElementById('paymentFreqLabel').textContent = paymentLabel;
         document.getElementById('offerHoldback').textContent = holdback + '%';
         document.getElementById('offerAPR').textContent = apr + '%';
@@ -5629,7 +5611,7 @@
         const dscr = revenue / totalMonthlyDebt;
         
         document.getElementById('calcDscrMonthlyRev').textContent = formatCurrency(revenue);
-        document.getElementById('calcDscrMonthlyDebt').textContent = formatCurrency(Math.round(totalMonthlyDebt)) + (existingDebt > 0 ? ' (incl. existing)' : '');
+        document.getElementById('calcDscrMonthlyDebt').textContent = formatCurrency(Math.floor(totalMonthlyDebt)) + (existingDebt > 0 ? ' (incl. existing)' : '');
         document.getElementById('calcDscrRatio').textContent = dscr.toFixed(2) + 'x';
         document.getElementById('calcDscrBarValue').textContent = dscr.toFixed(2) + 'x';
         document.getElementById('calcDscrValue').textContent = dscr.toFixed(2) + 'x';
@@ -5728,9 +5710,9 @@
       document.getElementById('overrideTermDisplay').textContent = overrideTerm + ' Months';
 
       // Calculate override offer
-      const payback = Math.round(overrideFunding * overrideFactor);
+      const payback = Math.floor(overrideFunding * overrideFactor);
       const termDays = overrideTerm * 22;
-      const daily = Math.round(payback / termDays * 100) / 100;
+      const daily = Math.floor(payback / termDays * 100) / 100;
       const dailyRevenue = calc.revenue / 22;
       const holdback = ((daily / dailyRevenue) * 100).toFixed(2);
 
@@ -5738,17 +5720,17 @@
       let payment, paymentLabel, calcPayment;
       if (paymentFreq === 'weekly') {
         const periodsPerMonth = 4.33;
-        payment = Math.round(payback / (overrideTerm * periodsPerMonth) * 100) / 100;
-        calcPayment = Math.round(calc.payback / (calc.term * periodsPerMonth) * 100) / 100;
+        payment = Math.floor(payback / (overrideTerm * periodsPerMonth) * 100) / 100;
+        calcPayment = Math.floor(calc.payback / (calc.term * periodsPerMonth) * 100) / 100;
         paymentLabel = 'Weekly Payment';
       } else if (paymentFreq === 'semiweekly') {
         const periodsPerMonth = 2;
-        payment = Math.round(payback / (overrideTerm * periodsPerMonth) * 100) / 100;
-        calcPayment = Math.round(calc.payback / (calc.term * periodsPerMonth) * 100) / 100;
+        payment = Math.floor(payback / (overrideTerm * periodsPerMonth) * 100) / 100;
+        calcPayment = Math.floor(calc.payback / (calc.term * periodsPerMonth) * 100) / 100;
         paymentLabel = 'Semi-Weekly Payment';
       } else if (paymentFreq === 'monthly') {
-        payment = Math.round(payback / overrideTerm * 100) / 100;
-        calcPayment = Math.round(calc.payback / calc.term * 100) / 100;
+        payment = Math.floor(payback / overrideTerm * 100) / 100;
+        calcPayment = Math.floor(calc.payback / calc.term * 100) / 100;
         paymentLabel = 'Monthly Payment';
       } else {
         payment = daily;
@@ -5773,7 +5755,7 @@
       apr = apr.toFixed(1);
 
       // Closing fees
-      const origFee = Math.round(overrideFunding * 0.03);
+      const origFee = Math.floor(overrideFunding * 0.03);
       const adminFee = 995;
       const wireFee = 50;
       const netWire = overrideFunding - origFee - adminFee - wireFee;
@@ -5783,7 +5765,7 @@
       document.getElementById('overrideOfferFactor').textContent = overrideFactor.toFixed(2) + 'x';
       document.getElementById('overrideOfferTerm').textContent = overrideTerm + ' Months';
       document.getElementById('overrideOfferPayback').textContent = formatCurrency(payback);
-      document.getElementById('overrideOfferPayment').textContent = formatCurrency(Math.round(payment));
+      document.getElementById('overrideOfferPayment').textContent = formatCurrency(Math.floor(payment));
       document.getElementById('overridePaymentFreqLabel').textContent = paymentLabel;
       document.getElementById('overrideOfferHoldback').textContent = holdback + '%';
       document.getElementById('overrideOfferAPR').textContent = apr + '%';
@@ -5817,9 +5799,9 @@
       document.getElementById('compPaybackDiff').style.color = paybackDiff > 0 ? '#ef4444' : paybackDiff < 0 ? '#10b981' : 'var(--text-muted)';
 
       document.getElementById('compPaymentLabel').textContent = paymentLabel;
-      document.getElementById('compPaymentCalc').textContent = '$' + Math.round(calcPayment);
-      document.getElementById('compPaymentOverride').textContent = '$' + Math.round(payment);
-      document.getElementById('compPaymentDiff').textContent = (paymentDiff >= 0 ? '+' : '') + '$' + Math.round(paymentDiff);
+      document.getElementById('compPaymentCalc').textContent = '$' + Math.floor(calcPayment);
+      document.getElementById('compPaymentOverride').textContent = '$' + Math.floor(payment);
+      document.getElementById('compPaymentDiff').textContent = (paymentDiff >= 0 ? '+' : '') + '$' + Math.floor(paymentDiff);
       document.getElementById('compPaymentDiff').style.color = paymentDiff > 0 ? '#ef4444' : paymentDiff < 0 ? '#10b981' : 'var(--text-muted)';
 
       // Calculate Probability of Default (PD) - simplified model
@@ -5870,7 +5852,7 @@
       const dscr = calc.revenue / monthlyDebt;
       
       document.getElementById('dscrMonthlyRev').textContent = formatCurrency(calc.revenue);
-      document.getElementById('dscrMonthlyDebt').textContent = formatCurrency(Math.round(monthlyDebt));
+      document.getElementById('dscrMonthlyDebt').textContent = formatCurrency(Math.floor(monthlyDebt));
       document.getElementById('dscrRatio').textContent = dscr.toFixed(2) + 'x';
       document.getElementById('dscrBarValue').textContent = dscr.toFixed(2) + 'x';
       document.getElementById('dscrImpact').textContent = dscr.toFixed(2) + 'x';
