@@ -39,13 +39,95 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    /* Header */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(10, 10, 10, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-secondary);
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .header-logo svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .logo-text {
+      font-size: 0.875rem;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+
+    .logo-ai {
+      color: #888;
+    }
+
+    /* Orbiting moon animation */
+    .orbiting-moon {
+      transform-origin: 32px 32px;
+      animation: orbit 3s linear infinite, moonColor 2s ease-in-out infinite;
+    }
+
+    @keyframes orbit {
+      0% { transform: rotate(-20deg) translate(26px, 0) scale(1); opacity: 1; }
+      12.5% { transform: rotate(-20deg) translate(18px, 5px) scale(0.9); opacity: 1; }
+      25% { transform: rotate(-20deg) translate(0, 7px) scale(0.75); opacity: 0.7; }
+      37.5% { transform: rotate(-20deg) translate(-18px, 5px) scale(0.6); opacity: 0.5; }
+      50% { transform: rotate(-20deg) translate(-26px, 0) scale(0.5); opacity: 0.4; }
+      62.5% { transform: rotate(-20deg) translate(-18px, -5px) scale(0.6); opacity: 0.5; }
+      75% { transform: rotate(-20deg) translate(0, -7px) scale(0.75); opacity: 0.7; }
+      87.5% { transform: rotate(-20deg) translate(18px, -5px) scale(0.9); opacity: 1; }
+      100% { transform: rotate(-20deg) translate(26px, 0) scale(1); opacity: 1; }
+    }
+
+    @keyframes moonColor {
+      0%, 100% { fill: #a855f7; }
+      25% { fill: #3b82f6; }
+      50% { fill: #ec4899; }
+      75% { fill: #10b981; }
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .header-nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .header-nav a:hover {
+      color: var(--text-primary);
+    }
+
     /* Layout */
     .page-container {
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 40px 24px;
+      padding: 80px 24px 40px;
     }
 
     .content-wrapper {
@@ -312,8 +394,29 @@
     }
 
     @media (max-width: 480px) {
+      .header {
+        padding: 12px 16px;
+      }
+
+      .header-logo svg {
+        width: 22px;
+        height: 22px;
+      }
+
+      .logo-text {
+        font-size: 0.8rem;
+      }
+
+      .header-nav {
+        gap: 16px;
+      }
+
+      .header-nav a {
+        font-size: 12px;
+      }
+
       .page-container {
-        padding: 24px 16px;
+        padding: 80px 16px 24px;
       }
 
       .signup-row {
@@ -336,6 +439,27 @@
   </style>
 </head>
 <body>
+
+  <!-- Header -->
+  <header class="header">
+    <a href="https://ables.ai/index.html" class="header-logo">
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Back half of ring (behind planet) -->
+        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
+        <!-- Planet -->
+        <circle cx="32" cy="32" r="12" fill="#eab308"/>
+        <!-- Front half of ring (in front of planet) -->
+        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
+        <!-- Orbiting moon -->
+        <circle class="orbiting-moon" cx="32" cy="32" r="4" fill="#a855f7"/>
+      </svg>
+      <span class="logo-text">Ables<span class="logo-ai">AI</span></span>
+    </a>
+    <nav class="header-nav">
+      <a href="https://ables.ai/index.html">Home</a>
+      <a href="https://ables.ai/calculator.html">Calculator</a>
+    </nav>
+  </header>
 
   <div class="page-container">
     <div class="content-wrapper">
