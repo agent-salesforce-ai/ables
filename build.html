@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator Pro + Brand Kit | AblesAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-main: #0a0a0a;
+      --bg-card: #111111;
+      --bg-card-inner: #1a1a1a;
+      --border-primary: #2a2a2a;
+      --border-secondary: #1f1f1f;
+      --text-primary: #ffffff;
+      --text-secondary: #e5e5e5;
+      --text-muted: #6b7280;
+      --accent: #3b82f6;
+      --accent-glow: rgba(59, 130, 246, 0.15);
+      --accent-index: 0;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+      background: var(--bg-main);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Header */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(10, 10, 10, 0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-secondary);
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .header-logo svg {
+      width: 36px;
+      height: 36px;
+    }
+
+    .logo-text {
+      font-size: 1.125rem;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+
+    .logo-ai {
+      color: #888;
+    }
+
+    .orbiting-moon {
+      transform-origin: 32px 32px;
+      animation: orbit 3s linear infinite, moonColor 2s ease-in-out infinite;
+    }
+
+    @keyframes orbit {
+      0% { transform: rotate(-20deg) translate(26px, 0) scale(1); opacity: 1; }
+      12.5% { transform: rotate(-20deg) translate(18px, 5px) scale(0.9); opacity: 1; }
+      25% { transform: rotate(-20deg) translate(0, 7px) scale(0.75); opacity: 0.7; }
+      37.5% { transform: rotate(-20deg) translate(-18px, 5px) scale(0.6); opacity: 0.5; }
+      50% { transform: rotate(-20deg) translate(-26px, 0) scale(0.5); opacity: 0.4; }
+      62.5% { transform: rotate(-20deg) translate(-18px, -5px) scale(0.6); opacity: 0.5; }
+      75% { transform: rotate(-20deg) translate(0, -7px) scale(0.75); opacity: 0.7; }
+      87.5% { transform: rotate(-20deg) translate(18px, -5px) scale(0.9); opacity: 1; }
+      100% { transform: rotate(-20deg) translate(26px, 0) scale(1); opacity: 1; }
+    }
+
+    @keyframes moonColor {
+      0%, 100% { fill: #a855f7; }
+      25% { fill: #3b82f6; }
+      50% { fill: #ec4899; }
+      75% { fill: #f97316; }
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .header-nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .header-nav a:hover {
+      color: var(--text-primary);
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 110px 24px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      pointer-events: none;
+      opacity: 0.5;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-glow);
+      border: 1px solid var(--accent);
+      padding: 8px 16px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 24px;
+      transition: all 0.8s ease;
+    }
+
+    .hero-badge svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .hero-title {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      max-width: 800px;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, var(--accent) 0%, #3b82f6 50%, #8b5cf6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: 1.125rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin-bottom: 40px;
+    }
+
+    .hero-cta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-primary {
+      padding: 16px 32px;
+      background: transparent;
+      color: var(--accent);
+      font-size: 15px;
+      font-weight: 700;
+      border: 2px solid var(--accent);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease, border-color 0.5s ease, color 0.5s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent);
+      color: #000;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px var(--accent-glow);
+    }
+
+    .btn-primary svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .hero-note {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Social Proof */
+    .social-proof {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      margin-top: 60px;
+      padding-top: 40px;
+      border-top: 1px solid var(--border-secondary);
+    }
+
+    .proof-stat {
+      text-align: center;
+    }
+
+    .proof-stat strong {
+      display: block;
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--accent);
+      transition: color 0.5s ease;
+    }
+
+    .proof-stat span {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Builder Section */
+    .builder-section {
+      padding: 80px 24px;
+      background: linear-gradient(180deg, var(--bg-main) 0%, var(--bg-card) 100%);
+    }
+
+    .builder-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .builder-step {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-card-inner);
+      border: 1px solid var(--border-primary);
+      padding: 8px 16px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .builder-title {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .builder-subtitle {
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    .builder-container {
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+      align-items: start;
+    }
+
+    /* Customizer Panel */
+    .customizer {
+      background: var(--bg-card);
+      border: 1px solid var(--border-primary);
+      border-radius: 20px;
+      padding: 28px;
+      position: sticky;
+      top: 80px;
+    }
+
+    .customizer-title {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .customizer-title svg {
+      width: 18px;
+      height: 18px;
+      color: var(--accent);
+    }
+
+    .field-group {
+      margin-bottom: 24px;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .field-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--bg-card-inner);
+      border: 1px solid var(--border-secondary);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 15px;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .field-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .field-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    /* Color Picker */
+    .color-options {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+    }
+
+    .color-option {
+      aspect-ratio: 1;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+      position: relative;
+    }
+
+    .color-option:hover {
+      transform: scale(1.1);
+    }
+
+    .color-option.active {
+      border-color: #fff;
+      box-shadow: 0 0 0 2px var(--bg-card), 0 0 20px var(--accent-glow);
+    }
+
+    .color-option.active::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+
+    .color-rainbow {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .color-rainbow::before {
+      content: '';
+      position: absolute;
+      inset: -50%;
+      background: conic-gradient(#ec4899, #8b5cf6, #3b82f6, #06b6d4, #eab308, #f97316, #ec4899);
+      animation: rainbowSpin 2s linear infinite;
+    }
+
+    @keyframes rainbowSpin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .color-rainbow span {
+      position: relative;
+      z-index: 1;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+
+    .color-rainbow.active::after {
+      content: none;
+    }
+
+    /* Theme Toggle */
+    .theme-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .theme-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 8px;
+      background: var(--bg-card-inner);
+      border: 1px solid var(--border-secondary);
+      border-radius: 10px;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .theme-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .theme-btn:hover {
+      border-color: var(--accent);
+      color: var(--text-primary);
+    }
+
+    .theme-btn.active {
+      background: var(--accent-glow);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Save Button */
+    .btn-save {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--bg-card-inner);
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .btn-save svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .btn-save:hover {
+      background: var(--accent);
+      color: #000;
+    }
+
+    .btn-save.saved {
+      background: var(--accent);
+      color: #000;
+    }
+
+    /* Preview Frame */
+    .preview-container {
+      position: relative;
+    }
+
+    .preview-badge {
+      position: absolute;
+      top: -12px;
+      left: 24px;
+      background: var(--accent);
+      color: #000;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .preview-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: #000;
+      border-radius: 50%;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .preview-frame {
+      background: var(--bg-card);
+      border: 3px solid var(--accent);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 
+        0 0 60px var(--accent-glow),
+        0 25px 50px rgba(0, 0, 0, 0.4);
+      transition: border-color 0.5s ease, box-shadow 0.5s ease;
+    }
+
+    .preview-frame iframe {
+      width: 100%;
+      height: 700px;
+      border: none;
+      display: block;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      padding: 80px 24px;
+      text-align: center;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border-primary);
+    }
+
+    .cta-card {
+      max-width: 600px;
+      margin: 0 auto;
+      background: linear-gradient(135deg, var(--accent-glow) 0%, rgba(59, 130, 246, 0.05) 100%);
+      border: 2px solid var(--accent);
+      border-radius: 24px;
+      padding: 48px;
+      transition: border-color 0.5s ease, background 0.5s ease;
+    }
+
+    .cta-hero-logo {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cta-hero-logo img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: none;
+    }
+
+    .cta-hero-logo img.visible {
+      display: block;
+    }
+
+    .cta-logo-fallback {
+      width: 64px;
+      height: 64px;
+      background: var(--accent);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.5s ease;
+    }
+
+    .cta-hero-logo img.visible + .cta-logo-fallback {
+      display: none;
+    }
+
+    .cta-logo-fallback svg {
+      width: 32px;
+      height: 32px;
+      color: #000;
+    }
+
+    .cta-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .cta-title span {
+      color: var(--accent);
+      transition: color 0.5s ease;
+    }
+
+    .cta-subtitle {
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+
+    .cta-price {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+
+    .cta-price-amount {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--accent);
+      transition: color 0.5s ease;
+    }
+
+    .cta-price-period {
+      font-size: 15px;
+      color: var(--text-muted);
+    }
+
+    .cta-features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .cta-feature {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .cta-feature svg {
+      width: 16px;
+      height: 16px;
+      color: var(--accent);
+      transition: color 0.5s ease;
+    }
+
+    .cta-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .cta-form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .cta-form input {
+      padding: 14px 16px;
+      background: var(--bg-card-inner);
+      border: 1px solid var(--border-secondary);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 15px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .cta-form input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .cta-submit {
+      padding: 18px;
+      background: var(--accent);
+      color: #000;
+      font-size: 15px;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease, background 0.5s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .cta-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px var(--accent-glow);
+    }
+
+    .cta-submit svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .cta-secure {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .cta-secure svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .builder-container {
+        grid-template-columns: 1fr;
+        max-width: 600px;
+      }
+
+      .customizer {
+        position: relative;
+        top: 0;
+      }
+
+      .preview-frame iframe {
+        height: 500px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .hero {
+        padding: 80px 20px 40px;
+      }
+
+      .hero-title {
+        font-size: 1.75rem;
+      }
+
+      .social-proof {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .builder-section {
+        padding: 40px 16px;
+      }
+
+      .customizer {
+        padding: 20px;
+      }
+
+      .color-options {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .theme-options {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .theme-btn {
+        padding: 10px 6px;
+        font-size: 10px;
+      }
+
+      .theme-btn svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .cta-form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .cta-card {
+        padding: 32px 20px;
+      }
+
+      .header {
+        padding: 12px 20px;
+      }
+
+      .header-logo svg {
+        width: 28px;
+        height: 28px;
+      }
+
+      .logo-text {
+        font-size: 0.95rem;
+      }
+
+      .header-nav {
+        gap: 20px;
+      }
+
+      .header-nav a {
+        font-size: 13px;
+      }
+    }
+
+    /* Payment Modal */
+    .payment-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .payment-modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .payment-modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+    }
+
+    .payment-modal-content {
+      position: relative;
+      background: var(--bg-card);
+      border: 2px solid var(--accent);
+      border-radius: 24px;
+      padding: 40px;
+      max-width: 480px;
+      width: 100%;
+      transform: scale(0.9) translateY(20px);
+      transition: all 0.3s ease, border-color 0.5s ease;
+      box-shadow: 0 0 60px var(--accent-glow);
+    }
+
+    .payment-modal.active .payment-modal-content {
+      transform: scale(1) translateY(0);
+    }
+
+    .payment-modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      background: var(--bg-card-inner);
+      border: 1px solid var(--border-secondary);
+      border-radius: 10px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .payment-modal-close:hover {
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .payment-modal-close svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .payment-branding {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .payment-branding img {
+      max-height: 48px;
+      max-width: 140px;
+      object-fit: contain;
+      display: none;
+    }
+
+    .payment-branding img.visible {
+      display: block;
+    }
+
+    .payment-branding span {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--accent);
+      transition: color 0.5s ease;
+    }
+
+    .payment-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-secondary), transparent);
+      margin-bottom: 24px;
+    }
+
+    .payment-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .payment-summary {
+      background: var(--bg-card-inner);
+      border: 1px solid var(--border-secondary);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .payment-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      color: var(--text-secondary);
+      font-size: 14px;
+      border-bottom: 1px solid var(--border-secondary);
+    }
+
+    .payment-item:last-of-type {
+      border-bottom: none;
+    }
+
+    .payment-included {
+      color: var(--accent);
+      font-weight: 600;
+      transition: color 0.5s ease;
+    }
+
+    .payment-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 12px;
+      margin-top: 8px;
+      border-top: 2px solid var(--accent);
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #fff;
+    }
+
+    .payment-total span:last-child {
+      color: var(--accent);
+      transition: color 0.5s ease;
+    }
+
+    .payment-config {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .payment-config-item {
+      flex: 1;
+      background: var(--bg-card-inner);
+      border: 1px solid var(--border-secondary);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .payment-config-label {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .payment-config-value {
+      font-weight: 600;
+      color: #fff;
+      text-transform: capitalize;
+    }
+
+    .payment-config-color {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      background: var(--accent);
+      border-radius: 6px;
+      transition: background 0.5s ease;
+    }
+
+    .payment-proceed {
+      width: 100%;
+      padding: 18px;
+      background: var(--accent);
+      color: #000;
+      font-size: 16px;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.3s ease, background 0.5s ease;
+    }
+
+    .payment-proceed:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px var(--accent-glow);
+    }
+
+    .payment-proceed svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .payment-stripe-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .payment-stripe-badge svg {
+      width: 14px;
+      height: 14px;
+      color: var(--accent);
+      transition: color 0.5s ease;
+    }
+
+    @media (max-width: 500px) {
+      .payment-modal-content {
+        padding: 24px;
+      }
+      
+      .payment-branding span {
+        font-size: 1.25rem;
+      }
+      
+      .payment-config {
+        flex-direction: column;
+        gap: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <a href="https://ables.ai/index.html" class="header-logo">
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
+        <circle cx="32" cy="32" r="12" fill="#eab308"/>
+        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
+        <circle class="orbiting-moon" cx="32" cy="32" r="4" fill="#a855f7"/>
+      </svg>
+      <span class="logo-text">Ables<span class="logo-ai">AI</span></span>
+    </a>
+    <nav class="header-nav">
+      <a href="https://ables.ai/index.html">Home</a>
+      <a href="https://ables.ai/calculator.html">Calculator</a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+      </svg>
+      Calculator Pro + Brand Kit
+    </div>
+    
+    <h1 class="hero-title">
+      Send approvals that <span>close themselves.</span>
+    </h1>
+    
+    <p class="hero-subtitle">
+      Your logo. Your colors. Professional calculators your clients actually want to use. Build yours in 60 seconds.
+    </p>
+    
+    <div class="hero-cta">
+      <a href="#builder" class="btn-primary">
+        Build Your Calculator
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+        </svg>
+      </a>
+      <p class="hero-note">No credit card required to preview</p>
+    </div>
+
+    <div class="social-proof">
+      <div class="proof-stat">
+        <strong>2,400+</strong>
+        <span>Offers Sent</span>
+      </div>
+      <div class="proof-stat">
+        <strong>34%</strong>
+        <span>Higher Close Rate</span>
+      </div>
+      <div class="proof-stat">
+        <strong>< 60s</strong>
+        <span>Setup Time</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Builder Section -->
+  <section class="builder-section" id="builder">
+    <div class="builder-header">
+      <div class="builder-step">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+          <path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+        </svg>
+        Step 1 of 2
+      </div>
+      <h2 class="builder-title">Customize Your Calculator</h2>
+      <p class="builder-subtitle">See changes instantly in the live preview</p>
+    </div>
+
+    <div class="builder-container">
+      <!-- Customizer Panel -->
+      <div class="customizer">
+        <div class="customizer-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          Brand Settings
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Company Name</label>
+          <input type="text" class="field-input" id="companyName" placeholder="Your Company LLC" value="">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Logo URL (optional)</label>
+          <input type="text" class="field-input" id="logoUrl" placeholder="https://yoursite.com/logo.png">
+        </div>
+
+        <button type="button" class="btn-save" id="saveBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 6L9 17l-5-5"/>
+          </svg>
+          Save & Preview
+        </button>
+
+        <div class="field-group">
+          <label class="field-label">Theme</label>
+          <div class="theme-options">
+            <button class="theme-btn" data-theme="light">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="5"/>
+                <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+              </svg>
+              Light
+            </button>
+            <button class="theme-btn" data-theme="dark">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              </svg>
+              Dark
+            </button>
+            <button class="theme-btn active" data-theme="black">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+              </svg>
+              Black
+            </button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Accent Color</label>
+          <div class="color-options">
+            <div class="color-option active" data-color="blue" style="background: #3b82f6;" title="Blue"></div>
+            <div class="color-option" data-color="purple" style="background: #8b5cf6;" title="Purple"></div>
+            <div class="color-option" data-color="orange" style="background: #f97316;" title="Orange"></div>
+            <div class="color-option" data-color="cyan" style="background: #06b6d4;" title="Cyan"></div>
+            <div class="color-option" data-color="gold" style="background: #eab308;" title="Gold"></div>
+            <div class="color-option" data-color="slate" style="background: #64748b;" title="Slate"></div>
+            <div class="color-option" data-color="pink" style="background: #ec4899;" title="Pink"></div>
+            <div class="color-option" data-color="indigo" style="background: #6366f1;" title="Indigo"></div>
+            <div class="color-option" data-color="red" style="background: #ef4444;" title="Red"></div>
+            <div class="color-option" data-color="amber" style="background: #f59e0b;" title="Amber"></div>
+            <div class="color-option color-rainbow" data-color="rainbow" title="Rainbow">
+              <span>∞</span>
+            </div>
+          </div>
+        </div>
+
+        <a href="#cta" class="btn-primary" style="width: 100%; justify-content: center; margin-top: 16px;">
+          Continue to Checkout
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+
+      <!-- Live Preview -->
+      <div class="preview-container">
+        <div class="preview-badge">Live Preview</div>
+        <div class="preview-frame">
+          <iframe id="previewFrame" src="about:blank" title="Calculator Pro Preview"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section" id="cta">
+    <div class="cta-card">
+      <div class="cta-hero-logo" id="ctaHeroLogo">
+        <img id="ctaLogoLarge" src="" alt="Logo">
+        <div class="cta-logo-fallback" id="ctaLogoFallback">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+        </div>
+      </div>
+      
+      <h3 class="cta-title">Launch <span id="ctaCompanyTitle">Your</span> Calculator</h3>
+      <p class="cta-subtitle">Start sending professional offers that convert today</p>
+      
+      <div class="cta-price">
+        <span class="cta-price-amount">$699</span>
+        <span class="cta-price-period">/month</span>
+      </div>
+
+      <div class="cta-features">
+        <span class="cta-feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+          Unlimited Offers
+        </span>
+        <span class="cta-feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+          Custom Branding
+        </span>
+        <span class="cta-feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+          10+ Loan Types
+        </span>
+        <span class="cta-feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+          Client Portal
+        </span>
+        <span class="cta-feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+          Shareable Links
+        </span>
+      </div>
+
+      <form class="cta-form" id="signupForm">
+        <input type="text" name="company" id="formCompany" placeholder="Company Name" required>
+        <div class="cta-form-row">
+          <input type="text" name="firstName" placeholder="First Name" required>
+          <input type="text" name="lastName" placeholder="Last Name" required>
+        </div>
+        <input type="email" name="email" placeholder="Email Address" required>
+        <button type="submit" class="cta-submit">
+          Continue to Payment
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </form>
+
+      <p class="cta-secure">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        Secure checkout powered by Stripe
+      </p>
+    </div>
+  </section>
+
+  <!-- Branded Payment Modal -->
+  <div class="payment-modal" id="paymentModal">
+    <div class="payment-modal-backdrop"></div>
+    <div class="payment-modal-content">
+      <button class="payment-modal-close" id="modalClose">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+      
+      <div class="payment-branding" id="paymentBranding">
+        <img id="paymentLogo" src="" alt="Logo">
+        <span id="paymentCompany">Your Company</span>
+      </div>
+      
+      <div class="payment-divider"></div>
+      
+      <h3 class="payment-title">Complete Your Order</h3>
+      
+      <div class="payment-summary">
+        <div class="payment-item">
+          <span>Calculator Pro Subscription</span>
+          <span>$699/mo</span>
+        </div>
+        <div class="payment-item">
+          <span>Custom Branding</span>
+          <span class="payment-included">Included</span>
+        </div>
+        <div class="payment-item">
+          <span>Unlimited Offers</span>
+          <span class="payment-included">Included</span>
+        </div>
+        <div class="payment-total">
+          <span>Total Today</span>
+          <span>$699.00</span>
+        </div>
+      </div>
+      
+      <div class="payment-config">
+        <div class="payment-config-item">
+          <span class="payment-config-label">Theme</span>
+          <span class="payment-config-value" id="paymentTheme">Black</span>
+        </div>
+        <div class="payment-config-item">
+          <span class="payment-config-label">Accent Color</span>
+          <span class="payment-config-color" id="paymentColor"></span>
+        </div>
+      </div>
+      
+      <button class="payment-proceed" id="proceedToStripe">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+          <line x1="1" y1="10" x2="23" y2="10"/>
+        </svg>
+        Proceed to Secure Checkout
+      </button>
+      
+      <p class="payment-stripe-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        256-bit SSL encryption · Powered by Stripe
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // Color definitions matching calculator (no greens)
+    const colors = {
+      blue: { accent: '#3b82f6', glow: 'rgba(59, 130, 246, 0.15)' },
+      purple: { accent: '#8b5cf6', glow: 'rgba(139, 92, 246, 0.15)' },
+      orange: { accent: '#f97316', glow: 'rgba(249, 115, 22, 0.15)' },
+      cyan: { accent: '#06b6d4', glow: 'rgba(6, 182, 212, 0.15)' },
+      gold: { accent: '#eab308', glow: 'rgba(234, 179, 8, 0.15)' },
+      slate: { accent: '#64748b', glow: 'rgba(100, 116, 139, 0.15)' },
+      pink: { accent: '#ec4899', glow: 'rgba(236, 72, 153, 0.15)' },
+      indigo: { accent: '#6366f1', glow: 'rgba(99, 102, 241, 0.15)' },
+      red: { accent: '#ef4444', glow: 'rgba(239, 68, 68, 0.15)' },
+      amber: { accent: '#f59e0b', glow: 'rgba(245, 158, 11, 0.15)' },
+      rainbow: { accent: '#8b5cf6', glow: 'rgba(139, 92, 246, 0.15)' }
+    };
+
+    const colorOrder = ['blue', 'purple', 'pink', 'orange', 'gold', 'cyan', 'indigo', 'red', 'amber'];
+    let currentColor = 'blue';
+    let currentTheme = 'black';
+    let colorRotationInterval = null;
+    let userSelectedColor = false;
+
+    // Rotate accent colors on the landing page
+    function startColorRotation() {
+      let colorIndex = 0;
+      colorRotationInterval = setInterval(() => {
+        if (userSelectedColor) return; // Stop if user picked a color
+        
+        colorIndex = (colorIndex + 1) % colorOrder.length;
+        const colorName = colorOrder[colorIndex];
+        const colorData = colors[colorName];
+        
+        document.documentElement.style.setProperty('--accent', colorData.accent);
+        document.documentElement.style.setProperty('--accent-glow', colorData.glow);
+      }, 2000);
+    }
+
+    // Start rotation on page load
+    startColorRotation();
+
+    // Update preview iframe
+    function updatePreview() {
+      const companyName = document.getElementById('companyName').value.trim();
+      const logoUrl = document.getElementById('logoUrl').value.trim();
+      
+      // Build client share link format
+      const config = {
+        c: "Your Client",
+        b: "Sample Business",
+        companyName: companyName || "Your Company",
+        logo: logoUrl || "",
+        accent: currentColor,
+        theme: currentTheme,
+        o: [{
+          t: "MCA",
+          a: 155000,
+          f: 1.28,
+          m: 10,
+          fr: "daily",
+          of: 2
+        }]
+      };
+      
+      // Encode config using LZString
+      const jsonStr = JSON.stringify(config);
+      const compressed = LZString.compressToEncodedURIComponent(jsonStr);
+      
+      const iframe = document.getElementById('previewFrame');
+      iframe.src = `https://ables.ai/calculator.html?d=${compressed}`;
+    }
+
+    // Color selection
+    document.querySelectorAll('.color-option').forEach(option => {
+      option.addEventListener('click', function() {
+        // Stop color rotation when user picks a color
+        userSelectedColor = true;
+        if (colorRotationInterval) {
+          clearInterval(colorRotationInterval);
+          colorRotationInterval = null;
+        }
+        
+        document.querySelectorAll('.color-option').forEach(o => o.classList.remove('active'));
+        this.classList.add('active');
+        currentColor = this.dataset.color;
+        
+        const colorData = colors[currentColor] || colors.blue;
+        document.documentElement.style.setProperty('--accent', colorData.accent);
+        document.documentElement.style.setProperty('--accent-glow', colorData.glow);
+        
+        updatePreview();
+        updateCtaBranding();
+      });
+    });
+
+    // Theme selection
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentTheme = this.dataset.theme;
+        updatePreview();
+      });
+    });
+
+    // Save button
+    document.getElementById('saveBtn').addEventListener('click', function() {
+      this.classList.add('saved');
+      this.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 6L9 17l-5-5"/>
+        </svg>
+        Saved!
+      `;
+      updatePreview();
+      updateCtaBranding();
+      
+      setTimeout(() => {
+        this.classList.remove('saved');
+        this.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 6L9 17l-5-5"/>
+          </svg>
+          Save & Preview
+        `;
+      }, 2000);
+    });
+
+    // Update CTA branding section
+    function updateCtaBranding() {
+      const companyName = document.getElementById('companyName').value.trim();
+      const logoUrl = document.getElementById('logoUrl').value.trim();
+      
+      const ctaLogoLarge = document.getElementById('ctaLogoLarge');
+      const ctaCompanyTitle = document.getElementById('ctaCompanyTitle');
+      const formCompany = document.getElementById('formCompany');
+      
+      // Update company name in title
+      if (companyName) {
+        ctaCompanyTitle.textContent = companyName + "'s";
+        formCompany.value = companyName;
+      } else {
+        ctaCompanyTitle.textContent = 'Your';
+      }
+      
+      // Update large logo
+      if (logoUrl) {
+        ctaLogoLarge.src = logoUrl;
+        ctaLogoLarge.classList.add('visible');
+        ctaLogoLarge.onerror = function() {
+          this.classList.remove('visible');
+        };
+      } else {
+        ctaLogoLarge.classList.remove('visible');
+      }
+    }
+
+    // Initialize preview
+    updatePreview();
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Form Submit - show branded modal
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      const companyName = document.getElementById('companyName').value.trim() || formData.get('company');
+      const logoUrl = document.getElementById('logoUrl').value.trim();
+      
+      // Store form data for Stripe redirect
+      window.pendingSignup = {
+        company: formData.get('company'),
+        firstName: formData.get('firstName'),
+        lastName: formData.get('lastName'),
+        email: formData.get('email'),
+        theme: currentTheme,
+        color: currentColor,
+        companyName: companyName,
+        logoUrl: logoUrl
+      };
+      
+      // Update modal branding
+      const paymentLogo = document.getElementById('paymentLogo');
+      const paymentCompany = document.getElementById('paymentCompany');
+      const paymentTheme = document.getElementById('paymentTheme');
+      
+      // Set company name
+      paymentCompany.textContent = companyName || 'Your Company';
+      
+      // Set logo
+      if (logoUrl) {
+        paymentLogo.src = logoUrl;
+        paymentLogo.classList.add('visible');
+        paymentLogo.onerror = function() {
+          this.classList.remove('visible');
+        };
+      } else {
+        paymentLogo.classList.remove('visible');
+      }
+      
+      // Set theme display
+      const themeNames = { light: 'Light', dark: 'Dark', black: 'Black (AMOLED)' };
+      paymentTheme.textContent = themeNames[currentTheme] || 'Black (AMOLED)';
+      
+      // Show modal
+      document.getElementById('paymentModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+
+    // Close modal
+    document.getElementById('modalClose').addEventListener('click', function() {
+      document.getElementById('paymentModal').classList.remove('active');
+      document.body.style.overflow = '';
+    });
+
+    document.querySelector('.payment-modal-backdrop').addEventListener('click', function() {
+      document.getElementById('paymentModal').classList.remove('active');
+      document.body.style.overflow = '';
+    });
+
+    // Escape key closes modal
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && document.getElementById('paymentModal').classList.contains('active')) {
+        document.getElementById('paymentModal').classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
+
+    // Proceed to Stripe
+    document.getElementById('proceedToStripe').addEventListener('click', function() {
+      const data = window.pendingSignup;
+      
+      // Save to localStorage
+      localStorage.setItem('calculatorProSignup', JSON.stringify({
+        ...data,
+        timestamp: Date.now()
+      }));
+      
+      // Redirect to Stripe with prefilled email
+      const stripeUrl = new URL('https://buy.stripe.com/eVqcN58RA6u3c6L7Y3bjW01');
+      stripeUrl.searchParams.set('prefilled_email', data.email);
+      
+      window.location.href = stripeUrl.toString();
+    });
+  </script>
+
+</body>
+</html>
