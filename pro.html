@@ -60,30 +60,73 @@
     body {
       background: var(--bg-body-gradient);
       min-height: 100vh;
+      font-size: 14px;
     }
+
+    /* ============================================
+       GLOBAL COMPACT OVERRIDES - DESKTOP NORMALIZED
+       ============================================ */
+    .p-6 { padding: 24px !important; }
+    .p-5 { padding: 20px !important; }
+    .p-4 { padding: 16px !important; }
+    .p-3 { padding: 12px !important; }
+    .p-2 { padding: 8px !important; }
+    
+    .px-6 { padding-left: 24px !important; padding-right: 24px !important; }
+    .px-4 { padding-left: 16px !important; padding-right: 16px !important; }
+    .py-6 { padding-top: 24px !important; padding-bottom: 24px !important; }
+    .py-4 { padding-top: 16px !important; padding-bottom: 16px !important; }
+    
+    .m-6 { margin: 24px !important; }
+    .m-4 { margin: 16px !important; }
+    .mx-6 { margin-left: 24px !important; margin-right: 24px !important; }
+    .my-6 { margin-top: 24px !important; margin-bottom: 24px !important; }
+    
+    .mb-6 { margin-bottom: 24px !important; }
+    .mb-5 { margin-bottom: 20px !important; }
+    .mb-4 { margin-bottom: 16px !important; }
+    .mb-3 { margin-bottom: 12px !important; }
+    .mb-2 { margin-bottom: 8px !important; }
+    
+    .mt-6 { margin-top: 24px !important; }
+    .mt-4 { margin-top: 16px !important; }
+    .mt-3 { margin-top: 12px !important; }
+    
+    .gap-6 { gap: 24px !important; }
+    .gap-5 { gap: 20px !important; }
+    .gap-4 { gap: 16px !important; }
+    .gap-3 { gap: 12px !important; }
+    .gap-2 { gap: 8px !important; }
+
+    .text-2xl { font-size: 24px !important; }
+    .text-xl { font-size: 20px !important; }
+    .text-lg { font-size: 18px !important; }
+    .text-base { font-size: 14px !important; }
+    .text-sm { font-size: 13px !important; }
+    .text-xs { font-size: 12px !important; }
 
     /* ============================================
        CARDS
        ============================================ */
     .card {
       background: var(--bg-card);
-      border-radius: 20px;
+      border-radius: 12px;
       border: 1px solid var(--border-secondary);
-      box-shadow: var(--shadow-md);
+      box-shadow: var(--shadow-sm);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
     }
 
     .card:hover {
-      box-shadow: var(--shadow-lg), 0 0 30px rgba(234, 179, 8, 0.08);
-      border-color: rgba(234, 179, 8, 0.2);
+      box-shadow: var(--shadow-md), 0 0 12px rgba(234, 179, 8, 0.05);
+      border-color: rgba(234, 179, 8, 0.12);
     }
     
     /* PRO Badge Styling */
     .pro-badge {
       background: var(--pro-gradient);
       color: #000;
-      font-size: 9px;
+      font-size: 14px;
       font-weight: 700;
       padding: 2px 6px;
       border-radius: 4px;
@@ -99,9 +142,9 @@
     .calc-result-preview::before {
       content: '';
       position: absolute;
-      inset: -2px;
-      background: linear-gradient(135deg, rgba(234, 179, 8, 0.3), rgba(245, 158, 11, 0.1), rgba(234, 179, 8, 0.3));
-      border-radius: 30px;
+      inset: -1px;
+      background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(245, 158, 11, 0.08), rgba(234, 179, 8, 0.2));
+      border-radius: 12px;
       z-index: -1;
       opacity: 0;
       transition: opacity 0.3s ease;
@@ -144,8 +187,8 @@
       flex-direction: row;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 10px 24px;
+      gap: 12px;
+      padding: 12px 24px;
       background: var(--bg-card);
       border-bottom: 1px solid var(--border-secondary);
       position: sticky;
@@ -154,20 +197,20 @@
     }
 
     .main-header svg:first-of-type {
-      width: 24px;
-      height: 24px;
+      width: 32px;
+      height: 32px;
     }
 
     .main-header h1 {
-      font-size: 16px;
-      font-weight: 800;
+      font-size: 18px;
+      font-weight: 700;
       letter-spacing: 0.02em;
       color: var(--text-primary);
     }
     
     .header-actions {
       position: absolute;
-      right: 16px;
+      right: 24px;
       top: 50%;
       transform: translateY(-50%);
       display: flex;
@@ -179,14 +222,20 @@
     .settings-btn {
       background: transparent;
       border: none;
-      padding: 4px;
+      padding: 8px;
       color: var(--text-muted);
       cursor: pointer;
       transition: all 0.2s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 4px;
+      border-radius: 6px;
+    }
+    
+    .info-btn svg,
+    .settings-btn svg {
+      width: 20px;
+      height: 20px;
     }
     
     .info-btn:hover,
@@ -197,8 +246,8 @@
     
     .info-btn svg,
     .settings-btn svg {
-      width: 14px;
-      height: 14px;
+      width: 20px;
+      height: 20px;
     }
     
     #themeToggleBtn {
@@ -244,10 +293,10 @@
 
     .settings-modal {
       background: var(--bg-card);
-      border-radius: 16px;
-      width: 100%;
-      max-width: 480px;
-      max-height: 90vh;
+      border-radius: 12px;
+      width: calc(100% - 32px);
+      max-width: 420px;
+      max-height: 80vh;
       overflow-y: auto;
       border: 1px solid var(--border-secondary);
     }
@@ -256,8 +305,12 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 16px;
+      padding: 16px 20px;
       border-bottom: 1px solid var(--border-secondary);
+      position: sticky;
+      top: 0;
+      background: var(--bg-card);
+      z-index: 10;
     }
 
     .settings-header h2 {
@@ -271,7 +324,7 @@
       border: none;
       color: var(--text-muted);
       cursor: pointer;
-      padding: 4px;
+      padding: 8px;
     }
 
     .settings-close:hover {
@@ -279,11 +332,11 @@
     }
 
     .settings-body {
-      padding: 12px;
+      padding: 16px 20px;
     }
 
     .settings-section {
-      margin-bottom: 12px;
+      margin-bottom: 20px;
     }
 
     .settings-section:last-child {
@@ -296,16 +349,16 @@
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: var(--text-muted);
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
 
     .settings-subsection-title {
       font-size: 10px;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.03em;
       color: var(--accent);
-      margin: 10px 0 6px 0;
+      margin: 16px 0 8px 0;
       padding-bottom: 4px;
       border-bottom: 1px solid rgba(212, 175, 55, 0.2);
     }
@@ -318,7 +371,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
 
     .settings-section-header .settings-section-title {
@@ -347,9 +400,9 @@
     .mode-toggle {
       position: relative;
       width: 36px;
-      height: 18px;
+      height: 20px;
       background: var(--bg-main);
-      border-radius: 9px;
+      border-radius: 10px;
       cursor: pointer;
       transition: background 0.2s ease;
       border: 1px solid var(--border-secondary);
@@ -364,15 +417,15 @@
       position: absolute;
       top: 2px;
       left: 2px;
-      width: 12px;
-      height: 12px;
+      width: 14px;
+      height: 14px;
       background: var(--text-primary);
       border-radius: 50%;
       transition: transform 0.2s ease;
     }
 
     .mode-toggle.advanced .mode-toggle-knob {
-      transform: translateX(18px);
+      transform: translateX(16px);
       background: #0a0a0f;
     }
 
@@ -385,27 +438,27 @@
     }
 
     .simple-mode-desc {
-      font-size: 11px;
+      font-size: 12px;
       color: var(--text-muted);
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       line-height: 1.4;
     }
 
     .preset-buttons {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      margin-bottom: 12px;
+      gap: 8px;
+      margin-bottom: 16px;
     }
 
     .preset-btn {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 8px 6px;
+      padding: 12px 8px;
       background: var(--bg-card-inner);
-      border: 2px solid var(--border-secondary);
-      border-radius: 6px;
+      border: 1px solid var(--border-secondary);
+      border-radius: 8px;
       cursor: pointer;
       transition: all 0.2s ease;
       text-align: center;
@@ -419,19 +472,18 @@
     .preset-btn.active {
       border-color: var(--accent);
       background: rgba(212, 175, 55, 0.1);
-      box-shadow: 0 0 0 1px var(--accent);
     }
 
     .preset-icon {
-      width: 22px;
-      height: 22px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 10px;
       font-weight: 700;
-      margin-bottom: 3px;
+      margin-bottom: 6px;
       color: #0a0a0f;
     }
 
@@ -476,30 +528,30 @@
     }
 
     .quick-preset-btn .preset-icon {
-      width: 24px;
-      height: 24px;
-      font-size: 9px;
+      width: 20px;
+      height: 20px;
+      font-size: 10px;
       margin-bottom: 0;
-      margin-right: 6px;
+      margin-right: 8px;
       display: inline-flex;
     }
 
     .preset-name {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 600;
       color: var(--text-primary);
-      margin-bottom: 1px;
+      margin-bottom: 2px;
     }
 
     .preset-desc {
-      font-size: 8px;
+      font-size: 10px;
       color: var(--text-muted);
-      line-height: 1.2;
+      line-height: 1.3;
     }
 
     .simple-slider-group {
       border-top: 1px solid var(--border-secondary);
-      padding-top: 8px;
+      padding-top: 12px;
     }
 
     .weight-total-indicator {
@@ -507,8 +559,8 @@
       align-items: center;
       justify-content: flex-end;
       gap: 6px;
-      margin-bottom: 6px;
-      font-size: 11px;
+      margin-bottom: 8px;
+      font-size: 12px;
       color: var(--text-muted);
     }
 
@@ -529,10 +581,10 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 8px 12px;
+      padding: 10px 12px;
       background: var(--bg-card-inner);
       border-radius: 6px;
-      margin-bottom: 4px;
+      margin-bottom: 8px;
     }
 
     .settings-row:last-child {
@@ -540,15 +592,15 @@
     }
 
     .settings-row-label {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 500;
       color: var(--text-primary);
     }
 
     .settings-row-desc {
-      font-size: 10px;
+      font-size: 11px;
       color: var(--text-muted);
-      margin-top: 1px;
+      margin-top: 2px;
     }
 
     /* Toggle Switch */
@@ -584,41 +636,41 @@
 
     /* Model Adjustment Sliders */
     .model-slider-row {
-      padding: 6px 10px;
+      padding: 10px 12px;
       background: var(--bg-card-inner);
       border-radius: 6px;
-      margin-bottom: 3px;
+      margin-bottom: 8px;
     }
 
     .model-slider-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 2px;
-      gap: 8px;
+      margin-bottom: 6px;
+      gap: 12px;
     }
 
     .model-slider-label {
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 600;
       color: var(--text-primary);
       flex: 1;
     }
 
     .model-slider-value {
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 700;
       color: var(--accent);
-      min-width: 60px;
+      min-width: 40px;
       text-align: right;
       flex-shrink: 0;
       white-space: nowrap;
     }
 
     .model-slider-desc {
-      font-size: 9px;
+      font-size: 11px;
       color: var(--text-muted);
-      margin-bottom: 3px;
+      margin-bottom: 8px;
     }
 
     .model-slider-input {
@@ -627,7 +679,7 @@
       -webkit-appearance: none;
       appearance: none;
       background: #4a4a4a;
-      border: 1px solid #666;
+      border: 1px solid #555;
       border-radius: 3px;
       outline: none;
     }
@@ -635,36 +687,36 @@
     .model-slider-input::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
       background: var(--accent);
       border: 2px solid #fff;
       border-radius: 50%;
       cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
 
     .model-slider-input::-moz-range-thumb {
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
       background: var(--accent);
       border: 2px solid #fff;
       border-radius: 50%;
       cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
 
     .settings-reset-btn {
       width: 100%;
-      padding: 8px;
+      padding: 12px;
       background: var(--bg-card-inner);
       border: 1px solid var(--border-secondary);
-      border-radius: 6px;
+      border-radius: 8px;
       color: var(--text-muted);
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 600;
       cursor: pointer;
-      margin-top: 8px;
+      margin-top: 16px;
       transition: all 0.2s ease;
     }
 
@@ -1006,10 +1058,17 @@
       background: var(--bg-card);
       border-bottom: 1px solid var(--border-secondary);
       position: sticky;
-      top: 45px;
+      top: 56px;
       z-index: 99;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
     }
+    .tab-nav::-webkit-scrollbar { display: none; }
 
+    /* ============================================
+       RESPONSIVE DESIGN - MOBILE FIRST
+       ============================================ */
     @media (max-width: 768px) {
       .tab-nav {
         position: fixed;
@@ -1020,16 +1079,261 @@
         border-bottom: none;
         border-top: 1px solid var(--border-secondary);
         box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+        z-index: 100;
+      }
+      
+      .tab-btn {
+        padding: 12px 8px;
+        font-size: 10px;
+        letter-spacing: 0.04em;
       }
       
       .tab-btn.active::before {
         top: auto;
         bottom: 0;
         border-radius: 3px 3px 0 0;
+        height: 3px;
       }
       
       body {
-        padding-bottom: 60px;
+        padding-bottom: 56px;
+      }
+      
+      .main-header {
+        padding: 8px 12px;
+        gap: 6px;
+      }
+      
+      .main-header svg:first-of-type {
+        width: 20px;
+        height: 20px;
+      }
+      
+      .main-header h1 {
+        font-size: 13px;
+      }
+      
+      .header-actions {
+        right: 8px;
+        gap: 6px;
+      }
+      
+      #themeToggleBtn svg {
+        width: 14px;
+        height: 14px;
+      }
+      
+      /* Main content padding */
+      .p-6 {
+        padding: 12px !important;
+      }
+      
+      .p-4 {
+        padding: 10px !important;
+      }
+      
+      .p-3 {
+        padding: 8px !important;
+      }
+      
+      .mx-6 {
+        margin-left: 8px !important;
+        margin-right: 8px !important;
+      }
+      
+      .mb-6 {
+        margin-bottom: 12px !important;
+      }
+      
+      .mb-4 {
+        margin-bottom: 10px !important;
+      }
+      
+      .gap-6 {
+        gap: 12px !important;
+      }
+      
+      .gap-4 {
+        gap: 8px !important;
+      }
+      
+      .gap-3 {
+        gap: 6px !important;
+      }
+      
+      /* Cards */
+      .card {
+        border-radius: 12px;
+      }
+      
+      /* Section titles */
+      .section-title {
+        font-size: 10px;
+      }
+      
+      .section-indicator {
+        width: 3px;
+        height: 18px;
+      }
+      
+      /* Sliders */
+      .slider {
+        height: 6px;
+      }
+      
+      .slider::-webkit-slider-thumb {
+        width: 20px;
+        height: 20px;
+        margin-top: -7px;
+      }
+      
+      .slider::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+      }
+      
+      /* Offer cards - stack on mobile */
+      .offer-scenarios {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+      }
+      
+      .offer-card {
+        padding: 12px !important;
+      }
+      
+      .offer-amount {
+        font-size: 20px !important;
+      }
+      
+      .offer-detail {
+        font-size: 11px !important;
+      }
+      
+      /* Inputs */
+      .editable-value {
+        font-size: 1.25rem;
+      }
+      
+      /* Grid layouts */
+      .grid-cols-3 {
+        grid-template-columns: 1fr !important;
+      }
+      
+      .lg\\:grid-cols-3 {
+        grid-template-columns: 1fr !important;
+      }
+      
+      .grid-cols-2 {
+        grid-template-columns: 1fr !important;
+      }
+      
+      /* Risk indicators - vertical stack */
+      #calcRiskIndicators,
+      #overrideRiskIndicators {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+      }
+      
+      #calcRiskIndicators > div,
+      #overrideRiskIndicators > div {
+        border-right: none !important;
+        padding-right: 0 !important;
+      }
+      
+      /* Font sizes */
+      h1, .text-2xl {
+        font-size: 18px !important;
+      }
+      
+      h2, .text-xl {
+        font-size: 16px !important;
+      }
+      
+      h3, .text-lg {
+        font-size: 14px !important;
+      }
+      
+      .text-base {
+        font-size: 13px !important;
+      }
+      
+      .text-sm {
+        font-size: 11px !important;
+      }
+      
+      .text-xs {
+        font-size: 10px !important;
+      }
+      
+      /* Analytics grid */
+      .analytics-grid {
+        grid-template-columns: 1fr !important;
+      }
+      
+      /* Gauge scaling */
+      .gauge-container {
+        transform: scale(0.6) !important;
+        margin-bottom: -25px !important;
+      }
+      
+      /* Settings modal */
+      .settings-modal {
+        width: calc(100% - 16px);
+        max-height: 80vh;
+        margin: 8px;
+      }
+      
+      .settings-overlay {
+        padding: 8px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .tab-btn {
+        padding: 10px 4px;
+        font-size: 14px;
+      }
+      
+      .main-header h1 {
+        font-size: 12px;
+      }
+      
+      .p-6 {
+        padding: 8px !important;
+      }
+      
+      .offer-scenarios {
+        gap: 6px !important;
+      }
+      
+      .offer-card {
+        padding: 10px !important;
+      }
+      
+      .offer-amount {
+        font-size: 18px !important;
+      }
+      
+      .gauge-container {
+        transform: scale(0.5) !important;
+        margin-bottom: -35px !important;
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .tab-btn {
+        padding: 16px 16px;
+        font-size: 11px;
+      }
+      
+      .offer-scenarios {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+      
+      .grid-cols-3 {
+        grid-template-columns: repeat(2, 1fr) !important;
       }
     }
 
@@ -1041,17 +1345,19 @@
     }
 
     .tab-btn {
-      flex: 1;
-      padding: 20px 28px;
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
+      flex: 1 0 auto;
+      min-width: fit-content;
+      padding: 12px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
       color: var(--text-muted);
       background: transparent;
       border: none;
       cursor: pointer;
       transition: all 0.2s;
       position: relative;
+      white-space: nowrap;
     }
 
     .tab-btn:hover:not(.active) {
@@ -1069,7 +1375,7 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 4px;
+      height: 3px;
       background: linear-gradient(90deg, #eab308, #fde047);
       border-radius: 0 0 3px 3px;
     }
@@ -1077,10 +1383,10 @@
     /* PRO badge inline */
     .tab-btn.tab-pro::after {
       content: 'PRO';
-      font-size: 9px;
+      font-size: 13px;
       font-weight: 800;
-      margin-left: 8px;
-      padding: 3px 6px;
+      margin-left: 6px;
+      padding: 2px 4px;
       background: linear-gradient(135deg, #eab308, #f59e0b);
       color: #000;
       border-radius: 3px;
@@ -1099,17 +1405,17 @@
        SECTION LABELS
        ============================================ */
     .section-indicator {
-      width: 4px;
-      height: 24px;
+      width: 3px;
+      height: 16px;
       background: linear-gradient(180deg, var(--accent), var(--accent-light));
-      border-radius: 4px;
+      border-radius: 2px;
     }
 
     .section-title {
-      font-size: 11px;
-      font-weight: 800;
+      font-size: 12px;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.05em;
       color: var(--text-secondary);
     }
 
@@ -1119,7 +1425,7 @@
     .slider {
       -webkit-appearance: none;
       appearance: none;
-      height: 8px;
+      height: 6px;
       background: var(--slider-track);
       border-radius: 999px;
       outline: none;
@@ -1129,7 +1435,7 @@
     }
 
     .slider::-webkit-slider-runnable-track {
-      height: 8px;
+      height: 6px;
       background: var(--slider-track);
       border-radius: 999px;
     }
@@ -1137,40 +1443,37 @@
     .slider::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      height: 24px;
-      width: 24px;
+      height: 18px;
+      width: 18px;
       border-radius: 50%;
       background: white;
-      border: 3px solid var(--accent);
+      border: 2px solid var(--accent);
       cursor: grab;
-      box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.4), 0 2px 8px rgba(0,0,0,0.12);
-      transition: all 0.15s ease, border-color 1.5s ease, box-shadow 1.5s ease;
-      margin-top: -8px;
+      box-shadow: 0 0 1px rgba(var(--accent-rgb), 0.3);
+      transition: all 0.15s ease;
+      margin-top: -2px;
     }
 
     .slider::-webkit-slider-thumb:hover {
       transform: scale(1.1);
-      box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.5), 0 4px 12px rgba(0,0,0,0.15);
     }
 
     .slider::-webkit-slider-thumb:active {
       cursor: grabbing;
-      transform: scale(1.05);
     }
 
     .slider::-moz-range-thumb {
-      height: 24px;
-      width: 24px;
+      height: 6px;
+      width: 6px;
       border-radius: 50%;
       background: white;
-      border: 3px solid var(--accent);
+      border: 1px solid var(--accent);
       cursor: grab;
-      box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.4), 0 2px 8px rgba(0,0,0,0.12);
-      transition: all 0.15s ease, border-color 1.5s ease, box-shadow 1.5s ease;
+      box-shadow: 0 0 1px rgba(var(--accent-rgb), 0.3);
     }
 
     .slider::-moz-range-track {
-      height: 8px;
+      height: 2px;
       background: var(--slider-track);
       border-radius: 999px;
     }
@@ -1181,16 +1484,16 @@
     .editable-value {
       background: transparent;
       border: none;
-      border-bottom: 2px solid transparent;
-      font-size: 1.5rem;
-      font-weight: 800;
+      border-bottom: 1px solid transparent;
+      font-size: 0.5rem;
+      font-weight: 700;
       color: var(--text-primary);
       outline: none;
       padding: 0;
       margin: 0;
       width: auto;
-      min-width: 60px;
-      max-width: 150px;
+      min-width: 18px;
+      max-width: 45px;
       cursor: text;
       transition: border-color 0.2s ease;
     }
@@ -1212,26 +1515,21 @@
        ============================================ */
     .calc-result-preview {
       background: var(--bg-card);
-      border-radius: 20px;
-      border: 3px solid var(--accent);
+      border-radius: 3px;
+      border: 1px solid var(--accent);
       width: 100%;
-      box-shadow: 
-        0 0 30px rgba(var(--accent-rgb), 0.2),
-        0 0 60px rgba(var(--accent-rgb), 0.08);
+      box-shadow: 0 0 4px rgba(var(--accent-rgb), 0.06);
       overflow: hidden;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.3s ease;
     }
 
     .calc-result-preview:hover {
-      transform: translateY(-2px);
-      box-shadow: 
-        0 0 40px rgba(var(--accent-rgb), 0.25),
-        0 0 80px rgba(var(--accent-rgb), 0.12);
+      box-shadow: 0 0 6px rgba(var(--accent-rgb), 0.1);
     }
 
     .calc-preview-header {
       background: var(--preview-header-bg);
-      padding: 32px 24px;
+      padding: 16px 12px;
       text-align: center;
       position: relative;
     }
@@ -1250,13 +1548,13 @@
       font-size: 10px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.1em;
       color: var(--text-muted);
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
 
     .calc-preview-amount {
-      font-size: clamp(2rem, 6vw, 2.75rem);
+      font-size: clamp(1.5rem, 4vw, 2rem);
       font-weight: 800;
       letter-spacing: -0.03em;
       background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 100%);
@@ -1272,7 +1570,7 @@
     }
 
     .calc-stat-cell {
-      padding: 20px 16px;
+      padding: 12px 8px;
       text-align: center;
       border-bottom: 1px solid var(--border-secondary);
     }
@@ -1282,17 +1580,17 @@
     }
 
     .calc-stat-label {
-      font-size: 9px;
+      font-size: 10px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.04em;
       color: var(--text-muted);
       display: block;
       margin-bottom: 4px;
     }
 
     .calc-stat-value {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 800;
       color: var(--text-primary);
     }
@@ -1302,7 +1600,7 @@
     }
 
     .calc-payment-display {
-      padding: 32px 24px;
+      padding: 12px 8px;
       text-align: center;
       background: var(--bg-card);
     }
@@ -1311,13 +1609,13 @@
       font-size: 10px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.08em;
       color: var(--text-muted);
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
 
     .calc-payment-amount {
-      font-size: 2.25rem;
+      font-size: 1.25rem;
       font-weight: 800;
       color: var(--text-primary);
     }
@@ -1336,9 +1634,9 @@
     .score-panel {
       background: var(--bg-option-card);
       border: 1px solid var(--border-secondary);
-      border-radius: 16px;
+      border-radius: 8px;
       overflow: hidden;
-      margin-bottom: 24px;
+      margin-bottom: 12px;
     }
     
     /* Mobile score section - hidden on desktop */
@@ -1347,32 +1645,32 @@
     }
 
     .score-header {
-      padding: 16px 20px;
+      padding: 12px 16px;
       border-bottom: 1px solid var(--border-secondary);
     }
 
     .score-body {
-      padding: 16px 20px;
+      padding: 12px 16px;
     }
 
     .breakdown-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
 
     .breakdown-bar-track {
-      width: 96px;
-      height: 8px;
+      width: 60px;
+      height: 4px;
       background: var(--bg-input);
-      border-radius: 4px;
+      border-radius: 2px;
       overflow: hidden;
     }
 
     .breakdown-bar-fill {
       height: 100%;
-      border-radius: 4px;
+      border-radius: 2px;
       transition: width 0.4s ease;
     }
 
@@ -1381,16 +1679,16 @@
        ============================================ */
     .tier-scale {
       display: flex;
-      border-radius: 8px;
+      border-radius: 4px;
       overflow: hidden;
-      margin-top: 16px;
+      margin-top: 8px;
     }
 
     .tier-seg {
       flex: 1;
-      padding: 8px 4px;
+      padding: 6px 4px;
       text-align: center;
-      font-size: 10px;
+      font-size: 14px;
       font-weight: 700;
       color: rgba(0,0,0,0.8);
     }
@@ -1407,8 +1705,8 @@
     .declined-card {
       background: rgba(239, 68, 68, 0.1);
       border: 1px solid rgba(239, 68, 68, 0.3);
-      border-radius: 16px;
-      padding: 32px;
+      border-radius: 3px;
+      padding: 4px;
       text-align: center;
     }
 
@@ -1418,45 +1716,45 @@
     .model-container {
       max-width: 900px;
       margin: 0 auto;
-      padding: 40px 24px;
+      padding: 4px 3px;
     }
 
     .model-card {
       background: var(--bg-card);
-      border-radius: 20px;
+      border-radius: 10px;
       border: 1px solid var(--border-secondary);
       overflow: hidden;
-      margin-bottom: 24px;
+      margin-bottom: 16px;
     }
 
     .model-card-header {
-      padding: 16px 20px;
+      padding: 12px 16px;
       border-bottom: 1px solid var(--border-secondary);
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
     .model-card-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 800;
       color: #000;
     }
 
     .model-card-body {
-      padding: 20px;
+      padding: 16px;
     }
 
     .tier-table-row {
       display: flex;
       align-items: center;
-      padding: 12px 0;
+      padding: 8px 0;
       border-bottom: 1px solid var(--border-secondary);
     }
 
@@ -1465,23 +1763,23 @@
     }
 
     .tier-badge {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 800;
       color: #000;
-      margin-right: 16px;
+      margin-right: 12px;
       flex-shrink: 0;
     }
 
     .donut-section {
       display: flex;
       align-items: center;
-      gap: 32px;
+      gap: 4px;
       flex-wrap: wrap;
     }
 
@@ -1840,7 +2138,7 @@
       top: -18px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 9px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--text-muted);
       white-space: nowrap;
@@ -1944,7 +2242,7 @@
     }
 
     .pd-scale-item {
-      font-size: 9px;
+      font-size: 14px;
       font-weight: 600;
       text-transform: uppercase;
     }
@@ -2245,7 +2543,7 @@
       }
       
       .modal-tier-label {
-        font-size: 8px;
+        font-size: 13px;
         font-weight: 700;
         color: var(--text-muted);
         text-transform: uppercase;
@@ -2259,7 +2557,7 @@
       }
       
       .modal-score-label {
-        font-size: 9px;
+        font-size: 14px;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -2320,7 +2618,7 @@
         display: flex;
         justify-content: space-between;
         margin-top: 6px;
-        font-size: 9px;
+        font-size: 14px;
         font-weight: 700;
       }
       
@@ -2335,7 +2633,7 @@
       }
       
       .modal-section-label {
-        font-size: 9px;
+        font-size: 14px;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 1px;
@@ -2352,7 +2650,7 @@
       }
       
       .slider-cell.offer-term-cell label {
-        font-size: 8px !important;
+        font-size: 13px !important;
         margin-bottom: 4px !important;
       }
       
@@ -2432,7 +2730,7 @@
       }
       
       .modal-pd-text {
-        font-size: 8px;
+        font-size: 13px;
         font-weight: 700;
         text-transform: uppercase;
         color: var(--text-muted);
@@ -2464,7 +2762,7 @@
       }
       
       .modal-dscr-mini-fill span {
-        font-size: 8px;
+        font-size: 13px;
         font-weight: 800;
         color: #000;
       }
@@ -2482,7 +2780,7 @@
       }
       
       .modal-dscr-text {
-        font-size: 8px;
+        font-size: 13px;
         font-weight: 700;
         text-transform: uppercase;
         color: var(--text-muted);
@@ -2515,7 +2813,7 @@
         display: flex;
         justify-content: space-between;
         margin-top: 6px;
-        font-size: 8px;
+        font-size: 13px;
         font-weight: 700;
       }
       
@@ -2576,7 +2874,7 @@
       }
       
       .slider-modal .slider-cell label {
-        font-size: 8px !important;
+        font-size: 13px !important;
         margin-bottom: 4px !important;
         display: block;
         color: var(--text-muted);
@@ -2613,7 +2911,7 @@
       }
       
       .slider-modal .toggle-section label {
-        font-size: 8px;
+        font-size: 13px;
         color: var(--text-muted);
         text-transform: uppercase;
         font-weight: 700;
@@ -2653,7 +2951,7 @@
       }
       
       #modalOverrideContent .toggle-section label {
-        font-size: 8px;
+        font-size: 13px;
         color: var(--text-muted);
         text-transform: uppercase;
         font-weight: 700;
@@ -2769,7 +3067,7 @@
     .pro-badge-sm {
       background: linear-gradient(135deg, #eab308, #f59e0b);
       color: #000;
-      font-size: 7px;
+      font-size: 13px;
       font-weight: 700;
       padding: 1px 4px;
       border-radius: 3px;
@@ -3010,21 +3308,20 @@
     .offer-scenarios {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
+      gap: 3px;
     }
     
     .offer-card {
       background: var(--bg-option-card);
-      border: 2px solid var(--border-secondary);
-      border-radius: 16px;
-      padding: 20px;
+      border: 1px solid var(--border-secondary);
+      border-radius: 3px;
+      padding: 4px;
       transition: all 0.2s ease;
       cursor: pointer;
     }
     
     .offer-card:hover {
       border-color: var(--accent);
-      transform: translateY(-2px);
     }
     
     .offer-card.recommended {
@@ -3036,7 +3333,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 8px;
     }
     
     .offer-type {
@@ -3048,9 +3345,9 @@
     }
     
     .offer-badge {
-      font-size: 9px;
+      font-size: 14px;
       font-weight: 700;
-      padding: 3px 8px;
+      padding: 3px 6px;
       border-radius: 4px;
       text-transform: uppercase;
     }
@@ -3060,7 +3357,7 @@
     .offer-badge.aggressive { background: #ef4444; color: #fff; }
     
     .offer-amount {
-      font-size: 28px;
+      font-size: 20px;
       font-weight: 800;
       color: var(--text-primary);
       margin-bottom: 4px;
@@ -3078,11 +3375,11 @@
     }
     
     #calcOfferScenariosCard .offer-card {
-      padding: 14px;
-      border-radius: 12px;
+      padding: 12px;
+      border-radius: 8px;
     }
     #calcOfferScenariosCard .offer-amount {
-      font-size: 24px;
+      font-size: 18px;
     }
     #calcOfferScenariosCard .offer-detail {
       font-size: 11px;
@@ -3091,25 +3388,25 @@
       font-size: 10px;
     }
     #calcOfferScenariosCard .offer-badge {
-      font-size: 9px;
-      padding: 3px 8px;
+      font-size: 14px;
+      padding: 3px 6px;
     }
     #calcOfferScenariosCard .offer-expanded {
       margin-top: 10px;
-      padding-top: 8px;
+      padding-top: 10px;
     }
     #calcOfferScenariosCard .offer-expanded-row {
-      padding: 5px 0;
+      padding: 4px 0;
     }
     #calcOfferScenariosCard .offer-expanded-label {
-      font-size: 9px;
+      font-size: 11px;
     }
     #calcOfferScenariosCard .offer-expanded-value {
-      font-size: 11px;
+      font-size: 12px;
     }
     #calcOfferScenariosCard .offer-load-btn {
       padding: 8px 12px;
-      font-size: 10px;
+      font-size: 11px;
       margin-top: 8px;
     }
     
@@ -3119,11 +3416,11 @@
     }
     
     #offerScenariosCard .offer-card {
-      padding: 14px;
-      border-radius: 12px;
+      padding: 12px;
+      border-radius: 8px;
     }
     #offerScenariosCard .offer-amount {
-      font-size: 24px;
+      font-size: 18px;
     }
     #offerScenariosCard .offer-detail {
       font-size: 11px;
@@ -3132,43 +3429,43 @@
       font-size: 10px;
     }
     #offerScenariosCard .offer-badge {
-      font-size: 9px;
-      padding: 3px 8px;
+      font-size: 14px;
+      padding: 3px 6px;
     }
     #offerScenariosCard .offer-expanded {
-      margin-top: 10px;
-      padding-top: 8px;
+      margin-top: 12px;
+      padding-top: 10px;
     }
     #offerScenariosCard .offer-expanded-row {
-      padding: 5px 0;
+      padding: 6px 0;
     }
     #offerScenariosCard .offer-expanded-label {
-      font-size: 9px;
+      font-size: 12px;
     }
     #offerScenariosCard .offer-expanded-value {
-      font-size: 11px;
+      font-size: 14px;
     }
     #offerScenariosCard .offer-load-btn {
-      padding: 8px 12px;
-      font-size: 10px;
-      margin-top: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      margin-top: 10px;
     }
     
     /* Selected offer card state */
     .offer-card.selected {
       border-color: var(--accent) !important;
-      box-shadow: 0 0 0 3px rgba(234,179,8,0.3), 0 8px 24px rgba(0,0,0,0.3);
-      transform: translateY(-4px);
+      box-shadow: 0 0 0 2px rgba(234,179,8,0.3), 0 4px 12px rgba(0,0,0,0.2);
+      transform: translateY(-2px);
     }
     
     .offer-card.selected.conservative-selected {
       border-color: #3b82f6 !important;
-      box-shadow: 0 0 0 3px rgba(59,130,246,0.3), 0 8px 24px rgba(0,0,0,0.3);
+      box-shadow: 0 0 0 2px rgba(59,130,246,0.3), 0 4px 12px rgba(0,0,0,0.2);
     }
     
     .offer-card.selected.aggressive-selected {
       border-color: #ef4444 !important;
-      box-shadow: 0 0 0 3px rgba(239,68,68,0.3), 0 8px 24px rgba(0,0,0,0.3);
+      box-shadow: 0 0 0 2px rgba(239,68,68,0.3), 0 4px 12px rgba(0,0,0,0.2);
     }
     
     /* Expanded offer card content - always visible */
@@ -4012,7 +4309,7 @@ button{ -webkit-tap-highlight-color: transparent; }
   padding: 8px 12px;
   background: var(--bg-input);
   border-top: 1px solid var(--border-subtle);
-  font-size: 9px;
+  font-size: 14px;
   color: var(--text-muted);
 }
 .analytics-card-footer svg { color: var(--text-muted); }
@@ -4024,7 +4321,7 @@ button{ -webkit-tap-highlight-color: transparent; }
 .analytics-card-stats > div {
   display: flex;
   justify-content: space-between;
-  font-size: 9px;
+  font-size: 14px;
 }
 .analytics-card-stats .stat-label { color: var(--text-muted); }
 .analytics-card-stats .stat-value { color: var(--text-primary); font-weight: 600; }
@@ -4117,7 +4414,7 @@ button{ -webkit-tap-highlight-color: transparent; }
     overflow-y: auto;
 }
 .analytics-sidenav-title {
-    font-size: 9px;
+    font-size: 14px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -4224,13 +4521,13 @@ body.light-theme .analytics-modal-header {
 .tornado-pos { background: #10b981; border-radius: 0 2px 2px 0; }
 .analytics-mini-bars { display: flex; flex-direction: column; gap: 6px; }
 .mini-bar-row { display: flex; align-items: center; gap: 6px; }
-.mini-bar-label { font-size: 8px; color: var(--text-muted); width: 40px; }
+.mini-bar-label { font-size: 13px; color: var(--text-muted); width: 40px; }
 .mini-bar-track { flex: 1; height: 6px; background: var(--bg-input); border-radius: 3px; position: relative; }
 .mini-bar-fill { height: 100%; background: var(--accent); border-radius: 3px; }
 .mini-bar-avg { position: absolute; top: -2px; width: 2px; height: 10px; background: var(--text-muted); }
 .analytics-mini-stack { display: flex; flex-direction: column; gap: 6px; }
 .stack-position { display: flex; align-items: center; gap: 8px; }
-.stack-badge { font-size: 8px; font-weight: 700; padding: 2px 6px; background: rgba(234,179,8,0.2); color: var(--accent); border-radius: 3px; }
+.stack-badge { font-size: 13px; font-weight: 700; padding: 2px 6px; background: rgba(234,179,8,0.2); color: var(--accent); border-radius: 3px; }
 .stack-amount { font-size: 14px; font-weight: 800; color: var(--text-primary); }
 .stack-bar-container { height: 6px; background: var(--bg-input); border-radius: 3px; }
 .stack-bar-fill { height: 100%; background: var(--accent); border-radius: 3px; }
@@ -4246,7 +4543,7 @@ body.light-theme .analytics-modal-header {
 .profit-fill.loss { background: #ef4444; }
 .profit-fill.net { background: var(--accent); }
 .analytics-mini-checklist { display: flex; flex-direction: column; gap: 4px; }
-.check-item { display: flex; align-items: center; gap: 6px; font-size: 9px; color: var(--text-secondary); }
+.check-item { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--text-secondary); }
 .check-item.pending { color: #eab308; }
 
 /* Analytics Modal */
@@ -4352,6 +4649,7 @@ body.light-theme .analytics-modal-header {
 <button aria-controls="tab-analytics" aria-selected="false" class="tab-btn tab-pro" id="tabbtn-analytics" onclick="switchTab('analytics', event)" role="tab" tabindex="-1" type="button"><span class="tab-btn-inner"><svg aria-hidden="true" class="tab-icon" viewbox="0 0 24 24"><path d="M4 19h16v2H2V3h2v16Zm4-2H6V9h2v8Zm5 0h-2V5h2v12Zm5 0h-2v-6h2v6Z" fill="currentColor"></path></svg><span class="tab-label">ANALYTICS</span></span></button>
 <button aria-controls="tab-compare" aria-selected="false" class="tab-btn tab-pro" id="tabbtn-compare" onclick="switchTab('compare', event)" role="tab" tabindex="-1" type="button"><span class="tab-btn-inner"><svg aria-hidden="true" class="tab-icon" viewbox="0 0 24 24"><path d="M10 3H5a2 2 0 0 0-2 2v14h7V3Zm11 0h-9v16h9V5a2 2 0 0 0-2-2Zm0 18H3v2h18v-2Z" fill="currentColor"></path></svg><span class="tab-label">COMPARE</span></span></button>
 <button aria-controls="tab-reports" aria-selected="false" class="tab-btn tab-pro" id="tabbtn-reports" onclick="switchTab('reports', event)" role="tab" tabindex="-1" type="button"><span class="tab-btn-inner"><svg aria-hidden="true" class="tab-icon" viewbox="0 0 24 24"><path d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm8 1.5V8h4.5L14 3.5ZM8 12h8v2H8v-2Zm0 4h8v2H8v-2Zm0-8h4v2H8V8Z" fill="currentColor"></path></svg><span class="tab-label">REPORTS</span></span></button>
+<button aria-controls="tab-send" aria-selected="false" class="tab-btn tab-pro" id="tabbtn-send" onclick="switchTab('send', event)" role="tab" tabindex="-1" type="button"><span class="tab-btn-inner"><svg aria-hidden="true" class="tab-icon" viewbox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="tab-label">SEND</span></span></button>
 </nav>
 <!-- QUICK ACTION BAR -->
 <div class="quick-action-bar">
@@ -4661,10 +4959,10 @@ body.light-theme .analytics-modal-header {
 </div>
 </div>
 <div class="pd-scale" style="margin-top: -20px;">
-<span class="pd-scale-item" style="color: #10b981; font-size: 8px;">Low</span>
-<span class="pd-scale-item" style="color: #eab308; font-size: 8px;">Med</span>
-<span class="pd-scale-item" style="color: #f97316; font-size: 8px;">High</span>
-<span class="pd-scale-item" style="color: #ef4444; font-size: 8px;">Severe</span>
+<span class="pd-scale-item" style="color: #10b981; font-size: 13px;">Low</span>
+<span class="pd-scale-item" style="color: #eab308; font-size: 13px;">Med</span>
+<span class="pd-scale-item" style="color: #f97316; font-size: 13px;">High</span>
+<span class="pd-scale-item" style="color: #ef4444; font-size: 13px;">Severe</span>
 </div>
 </div>
 <!-- DSCR Impact -->
@@ -5283,10 +5581,10 @@ body.light-theme .analytics-modal-header {
 </div>
 </div>
 <div class="pd-scale" style="margin-top: -20px;">
-<span class="pd-scale-item" style="color: #10b981; font-size: 8px;">Low</span>
-<span class="pd-scale-item" style="color: #eab308; font-size: 8px;">Med</span>
-<span class="pd-scale-item" style="color: #f97316; font-size: 8px;">High</span>
-<span class="pd-scale-item" style="color: #ef4444; font-size: 8px;">Severe</span>
+<span class="pd-scale-item" style="color: #10b981; font-size: 13px;">Low</span>
+<span class="pd-scale-item" style="color: #eab308; font-size: 13px;">Med</span>
+<span class="pd-scale-item" style="color: #f97316; font-size: 13px;">High</span>
+<span class="pd-scale-item" style="color: #ef4444; font-size: 13px;">Severe</span>
 </div>
 </div>
 <!-- DSCR Impact -->
@@ -6229,9 +6527,9 @@ body.light-theme .analytics-modal-header {
 <div class="analytics-card-lg-header"><svg fill="none" height="16" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="16"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg><span>Sensitivity</span></div>
 <div class="analytics-card-lg-body">
 <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px;">
-<div style="display: flex; align-items: center; gap: 6px;"><span style="font-size: 9px; color: var(--text-muted); width: 50px;">Credit</span><div style="display: flex; flex: 1; height: 12px;"><div style="width: 35%; background: #ef4444; border-radius: 3px 0 0 3px;"></div><div style="width: 45%; background: #10b981; border-radius: 0 3px 3px 0;"></div></div></div>
-<div style="display: flex; align-items: center; gap: 6px;"><span style="font-size: 9px; color: var(--text-muted); width: 50px;">Revenue</span><div style="display: flex; flex: 1; height: 12px;"><div style="width: 28%; background: #ef4444; border-radius: 3px 0 0 3px;"></div><div style="width: 38%; background: #10b981; border-radius: 0 3px 3px 0;"></div></div></div>
-<div style="display: flex; align-items: center; gap: 6px;"><span style="font-size: 9px; color: var(--text-muted); width: 50px;">TIB</span><div style="display: flex; flex: 1; height: 12px;"><div style="width: 20%; background: #ef4444; border-radius: 3px 0 0 3px;"></div><div style="width: 25%; background: #10b981; border-radius: 0 3px 3px 0;"></div></div></div>
+<div style="display: flex; align-items: center; gap: 6px;"><span style="font-size: 14px; color: var(--text-muted); width: 50px;">Credit</span><div style="display: flex; flex: 1; height: 12px;"><div style="width: 35%; background: #ef4444; border-radius: 3px 0 0 3px;"></div><div style="width: 45%; background: #10b981; border-radius: 0 3px 3px 0;"></div></div></div>
+<div style="display: flex; align-items: center; gap: 6px;"><span style="font-size: 14px; color: var(--text-muted); width: 50px;">Revenue</span><div style="display: flex; flex: 1; height: 12px;"><div style="width: 28%; background: #ef4444; border-radius: 3px 0 0 3px;"></div><div style="width: 38%; background: #10b981; border-radius: 0 3px 3px 0;"></div></div></div>
+<div style="display: flex; align-items: center; gap: 6px;"><span style="font-size: 14px; color: var(--text-muted); width: 50px;">TIB</span><div style="display: flex; flex: 1; height: 12px;"><div style="width: 20%; background: #ef4444; border-radius: 3px 0 0 3px;"></div><div style="width: 25%; background: #10b981; border-radius: 0 3px 3px 0;"></div></div></div>
 </div>
 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
 <div class="stat-box"><span>Key Driver</span><span>Credit</span></div>
@@ -6246,10 +6544,10 @@ body.light-theme .analytics-modal-header {
 <div class="analytics-card-lg-header"><svg fill="none" height="16" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="16"><path d="M18 20V10M12 20V4M6 20v-6"/></svg><span>Benchmarks</span></div>
 <div class="analytics-card-lg-body">
 <div style="display: flex; flex-direction: column; gap: 10px;">
-<div style="display: flex; align-items: center; gap: 8px;"><span style="font-size: 9px; color: var(--text-muted); width: 50px;">Funding</span><div style="flex: 1; height: 10px; background: var(--bg-input); border-radius: 5px; position: relative;"><div style="height: 100%; width: 55%; background: var(--accent); border-radius: 5px;"></div><div style="position: absolute; top: -3px; left: 50%; width: 2px; height: 16px; background: var(--text-muted);"></div></div><span style="font-size: 9px; color: #10b981;">+11%</span></div>
-<div style="display: flex; align-items: center; gap: 8px;"><span style="font-size: 9px; color: var(--text-muted); width: 50px;">Score</span><div style="flex: 1; height: 10px; background: var(--bg-input); border-radius: 5px; position: relative;"><div style="height: 100%; width: 62%; background: var(--accent); border-radius: 5px;"></div><div style="position: absolute; top: -3px; left: 55%; width: 2px; height: 16px; background: var(--text-muted);"></div></div><span style="font-size: 9px; color: #10b981;">+8%</span></div>
-<div style="display: flex; align-items: center; gap: 8px;"><span style="font-size: 9px; color: var(--text-muted); width: 50px;">Default</span><div style="flex: 1; height: 10px; background: var(--bg-input); border-radius: 5px; position: relative;"><div style="height: 100%; width: 20%; background: #f97316; border-radius: 5px;"></div><div style="position: absolute; top: -3px; left: 24%; width: 2px; height: 16px; background: var(--text-muted);"></div></div><span style="font-size: 9px; color: #10b981;">-15%</span></div>
-<div style="display: flex; align-items: center; gap: 8px;"><span style="font-size: 9px; color: var(--text-muted); width: 50px;">Approval</span><div style="flex: 1; height: 10px; background: var(--bg-input); border-radius: 5px; position: relative;"><div style="height: 100%; width: 78%; background: #10b981; border-radius: 5px;"></div><div style="position: absolute; top: -3px; left: 68%; width: 2px; height: 16px; background: var(--text-muted);"></div></div><span style="font-size: 9px; color: #10b981;">+15%</span></div>
+<div style="display: flex; align-items: center; gap: 8px;"><span style="font-size: 14px; color: var(--text-muted); width: 50px;">Funding</span><div style="flex: 1; height: 10px; background: var(--bg-input); border-radius: 5px; position: relative;"><div style="height: 100%; width: 55%; background: var(--accent); border-radius: 5px;"></div><div style="position: absolute; top: -3px; left: 50%; width: 2px; height: 16px; background: var(--text-muted);"></div></div><span style="font-size: 14px; color: #10b981;">+11%</span></div>
+<div style="display: flex; align-items: center; gap: 8px;"><span style="font-size: 14px; color: var(--text-muted); width: 50px;">Score</span><div style="flex: 1; height: 10px; background: var(--bg-input); border-radius: 5px; position: relative;"><div style="height: 100%; width: 62%; background: var(--accent); border-radius: 5px;"></div><div style="position: absolute; top: -3px; left: 55%; width: 2px; height: 16px; background: var(--text-muted);"></div></div><span style="font-size: 14px; color: #10b981;">+8%</span></div>
+<div style="display: flex; align-items: center; gap: 8px;"><span style="font-size: 14px; color: var(--text-muted); width: 50px;">Default</span><div style="flex: 1; height: 10px; background: var(--bg-input); border-radius: 5px; position: relative;"><div style="height: 100%; width: 20%; background: #f97316; border-radius: 5px;"></div><div style="position: absolute; top: -3px; left: 24%; width: 2px; height: 16px; background: var(--text-muted);"></div></div><span style="font-size: 14px; color: #10b981;">-15%</span></div>
+<div style="display: flex; align-items: center; gap: 8px;"><span style="font-size: 14px; color: var(--text-muted); width: 50px;">Approval</span><div style="flex: 1; height: 10px; background: var(--bg-input); border-radius: 5px; position: relative;"><div style="height: 100%; width: 78%; background: #10b981; border-radius: 5px;"></div><div style="position: absolute; top: -3px; left: 68%; width: 2px; height: 16px; background: var(--text-muted);"></div></div><span style="font-size: 14px; color: #10b981;">+15%</span></div>
 </div>
 </div>
 <div class="analytics-card-lg-footer"><span id="miniBenchVsAvg">Above Average</span><svg fill="none" height="14" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="14"><path d="M9 18l6-6-6-6"/></svg></div>
@@ -6348,9 +6646,9 @@ body.light-theme .analytics-modal-header {
 <div class="analytics-card-lg-header"><svg fill="none" height="16" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="16"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg><span>Pricing</span></div>
 <div class="analytics-card-lg-body">
 <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px;">
-<div style="display: flex; align-items: center; gap: 6px;"><span style="font-size: 9px; color: var(--text-muted); width: 45px;">Gross</span><div style="flex: 1; height: 10px; background: var(--bg-input); border-radius: 5px; overflow: hidden;"><div style="height: 100%; width: 100%; background: #10b981; border-radius: 5px;"></div></div><span style="font-size: 9px; color: #10b981;">$15K</span></div>
-<div style="display: flex; align-items: center; gap: 6px;"><span style="font-size: 9px; color: var(--text-muted); width: 45px;">Costs</span><div style="flex: 1; height: 10px; background: var(--bg-input); border-radius: 5px; overflow: hidden;"><div style="height: 100%; width: 39%; background: #ef4444; border-radius: 5px;"></div></div><span style="font-size: 9px; color: #ef4444;">-$5.9K</span></div>
-<div style="display: flex; align-items: center; gap: 6px;"><span style="font-size: 9px; color: var(--text-muted); width: 45px;">Net</span><div style="flex: 1; height: 10px; background: var(--bg-input); border-radius: 5px; overflow: hidden;"><div style="height: 100%; width: 61%; background: var(--accent); border-radius: 5px;"></div></div><span style="font-size: 9px; color: var(--accent);" id="miniPricingNet">$9.1K</span></div>
+<div style="display: flex; align-items: center; gap: 6px;"><span style="font-size: 14px; color: var(--text-muted); width: 45px;">Gross</span><div style="flex: 1; height: 10px; background: var(--bg-input); border-radius: 5px; overflow: hidden;"><div style="height: 100%; width: 100%; background: #10b981; border-radius: 5px;"></div></div><span style="font-size: 14px; color: #10b981;">$15K</span></div>
+<div style="display: flex; align-items: center; gap: 6px;"><span style="font-size: 14px; color: var(--text-muted); width: 45px;">Costs</span><div style="flex: 1; height: 10px; background: var(--bg-input); border-radius: 5px; overflow: hidden;"><div style="height: 100%; width: 39%; background: #ef4444; border-radius: 5px;"></div></div><span style="font-size: 14px; color: #ef4444;">-$5.9K</span></div>
+<div style="display: flex; align-items: center; gap: 6px;"><span style="font-size: 14px; color: var(--text-muted); width: 45px;">Net</span><div style="flex: 1; height: 10px; background: var(--bg-input); border-radius: 5px; overflow: hidden;"><div style="height: 100%; width: 61%; background: var(--accent); border-radius: 5px;"></div></div><span style="font-size: 14px; color: var(--accent);" id="miniPricingNet">$9.1K</span></div>
 </div>
 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
 <div class="stat-box"><span>Factor</span><span id="miniPricingFactor">1.30</span></div>
@@ -6372,10 +6670,10 @@ body.light-theme .analytics-modal-header {
 <div style="display: flex; align-items: center; gap: 8px; padding: 8px; background: rgba(234,179,8,0.1); border-radius: 6px;"><svg fill="none" height="14" stroke="#eab308" stroke-width="2.5" viewbox="0 0 24 24" width="14"><circle cx="12" cy="12" r="10"/></svg><span style="font-size: 10px; color: #eab308;">UCC Pending</span></div>
 </div>
 <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 8px;">
-<div style="padding: 4px; text-align: center; font-size: 8px; background: rgba(16,185,129,0.1); color: #10b981; border-radius: 4px;">OFAC</div>
-<div style="padding: 4px; text-align: center; font-size: 8px; background: rgba(16,185,129,0.1); color: #10b981; border-radius: 4px;">Industry</div>
-<div style="padding: 4px; text-align: center; font-size: 8px; background: rgba(16,185,129,0.1); color: #10b981; border-radius: 4px;">State</div>
-<div style="padding: 4px; text-align: center; font-size: 8px; background: rgba(16,185,129,0.1); color: #10b981; border-radius: 4px;">Rate</div>
+<div style="padding: 4px; text-align: center; font-size: 13px; background: rgba(16,185,129,0.1); color: #10b981; border-radius: 4px;">OFAC</div>
+<div style="padding: 4px; text-align: center; font-size: 13px; background: rgba(16,185,129,0.1); color: #10b981; border-radius: 4px;">Industry</div>
+<div style="padding: 4px; text-align: center; font-size: 13px; background: rgba(16,185,129,0.1); color: #10b981; border-radius: 4px;">State</div>
+<div style="padding: 4px; text-align: center; font-size: 13px; background: rgba(16,185,129,0.1); color: #10b981; border-radius: 4px;">Rate</div>
 </div>
 </div>
 <div class="analytics-card-lg-footer"><span id="miniComplianceStatus" style="color:#10b981;">Ready</span><svg fill="none" height="14" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="14"><path d="M9 18l6-6-6-6"/></svg></div>
@@ -6395,7 +6693,7 @@ body.light-theme .analytics-modal-header {
 <div style="display: flex; align-items: center; gap: 8px;">
 <div class="section-indicator"></div>
 <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0;" id="analyticsModalTitle">Score Analysis</h3>
-<span style="padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 700; background: rgba(234,179,8,0.2); color: var(--accent);">PRO</span>
+<span style="padding: 2px 8px; border-radius: 4px; font-size: 14px; font-weight: 700; background: rgba(234,179,8,0.2); color: var(--accent);">PRO</span>
 </div>
 <button onclick="closeAnalyticsModal()" class="analytics-modal-close">
 <svg fill="none" height="20" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="20"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -6654,6 +6952,212 @@ body.light-theme .analytics-modal-header {
 </div>
 </div>
 </div>
+<!-- SEND TAB -->
+<div aria-hidden="true" aria-labelledby="tabbtn-send" class="tab-panel" id="tab-send" role="tabpanel" tabindex="0">
+<div class="p-6 max-w-[1600px] mx-auto">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<!-- Left Column - Package Summary -->
+<div class="space-y-4">
+<!-- Package Header -->
+<div class="card p-4">
+<div class="flex items-center gap-3 mb-3">
+<div class="section-indicator"></div>
+<h3 class="section-title">Package Summary</h3>
+</div>
+<div class="flex items-center justify-between mb-2" style="padding: 12px 16px; background: var(--bg-option-card); border-radius: 8px;">
+<span style="font-size: 12px; color: var(--text-muted); text-transform: uppercase;">Deal Status</span>
+<span id="sendDealStatus" style="font-size: 14px; font-weight: 700; color: #22c55e;">Ready to Send</span>
+</div>
+<div class="flex items-center justify-between" style="padding: 12px 16px; background: var(--bg-option-card); border-radius: 8px;">
+<span style="font-size: 12px; color: var(--text-muted); text-transform: uppercase;">Package Date</span>
+<span id="sendPackageDate" style="font-size: 14px; font-weight: 600; color: var(--text-primary);">--</span>
+</div>
+</div>
+
+<!-- Merchant Info -->
+<div class="card p-4">
+<div class="flex items-center gap-3 mb-3">
+<div class="section-indicator"></div>
+<h3 class="section-title">Merchant Profile</h3>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between" style="padding: 8px 0; border-bottom: 1px solid var(--border-secondary);">
+<span style="font-size: 12px; color: var(--text-muted);">Credit Score</span>
+<span id="sendCreditScore" style="font-size: 14px; font-weight: 600; color: var(--text-primary);">--</span>
+</div>
+<div class="flex justify-between" style="padding: 8px 0; border-bottom: 1px solid var(--border-secondary);">
+<span style="font-size: 12px; color: var(--text-muted);">Monthly Revenue</span>
+<span id="sendRevenue" style="font-size: 14px; font-weight: 600; color: var(--text-primary);">--</span>
+</div>
+<div class="flex justify-between" style="padding: 8px 0; border-bottom: 1px solid var(--border-secondary);">
+<span style="font-size: 12px; color: var(--text-muted);">Avg Daily Balance</span>
+<span id="sendADB" style="font-size: 14px; font-weight: 600; color: var(--text-primary);">--</span>
+</div>
+<div class="flex justify-between" style="padding: 8px 0; border-bottom: 1px solid var(--border-secondary);">
+<span style="font-size: 12px; color: var(--text-muted);">Time in Business</span>
+<span id="sendTIB" style="font-size: 14px; font-weight: 600; color: var(--text-primary);">--</span>
+</div>
+<div class="flex justify-between" style="padding: 8px 0; border-bottom: 1px solid var(--border-secondary);">
+<span style="font-size: 12px; color: var(--text-muted);">NSF Count (90d)</span>
+<span id="sendNSF" style="font-size: 14px; font-weight: 600; color: var(--text-primary);">--</span>
+</div>
+<div class="flex justify-between" style="padding: 8px 0;">
+<span style="font-size: 12px; color: var(--text-muted);">Negative Days (90d)</span>
+<span id="sendNegDays" style="font-size: 14px; font-weight: 600; color: var(--text-primary);">--</span>
+</div>
+</div>
+</div>
+
+<!-- Offer Terms -->
+<div class="card p-4">
+<div class="flex items-center gap-3 mb-3">
+<div class="section-indicator"></div>
+<h3 class="section-title">Approved Offer Terms</h3>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div style="padding: 12px; background: var(--bg-option-card); border-radius: 8px; text-align: center;">
+<div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Funding Amount</div>
+<div id="sendFunding" style="font-size: 20px; font-weight: 800; color: var(--accent);">--</div>
+</div>
+<div style="padding: 12px; background: var(--bg-option-card); border-radius: 8px; text-align: center;">
+<div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Factor Rate</div>
+<div id="sendFactor" style="font-size: 20px; font-weight: 800; color: var(--text-primary);">--</div>
+</div>
+<div style="padding: 12px; background: var(--bg-option-card); border-radius: 8px; text-align: center;">
+<div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Payback</div>
+<div id="sendPayback" style="font-size: 20px; font-weight: 800; color: var(--text-primary);">--</div>
+</div>
+<div style="padding: 12px; background: var(--bg-option-card); border-radius: 8px; text-align: center;">
+<div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Term</div>
+<div id="sendTerm" style="font-size: 20px; font-weight: 800; color: var(--text-primary);">--</div>
+</div>
+</div>
+<div class="mt-3" style="padding: 16px; background: linear-gradient(135deg, rgba(234,179,8,0.15) 0%, rgba(234,179,8,0.05) 100%); border: 1px solid var(--accent); border-radius: 8px; text-align: center;">
+<div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Daily Payment</div>
+<div id="sendDailyPmt" style="font-size: 24px; font-weight: 800; color: var(--accent);">--</div>
+</div>
+</div>
+
+<!-- Score Summary -->
+<div class="card p-4">
+<div class="flex items-center gap-3 mb-3">
+<div class="section-indicator"></div>
+<h3 class="section-title">ABLESCORE Rating</h3>
+</div>
+<div class="flex items-center gap-4">
+<div style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #b8860b); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+<span id="sendScore" style="font-size: 20px; font-weight: 800; color: #000;">--</span>
+</div>
+<div class="flex-1">
+<div id="sendTier" style="font-size: 16px; font-weight: 700; color: var(--accent);">--</div>
+<div id="sendDecision" style="font-size: 13px; color: var(--text-muted);">--</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Right Column - ISO Preview & Share -->
+<div class="space-y-4">
+<!-- ISO Calculator Preview -->
+<div class="card p-4">
+<div class="flex items-center gap-3 mb-3">
+<div class="section-indicator"></div>
+<h3 class="section-title" style="font-size: 10px;">ISO Calculator Preview</h3>
+</div>
+<div id="sendISOPreview" class="calc-result-preview" style="margin-bottom: 12px;">
+<div class="calc-preview-header">
+<div class="calc-preview-label">Funding Amount</div>
+<div class="calc-preview-amount" id="sendPreviewAmount">$25,000</div>
+</div>
+<div class="calc-stats-grid">
+<div class="calc-stat-cell">
+<span class="calc-stat-label">Factor</span>
+<span class="calc-stat-value" id="sendPreviewFactor">1.35</span>
+</div>
+<div class="calc-stat-cell">
+<span class="calc-stat-label">Payback</span>
+<span class="calc-stat-value" id="sendPreviewPayback">$33,750</span>
+</div>
+<div class="calc-stat-cell">
+<span class="calc-stat-label">Term</span>
+<span class="calc-stat-value" id="sendPreviewTerm">6 mo</span>
+</div>
+<div class="calc-stat-cell">
+<span class="calc-stat-label">Revenue</span>
+<span class="calc-stat-value accent" id="sendPreviewRevenue">$7,750</span>
+</div>
+</div>
+<div class="calc-payment-display">
+<div class="calc-payment-label">Est. Daily Payment</div>
+<div class="calc-payment-amount" id="sendPreviewDaily">$258</div>
+</div>
+</div>
+<div style="font-size: 6px; color: var(--text-muted); text-align: center;">This is how the offer will appear to the ISO/Broker</div>
+</div>
+
+<!-- Share Link Section -->
+<div class="card p-4">
+<div class="flex items-center gap-3 mb-3">
+<div class="section-indicator"></div>
+<h3 class="section-title" style="font-size: 10px;">Share Offer Link</h3>
+</div>
+<div style="background: var(--bg-option-card); border-radius: 4px; padding: 8px; margin-bottom: 8px;">
+<div style="font-size: 5px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">ISO Preview URL</div>
+<div style="display: flex; gap: 4px; align-items: center;">
+<input type="text" id="sendOfferLink" readonly style="flex: 1; background: var(--bg-input); border: 1px solid var(--border-secondary); border-radius: 3px; padding: 4px 6px; font-size: 6px; color: var(--text-primary); font-family: monospace;" value="https://ables.ai/offer/..."/>
+<button onclick="copyOfferLink()" class="quick-action-btn" style="padding: 4px 8px; font-size: 6px;" type="button">
+<svg fill="none" height="10" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="10"><rect height="13" rx="2" ry="2" width="13" x="9" y="9"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+Copy
+</button>
+</div>
+</div>
+<div id="sendLinkCopied" style="display: none; font-size: 6px; color: #22c55e; text-align: center; padding: 4px;">Link copied to clipboard!</div>
+
+<!-- Quick Share Options -->
+<div style="margin-top: 8px;">
+<div style="font-size: 6px; color: var(--text-muted); margin-bottom: 6px;">Quick Share</div>
+<div class="grid grid-cols-3 gap-2">
+<button onclick="shareViaEmail()" class="quick-action-btn" style="flex-direction: column; padding: 6px; font-size: 5px;" type="button">
+<svg fill="none" height="12" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="12"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+Email
+</button>
+<button onclick="shareViaSMS()" class="quick-action-btn" style="flex-direction: column; padding: 6px; font-size: 5px;" type="button">
+<svg fill="none" height="12" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="12"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+SMS
+</button>
+<button onclick="generateQR()" class="quick-action-btn" style="flex-direction: column; padding: 6px; font-size: 5px;" type="button">
+<svg fill="none" height="12" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="12"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="3" height="3"></rect><rect x="18" y="14" width="3" height="3"></rect><rect x="14" y="18" width="3" height="3"></rect><rect x="18" y="18" width="3" height="3"></rect></svg>
+QR Code
+</button>
+</div>
+</div>
+</div>
+
+<!-- Send Actions -->
+<div class="card p-4">
+<div class="flex items-center gap-3 mb-3">
+<div class="section-indicator"></div>
+<h3 class="section-title" style="font-size: 10px;">Send Package</h3>
+</div>
+<div class="space-y-2">
+<button onclick="sendToISO()" class="quick-action-btn primary w-full justify-center" style="padding: 8px; font-size: 13px;" type="button">
+<svg fill="none" height="14" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="14"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
+Send to ISO / Broker
+</button>
+<button onclick="sendToMerchant()" class="quick-action-btn w-full justify-center" style="padding: 8px; font-size: 13px;" type="button">
+<svg fill="none" height="14" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="14"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+Send to Merchant
+</button>
+<button onclick="downloadPackage()" class="quick-action-btn w-full justify-center" style="padding: 8px; font-size: 13px;" type="button">
+<svg fill="none" height="14" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg>
+Download Package PDF
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- Floating Action Button for Sliders (Mobile) -->
 <button class="slider-fab" id="sliderFab" onclick="openSliderModal()" type="button">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -6774,8 +7278,8 @@ body.light-theme .analytics-modal-header {
 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
 <label style="margin-bottom: 0;">Existing Debt Payments</label>
 <div style="display: flex; align-items: center; gap: 4px;">
-<span style="font-size: 9px; color: var(--text-muted);">paid</span>
-<select id="modalExistingDebtFreqSelect" onchange="syncExistingDebtFreq(this.value)" style="font-size: 9px; padding: 2px 4px; background: var(--bg-primary); color: var(--text-muted); border: 1px solid var(--border-secondary); border-radius: 4px;">
+<span style="font-size: 14px; color: var(--text-muted);">paid</span>
+<select id="modalExistingDebtFreqSelect" onchange="syncExistingDebtFreq(this.value)" style="font-size: 14px; padding: 2px 4px; background: var(--bg-primary); color: var(--text-muted); border: 1px solid var(--border-secondary); border-radius: 4px;">
 <option value="daily">daily</option>
 <option value="weekly">weekly</option>
 <option value="monthly">monthly</option>
@@ -9313,7 +9817,7 @@ body.light-theme .analytics-modal-header {
       // Hide/show FAB based on tab (hide on MODEL INFO and PRO tabs)
       const fab = document.getElementById('sliderFab');
       if (fab) {
-        if (tabName === 'model' || tabName === 'analytics' || tabName === 'compare' || tabName === 'reports') {
+        if (tabName === 'model' || tabName === 'analytics' || tabName === 'compare' || tabName === 'reports' || tabName === 'send') {
           fab.style.display = 'none';
         } else {
           fab.style.display = '';
@@ -9328,6 +9832,184 @@ body.light-theme .analytics-modal-header {
         updateAnalytics();
       } else if (tabName === 'reports') {
         updateReportPreview();
+      } else if (tabName === 'send') {
+        updateSendTab();
+      }
+    }
+
+    // ============================================
+    // SEND TAB FUNCTIONS
+    // ============================================
+    
+    function updateSendTab() {
+      // Get current values
+      const credit = parseFloat(document.getElementById('credit').value) || 0;
+      const revenue = parseFloat(document.getElementById('revenue').value) || 0;
+      const balance = parseFloat(document.getElementById('balance').value) || 0;
+      const tib = parseFloat(document.getElementById('tib').value) || 0;
+      const nsf = parseFloat(document.getElementById('nsf').value) || 0;
+      const negDays = parseFloat(document.getElementById('negdays').value) || 0;
+      
+      const funding = parseFloat(document.getElementById('funding').value) || 0;
+      const factor = parseFloat(document.getElementById('factor').value) || 1;
+      const term = parseFloat(document.getElementById('term').value) || 6;
+      
+      const payback = Math.round(funding * factor);
+      const dailyPmt = Math.round(payback / (term * 22));
+      const isoRevenue = payback - funding;
+      
+      // Update package date
+      const now = new Date();
+      document.getElementById('sendPackageDate').textContent = now.toLocaleDateString('en-US', { 
+        month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' 
+      });
+      
+      // Update merchant profile
+      document.getElementById('sendCreditScore').textContent = credit;
+      document.getElementById('sendRevenue').textContent = '$' + revenue.toLocaleString();
+      document.getElementById('sendADB').textContent = '$' + balance.toLocaleString();
+      document.getElementById('sendTIB').textContent = tib + ' months';
+      document.getElementById('sendNSF').textContent = nsf;
+      document.getElementById('sendNegDays').textContent = negDays;
+      
+      // Update offer terms
+      document.getElementById('sendFunding').textContent = '$' + funding.toLocaleString();
+      document.getElementById('sendFactor').textContent = factor.toFixed(2);
+      document.getElementById('sendPayback').textContent = '$' + payback.toLocaleString();
+      document.getElementById('sendTerm').textContent = term + ' mo';
+      document.getElementById('sendDailyPmt').textContent = '$' + dailyPmt.toLocaleString();
+      
+      // Update score
+      const scoreEl = document.getElementById('overallScore');
+      const score = scoreEl ? parseInt(scoreEl.textContent) || 0 : 0;
+      document.getElementById('sendScore').textContent = score;
+      
+      // Determine tier and decision
+      let tier = 'Standard';
+      let decision = 'Approved with standard terms';
+      if (score >= 85) { tier = 'Elite'; decision = 'Approved - Premium tier  pricing'; }
+      else if (score >= 70) { tier = 'Prime'; decision = 'Approved - Favorable terms'; }
+      else if (score >= 55) { tier = 'Standard'; decision = 'Approved - Standard terms'; }
+      else if (score >= 40) { tier = 'Subprime'; decision = 'Approved - Enhanced monitoring'; }
+      else { tier = 'High Risk'; decision = 'Manual review required'; }
+      
+      document.getElementById('sendTier').textContent = tier + ' Tier';
+      document.getElementById('sendDecision').textContent = decision;
+      
+      // Update deal status
+      const statusEl = document.getElementById('sendDealStatus');
+      if (score >= 40) {
+        statusEl.textContent = 'Ready to Send';
+        statusEl.style.color = '#22c55e';
+      } else {
+        statusEl.textContent = 'Needs Review';
+        statusEl.style.color = '#f59e0b';
+      }
+      
+      // Update ISO Preview
+      document.getElementById('sendPreviewAmount').textContent = '$' + funding.toLocaleString();
+      document.getElementById('sendPreviewFactor').textContent = factor.toFixed(2);
+      document.getElementById('sendPreviewPayback').textContent = '$' + payback.toLocaleString();
+      document.getElementById('sendPreviewTerm').textContent = term + ' mo';
+      document.getElementById('sendPreviewRevenue').textContent = '$' + isoRevenue.toLocaleString();
+      document.getElementById('sendPreviewDaily').textContent = '$' + dailyPmt.toLocaleString();
+      
+      // Generate offer link
+      const offerData = btoa(JSON.stringify({ f: funding, r: factor, t: term, s: score }));
+      const offerLink = 'https://ables.ai/offer/' + offerData.substring(0, 12);
+      document.getElementById('sendOfferLink').value = offerLink;
+    }
+    
+    function copyOfferLink() {
+      const linkInput = document.getElementById('sendOfferLink');
+      linkInput.select();
+      linkInput.setSelectionRange(0, 99999);
+      
+      navigator.clipboard.writeText(linkInput.value).then(() => {
+        const copiedMsg = document.getElementById('sendLinkCopied');
+        copiedMsg.style.display = 'block';
+        setTimeout(() => { copiedMsg.style.display = 'none'; }, 2000);
+        
+        // Add to audit log
+        if (typeof addAuditEntry === 'function') {
+          addAuditEntry('Offer link copied to clipboard');
+        }
+      }).catch(() => {
+        document.execCommand('copy');
+        const copiedMsg = document.getElementById('sendLinkCopied');
+        copiedMsg.style.display = 'block';
+        setTimeout(() => { copiedMsg.style.display = 'none'; }, 2000);
+      });
+    }
+    
+    function shareViaEmail() {
+      const funding = document.getElementById('sendFunding')?.textContent || '$0';
+      const factor = document.getElementById('sendFactor')?.textContent || '1.00';
+      const link = document.getElementById('sendOfferLink')?.value || '';
+      
+      const subject = encodeURIComponent('MCA Offer - ' + funding + ' Funding Available');
+      const body = encodeURIComponent(
+        'Hello,\n\n' +
+        'Please find the funding offer details below:\n\n' +
+        'Funding Amount: ' + funding + '\n' +
+        'Factor Rate: ' + factor + '\n\n' +
+        'View full offer details: ' + link + '\n\n' +
+        'Best regards'
+      );
+      
+      window.open('mailto:?subject=' + subject + '&body=' + body);
+      if (typeof addAuditEntry === 'function') {
+        addAuditEntry('Shared offer via email');
+      }
+    }
+    
+    function shareViaSMS() {
+      const funding = document.getElementById('sendFunding')?.textContent || '$0';
+      const link = document.getElementById('sendOfferLink')?.value || '';
+      
+      const message = encodeURIComponent('MCA Offer: ' + funding + ' funding available. Details: ' + link);
+      window.open('sms:?body=' + message);
+      if (typeof addAuditEntry === 'function') {
+        addAuditEntry('Shared offer via SMS');
+      }
+    }
+    
+    function generateQR() {
+      const link = document.getElementById('sendOfferLink')?.value || '';
+      // Use QR code API
+      const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(link);
+      window.open(qrUrl, '_blank', 'width=300,height=300');
+      if (typeof addAuditEntry === 'function') {
+        addAuditEntry('Generated QR code for offer');
+      }
+    }
+    
+    function sendToISO() {
+      updateSendTab();
+      const funding = document.getElementById('sendFunding')?.textContent || '$0';
+      alert('Offer package for ' + funding + ' sent to ISO/Broker!\n\nIn production, this would:\n- Send email notification\n- Create CRM record\n- Log activity');
+      if (typeof addAuditEntry === 'function') {
+        addAuditEntry('Package sent to ISO/Broker');
+      }
+    }
+    
+    function sendToMerchant() {
+      updateSendTab();
+      const funding = document.getElementById('sendFunding')?.textContent || '$0';
+      alert('Offer package for ' + funding + ' sent to Merchant!\n\nIn production, this would:\n- Send merchant email\n- Create welcome packet\n- Initiate DocuSign');
+      if (typeof addAuditEntry === 'function') {
+        addAuditEntry('Package sent to Merchant');
+      }
+    }
+    
+    function downloadPackage() {
+      updateSendTab();
+      // Trigger PDF export
+      if (typeof exportPDF === 'function') {
+        exportPDF();
+      }
+      if (typeof addAuditEntry === 'function') {
+        addAuditEntry('Package PDF downloaded');
       }
     }
 
