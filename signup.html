@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator Pro + Brand Kit | AblesAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-main: #0a0a0a;
+      --bg-card: #111111;
+      --bg-card-inner: #1a1a1a;
+      --border-primary: #2a2a2a;
+      --border-secondary: #1f1f1f;
+      --text-primary: #ffffff;
+      --text-secondary: #e5e5e5;
+      --text-muted: #6b7280;
+      --accent: #eab308;
+      --theme-rgb: 59, 130, 246;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+      background: var(--bg-main);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Layout */
+    .page-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+    }
+
+    .content-wrapper {
+      display: grid;
+      grid-template-columns: 480px 1fr;
+      gap: 48px;
+      max-width: 1100px;
+      width: 100%;
+      align-items: start;
+    }
+
+    /* Left Side - Signup Form (Primary) */
+    .signup-side {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .signup-header {
+      margin-bottom: 8px;
+    }
+
+    .signup-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(234, 179, 8, 0.1);
+      border: 1px solid rgba(234, 179, 8, 0.2);
+      padding: 6px 12px;
+      border-radius: 100px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .signup-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .signup-subtitle {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* Features List */
+    .features-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .feature-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-secondary);
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .feature-tag svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--accent);
+    }
+
+    /* Signup Card */
+    .signup-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-primary);
+      border-radius: 16px;
+      padding: 32px;
+    }
+
+    .price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-secondary);
+    }
+
+    .price-amount {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .price-period {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .signup-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .signup-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .signup-field label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .signup-field input {
+      padding: 14px 16px;
+      background: var(--bg-card-inner);
+      border: 1px solid var(--border-secondary);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 15px;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%;
+    }
+
+    .signup-field input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.1);
+    }
+
+    .signup-field input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .signup-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .signup-submit {
+      padding: 16px;
+      background: var(--accent);
+      color: #000;
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      margin-top: 8px;
+    }
+
+    .signup-submit:hover {
+      background: #fbbf24;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(234, 179, 8, 0.25);
+    }
+
+    .signup-footer {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .signup-footer svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Right Side - Preview (Secondary) */
+    .preview-side {
+      position: sticky;
+      top: 40px;
+    }
+
+    .preview-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .preview-label::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .preview-frame {
+      background: var(--bg-card);
+      border: 1px solid var(--border-primary);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .preview-frame iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+      display: block;
+    }
+
+    /* Responsive */
+    @media (max-width: 960px) {
+      .content-wrapper {
+        grid-template-columns: 1fr;
+        max-width: 520px;
+      }
+
+      .preview-side {
+        position: relative;
+        top: 0;
+        order: 2;
+      }
+
+      .signup-side {
+        order: 1;
+      }
+
+      .preview-frame iframe {
+        height: 500px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .page-container {
+        padding: 24px 16px;
+      }
+
+      .signup-row {
+        grid-template-columns: 1fr;
+      }
+
+      .signup-title {
+        font-size: 1.75rem;
+      }
+
+      .features-list {
+        gap: 6px;
+      }
+
+      .feature-tag {
+        font-size: 11px;
+        padding: 6px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-container">
+    <div class="content-wrapper">
+
+      <!-- Left Side - Signup (Primary Focus) -->
+      <div class="signup-side">
+        
+        <div class="signup-header">
+          <div class="signup-badge">Calculator Pro + Brand Kit</div>
+          <h1 class="signup-title">Close More Deals with Branded Offer Calculators</h1>
+          <p class="signup-subtitle">Send professional, interactive funding offers your clients can explore. Your logo, your colors, your brand.</p>
+          
+          <div class="features-list">
+            <span class="feature-tag">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+              Custom Logo
+            </span>
+            <span class="feature-tag">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+              Custom Colors
+            </span>
+            <span class="feature-tag">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+              Shareable Links
+            </span>
+            <span class="feature-tag">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+              10+ Loan Types
+            </span>
+            <span class="feature-tag">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+              Client Portal
+            </span>
+          </div>
+        </div>
+
+        <div class="signup-card">
+          <div class="price-row">
+            <span class="price-amount">$699</span>
+            <span class="price-period">/month per organization</span>
+          </div>
+
+          <form class="signup-form" id="signupForm">
+            <div class="signup-field">
+              <label for="company">Company Name</label>
+              <input type="text" id="company" name="company" placeholder="Your Company LLC" required>
+            </div>
+
+            <div class="signup-row">
+              <div class="signup-field">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" name="firstName" placeholder="John" required>
+              </div>
+              <div class="signup-field">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" name="lastName" placeholder="Smith" required>
+              </div>
+            </div>
+
+            <div class="signup-field">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" placeholder="john@company.com" required>
+            </div>
+
+            <button type="submit" class="signup-submit">Continue to Payment →</button>
+          </form>
+
+          <p class="signup-footer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            Secure checkout powered by Stripe
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Right Side - Live Preview (Secondary) -->
+      <div class="preview-side">
+        <div class="preview-label">Live Preview</div>
+        <div class="preview-frame">
+          <iframe src="https://ables.ai/calculator.html?d=N4IgRiBcIgNCBjKN4EsDOB7KA7ArgDYHwE66HEgCmAHuUSZgObbRyKYC2ADgIY4BPAHK9OVZOwAuACypjkYArwQBrdsoRUck5KhwATVC3asA2qF5QArAAY7N+ADMoARgB0AJivwdkFwGYHEABHZH1eVAIBdkdxSCDubigE-QkfVhQQMjZ4VMhHXgJ0KlzfEAA1TFR9Kn0AAgBhWVUAHRwAcUwANyoAJxwxbTqASXR0PFqRgBF2AjV4kktIfAYQAl8VygJQ5YoSCF3Vgk56AgBfAF0zoA" title="Calculator Pro Preview"></iframe>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Form Submit
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      const data = {
+        company: formData.get('company'),
+        firstName: formData.get('firstName'),
+        lastName: formData.get('lastName'),
+        email: formData.get('email')
+      };
+      
+      localStorage.setItem('calculatorProSignup', JSON.stringify(data));
+      
+      const stripeUrl = new URL('https://buy.stripe.com/eVqcN58RA6u3c6L7Y3bjW01');
+      stripeUrl.searchParams.set('prefilled_email', data.email);
+      
+      window.location.href = stripeUrl.toString();
+    });
+  </script>
+
+</body>
+</html>
