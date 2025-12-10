@@ -5586,7 +5586,28 @@ Government Issued ID</textarea>
     
     // Animate number spin up
     function animateNumber(element, targetValue, duration = 1500, formatter = formatCurrency) {
-        const startValue = 0;
+        // Cancel any existing animation on this element
+        if (element._animationId) {
+            cancelAnimationFrame(element._animationId);
+        }
+        
+        // Ensure target value is valid and non-negative for currency
+        if (typeof targetValue !== 'number' || isNaN(targetValue)) {
+            targetValue = 0;
+        }
+        // For currency formatting, prevent negative values
+        if (formatter === formatCurrency && targetValue < 0) {
+            targetValue = 0;
+        }
+        
+        // Start from current displayed value instead of always 0
+        let startValue = 0;
+        const currentText = element.textContent || '';
+        const parsed = parseFloat(currentText.replace(/[^0-9.-]/g, ''));
+        if (!isNaN(parsed) && parsed >= 0) {
+            startValue = parsed;
+        }
+        
         const startTime = performance.now();
         const isInteger = Number.isInteger(targetValue);
         
@@ -5600,17 +5621,24 @@ Government Issued ID</textarea>
             const easedProgress = easeOutExpo(progress);
             let currentValue = startValue + (targetValue - startValue) * easedProgress;
             
+            // Ensure non-negative for currency values
+            if (formatter === formatCurrency) {
+                currentValue = Math.max(0, currentValue);
+            }
+            
             // Only round for integer targets (amounts, counts), preserve decimals for factors
             if (isInteger) currentValue = Math.round(currentValue);
             
             element.textContent = formatter(currentValue);
             
             if (progress < 1) {
-                requestAnimationFrame(update);
+                element._animationId = requestAnimationFrame(update);
+            } else {
+                element._animationId = null;
             }
         }
         
-        requestAnimationFrame(update);
+        element._animationId = requestAnimationFrame(update);
     }
 
     // ============================================
@@ -7200,9 +7228,15 @@ Government Issued ID</textarea>
     // CORE CALCULATION
     // ============================================
     function calculate(a, f, t, fr, fe) { 
+        // Validate inputs - ensure all are valid numbers
+        a = (typeof a === 'number' && !isNaN(a) && a >= 0) ? a : 0;
+        f = (typeof f === 'number' && !isNaN(f) && f > 0) ? f : 1.15;
+        t = (typeof t === 'number' && !isNaN(t) && t > 0) ? t : 130;
+        fe = (typeof fe === 'number' && !isNaN(fe) && fe >= 0) ? fe : 0;
+        
         const tp = a * f; 
         const tc = tp - a; 
-        const p = tp / t; 
+        const p = t > 0 ? tp / t : 0; 
         const fa = a * (fe / 100); 
         const net = a - fa; 
         return { amount: a, factor: f, term: t, frequency: fr, fee: fe, feeAmount: fa, net: net, totalPayback: tp, totalCost: tc, payment: p }; 
@@ -8433,47 +8467,68 @@ Government Issued ID</textarea>
     }
     
     function copyLink() { 
-        const l = getLink(); 
-        saveOfferToDashboard(l, 'clientShareLink'); // Save offer to dashboard with tracking
-        
-        // Mark as shared and update UI
-        window.clientLinkShared = true;
-        updateModeStatusIcons();
-        
-        if (navigator.clipboard) { navigator.clipboard.writeText(l).then(() => showToast('Link copied!')).catch(() => prompt("Copy Link:", l)); } else { prompt("Copy Link:", l); }
-        $('shareModal').classList.add('hidden');
+        console.log('copyLink() called');
+        try {
+            const l = getLink(); 
+            console.log('Generated link:', l);
+            saveOfferToDashboard(l, 'clientShareLink');
+            
+            window.clientLinkShared = true;
+            updateModeStatusIcons();
+            
+            if (navigator.clipboard) { 
+                navigator.clipboard.writeText(l).then(() => {
+                    console.log('Clipboard write success');
+                    showToast('Link copied!');
+                }).catch((err) => {
+                    console.log('Clipboard failed, using prompt', err);
+                    prompt("Copy Link:", l);
+                }); 
+            } else { 
+                console.log('No clipboard API, using prompt');
+                prompt("Copy Link:", l); 
+            }
+            $('shareModal').classList.add('hidden');
+        } catch(e) {
+            console.error('copyLink error:', e);
+            alert('Error: ' + e.message);
+        }
     }
     
     function copySMS() {
-        // Build minimal link for SMS (shorter URL)
-        const smsLink = getSMSLink();
-        saveOfferToDashboard(smsLink, 'smsShare');
-        
-        // Mark as shared and update UI
-        window.clientLinkShared = true;
-        updateModeStatusIcons();
-        
-        // Build compact SMS message
-        const opt = calcOptions[0];
-        const cal = calculate(opt.amount, opt.factor, opt.term, opt.frequency, opt.fee);
-        
-        // Format amount (50K or $50,000)
-        const amt = opt.amount >= 1000 ? '$' + Math.round(opt.amount / 1000) + 'K' : '$' + opt.amount;
-        
-        // Get business or contact name
-        const businessName = getVal('calcBusinessName') || '';
-        const contactName = getVal('calcContactName') || '';
-        const name = businessName || contactName || 'Your Business';
-        
-        // Build message: [Amount] Approval for [Name] - View or Accept: [URL]
-        const sms = `${amt} Approval for ${name} - View or Accept: ${smsLink}`;
-        
-        if (navigator.clipboard) { 
-            navigator.clipboard.writeText(sms).then(() => showToast('SMS copied!')).catch(() => prompt("Copy SMS:", sms)); 
-        } else { 
-            prompt("Copy SMS:", sms); 
+        console.log('copySMS() called');
+        try {
+            const smsLink = getSMSLink();
+            console.log('Generated SMS link:', smsLink);
+            saveOfferToDashboard(smsLink, 'smsShare');
+            
+            window.clientLinkShared = true;
+            updateModeStatusIcons();
+            
+            const opt = calcOptions[0];
+            const cal = calculate(opt.amount, opt.factor, opt.term, opt.frequency, opt.fee);
+            const amt = opt.amount >= 1000 ? '$' + Math.round(opt.amount / 1000) + 'K' : '$' + opt.amount;
+            const businessName = getVal('calcBusinessName') || '';
+            const contactName = getVal('calcContactName') || '';
+            const name = businessName || contactName || 'Your Business';
+            const sms = `${amt} Approval for ${name} - View or Accept: ${smsLink}`;
+            
+            if (navigator.clipboard) { 
+                navigator.clipboard.writeText(sms).then(() => {
+                    console.log('SMS clipboard success');
+                    showToast('SMS copied!');
+                }).catch((err) => {
+                    console.log('SMS clipboard failed', err);
+                    prompt("Copy SMS:", sms);
+                }); 
+            } else { 
+                prompt("Copy SMS:", sms); 
+            }
+            $('shareModal').classList.add('hidden');
+        } catch(e) {
+            console.error('copySMS error:', e);
+            alert('Error: ' + e.message);
         }
-        $('shareModal').classList.add('hidden');
     }
     
     function getSMSLink() {
@@ -9661,7 +9716,9 @@ Government Issued ID</textarea>
     }
     
     function copyText() {
+        console.log('copyText() called');
         const l = getLink();
+        console.log('Generated email link:', l);
         const businessName = getVal('calcBusinessName') || 'Business Funding';
         const contactName = getVal('calcContactName') || '';
         const fontMain = "font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;";
@@ -10208,7 +10265,8 @@ Government Issued ID</textarea>
     });
     
     $('clientAmountSlider').addEventListener('input', function() {
-        clientSelectedAmount = parseInt(this.value);
+        const val = parseInt(this.value);
+        clientSelectedAmount = (isNaN(val) || val < 0) ? 5000 : val;
         updateSliderFill(this);
         updateClientPreview();
     });
