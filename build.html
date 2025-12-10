@@ -57,26 +57,32 @@
       border-bottom: 1px solid var(--border-secondary);
     }
 
-    .header-logo {
+    .header-spacer {
+      flex: 1;
+    }
+
+    .hero-logo {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
+      margin-bottom: 32px;
       text-decoration: none;
+    }
+
+    .hero-logo svg {
+      width: 80px;
+      height: 80px;
+    }
+
+    .hero-logo-text {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
       color: var(--text-primary);
     }
 
-    .header-logo svg {
-      width: 36px;
-      height: 36px;
-    }
-
-    .logo-text {
-      font-size: 1.125rem;
-      font-weight: 800;
-      letter-spacing: -0.3px;
-    }
-
-    .logo-ai {
+    .hero-logo-text .logo-ai {
       color: #888;
     }
 
@@ -822,21 +828,21 @@
         padding: 12px 20px;
       }
 
-      .header-logo svg {
-        width: 28px;
-        height: 28px;
-      }
-
-      .logo-text {
-        font-size: 0.95rem;
-      }
-
       .header-nav {
         gap: 20px;
       }
 
       .header-nav a {
         font-size: 13px;
+      }
+
+      .hero-logo svg {
+        width: 64px;
+        height: 64px;
+      }
+
+      .hero-logo-text {
+        font-size: 1.25rem;
       }
     }
 
@@ -1098,15 +1104,7 @@
 
   <!-- Header -->
   <header class="header">
-    <a href="https://ables.ai/index.html" class="header-logo">
-      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
-        <circle cx="32" cy="32" r="12" fill="#eab308"/>
-        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
-        <circle class="orbiting-moon" cx="32" cy="32" r="4" fill="#a855f7"/>
-      </svg>
-      <span class="logo-text">Ables<span class="logo-ai">AI</span></span>
-    </a>
+    <div class="header-spacer"></div>
     <nav class="header-nav">
       <a href="https://ables.ai/index.html">Home</a>
       <a href="https://ables.ai/calculator.html">Calculator</a>
@@ -1115,6 +1113,16 @@
 
   <!-- Hero Section -->
   <section class="hero">
+    <a href="https://ables.ai/index.html" class="hero-logo">
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
+        <circle cx="32" cy="32" r="12" fill="#eab308"/>
+        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
+        <circle class="orbiting-moon" cx="32" cy="32" r="4" fill="#a855f7"/>
+      </svg>
+      <span class="hero-logo-text">Ables<span class="logo-ai">AI</span></span>
+    </a>
+    
     <div class="hero-badge">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
