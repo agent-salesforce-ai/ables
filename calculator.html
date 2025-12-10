@@ -1921,49 +1921,6 @@
       color: #ef4444;
     }
 
-    /* Lite Usage Badge */
-    .lite-usage-badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      background: rgba(245, 158, 11, 0.1);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      color: #f59e0b;
-      transition: all 0.2s;
-    }
-    
-    .lite-usage-badge .lite-count {
-      font-weight: 800;
-      font-size: 13px;
-    }
-    
-    .lite-usage-badge .lite-label {
-      font-weight: 500;
-      opacity: 0.8;
-    }
-    
-    .lite-usage-badge.low {
-      background: rgba(239, 68, 68, 0.1);
-      border-color: rgba(239, 68, 68, 0.3);
-      color: #ef4444;
-    }
-    
-    .lite-usage-badge.depleted {
-      background: rgba(239, 68, 68, 0.15);
-      border-color: rgba(239, 68, 68, 0.5);
-      color: #ef4444;
-      animation: pulse-warning 2s infinite;
-    }
-    
-    @keyframes pulse-warning {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
-    }
-
     /* ============================================
        ANIMATIONS
        ============================================ */
@@ -4644,7 +4601,6 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                         </svg>
                         <span class="btn-text">Share</span>
-                        <span id="liteUsageBadge" class="offer-count-badge hidden">25</span>
                     </button>
                 </div>
           </header>
@@ -5123,7 +5079,6 @@ Government Issued ID</textarea>
                                   <path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                               </svg>
                               Share
-                              <span id="stickyLiteUsageBadge" class="offer-count-badge hidden">25</span>
                           </button>
                       </div>
                       
@@ -5609,39 +5564,6 @@ Government Issued ID</textarea>
       </div>
     </div>
   </div>
-
-  <!-- Upgrade Modal (DISABLED - monthly limit removed) -->
-  <!--
-  <div id="upgradeModal" class="login-modal-overlay">
-    <div class="login-modal rounded-2xl w-full max-w-md shadow-2xl p-8 text-center">
-      <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-        </svg>
-      </div>
-      <h3 class="text-2xl font-extrabold mb-3" style="color: var(--text-primary);">Monthly Limit Reached</h3>
-      <p class="text-sm mb-6" style="color: var(--text-secondary);">You've used all <strong>25 free shares</strong> this month. Upgrade to Pro for unlimited shares and white-label branding.</p>
-      
-      <div class="rounded-xl p-4 mb-6" style="background: var(--bg-card-inner); border: 1px solid var(--border-primary);">
-        <div class="flex items-center justify-between mb-3">
-          <span class="text-sm font-semibold" style="color: var(--text-muted);">LITE (Free)</span>
-          <span class="text-sm font-bold" style="color: var(--text-muted);">Current</span>
-        </div>
-        <div class="flex items-center justify-between">
-          <span class="text-sm font-semibold" style="color: var(--accent);">PRO</span>
-          <span class="text-sm font-bold" style="color: var(--accent);">Unlimited + Branding</span>
-        </div>
-      </div>
-      
-      <button onclick="openLoginModal(); closeUpgradeModal();" class="btn btn-primary w-full py-4 rounded-xl font-bold mb-3">
-        Sign In to Upgrade
-      </button>
-      <button onclick="closeUpgradeModal()" class="text-sm font-semibold transition-colors" style="color: var(--text-muted);">Maybe Later</button>
-      
-      <p class="text-xs mt-6" style="color: var(--text-muted);">Your limit resets on the 1st of each month.</p>
-    </div>
-  </div>
-  -->
 
   <!-- Toast -->
   <div id="toast" class="toast fixed bottom-6 right-6 text-white px-6 py-4 rounded-xl shadow-2xl z-50 flex items-center gap-3" style="background: var(--bg-card);">
@@ -6244,16 +6166,7 @@ Government Issued ID</textarea>
         updateSliders();
     }
 
-    // Accents available to lite (non-logged-in) users
-    const liteAccents = ['rainbow', 'indigo'];
-    
     function setAccentColor(accent) {
-        // If not logged in, restrict to lite accents only
-        if (!currentUser && !liteAccents.includes(accent)) {
-            showUpgradeModal();
-            return;
-        }
-        
         currentAccent = accent;
         const html = document.documentElement;
         
@@ -6294,13 +6207,9 @@ Government Issued ID</textarea>
     }
     
     function updateAccentSwatchLocks() {
+        // All accents now unlocked for everyone
         $$('.color-swatch').forEach(swatch => {
-            const accent = swatch.dataset.accent;
-            if (!currentUser && !liteAccents.includes(accent)) {
-                swatch.classList.add('locked');
-            } else {
-                swatch.classList.remove('locked');
-            }
+            swatch.classList.remove('locked');
         });
     }
 
@@ -7024,12 +6933,7 @@ Government Issued ID</textarea>
                 const pref = JSON.parse(saved);
                 if (pref.mode) setThemeMode(pref.mode);
                 if (pref.accent) {
-                    // For lite users, check if saved accent is available
-                    if (!currentUser && !liteAccents.includes(pref.accent)) {
-                        setAccentColor('indigo'); // Fall back to indigo for lite users
-                    } else {
-                        setAccentColor(pref.accent);
-                    }
+                    setAccentColor(pref.accent);
                 }
                 if (pref.logoUrl) {
                     $('logoUrlInput').value = pref.logoUrl;
@@ -7043,11 +6947,9 @@ Government Issued ID</textarea>
                 console.error('Failed to load theme preference', e);
             }
         } else {
-            // Default to black theme with indigo accent for lite users
+            // Default to black theme with rainbow accent
             setThemeMode('black');
-            if (!currentUser) {
-                setAccentColor('indigo');
-            }
+            setAccentColor('rainbow');
         }
         
         // Set initial active states
@@ -7100,85 +7002,6 @@ Government Issued ID</textarea>
     const VALID_USERS = {
         'sutton': 'nouns'
     };
-    
-    // ============================================
-    // LITE VERSION USAGE TRACKING
-    // ============================================
-    const LITE_MONTHLY_LIMIT = Infinity; // Disabled: was 25
-    
-    function getLiteUsage() {
-        try {
-            const data = JSON.parse(localStorage.getItem('trustbureau_lite_usage') || '{}');
-            const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
-            
-            // Reset if new month
-            if (data.month !== currentMonth) {
-                return { month: currentMonth, count: 0 };
-            }
-            return data;
-        } catch (e) {
-            return { month: new Date().toISOString().slice(0, 7), count: 0 };
-        }
-    }
-    
-    function saveLiteUsage(data) {
-        localStorage.setItem('trustbureau_lite_usage', JSON.stringify(data));
-    }
-    
-    function incrementLiteUsage() {
-        const usage = getLiteUsage();
-        usage.count++;
-        saveLiteUsage(usage);
-        updateLiteUsageUI();
-        return usage.count;
-    }
-    
-    function canUseLiteShare() {
-        if (currentUser) return true; // Logged in users have unlimited
-        const usage = getLiteUsage();
-        return usage.count < LITE_MONTHLY_LIMIT;
-    }
-    
-    function getRemainingLiteShares() {
-        if (currentUser) return Infinity;
-        const usage = getLiteUsage();
-        return Math.max(0, LITE_MONTHLY_LIMIT - usage.count);
-    }
-    
-    function updateLiteUsageUI() {
-        const badge = $('liteUsageBadge');
-        const stickyBadge = $('stickyLiteUsageBadge');
-        const remaining = getRemainingLiteShares();
-        
-        if (currentUser) {
-            // Hide for logged in users
-            if (badge) badge.classList.add('hidden');
-            if (stickyBadge) stickyBadge.classList.add('hidden');
-            return;
-        }
-        
-        [badge, stickyBadge].forEach(b => {
-            if (b) {
-                b.classList.remove('hidden');
-                b.textContent = remaining;
-                
-                // Change color when low (5 or less)
-                if (remaining <= 5) {
-                    b.classList.add('low');
-                } else {
-                    b.classList.remove('low');
-                }
-            }
-        });
-    }
-    
-    function showUpgradeModal() {
-        $('upgradeModal').classList.add('open');
-    }
-    
-    function closeUpgradeModal() {
-        $('upgradeModal').classList.remove('open');
-    }
     
     let currentUser = null;
 
@@ -7309,9 +7132,6 @@ Government Issued ID</textarea>
         
         // Update Save Favorite button visibility
         updateSaveFavoriteButton();
-        
-        // Update lite usage display
-        updateLiteUsageUI();
         
         // Update accent swatch locks
         updateAccentSwatchLocks();
@@ -8613,12 +8433,6 @@ Government Issued ID</textarea>
     }
     
     function copyLink() { 
-        // Check lite usage limit
-        if (!canUseLiteShare()) {
-            showUpgradeModal();
-            return;
-        }
-        
         const l = getLink(); 
         saveOfferToDashboard(l, 'clientShareLink'); // Save offer to dashboard with tracking
         
@@ -8626,22 +8440,11 @@ Government Issued ID</textarea>
         window.clientLinkShared = true;
         updateModeStatusIcons();
         
-        // Increment usage for lite users
-        if (!currentUser) {
-            incrementLiteUsage();
-        }
-        
         if (navigator.clipboard) { navigator.clipboard.writeText(l).then(() => showToast('Link copied!')).catch(() => prompt("Copy Link:", l)); } else { prompt("Copy Link:", l); }
         $('shareModal').classList.add('hidden');
     }
     
     function copySMS() {
-        // Check lite usage limit
-        if (!canUseLiteShare()) {
-            showUpgradeModal();
-            return;
-        }
-        
         // Build minimal link for SMS (shorter URL)
         const smsLink = getSMSLink();
         saveOfferToDashboard(smsLink, 'smsShare');
@@ -8649,11 +8452,6 @@ Government Issued ID</textarea>
         // Mark as shared and update UI
         window.clientLinkShared = true;
         updateModeStatusIcons();
-        
-        // Increment usage for lite users
-        if (!currentUser) {
-            incrementLiteUsage();
-        }
         
         // Build compact SMS message
         const opt = calcOptions[0];
@@ -10486,16 +10284,6 @@ Government Issued ID</textarea>
                 closeLoginModal();
             }
         });
-        
-        // Close upgrade modal on overlay click
-        $('upgradeModal').addEventListener('click', (e) => {
-            if (e.target === $('upgradeModal')) {
-                closeUpgradeModal();
-            }
-        });
-        
-        // Initialize lite usage UI
-        updateLiteUsageUI();
         
         // Initialize client view if this is a client share link
         if (isClientShareLink && clientShareData) {
