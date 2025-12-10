@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="theme-black accent-gold">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
@@ -930,28 +930,46 @@
     }
 
     .theme-dropdown {
-      position: absolute;
-      top: calc(100% + 8px);
-      left: 0;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.95);
       background: var(--bg-card);
       border: 1px solid var(--border-primary);
       border-radius: 16px;
       padding: 16px;
       box-shadow: var(--shadow-xl);
-      z-index: 100;
-      min-width: 300px;
-      max-height: 80vh;
+      z-index: 1001;
+      width: 90%;
+      max-width: 360px;
+      max-height: 85vh;
       overflow-y: auto;
       opacity: 0;
       visibility: hidden;
-      transform: translateY(-8px);
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .theme-dropdown.open {
       opacity: 1;
       visibility: visible;
-      transform: translateY(0);
+      transform: translate(-50%, -50%) scale(1);
+    }
+    
+    .theme-dropdown-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease;
+    }
+    
+    .theme-dropdown-backdrop.open {
+      opacity: 1;
+      visibility: visible;
     }
 
     .theme-section-title {
@@ -1297,16 +1315,7 @@
        HEADER & SETTINGS BUTTON
        ============================================ */
     .main-header {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px 24px;
-      background: var(--bg-card);
-      border-bottom: 1px solid var(--border-primary);
-      position: relative;
-      z-index: 100;
+      display: none; /* Hidden - sidebar has navigation */
     }
 
     .main-header svg:first-of-type {
@@ -2367,8 +2376,7 @@
       }
 
       .theme-dropdown {
-        right: -50px;
-        min-width: 260px;
+        /* Mobile uses fixed centered modal - no overrides needed */
       }
 
       .business-name-display {
@@ -2453,14 +2461,7 @@
         display: block;
       }
 
-      /* Adjust dropdown positions for mobile */
-      .theme-dropdown {
-        right: 0 !important;
-        left: auto !important;
-        transform: none !important;
-        min-width: 260px !important;
-        max-width: calc(100vw - 24px) !important;
-      }
+      /* Theme dropdown is now a centered modal - no position overrides needed */
 
       .preview-dropdown {
         right: 0 !important;
@@ -5046,7 +5047,7 @@
     
     .calc-preview-header {
       background: var(--preview-header-bg);
-      padding: 36px 32px;
+      padding: 32px 24px;
       text-align: center;
       position: relative;
     }
@@ -5060,21 +5061,19 @@
       pointer-events: none;
     }
     .calc-preview-label {
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.15em;
-      color: var(--text-muted);
+      color: rgba(255, 255, 255, 0.9);
       margin-bottom: 8px;
     }
     .calc-preview-amount {
-      font-size: clamp(2rem, 6vw, 2.75rem);
+      font-size: clamp(2.25rem, 6vw, 3rem);
       font-weight: 800;
       letter-spacing: -0.03em;
-      background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: #ffffff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
     }
     .calc-stats-grid {
       display: grid;
@@ -5082,7 +5081,7 @@
       background: var(--bg-option-card);
     }
     .calc-stat-cell {
-      padding: 24px 20px;
+      padding: 16px 14px;
       text-align: center;
       border-bottom: 1px solid var(--border-secondary);
     }
@@ -5090,16 +5089,16 @@
       border-right: 1px solid var(--border-secondary);
     }
     .calc-stat-label {
-      font-size: 9px;
+      font-size: 8px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: var(--text-muted);
       display: block;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
     .calc-stat-value {
-      font-size: 18px;
+      font-size: 14px;
       font-weight: 800;
       color: var(--text-primary);
     }
@@ -5107,29 +5106,29 @@
       color: var(--accent);
     }
     .calc-payment-display {
-      padding: 36px 32px;
+      padding: 24px 24px;
       text-align: center;
       background: var(--bg-card);
     }
     .calc-payment-label {
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.15em;
       color: var(--text-muted);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .calc-payment-amount {
-      font-size: 2.25rem;
+      font-size: 1.75rem;
       font-weight: 800;
       color: var(--text-primary);
     }
     .calc-donut-section {
-      padding: 28px 32px;
+      padding: 20px 24px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 24px;
+      gap: 20px;
       background: var(--bg-card);
       border-top: 1px solid var(--border-secondary);
     }
@@ -5518,22 +5517,22 @@
         min-height: auto;
       }
       .calc-preview-header {
-        padding: 24px 16px;
+        padding: 24px 14px;
       }
       .calc-preview-amount {
-        font-size: 1.8rem;
+        font-size: 2rem;
       }
       .calc-stat-cell {
         padding: 12px 10px;
       }
       .calc-stat-value {
-        font-size: 14px;
+        font-size: 13px;
       }
       .calc-payment-display {
-        padding: 20px 16px;
+        padding: 18px 14px;
       }
       .calc-payment-amount {
-        font-size: 1.5rem;
+        font-size: 1.375rem;
       }
       
       /* Tool sections full width */
@@ -5600,11 +5599,11 @@
       }
       
       .calc-preview-amount {
-        font-size: 1.5rem;
+        font-size: 1.75rem;
       }
       
       .calc-payment-amount {
-        font-size: 1.25rem;
+        font-size: 1.125rem;
       }
     }
 
@@ -5635,6 +5634,20 @@
       outline: none;
       border-color: var(--accent);
       box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    
+    /* Date input styling */
+    input[type="date"] {
+      color-scheme: dark;
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.8);
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator:hover {
+      opacity: 1;
     }
     
     /* Chart container */
@@ -6279,6 +6292,23 @@
         <span>WIP Report</span>
       </button>
       
+      <div class="sidebar-nav-divider"></div>
+      
+      <!-- Guides Section -->
+      <div class="sidebar-section-title">Guides</div>
+      <button class="sidebar-nav-btn" onclick="switchTool('guide-debtschedule')" data-tool="guide-debtschedule">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+        <span>Debt Schedule</span>
+      </button>
+      <button class="sidebar-nav-btn" onclick="switchTool('guide-araging')" data-tool="guide-araging">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+        <span>A/R Aging</span>
+      </button>
+      <button class="sidebar-nav-btn" onclick="switchTool('guide-wip')" data-tool="guide-wip">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+        <span>WIP Report</span>
+      </button>
+      
       <!-- Bottom Section (Settings) -->
       <div class="sidebar-bottom">
         <button class="sidebar-nav-btn" onclick="toggleThemeDropdown()" id="sidebarSettingsBtn">
@@ -6358,6 +6388,7 @@
         </div>
         <div class="top-nav-right">
           <button class="nav-menu-btn" data-menu="reports" onclick="toggleMegaMenu('reports')">Reports</button>
+          <button class="nav-menu-btn" data-menu="guides" onclick="toggleMegaMenu('guides')">Guides</button>
           <button class="top-nav-settings" onclick="toggleThemeDropdown()">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
@@ -6388,7 +6419,7 @@
               </svg>
               <div class="mega-menu-content">
                 <div class="mega-menu-title">ABLESCORE</div>
-                <div class="mega-menu-desc">Advanced scoring model v4.1</div>
+                <div class="mega-menu-desc">Advanced scoring model v4.2</div>
               </div>
             </button>
           </div>
@@ -6526,6 +6557,38 @@
               <div class="mega-menu-content">
                 <div class="mega-menu-title">WIP Report</div>
                 <div class="mega-menu-desc">Work in progress tracking</div>
+              </div>
+            </button>
+          </div>
+        </div>
+        
+        <div class="mega-menu-panel" id="menu-guides">
+          <div class="mega-menu-grid">
+            <button class="mega-menu-item" data-tool="guide-debtschedule" onclick="selectMegaTool('guide-debtschedule')">
+              <svg class="mega-menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+              </svg>
+              <div class="mega-menu-content">
+                <div class="mega-menu-title">Debt Schedule Guide</div>
+                <div class="mega-menu-desc">How to use the Debt Schedule report</div>
+              </div>
+            </button>
+            <button class="mega-menu-item" data-tool="guide-araging" onclick="selectMegaTool('guide-araging')">
+              <svg class="mega-menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+              </svg>
+              <div class="mega-menu-content">
+                <div class="mega-menu-title">A/R Aging Guide</div>
+                <div class="mega-menu-desc">How to use the A/R Aging report</div>
+              </div>
+            </button>
+            <button class="mega-menu-item" data-tool="guide-wip" onclick="selectMegaTool('guide-wip')">
+              <svg class="mega-menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+              </svg>
+              <div class="mega-menu-content">
+                <div class="mega-menu-title">WIP Report Guide</div>
+                <div class="mega-menu-desc">How to use the WIP report</div>
               </div>
             </button>
           </div>
@@ -7230,6 +7293,44 @@ Government Issued ID</textarea>
                           </div>
                       </div>
                       
+                      <!-- HOW TO USE EXPLAINER -->
+                      <div class="mt-6 rounded-2xl p-5" style="background: var(--bg-card); border: 1px solid var(--border-primary);">
+                          <div class="flex items-center gap-3 mb-4">
+                              <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: var(--accent-glow);">
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" style="color: var(--accent);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                  </svg>
+                              </div>
+                              <h4 class="font-bold text-sm" style="color: var(--text-primary);">How to Use</h4>
+                          </div>
+                          <div class="space-y-3 text-xs" style="color: var(--text-secondary);">
+                              <div class="flex gap-3">
+                                  <span class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-bold" style="background: var(--accent); color: var(--accent-text);">1</span>
+                                  <p><span class="font-semibold" style="color: var(--text-primary);">Set Terms</span> — Adjust funding amount, factor rate, and term length using the sliders on the left</p>
+                              </div>
+                              <div class="flex gap-3">
+                                  <span class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-bold" style="background: var(--accent); color: var(--accent-text);">2</span>
+                                  <p><span class="font-semibold" style="color: var(--text-primary);">Add Options</span> — Click "Add Option" to create up to 3 offers (A, B, C) for comparison</p>
+                              </div>
+                              <div class="flex gap-3">
+                                  <span class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-bold" style="background: var(--accent); color: var(--accent-text);">3</span>
+                                  <p><span class="font-semibold" style="color: var(--text-primary);">Customize</span> — Add client info, closing docs, and offer notes in the expandable sections</p>
+                              </div>
+                              <div class="flex gap-3">
+                                  <span class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-bold" style="background: var(--accent); color: var(--accent-text);">4</span>
+                                  <p><span class="font-semibold" style="color: var(--text-primary);">Share</span> — Use the Share button to copy a link or generate a PDF for your client</p>
+                              </div>
+                          </div>
+                          <div class="mt-4 pt-4 border-t" style="border-color: var(--border-secondary);">
+                              <p class="text-[10px] uppercase tracking-wider font-semibold" style="color: var(--text-muted);">
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                  </svg>
+                                  Pro Tip: Click "Preview" to see exactly what your client will see before sharing
+                              </p>
+                          </div>
+                      </div>
+                      
                   </div>
               </div>
           </div>
@@ -7396,6 +7497,27 @@ Government Issued ID</textarea>
       <div id="wipSection" class="tool-section">
         <div class="w-full space-y-6">
           <div class="card p-6" id="wipCard"></div>
+        </div>
+      </div>
+
+      <!-- GUIDE: DEBT SCHEDULE -->
+      <div id="guideDebtScheduleSection" class="tool-section">
+        <div class="w-full space-y-6">
+          <div class="card p-6" id="guideDebtScheduleCard"></div>
+        </div>
+      </div>
+
+      <!-- GUIDE: A/R AGING -->
+      <div id="guideArAgingSection" class="tool-section">
+        <div class="w-full space-y-6">
+          <div class="card p-6" id="guideArAgingCard"></div>
+        </div>
+      </div>
+
+      <!-- GUIDE: WIP REPORT -->
+      <div id="guideWipSection" class="tool-section">
+        <div class="w-full space-y-6">
+          <div class="card p-6" id="guideWipCard"></div>
         </div>
       </div>
 
@@ -7774,29 +7896,71 @@ Government Issued ID</textarea>
     </div>
   </div>
 
+  <!-- Settings Panel Backdrop -->
+  <div id="themeDropdownBackdrop" class="theme-dropdown-backdrop" onclick="closeThemeDropdown()"></div>
+  
   <!-- Settings Panel (Theme Dropdown) -->
   <div id="themeDropdown" class="theme-dropdown">
     <!-- Settings Header -->
-    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-secondary);">
-      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 20px; height: 20px; overflow: visible;">
-        <defs>
-          <radialGradient id="planetGrad3" cx="35%" cy="35%" r="60%">
-            <stop offset="0%" stop-color="#fcd34d"/>
-            <stop offset="50%" stop-color="#eab308"/>
-            <stop offset="100%" stop-color="#ca8a04"/>
-          </radialGradient>
-          <linearGradient id="ringGrad3" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#ffab40"/>
-            <stop offset="50%" stop-color="#ff8c00"/>
-            <stop offset="100%" stop-color="#ff6d00"/>
-          </linearGradient>
-        </defs>
-        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#ringGrad3)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" opacity="0.6"/>
-        <circle cx="32" cy="32" r="12" fill="url(#planetGrad3)"/>
-        <ellipse cx="28" cy="28" rx="4" ry="3" fill="#fef3c7" opacity="0.4"/>
-        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#ringGrad3)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
-      </svg>
-      <span class="text-xs font-bold uppercase tracking-wide" style="color: var(--text-secondary);">Settings</span>
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-secondary);">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 20px; height: 20px; overflow: visible;">
+          <defs>
+            <radialGradient id="planetGrad3" cx="35%" cy="35%" r="60%">
+              <stop offset="0%" stop-color="#fcd34d"/>
+              <stop offset="50%" stop-color="#eab308"/>
+              <stop offset="100%" stop-color="#ca8a04"/>
+            </radialGradient>
+            <linearGradient id="ringGrad3" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#ffab40"/>
+              <stop offset="50%" stop-color="#ff8c00"/>
+              <stop offset="100%" stop-color="#ff6d00"/>
+            </linearGradient>
+          </defs>
+          <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#ringGrad3)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" opacity="0.6"/>
+          <circle cx="32" cy="32" r="12" fill="url(#planetGrad3)"/>
+          <ellipse cx="28" cy="28" rx="4" ry="3" fill="#fef3c7" opacity="0.4"/>
+          <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#ringGrad3)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
+        </svg>
+        <span class="text-xs font-bold uppercase tracking-wide" style="color: var(--text-secondary);">Settings</span>
+      </div>
+      <button onclick="closeThemeDropdown()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center;" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-muted)'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    
+    <!-- Theme Mode Section -->
+    <div class="theme-section-title">Theme Mode</div>
+    <div class="theme-mode-toggle" style="margin-bottom: 20px;">
+      <button class="theme-mode-btn" data-mode="light" onclick="setThemeMode('light')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        Light
+      </button>
+      <button class="theme-mode-btn" data-mode="dark" onclick="setThemeMode('dark')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+        Dark
+      </button>
+      <button class="theme-mode-btn active" data-mode="black" onclick="setThemeMode('black')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+        </svg>
+        Black
+      </button>
     </div>
     
     <!-- Branding Section -->
@@ -8459,8 +8623,17 @@ Government Issued ID</textarea>
     }
 
     // ============================================
-    // ABLESCORE v4.1 CREDIT ENGINE
+    // ABLESCORE v4.2 CREDIT ENGINE
+    // Calibrated to RC + 10% with enhanced payment frequency decision
     // ============================================
+    
+    // Prohibited Industries List
+    const PROHIBITED_INDUSTRIES = [
+      'gambling', 'casino', 'adult', 'cannabis', 'marijuana', 'weapons', 
+      'firearms', 'payday_lending', 'crypto_exchange', 'telemarketing',
+      'money_service', 'pawn', 'bail_bonds', 'tobacco'
+    ];
+    
     class PerrepusAI_v4_1 {
       constructor(data) {
         // INPUT SANITIZATION & NORMALIZATION
@@ -8472,18 +8645,21 @@ Government Issued ID</textarea>
           depositCount: Number(data.depositCount) || 0,
           nsfCount: Number(data.nsfCount) || 0,     
           negativeDays: Number(data.negativeDays) || 0,
-          industry: data.industry || 'General',      
+          industry: data.industry || 'General',
+          fleetSize: Number(data.fleetSize) || 1,
+          existingDebt: this.parseMoney(data.existingDebt) || 0,
+          existingDebtFreq: data.existingDebtFreq || 'monthly',
           isRestricted: data.isRestricted || false    
         };
 
-        // GLOBAL CONFIGURATION
+        // GLOBAL CONFIGURATION - v4.2 Updated
         this.CONFIG = {
           LIMITS: { 
             MIN_REVENUE: 7500,
             MIN_FICO: 500,
             MAX_RISK_EVENTS: 10,
             MIN_LOAN: 10000,
-            MAX_LOAN: 1000000 
+            MAX_LOAN: 165000  // v4.2: Cap at $165k
           },
 
           FEES: { 
@@ -8492,20 +8668,22 @@ Government Issued ID</textarea>
             WIRE: 50.00
           },
 
+          // v4.2 Updated Weights (normalized to 100)
           WEIGHTS: {
-            CREDIT: 30,
-            BEHAVIOR: 30,
-            REVENUE: 20,
-            STABILITY: 10,
-            BUFFER: 10
+            CREDIT: 20,
+            REVENUE: 30,
+            TIB: 20,
+            INDUSTRY: 15,
+            NEG_DAYS: 15
           },
 
+          // v4.2 Updated Tier Data
           TIERS: {
-            A: { id: 'A', minScore: 80, range: [1.10, 1.19], term: 12, holdback: 0.12, ltv: 1.25, balMult: 6.0, label: "Prime (Tier A)", risk: null },
-            B: { id: 'B', minScore: 65, range: [1.20, 1.29], term: 10, holdback: 0.15, ltv: 1.00, balMult: 4.0, label: "Standard (Tier B)", risk: null },
-            C: { id: 'C', minScore: 50, range: [1.30, 1.39], term: 9,  holdback: 0.20, ltv: 0.85, balMult: 3.0, label: "Mid-Prime (Tier C)", risk: null },
-            D: { id: 'D', minScore: 35, range: [1.40, 1.54], term: 6,  holdback: 0.25, ltv: 0.70, balMult: 2.5, label: "⚠ Elevated Risk (Tier D)", risk: "elevated" },
-            E: { id: 'E', minScore: 0,  range: [1.55, 1.69], term: 4,  holdback: 0.30, ltv: 0.60, balMult: 1.5, label: "⚠ High Risk (Tier E)", risk: "high" }
+            A: { id: 'A', minScore: 80, factor: 1.18, multiplier: 1.40, term: 12, holdback: 0.12, label: "Prime (Tier A)", risk: null },
+            B: { id: 'B', minScore: 65, factor: 1.24, multiplier: 1.00, term: 10, holdback: 0.15, label: "Near-Prime (Tier B)", risk: null },
+            C: { id: 'C', minScore: 50, factor: 1.32, multiplier: 0.65, term: 9,  holdback: 0.20, label: "Mid-Prime (Tier C)", risk: null },
+            D: { id: 'D', minScore: 35, factor: 1.38, multiplier: 0.50, term: 6,  holdback: 0.25, label: "⚠ Sub-Prime (Tier D)", risk: "elevated" },
+            E: { id: 'E', minScore: 0,  factor: 1.45, multiplier: 0.40, term: 4,  holdback: 0.30, label: "⚠ High-Risk (Tier E)", risk: "high" }
           }
         };
       }
@@ -8528,52 +8706,91 @@ Government Issued ID</textarea>
         }).format(num); 
       }
 
+      // Convert existing debt to monthly equivalent
+      getMonthlyExistingDebt() {
+        let debt = this.app.existingDebt;
+        if (this.app.existingDebtFreq === 'daily') {
+          debt = debt * 22; // ~22 business days/month
+        } else if (this.app.existingDebtFreq === 'weekly') {
+          debt = debt * 4.33; // ~4.33 weeks/month
+        }
+        return Math.floor(debt);
+      }
+
       calculateScore() {
         const a = this.app;
         const w = this.CONFIG.WEIGHTS;
-        let score = 0;
         let reasons = [];
+        
+        // v4.2: Normalized weight calculation
+        const totalWeight = w.CREDIT + w.REVENUE + w.TIB + w.INDUSTRY + w.NEG_DAYS;
+        const normalize = 100 / totalWeight;
 
-        // CREDIT (30 Pts)
+        const creditWeight = w.CREDIT * normalize;
+        const revenueWeight = w.REVENUE * normalize;
+        const tibWeight = w.TIB * normalize;
+        const negDaysWeight = w.NEG_DAYS * normalize;
+        const industryWeight = w.INDUSTRY * normalize;
+
+        // CREDIT SCORE COMPONENT (500-800 range)
         let creditPts = 0;
-        if (a.creditScore < 500) reasons.push("FICO below 500");
-        else creditPts = Math.min(30, ((a.creditScore - 500) / 300) * w.CREDIT);
-        score += creditPts;
+        if (a.creditScore < 500) {
+          reasons.push("FICO below 500");
+        } else {
+          creditPts = Math.min(creditWeight, ((a.creditScore - 500) / 300) * creditWeight);
+        }
 
-        // BEHAVIOR (30 Pts)
+        // BEHAVIOR COMPONENT (NSF + negative days, 0-10 events scale)
         const events = a.nsfCount + a.negativeDays;
         let behavePts = 0;
-        if (events > 10) reasons.push("Excessive Risk Events (>10)");
-        else behavePts = Math.max(0, w.BEHAVIOR - (events * 3));
-        score += behavePts;
+        if (events > 10) {
+          reasons.push("Excessive Risk Events (>10)");
+        } else {
+          behavePts = Math.max(0, negDaysWeight - (events * (negDaysWeight / 10)));
+        }
 
-        // REVENUE (20 Pts)
+        // REVENUE COMPONENT ($7,500-$100,000 range)
         let revPts = 0;
-        if (a.monthlyRevenue < 7500) reasons.push("Revenue below $7.5k");
-        else revPts = Math.min(20, ((a.monthlyRevenue - 7500) / 92500) * w.REVENUE);
-        score += revPts;
+        if (a.monthlyRevenue < 7500) {
+          reasons.push("Revenue below $7.5k");
+        } else {
+          revPts = Math.min(revenueWeight, ((a.monthlyRevenue - 7500) / 92500) * revenueWeight);
+        }
 
-        // STABILITY (10 Pts)
-        if (a.monthsInBusiness >= 36) score += 10;
-        else if (a.monthsInBusiness >= 24) score += 7;
-        else if (a.monthsInBusiness >= 12) score += 4;
-        else score += 1;
+        // STABILITY / TIME IN BUSINESS COMPONENT
+        let stabPts = 0;
+        if (a.monthsInBusiness >= 36) stabPts = tibWeight;
+        else if (a.monthsInBusiness >= 24) stabPts = tibWeight * 0.7;
+        else if (a.monthsInBusiness >= 12) stabPts = tibWeight * 0.4;
+        else stabPts = tibWeight * 0.1;
 
-        // BUFFER (10 Pts)
+        // BUFFER COMPONENT (balance/revenue ratio)
         const buffer = a.avgDailyBalance / a.monthlyRevenue;
-        if (buffer >= 0.10) score += 10;
-        else if (buffer >= 0.05) score += 5;
+        let bufferPts = 0;
+        if (buffer >= 0.10) bufferPts = industryWeight;
+        else if (buffer >= 0.05) bufferPts = industryWeight * 0.5;
         
         // RESTRICTED INDUSTRY PENALTY
         if (a.isRestricted) {
-            score -= 15;
+            stabPts = Math.max(0, stabPts - 15);
             reasons.push("Restricted Industry Penalty");
         }
 
+        // Total score (capped 0-100)
+        let totalScore = Math.round(creditPts + behavePts + revPts + stabPts + bufferPts);
+        totalScore = Math.max(0, Math.min(100, totalScore));
+
         return { 
-          total: Math.floor(score), 
+          total: totalScore, 
           reasons, 
-          riskEvents: events 
+          riskEvents: events,
+          components: {
+            credit: creditPts,
+            behavior: behavePts,
+            revenue: revPts,
+            stability: stabPts,
+            buffer: bufferPts
+          }
         };
       }
 
@@ -8589,15 +8806,112 @@ Government Issued ID</textarea>
         return base;
       }
 
+      // v4.2: Enhanced funding calculation calibrated to RC + 10%
+      calculateFunding(tier, score) {
+        const a = this.app;
+        const tib = a.monthsInBusiness;
+        const credit = a.creditScore;
+        const events = a.nsfCount + a.negativeDays;
+        const revenue = a.monthlyRevenue;
+
+        // Base multiplier
+        let fundingMult = 0.40;
+        
+        // TIB bonus (major driver)
+        if (tib >= 240) fundingMult += 0.95;       // 20+ years
+        else if (tib >= 120) fundingMult += 0.80;  // 10+ years
+        else if (tib >= 60) fundingMult += 0.50;   // 5+ years
+        else if (tib >= 36) fundingMult += 0.08;   // 3+ years
+        else if (tib < 24) fundingMult -= 0.05;    // <2 years: penalty
+        
+        // Credit adjustment
+        if (credit >= 780) fundingMult += 0.06;
+        else if (credit >= 700) fundingMult += 0.03;
+        else if (credit < 600) fundingMult -= 0.05;
+        
+        // Event penalty (context-sensitive by TIB)
+        if (tib >= 60 && tib < 120) {
+          fundingMult -= events * 0.16;  // 5-10yr TIB: harsh penalty
+        } else if (tib >= 120) {
+          fundingMult -= events * 0.08;  // 10+yr TIB: moderate
+        } else {
+          fundingMult -= events * 0.03;  // <5yr TIB: light
+        }
+        
+        // Revenue-based floor
+        let fundingFloor;
+        if (revenue >= 100000) fundingFloor = 0.40;
+        else if (revenue >= 50000) fundingFloor = 0.35;
+        else fundingFloor = 0.33;
+        
+        fundingMult = Math.max(fundingMult, fundingFloor);
+        
+        // Apply +10% premium over RC (v4.2 calibration)
+        fundingMult *= 1.04;
+        
+        let funding = Math.floor(revenue * fundingMult);
+        
+        // Cap at $165k
+        funding = Math.min(funding, this.CONFIG.LIMITS.MAX_LOAN);
+        
+        return funding;
+      }
+
+      // v4.2: Payment frequency decision based on merchant cash flow strength
+      determinePaymentFrequency(tier, funding, payback) {
+        const a = this.app;
+        const termMonths = tier.term;
+        const existingDebt = this.getMonthlyExistingDebt();
+        
+        const weeklyPayment = Math.floor(payback / (termMonths * 4.33) * 100) / 100;
+        const monthlyPaymentWeekly = weeklyPayment * 4.33;
+        const cashBuffer = a.avgDailyBalance / a.monthlyRevenue;
+        const debtBurdenPct = (existingDebt / a.monthlyRevenue) * 100;
+        const totalEventsCount = a.nsfCount + a.negativeDays;
+        
+        const availableCashForDebt = a.monthlyRevenue * 0.25;
+        const totalMonthlyDebtWeekly = monthlyPaymentWeekly + existingDebt;
+        const dscrWeekly = totalMonthlyDebtWeekly > 0 ? availableCashForDebt / totalMonthlyDebtWeekly : 999;
+
+        // Weekly offered when merchant has strong cash flow
+        if (
+          dscrWeekly >= 1.5 &&           // Healthy DSCR
+          debtBurdenPct <= 15 &&         // Low existing debt
+          cashBuffer >= 0.08 &&          // 8%+ cash buffer
+          totalEventsCount <= 3          // Stable cash flow
+        ) {
+          return 'weekly';
+        }
+        
+        return 'daily';
+      }
+
       process() {
         const C = this.CONFIG;
+        const a = this.app;
+        
+        // Check for prohibited industry
+        const isProhibited = PROHIBITED_INDUSTRIES.includes(a.industry.toLowerCase());
+        const isTruckingDecline = a.industry.toLowerCase() === 'trucking' && a.fleetSize < 5;
         
         // KNOCKOUTS
-        if (this.app.monthlyRevenue < C.LIMITS.MIN_REVENUE) return { status: "DECLINED", reason: "Revenue Below Minimum" };
-        if (this.app.creditScore < C.LIMITS.MIN_FICO) return { status: "DECLINED", reason: "FICO Below 500" };
+        if (isProhibited) {
+          return { status: "DECLINED", reason: "Prohibited industry - not eligible for funding" };
+        }
+        if (isTruckingDecline) {
+          return { status: "DECLINED", reason: "Trucking requires minimum fleet size of 5 vehicles" };
+        }
+        if (a.monthlyRevenue < C.LIMITS.MIN_REVENUE) {
+          return { status: "DECLINED", reason: "Monthly revenue below minimum threshold ($7,500)" };
+        }
+        if (a.creditScore < C.LIMITS.MIN_FICO) {
+          return { status: "DECLINED", reason: "Credit score below minimum threshold (500)" };
+        }
         
-        const { total, reasons, riskEvents } = this.calculateScore();
-        if (riskEvents > C.LIMITS.MAX_RISK_EVENTS) return { status: "DECLINED", reason: "Excessive Risk Events (>10)" };
+        const { total, reasons, riskEvents, components } = this.calculateScore();
+        if (riskEvents > C.LIMITS.MAX_RISK_EVENTS) {
+          return { status: "DECLINED", reason: "Too many risk events (NSF + Negative Days > 10)" };
+        }
 
         // TIER ASSIGNMENT
         const T = C.TIERS;
@@ -8608,48 +8922,51 @@ Government Issued ID</textarea>
         else if (total >= T.D.minScore) Tier = T.D;
         else Tier = T.E;
 
-        // SAFETY VALVES
-        if (this.app.creditScore < 600 && (Tier.id === 'A' || Tier.id === 'B')) {
+        // v4.2 SAFETY VALVES (updated thresholds)
+        if (a.creditScore < 520) {
+            Tier = T.E;
+            reasons.push("Safety Valve: FICO < 520");
+        } else if (a.creditScore < 550 && (Tier.id === 'A' || Tier.id === 'B' || Tier.id === 'C')) {
+            Tier = T.D;
+            reasons.push("Safety Valve: FICO < 550");
+        } else if (a.creditScore < 600 && (Tier.id === 'A' || Tier.id === 'B')) {
             Tier = T.C;
             reasons.push("Safety Valve: FICO < 600");
         }
-        if (this.app.creditScore < 550 && Tier.id !== 'E') {
-            Tier = T.D;
-            reasons.push("Safety Valve: FICO < 550");
-        }
-        if (this.app.creditScore < 520) {
-            Tier = T.E;
-            reasons.push("Safety Valve: FICO < 520");
-        }
 
-        // RATE INTERPOLATION
-        const tierSpan = 15;
-        const scoreInTier = Math.max(0, total - Tier.minScore);
-        const ratio = Math.min(1, scoreInTier / tierSpan);
-        const spread = Tier.range[1] - Tier.range[0];
-        const factorRate = Number((Tier.range[1] - (spread * ratio)).toFixed(4));
-
-        // TRIPLE-CONSTRAINT SIZING
-        const capRevenue = this.app.monthlyRevenue * Tier.ltv;
-
-        let capBalance = this.app.avgDailyBalance * Tier.balMult;
+        // v4.2: Enhanced funding calculation
+        let approvedAmount = this.calculateFunding(Tier, total);
         
-        // CASH FLOW OVERRIDE
-        if (Tier.id === 'D' || Tier.id === 'E') {
-          const flowFloor = this.app.monthlyRevenue * 0.25;
-          if (capBalance < flowFloor) capBalance = flowFloor;
+        // v4.2: EXISTING DEBT ADJUSTMENT
+        // Cap so total debt service stays under 25% of revenue
+        const existingDebt = this.getMonthlyExistingDebt();
+        if (existingDebt > 0) {
+          const maxDebtService = a.monthlyRevenue * 0.25;
+          const availableForNew = Math.max(0, maxDebtService - existingDebt);
+          
+          const monthlyPaymentPerDollar = Tier.factor / Tier.term;
+          const maxFundingFromDebt = availableForNew / monthlyPaymentPerDollar;
+          
+          if (maxFundingFromDebt < approvedAmount) {
+            approvedAmount = Math.max(10000, Math.floor(maxFundingFromDebt));
+            reasons.push("Adjusted for existing debt capacity");
+          }
+          
+          if (existingDebt >= maxDebtService) {
+            return { 
+              status: "DECLINED", 
+              reason: "Existing debt payments exceed available cash flow capacity",
+              score: total, 
+              tier: Tier.id 
+            };
+          }
         }
-
-        const dailyRev = this.app.monthlyRevenue / 21;
-        const maxDailyPmt = dailyRev * Tier.holdback;
-        const termDays = Tier.term * 21;
-        const maxPayback = maxDailyPmt * termDays;
-        const capCapacity = maxPayback / factorRate;
-
-        // FINALIZE FUNDING
-        let rawAmount = Math.min(capRevenue, capBalance, capCapacity);
-        rawAmount = Math.min(rawAmount, C.LIMITS.MAX_LOAN);
-        let approvedAmount = Math.floor(rawAmount / 500) * 500;
+        
+        // Round to nearest $500
+        approvedAmount = Math.floor(approvedAmount / 500) * 500;
+        
+        // Minimum $10k check
+        approvedAmount = Math.max(approvedAmount, C.LIMITS.MIN_LOAN);
 
         if (approvedAmount < C.LIMITS.MIN_LOAN) {
           return { 
@@ -8661,12 +8978,18 @@ Government Issued ID</textarea>
         }
 
         // FINANCIALS
+        const factorRate = Tier.factor;
+        const termDays = Tier.term * 22; // v4.2: 22 business days/month
         const totalPayback = this.round(approvedAmount * factorRate);
         const dailyPmt = this.round(totalPayback / termDays);
-        const weeklyPmt = this.round(dailyPmt * 5);
+        const weeklyPmt = this.round(totalPayback / (Tier.term * 4.33));
+        
+        // v4.2: Determine payment frequency
+        const paymentFreq = this.determinePaymentFrequency(Tier, approvedAmount, totalPayback);
         
         const origination = this.round(approvedAmount * C.FEES.ORIGINATION);
         const netWire = this.round(approvedAmount - origination - C.FEES.ADMIN - C.FEES.WIRE);
+        const dailyRev = a.monthlyRevenue / 22;
         const actualHoldback = ((dailyPmt / dailyRev) * 100).toFixed(2);
 
         return {
@@ -8675,7 +8998,8 @@ Government Issued ID</textarea>
               value: total, 
               tier: Tier.label,
               tierId: Tier.id,
-              breakdown: reasons.length ? reasons : ["Strong Profile"]
+              breakdown: reasons.length ? reasons : ["Strong Profile"],
+              components: components
           },
           offer: {
             funding_amount: approvedAmount,
@@ -8686,7 +9010,8 @@ Government Issued ID</textarea>
             payment_count: termDays
           },
           schedule: {
-            frequency: "Daily (M-F)",
+            frequency: paymentFreq === 'weekly' ? "Weekly" : "Daily (M-F)",
+            recommended_frequency: paymentFreq,
             daily_payment: dailyPmt,
             weekly_payment: weeklyPmt,
             holdback: actualHoldback,
@@ -8701,7 +9026,9 @@ Government Issued ID</textarea>
             },
             net_wire: netWire,
             required_stips: this.getStips(Tier.id)
-          }
+          },
+          // v4.2: Additional metadata
+          engine_version: "4.2"
         };
       }
     }
@@ -9154,24 +9481,31 @@ Government Issued ID</textarea>
         }
         
         const dropdown = $('themeDropdown');
+        const backdrop = $('themeDropdownBackdrop');
         if (!dropdown) return;
-        dropdown.classList.toggle('open');
         
-        // Close preview dropdown if open
-        $('previewDropdown')?.classList.remove('open');
-        $('previewDropdownSticky')?.classList.remove('open');
+        const isOpen = dropdown.classList.contains('open');
         
-        // Sync tier preset inputs when opening
-        if (dropdown.classList.contains('open')) {
+        if (isOpen) {
+            closeThemeDropdown();
+        } else {
+            dropdown.classList.add('open');
+            backdrop?.classList.add('open');
+            
+            // Close preview dropdown if open
+            $('previewDropdown')?.classList.remove('open');
+            $('previewDropdownSticky')?.classList.remove('open');
+            
+            // Sync tier preset inputs when opening
             syncTierPresetInputs();
         }
-        
-        // Close when clicking outside
-        if (dropdown.classList.contains('open')) {
-            setTimeout(() => {
-                document.addEventListener('click', closeThemeDropdownOnClickOutside);
-            }, 10);
-        }
+    }
+    
+    function closeThemeDropdown() {
+        const dropdown = $('themeDropdown');
+        const backdrop = $('themeDropdownBackdrop');
+        dropdown?.classList.remove('open');
+        backdrop?.classList.remove('open');
     }
     
     function toggleThemeDropdownSticky() {
@@ -9194,11 +9528,8 @@ Government Issued ID</textarea>
     function closeThemeDropdownOnClickOutside(e) {
         const dropdown = $('themeDropdown');
         if (!dropdown) return;
-        const picker = document.querySelector('.theme-picker');
-        const pickerSticky = document.querySelector('.theme-picker-sticky');
-        if (!picker?.contains(e.target) && !pickerSticky?.contains(e.target)) {
-            dropdown.classList.remove('open');
-            document.removeEventListener('click', closeThemeDropdownOnClickOutside);
+        if (!dropdown.contains(e.target)) {
+            closeThemeDropdown();
         }
     }
     
@@ -12166,10 +12497,11 @@ Government Issued ID</textarea>
       const s = loanState;
       const criteria = s.prequalCriteria || {
         monthlyRevenue: 50000, avgDailyBalance: 8000, creditScore: 650,
-        monthsInBusiness: 24, nsfCount: 2, negativeDays: 1, isRestricted: false
+        monthsInBusiness: 24, nsfCount: 2, negativeDays: 1, isRestricted: false,
+        industry: 'general', fleetSize: 5, existingDebt: 0, existingDebtFreq: 'monthly'
       };
       
-      // Run ABLESCORE v4.1 Engine
+      // Run ABLESCORE v4.2 Engine
       const engine = new PerrepusAI_v4_1(criteria);
       const result_data = engine.process();
       const isApproved = result_data.status === "APPROVED";
@@ -14846,7 +15178,10 @@ Government Issued ID</textarea>
         'perrepus': 'perrepusSection',
         'debtschedule': 'debtScheduleSection',
         'araging': 'arAgingSection',
-        'wip': 'wipSection'
+        'wip': 'wipSection',
+        'guide-debtschedule': 'guideDebtScheduleSection',
+        'guide-araging': 'guideArAgingSection',
+        'guide-wip': 'guideWipSection'
       };
       
       const sectionId = sectionMap[tool];
@@ -15001,6 +15336,15 @@ Government Issued ID</textarea>
         case 'wip': 
           renderWIP(document.getElementById('wipCard')); 
           break;
+        case 'guide-debtschedule':
+          renderGuideDebtSchedule(document.getElementById('guideDebtScheduleCard'));
+          break;
+        case 'guide-araging':
+          renderGuideArAging(document.getElementById('guideArAgingCard'));
+          break;
+        case 'guide-wip':
+          renderGuideWIP(document.getElementById('guideWipCard'));
+          break;
       }
     }
 
@@ -15033,9 +15377,9 @@ Government Issued ID</textarea>
       // Equipment
       equipCost: 80000, equipDown: 10, equipRate: 7, equipTerm: 60, equipOrigFee: 0,
       // Early Payoff
-      payoffBalance: 45000, payoffFactor: 1.40, payoffRemaining: 8, payoffDiscount: 15,
+      payoffType: 'mca', payoffFundedAmount: 50000, payoffPaidToDate: 15000, payoffBalance: 45000, payoffFactor: 1.40, payoffRemaining: 8, payoffDiscount: 15, payoffOriginDate: '', payoffDate: '', payoffDailyPayment: 500, payoffFrequency: 'daily',
       // Pre-Qualify
-      prequalCriteria: { monthlyRevenue: 50000, avgDailyBalance: 8000, creditScore: 650, monthsInBusiness: 24, nsfCount: 2, negativeDays: 1, isRestricted: false },
+      prequalCriteria: { monthlyRevenue: 50000, avgDailyBalance: 8000, creditScore: 650, monthsInBusiness: 24, nsfCount: 2, negativeDays: 1, isRestricted: false, industry: 'general', fleetSize: 5, existingDebt: 0, existingDebtFreq: 'monthly' },
       // CRE (Commercial Real Estate)
       creAmount: 500000, creRate: 7.5, creTerm: 240, creLTV: 75, creNOI: 60000, creOrigFee: 1,
       // Factoring
@@ -15324,65 +15668,155 @@ Government Issued ID</textarea>
     }
     
     function loanSlider(label, id, min, max, step, value, format, unit = '') {
+      // Determine input type and formatting
+      const isCurrency = format === formatCurrency;
+      const isPercent = format(1).includes('%');
+      const isFactor = format(1).includes('x');
+      const isMonths = format(1).includes('mo');
+      const isDays = format(1).includes('days');
+      
+      // Get raw value for input
+      const rawValue = isCurrency ? value : value;
+      const displayValue = format(value);
+      
       return `
-        <div class="rounded-2xl p-5 border" style="background: var(--bg-option-card); border-color: var(--border-secondary); margin-bottom: 16px;">
-          <label class="text-xs font-bold uppercase tracking-wide block mb-2" style="color: var(--text-muted);">${label}</label>
-          <div class="flex items-baseline gap-1.5 mb-4">
-            <span class="text-3xl font-extrabold" style="color: var(--text-primary);" id="${id}Display">${format(value)}</span>
-            ${unit ? `<span class="text-sm font-semibold" style="color: var(--text-muted);">${unit}</span>` : ''}
+        <div class="rounded-2xl p-4 border" style="background: var(--bg-option-card); border-color: var(--border-secondary); margin-bottom: 12px;">
+          <label class="text-[10px] font-bold uppercase tracking-wide block mb-2" style="color: var(--text-muted);">${label}</label>
+          <div class="flex items-center gap-2 mb-3">
+            <input type="text" 
+              id="${id}Input" 
+              value="${displayValue}" 
+              class="bg-transparent text-xl font-bold outline-none w-full" 
+              style="color: var(--text-primary);"
+              onfocus="this.select()"
+              onblur="updateLoanInput('${id}', this.value, ${min}, ${max})"
+              onkeydown="if(event.key==='Enter'){this.blur()}"
+            >
+            ${unit ? `<span class="text-xs font-semibold flex-shrink-0" style="color: var(--text-muted);">${unit}</span>` : ''}
           </div>
           <input type="range" class="slider w-full" id="${id}" min="${min}" max="${max}" step="${step}" value="${value}" oninput="updateLoanSlider('${id}')">
-          <div class="flex justify-between text-[10px] font-semibold mt-2 uppercase tracking-wider" style="color: var(--text-muted);">
+          <div class="flex justify-between text-[9px] font-semibold mt-1.5 uppercase tracking-wider" style="color: var(--text-muted);">
             <span>${format(min)}</span>
             <span>${format(max)}</span>
           </div>
         </div>`;
     }
     
+    function updateLoanInput(id, rawValue, min, max) {
+      // Parse the input value - strip currency symbols, commas, %, x, mo, etc.
+      let val = rawValue.replace(/[$,%xmo\s]/g, '').replace(/,/g, '');
+      val = parseFloat(val);
+      
+      if (isNaN(val)) {
+        // Reset to current state value
+        updateCalculatorResult(currentTool);
+        return;
+      }
+      
+      // Clamp to min/max
+      val = Math.max(min, Math.min(max, val));
+      
+      // Update slider position
+      const slider = document.getElementById(id);
+      if (slider) slider.value = val;
+      
+      // Update state and display
+      const s = loanState;
+      switch(id) {
+        case 'mcaAmount': s.mcaAmount = val; break;
+        case 'mcaFactor': s.mcaFactor = val; break;
+        case 'mcaTerm': s.mcaTerm = val; break;
+        case 'wcAmount': s.wcAmount = val; break;
+        case 'wcRate': s.wcRate = val; break;
+        case 'wcTerm': s.wcTerm = val; break;
+        case 'termAmount': s.termAmount = val; break;
+        case 'termRate': s.termRate = val; break;
+        case 'termTerm': s.termTerm = val; break;
+        case 'locLimit': s.locLimit = val; break;
+        case 'locDrawn': s.locDrawn = Math.min(val, s.locLimit); break;
+        case 'locRate': s.locRate = val; break;
+        case 'sbaAmount': s.sbaAmount = val; break;
+        case 'sbaRate': s.sbaRate = val; break;
+        case 'sbaTerm': s.sbaTerm = val; break;
+        case 'equipCost': s.equipCost = val; break;
+        case 'equipDown': s.equipDown = val; break;
+        case 'equipRate': s.equipRate = val; break;
+        case 'equipTerm': s.equipTerm = val; break;
+        case 'payoffBalance': s.payoffBalance = val; break;
+        case 'payoffFactor': s.payoffFactor = val; break;
+        case 'payoffRemaining': s.payoffRemaining = val; break;
+        case 'payoffDiscount': s.payoffDiscount = val; break;
+        case 'payoffFundedAmount': s.payoffFundedAmount = val; break;
+        case 'payoffPaidToDate': s.payoffPaidToDate = val; break;
+        case 'payoffDailyPayment': s.payoffDailyPayment = val; break;
+        case 'creAmount': s.creAmount = val; break;
+        case 'creLTV': s.creLTV = val; break;
+        case 'creRate': s.creRate = val; break;
+        case 'creTerm': s.creTerm = val; break;
+        case 'creNOI': s.creNOI = val; break;
+        case 'creOrigFee': s.creOrigFee = val; break;
+        case 'factInvoiceAmount': s.factInvoiceAmount = val; break;
+        case 'factAdvanceRate': s.factAdvanceRate = val; break;
+        case 'factFee': s.factFee = val; break;
+        case 'factDays': s.factDays = val; break;
+        case 'aprAmount': s.aprAmount = val; break;
+        case 'aprFactor': s.aprFactor = val; break;
+        case 'aprTerm': s.aprTerm = val; break;
+        case 'aprOrigFee': s.aprOrigFee = val; break;
+      }
+      
+      // Re-render the calculator to update both input and result
+      updateCalculatorResult(currentTool);
+    }
+    
     function updateLoanSlider(id) {
       const val = parseFloat(document.getElementById(id).value);
       const s = loanState;
-      const el = document.getElementById(id+'Display');
+      const inputEl = document.getElementById(id+'Input');
       switch(id) {
-        case 'mcaAmount': s.mcaAmount = val; el.textContent = formatCurrency(val); break;
-        case 'mcaFactor': s.mcaFactor = val; el.textContent = val.toFixed(2)+'x'; break;
-        case 'mcaTerm': s.mcaTerm = val; el.textContent = val+' mo'; break;
-        case 'wcAmount': s.wcAmount = val; el.textContent = formatCurrency(val); break;
-        case 'wcRate': s.wcRate = val; el.textContent = val.toFixed(1)+'%'; break;
-        case 'wcTerm': s.wcTerm = val; el.textContent = val+' mo'; break;
-        case 'termAmount': s.termAmount = val; el.textContent = formatCurrency(val); break;
-        case 'termRate': s.termRate = val; el.textContent = val.toFixed(2)+'%'; break;
-        case 'termTerm': s.termTerm = val; el.textContent = val+' mo'; break;
-        case 'locLimit': s.locLimit = val; el.textContent = formatCurrency(val); break;
-        case 'locDrawn': s.locDrawn = Math.min(val, s.locLimit); el.textContent = formatCurrency(s.locDrawn); break;
-        case 'locRate': s.locRate = val; el.textContent = val.toFixed(1)+'%'; break;
-        case 'sbaAmount': s.sbaAmount = val; el.textContent = formatCurrency(val); break;
-        case 'sbaRate': s.sbaRate = val; el.textContent = val.toFixed(2)+'%'; break;
-        case 'sbaTerm': s.sbaTerm = val; el.textContent = val+' mo'; break;
-        case 'equipCost': s.equipCost = val; el.textContent = formatCurrency(val); break;
-        case 'equipDown': s.equipDown = val; el.textContent = val+'%'; break;
-        case 'equipRate': s.equipRate = val; el.textContent = val.toFixed(2)+'%'; break;
-        case 'equipTerm': s.equipTerm = val; el.textContent = val+' mo'; break;
-        case 'payoffBalance': s.payoffBalance = val; el.textContent = formatCurrency(val); break;
-        case 'payoffFactor': s.payoffFactor = val; el.textContent = val.toFixed(2)+'x'; break;
-        case 'payoffRemaining': s.payoffRemaining = val; el.textContent = val+' mo'; break;
-        case 'payoffDiscount': s.payoffDiscount = val; el.textContent = val+'%'; break;
+        case 'mcaAmount': s.mcaAmount = val; if(inputEl) inputEl.value = formatCurrency(val); break;
+        case 'mcaFactor': s.mcaFactor = val; if(inputEl) inputEl.value = val.toFixed(2)+'x'; break;
+        case 'mcaTerm': s.mcaTerm = val; if(inputEl) inputEl.value = val+' mo'; break;
+        case 'wcAmount': s.wcAmount = val; if(inputEl) inputEl.value = formatCurrency(val); break;
+        case 'wcRate': s.wcRate = val; if(inputEl) inputEl.value = val.toFixed(1)+'%'; break;
+        case 'wcTerm': s.wcTerm = val; if(inputEl) inputEl.value = val+' mo'; break;
+        case 'termAmount': s.termAmount = val; if(inputEl) inputEl.value = formatCurrency(val); break;
+        case 'termRate': s.termRate = val; if(inputEl) inputEl.value = val.toFixed(2)+'%'; break;
+        case 'termTerm': s.termTerm = val; if(inputEl) inputEl.value = val+' mo'; break;
+        case 'locLimit': s.locLimit = val; if(inputEl) inputEl.value = formatCurrency(val); break;
+        case 'locDrawn': s.locDrawn = Math.min(val, s.locLimit); if(inputEl) inputEl.value = formatCurrency(s.locDrawn); break;
+        case 'locRate': s.locRate = val; if(inputEl) inputEl.value = val.toFixed(1)+'%'; break;
+        case 'sbaAmount': s.sbaAmount = val; if(inputEl) inputEl.value = formatCurrency(val); break;
+        case 'sbaRate': s.sbaRate = val; if(inputEl) inputEl.value = val.toFixed(2)+'%'; break;
+        case 'sbaTerm': s.sbaTerm = val; if(inputEl) inputEl.value = val+' mo'; break;
+        case 'equipCost': s.equipCost = val; if(inputEl) inputEl.value = formatCurrency(val); break;
+        case 'equipDown': s.equipDown = val; if(inputEl) inputEl.value = val+'%'; break;
+        case 'equipRate': s.equipRate = val; if(inputEl) inputEl.value = val.toFixed(2)+'%'; break;
+        case 'equipTerm': s.equipTerm = val; if(inputEl) inputEl.value = val+' mo'; break;
+        case 'payoffBalance': s.payoffBalance = val; if(inputEl) inputEl.value = formatCurrency(val); break;
+        case 'payoffFactor': s.payoffFactor = val; if(inputEl) inputEl.value = val.toFixed(2)+'x'; break;
+        case 'payoffRemaining': s.payoffRemaining = val; if(inputEl) inputEl.value = val+' mo'; break;
+        case 'payoffDiscount': s.payoffDiscount = val; if(inputEl) inputEl.value = val+'%'; break;
+        case 'payoffFundedAmount': s.payoffFundedAmount = val; if(inputEl) inputEl.value = formatCurrency(val); break;
+        case 'payoffPaidToDate': s.payoffPaidToDate = val; if(inputEl) inputEl.value = formatCurrency(val); break;
+        case 'payoffDailyPayment': s.payoffDailyPayment = val; if(inputEl) inputEl.value = formatCurrency(val); break;
         // CRE
-        case 'creAmount': s.creAmount = val; el.textContent = formatCurrency(val); break;
-        case 'creLTV': s.creLTV = val; el.textContent = val+'%'; break;
-        case 'creRate': s.creRate = val; el.textContent = val.toFixed(2)+'%'; break;
-        case 'creTerm': s.creTerm = val; el.textContent = val+' mo'; break;
-        case 'creNOI': s.creNOI = val; el.textContent = formatCurrency(val); break;
+        case 'creAmount': s.creAmount = val; if(inputEl) inputEl.value = formatCurrency(val); break;
+        case 'creLTV': s.creLTV = val; if(inputEl) inputEl.value = val+'%'; break;
+        case 'creRate': s.creRate = val; if(inputEl) inputEl.value = val.toFixed(2)+'%'; break;
+        case 'creTerm': s.creTerm = val; if(inputEl) inputEl.value = val+' mo'; break;
+        case 'creNOI': s.creNOI = val; if(inputEl) inputEl.value = formatCurrency(val); break;
+        case 'creOrigFee': s.creOrigFee = val; if(inputEl) inputEl.value = val.toFixed(2)+'%'; break;
         // Factoring
-        case 'factInvoiceAmount': s.factInvoiceAmount = val; el.textContent = formatCurrency(val); break;
-        case 'factAdvanceRate': s.factAdvanceRate = val; el.textContent = val+'%'; break;
-        case 'factFee': s.factFee = val; el.textContent = val.toFixed(2)+'%'; break;
-        case 'factDays': s.factDays = val; el.textContent = val+' days'; break;
+        case 'factInvoiceAmount': s.factInvoiceAmount = val; if(inputEl) inputEl.value = formatCurrency(val); break;
+        case 'factAdvanceRate': s.factAdvanceRate = val; if(inputEl) inputEl.value = val+'%'; break;
+        case 'factFee': s.factFee = val; if(inputEl) inputEl.value = val.toFixed(2)+'%'; break;
+        case 'factDays': s.factDays = val; if(inputEl) inputEl.value = val+' days'; break;
         // APR
-        case 'aprAmount': s.aprAmount = val; el.textContent = formatCurrency(val); break;
-        case 'aprFactor': s.aprFactor = val; el.textContent = val.toFixed(2)+'x'; break;
-        case 'aprTerm': s.aprTerm = val; el.textContent = val+' mo'; break;
-        case 'aprOrigFee': s.aprOrigFee = val; el.textContent = val.toFixed(1)+'%'; break;
+        case 'aprAmount': s.aprAmount = val; if(inputEl) inputEl.value = formatCurrency(val); break;
+        case 'aprFactor': s.aprFactor = val; if(inputEl) inputEl.value = val.toFixed(2)+'x'; break;
+        case 'aprTerm': s.aprTerm = val; if(inputEl) inputEl.value = val+' mo'; break;
+        case 'aprOrigFee': s.aprOrigFee = val; if(inputEl) inputEl.value = val.toFixed(1)+'%'; break;
       }
       // Update just the result card, not the input sliders
       updateCalculatorResult(currentTool);
@@ -15935,6 +16369,11 @@ Government Issued ID</textarea>
           params.set('nsf', c.nsfCount || 2);
           params.set('neg', c.negativeDays || 1);
           if (c.isRestricted) params.set('restricted', '1');
+          // v4.2 fields
+          if (c.industry && c.industry !== 'general') params.set('ind', c.industry);
+          if (c.fleetSize && c.fleetSize !== 5) params.set('fleet', c.fleetSize);
+          if (c.existingDebt && c.existingDebt > 0) params.set('debt', c.existingDebt);
+          if (c.existingDebtFreq && c.existingDebtFreq !== 'monthly') params.set('debtfreq', c.existingDebtFreq);
           break;
       }
       
@@ -16018,6 +16457,11 @@ Government Issued ID</textarea>
           if (params.has('nsf')) s.prequalCriteria.nsfCount = parseInt(params.get('nsf'));
           if (params.has('neg')) s.prequalCriteria.negativeDays = parseInt(params.get('neg'));
           if (params.has('restricted')) s.prequalCriteria.isRestricted = params.get('restricted') === '1';
+          // v4.2 fields
+          if (params.has('ind')) s.prequalCriteria.industry = params.get('ind');
+          if (params.has('fleet')) s.prequalCriteria.fleetSize = parseInt(params.get('fleet'));
+          if (params.has('debt')) s.prequalCriteria.existingDebt = parseFloat(params.get('debt'));
+          if (params.has('debtfreq')) s.prequalCriteria.existingDebtFreq = params.get('debtfreq');
           break;
       }
       
@@ -16242,10 +16686,11 @@ Government Issued ID</textarea>
         case 'prequal': {
           const criteria = s.prequalCriteria || {
             monthlyRevenue: 50000, avgDailyBalance: 8000, creditScore: 650,
-            monthsInBusiness: 24, nsfCount: 2, negativeDays: 1, isRestricted: false
+            monthsInBusiness: 24, nsfCount: 2, negativeDays: 1, isRestricted: false,
+            industry: 'general', fleetSize: 5, existingDebt: 0, existingDebtFreq: 'monthly'
           };
           
-          // Run ABLESCORE v4.1 Engine
+          // Run ABLESCORE v4.2 Engine
           const engine = new PerrepusAI_v4_1(criteria);
           const result_data = engine.process();
           const isApproved = result_data.status === "APPROVED";
@@ -16885,23 +17330,210 @@ Government Issued ID</textarea>
     
     function renderEarlyPayoff(input, result) {
       const s = loanState;
-      const originalPayback = s.payoffBalance * s.payoffFactor;
-      const remainingPayback = originalPayback * (s.payoffRemaining / 12);
-      const discountAmount = remainingPayback * (s.payoffDiscount / 100);
-      const payoffAmount = remainingPayback - discountAmount;
-      const savings = remainingPayback - payoffAmount;
-      const savingsPct = Math.round((savings / remainingPayback) * 100) || 0;
+      
+      // Default to MCA if no type set
+      if (!s.payoffType) s.payoffType = 'mca';
+      if (!s.payoffFrequency) s.payoffFrequency = 'daily';
+      if (!s.payoffDailyPayment) s.payoffDailyPayment = 500;
+      
+      // Calculate business days between two dates
+      function getBusinessDays(startDate, endDate) {
+        if (!startDate || !endDate) return 0;
+        const start = new Date(startDate + 'T00:00:00');
+        const end = new Date(endDate + 'T00:00:00');
+        if (end <= start) return 0;
+        let count = 0;
+        const current = new Date(start);
+        while (current < end) {
+          const day = current.getDay();
+          if (day !== 0 && day !== 6) count++;
+          current.setDate(current.getDate() + 1);
+        }
+        return count;
+      }
+      
+      // MCA Calculations
+      const mcaTotalPayback = s.payoffFundedAmount * s.payoffFactor;
+      
+      // Calculate paid to date from dates if both are set
+      let calculatedPaid = 0;
+      let paymentDays = 0;
+      let useCalculated = s.payoffOriginDate && s.payoffDate;
+      
+      if (useCalculated) {
+        paymentDays = getBusinessDays(s.payoffOriginDate, s.payoffDate);
+        const paymentsPerDay = s.payoffFrequency === 'weekly' ? s.payoffDailyPayment / 5 : s.payoffDailyPayment;
+        calculatedPaid = paymentDays * paymentsPerDay;
+        calculatedPaid = Math.min(calculatedPaid, mcaTotalPayback); // Can't pay more than owed
+      }
+      
+      const effectivePaid = useCalculated ? calculatedPaid : (s.payoffPaidToDate || 0);
+      const mcaRemainingBalance = mcaTotalPayback - effectivePaid;
+      const mcaDiscountAmount = mcaRemainingBalance * (s.payoffDiscount / 100);
+      const mcaPayoffAmount = mcaRemainingBalance - mcaDiscountAmount;
+      const mcaSavings = mcaRemainingBalance - mcaPayoffAmount;
+      const mcaSavingsPct = mcaRemainingBalance > 0 ? Math.round((mcaSavings / mcaRemainingBalance) * 100) : 0;
+      const mcaPercentPaid = mcaTotalPayback > 0 ? Math.round((effectivePaid / mcaTotalPayback) * 100) : 0;
+      
+      // Term Loan Calculations  
+      const termRemainingBalance = s.payoffBalance * s.payoffFactor;
+      const termRemainingPayback = termRemainingBalance * (s.payoffRemaining / 12);
+      const termDiscountAmount = termRemainingPayback * (s.payoffDiscount / 100);
+      const termPayoffAmount = termRemainingPayback - termDiscountAmount;
+      const termSavings = termRemainingPayback - termPayoffAmount;
+      const termSavingsPct = termRemainingPayback > 0 ? Math.round((termSavings / termRemainingPayback) * 100) : 0;
+      
+      // Use appropriate values based on type
+      const isMCA = s.payoffType === 'mca';
+      const remainingBalance = isMCA ? mcaRemainingBalance : termRemainingPayback;
+      const payoffAmount = isMCA ? mcaPayoffAmount : termPayoffAmount;
+      const savings = isMCA ? mcaSavings : termSavings;
+      const savingsPct = isMCA ? mcaSavingsPct : termSavingsPct;
+      
+      // Format date for display
+      const formatDate = (dateStr) => {
+        if (!dateStr) return '';
+        return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      };
       
       input.innerHTML = `
-        <div class="flex items-center gap-3 mb-6">
+        <div class="flex items-center gap-2 mb-4">
           <div class="section-indicator"></div>
-          <h3 class="section-title">Early Payoff Terms</h3>
+          <h3 class="section-title text-sm">Payoff Calculator</h3>
         </div>
+        
+        <!-- Funding Type Toggle -->
+        <div class="mb-4">
+          <label class="text-[10px] font-bold uppercase tracking-wide mb-2 block" style="color: var(--text-muted);">Funding Type</label>
+          <div class="toggle-group inline-flex w-full">
+            <button class="toggle-btn ${s.payoffType === 'mca' ? 'active' : ''} flex-1 py-2.5 rounded-lg text-xs font-semibold transition-all" onclick="loanState.payoffType='mca';renderEarlyPayoff(document.getElementById('payoffInputCard'),document.getElementById('payoffResultCard'))">MCA / Revenue</button>
+            <button class="toggle-btn ${s.payoffType === 'term' ? 'active' : ''} flex-1 py-2.5 rounded-lg text-xs font-semibold transition-all" onclick="loanState.payoffType='term';renderEarlyPayoff(document.getElementById('payoffInputCard'),document.getElementById('payoffResultCard'))">Term Loan</button>
+          </div>
+        </div>
+        
+        ${s.payoffType === 'mca' ? `
+        <!-- MCA INPUTS -->
+        <div class="space-y-0">
+          ${loanSlider('Funded Amount', 'payoffFundedAmount', 5000, 500000, 5000, s.payoffFundedAmount || 50000, formatCurrency)}
+          ${loanSlider('Factor Rate', 'payoffFactor', 1.10, 1.60, 0.01, s.payoffFactor, v=>v.toFixed(2)+'x')}
+          
+          <!-- Total Payback Display -->
+          <div class="rounded-2xl p-3 mb-3" style="background: var(--bg-option-card); border: 1px solid var(--border-secondary);">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-[10px] font-bold uppercase tracking-wide" style="color: var(--text-muted);">Total Payback</span>
+              <span class="text-base font-bold" style="color: var(--text-primary);">${formatCurrency(mcaTotalPayback)}</span>
+            </div>
+            <div class="text-[9px]" style="color: var(--text-muted);">Funded × Factor Rate</div>
+          </div>
+          
+          <!-- Payment Frequency Toggle -->
+          <div class="rounded-2xl p-3 mb-3" style="background: var(--bg-option-card); border: 1px solid var(--border-secondary);">
+            <label class="text-[10px] font-bold uppercase tracking-wide mb-2 block" style="color: var(--text-muted);">Payment Frequency</label>
+            <div class="toggle-group inline-flex w-full">
+              <button class="toggle-btn ${s.payoffFrequency === 'daily' ? 'active' : ''} flex-1 py-2 rounded-lg text-[11px] font-semibold" onclick="loanState.payoffFrequency='daily';renderEarlyPayoff(document.getElementById('payoffInputCard'),document.getElementById('payoffResultCard'))">Daily</button>
+              <button class="toggle-btn ${s.payoffFrequency === 'weekly' ? 'active' : ''} flex-1 py-2 rounded-lg text-[11px] font-semibold" onclick="loanState.payoffFrequency='weekly';renderEarlyPayoff(document.getElementById('payoffInputCard'),document.getElementById('payoffResultCard'))">Weekly</button>
+            </div>
+          </div>
+          
+          ${loanSlider(s.payoffFrequency === 'weekly' ? 'Weekly Payment' : 'Daily Payment', 'payoffDailyPayment', 50, 5000, 50, s.payoffDailyPayment || 500, formatCurrency)}
+          
+          <!-- Date Inputs -->
+          <div class="grid grid-cols-2 gap-3 mb-3">
+            <div class="rounded-2xl p-3 border" style="background: var(--bg-option-card); border-color: var(--border-secondary);">
+              <label class="text-[10px] font-bold uppercase tracking-wide block mb-2" style="color: var(--text-muted);">Origination Date</label>
+              <input type="date" 
+                id="payoffOriginDate" 
+                value="${s.payoffOriginDate || ''}" 
+                class="bg-transparent text-sm font-bold outline-none w-full" 
+                style="color: var(--text-primary); color-scheme: dark;"
+                onchange="loanState.payoffOriginDate=this.value;renderEarlyPayoff(document.getElementById('payoffInputCard'),document.getElementById('payoffResultCard'))"
+              >
+            </div>
+            <div class="rounded-2xl p-3 border" style="background: var(--bg-option-card); border-color: var(--border-secondary);">
+              <label class="text-[10px] font-bold uppercase tracking-wide block mb-2" style="color: var(--text-muted);">Payoff Date</label>
+              <input type="date" 
+                id="payoffDate" 
+                value="${s.payoffDate || ''}" 
+                class="bg-transparent text-sm font-bold outline-none w-full" 
+                style="color: var(--text-primary); color-scheme: dark;"
+                onchange="loanState.payoffDate=this.value;renderEarlyPayoff(document.getElementById('payoffInputCard'),document.getElementById('payoffResultCard'))"
+              >
+            </div>
+          </div>
+          
+          ${useCalculated ? `
+          <!-- Calculated Paid Display -->
+          <div class="rounded-2xl p-3 mb-3" style="background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(5,150,105,0.05) 100%); border: 1px solid rgba(16,185,129,0.3);">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-[10px] font-bold uppercase tracking-wide" style="color: #10b981;">Calculated Paid to Date</span>
+              <span class="text-base font-bold" style="color: #10b981;">${formatCurrency(calculatedPaid)}</span>
+            </div>
+            <div class="text-[9px]" style="color: var(--text-muted);">${paymentDays} business days × ${formatCurrency(s.payoffDailyPayment)}/${s.payoffFrequency === 'weekly' ? 'week' : 'day'}</div>
+          </div>
+          ` : `
+          ${loanSlider('Already Paid (Manual)', 'payoffPaidToDate', 0, mcaTotalPayback, 500, s.payoffPaidToDate || 0, formatCurrency)}
+          `}
+          
+          ${loanSlider('Discount Offered', 'payoffDiscount', 0, 50, 1, s.payoffDiscount, v=>v+'%')}
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="mt-3 p-3 rounded-xl" style="background: var(--bg-option-card); border: 1px solid var(--border-secondary);">
+          <div class="flex justify-between items-center mb-1.5">
+            <span class="text-[10px] font-semibold" style="color: var(--text-muted);">Payment Progress</span>
+            <span class="text-[10px] font-bold" style="color: var(--accent);">${mcaPercentPaid}% Complete</span>
+          </div>
+          <div class="h-1.5 rounded-full overflow-hidden" style="background: var(--bg-tertiary);">
+            <div class="h-full rounded-full transition-all" style="width: ${Math.min(mcaPercentPaid, 100)}%; background: linear-gradient(90deg, var(--accent), var(--accent-light));"></div>
+          </div>
+          <div class="flex justify-between mt-1.5 text-[9px]" style="color: var(--text-muted);">
+            <span>Paid: ${formatCurrency(effectivePaid)}</span>
+            <span>Remaining: ${formatCurrency(mcaRemainingBalance)}</span>
+          </div>
+        </div>
+        ` : `
+        <!-- TERM LOAN INPUTS -->
         <div class="space-y-0">
           ${loanSlider('Original Balance', 'payoffBalance', 5000, 200000, 5000, s.payoffBalance, formatCurrency)}
-          ${loanSlider('Original Factor', 'payoffFactor', 1.10, 1.60, 0.01, s.payoffFactor, v=>v.toFixed(2)+'x')}
+          ${loanSlider('Original Factor/Rate', 'payoffFactor', 1.10, 1.60, 0.01, s.payoffFactor, v=>v.toFixed(2)+'x')}
           ${loanSlider('Months Remaining', 'payoffRemaining', 1, 24, 1, s.payoffRemaining, v=>v+' mo')}
           ${loanSlider('Discount Offered', 'payoffDiscount', 0, 50, 1, s.payoffDiscount, v=>v+'%')}
+          
+          <!-- Payoff Date -->
+          <div class="rounded-2xl p-3 border" style="background: var(--bg-option-card); border-color: var(--border-secondary); margin-bottom: 12px;">
+            <label class="text-[10px] font-bold uppercase tracking-wide block mb-2" style="color: var(--text-muted);">Payoff Good Through</label>
+            <input type="date" 
+              id="payoffDateTerm" 
+              value="${s.payoffDate || ''}" 
+              class="bg-transparent text-sm font-bold outline-none w-full" 
+              style="color: var(--text-primary); color-scheme: dark;"
+              onchange="loanState.payoffDate=this.value;renderEarlyPayoff(document.getElementById('payoffInputCard'),document.getElementById('payoffResultCard'))"
+            >
+          </div>
+        </div>
+        `}
+        
+        <!-- How to Use -->
+        <div class="mt-4 rounded-xl p-3" style="background: var(--bg-card); border: 1px solid var(--border-primary);">
+          <div class="flex items-center gap-2 mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" style="color: var(--accent);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span class="font-bold text-[10px]" style="color: var(--text-primary);">How to Use</span>
+          </div>
+          <div class="text-[10px] space-y-1.5" style="color: var(--text-secondary);">
+            ${s.payoffType === 'mca' ? `
+            <p>1. Enter <strong>funded amount</strong>, <strong>factor rate</strong>, and <strong>payment</strong></p>
+            <p>2. Set <strong>origination</strong> and <strong>payoff date</strong> to auto-calculate paid amount</p>
+            <p>3. Or manually enter <strong>already paid</strong> if dates not set</p>
+            <p>4. Adjust <strong>discount</strong> offered for early payoff</p>
+            ` : `
+            <p>1. Enter <strong>original balance</strong> and <strong>factor rate</strong></p>
+            <p>2. Set how many <strong>months remain</strong></p>
+            <p>3. Adjust the <strong>discount</strong> percentage</p>
+            <p>4. Set payoff date for letter</p>
+            `}
+          </div>
         </div>`;
       
       result.innerHTML = `
@@ -16912,27 +17544,28 @@ Government Issued ID</textarea>
         <div class="calc-preview-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
           <div class="calc-preview-label">You Save</div>
           <div class="calc-preview-amount">${formatCurrency(savings)}</div>
+          <div class="text-[10px] mt-1" style="color: rgba(255,255,255,0.8);">${savingsPct}% discount applied</div>
         </div>
         
         <!-- Donut Chart Section -->
         <div class="calc-donut-section">
-          <div style="position:relative;width:120px;height:120px;">
+          <div style="position:relative;width:100px;height:100px;">
             <svg viewBox="0 0 36 36" style="transform:rotate(-90deg);width:100%;height:100%;">
               <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--chart-bg)" stroke-width="3"/>
-              <circle cx="18" cy="18" r="15.9" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="${100-savingsPct} ${savingsPct}" stroke-linecap="round"/>
+              <circle cx="18" cy="18" r="15.9" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="${savingsPct} ${100-savingsPct}" stroke-linecap="round"/>
             </svg>
             <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-              <span class="text-[10px] font-bold uppercase tracking-wide" style="color:var(--text-muted);">Balance</span>
-              <span class="text-base font-bold" style="color:var(--text-primary);">${formatCurrency(remainingPayback)}</span>
+              <span class="text-[9px] font-bold uppercase tracking-wide" style="color:var(--text-muted);">Owed</span>
+              <span class="text-sm font-bold" style="color:var(--text-primary);">${formatCurrency(remainingBalance)}</span>
             </div>
           </div>
-          <div class="space-y-3 text-xs">
-            <div class="flex items-center gap-2.5">
-              <span class="w-3.5 h-3.5 rounded-full" style="background: var(--chart-bg);"></span>
+          <div class="space-y-2 text-[11px]">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full" style="background: var(--chart-bg);"></span>
               <span class="font-semibold" style="color: var(--text-secondary);">Payoff Amount</span>
             </div>
-            <div class="flex items-center gap-2.5">
-              <span class="w-3.5 h-3.5 rounded-full" style="background: #10b981;"></span>
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full" style="background: #10b981;"></span>
               <span class="font-semibold" style="color: var(--text-secondary);">Savings</span>
             </div>
           </div>
@@ -16940,9 +17573,27 @@ Government Issued ID</textarea>
         
         <!-- Stats Grid -->
         <div class="calc-stats-grid">
+          ${isMCA ? `
+          <div class="calc-stat-cell">
+            <span class="calc-stat-label">Funded Amount</span>
+            <span class="calc-stat-value">${formatCurrency(s.payoffFundedAmount || 50000)}</span>
+          </div>
+          <div class="calc-stat-cell">
+            <span class="calc-stat-label">Total Payback</span>
+            <span class="calc-stat-value">${formatCurrency(mcaTotalPayback)}</span>
+          </div>
+          <div class="calc-stat-cell">
+            <span class="calc-stat-label">${useCalculated ? 'Days Paid' : 'Already Paid'}</span>
+            <span class="calc-stat-value">${useCalculated ? paymentDays : formatCurrency(effectivePaid)}</span>
+          </div>
+          <div class="calc-stat-cell">
+            <span class="calc-stat-label">Discount</span>
+            <span class="calc-stat-value font-mono">${s.payoffDiscount}%</span>
+          </div>
+          ` : `
           <div class="calc-stat-cell">
             <span class="calc-stat-label">Remaining Balance</span>
-            <span class="calc-stat-value">${formatCurrency(remainingPayback)}</span>
+            <span class="calc-stat-value">${formatCurrency(termRemainingPayback)}</span>
           </div>
           <div class="calc-stat-cell">
             <span class="calc-stat-label">Months Left</span>
@@ -16956,14 +17607,16 @@ Government Issued ID</textarea>
             <span class="calc-stat-label">Total Savings</span>
             <span class="calc-stat-value" style="color:#10b981;">${formatCurrency(savings)}</span>
           </div>
+          `}
         </div>
         
         <!-- Payment Display -->
         <div class="calc-payment-display">
           <div class="calc-payment-label">Payoff Amount</div>
           <div class="calc-payment-amount" style="color: var(--accent);">${formatCurrency(payoffAmount)}</div>
+          ${s.payoffDate ? `<div class="text-[10px] mt-2 font-semibold" style="color: var(--text-muted);">Good through ${formatDate(s.payoffDate)}</div>` : `<div class="text-[10px] mt-1" style="color: var(--text-muted);">After ${s.payoffDiscount}% early payoff discount</div>`}
         </div>
-        `;
+        `; 
     }
     
     // CRE (COMMERCIAL REAL ESTATE) CALCULATOR
@@ -17270,7 +17923,7 @@ Government Issued ID</textarea>
         <div class="flex items-center gap-3 mb-8">
           <div class="section-indicator"></div>
           <div>
-            <h2 class="text-2xl font-black" style="color: var(--text-primary);">ABLESCORE v4.1</h2>
+            <h2 class="text-2xl font-black" style="color: var(--text-primary);">ABLESCORE v4.2</h2>
             <p class="text-sm" style="color: var(--text-muted);">Predictive Engine for Revenue-Based Underwriting Scoring</p>
           </div>
         </div>
@@ -18333,6 +18986,234 @@ Government Issued ID</textarea>
       }
     }
     
+    // ============================================
+    // GUIDE RENDER FUNCTIONS
+    // ============================================
+    function renderGuideDebtSchedule(container) {
+      container.innerHTML = `
+        <div class="flex items-center gap-3 mb-6">
+          <div class="section-indicator"></div>
+          <div>
+            <h2 class="text-xl font-bold" style="color: var(--text-primary);">Debt Schedule Guide</h2>
+            <p class="text-sm" style="color: var(--text-muted);">How to use the Debt Schedule report</p>
+          </div>
+        </div>
+        
+        <div class="space-y-6">
+          <!-- Overview -->
+          <div class="rounded-xl p-5" style="background: var(--bg-option-card); border: 1px solid var(--border-secondary);">
+            <h3 class="text-sm font-bold mb-3" style="color: var(--text-primary);">What is a Debt Schedule?</h3>
+            <p class="text-sm leading-relaxed" style="color: var(--text-secondary);">
+              A Debt Schedule is a comprehensive listing of all outstanding loans, credit lines, and financial obligations a business has. It provides lenders with a clear picture of existing debt load, monthly payment obligations, and overall leverage when evaluating new funding requests.
+            </p>
+          </div>
+          
+          <!-- Steps -->
+          <div class="rounded-xl p-5" style="background: var(--bg-option-card); border: 1px solid var(--border-secondary);">
+            <h3 class="text-sm font-bold mb-4" style="color: var(--text-primary);">Step-by-Step Instructions</h3>
+            <div class="space-y-4">
+              <div class="flex gap-4">
+                <span class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-bold" style="background: var(--accent); color: var(--accent-text);">1</span>
+                <div>
+                  <p class="font-semibold text-sm" style="color: var(--text-primary);">Add Debts</p>
+                  <p class="text-sm" style="color: var(--text-secondary);">Click "+ Add Debt" to add each loan, line of credit, or obligation the business has.</p>
+                </div>
+              </div>
+              <div class="flex gap-4">
+                <span class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-bold" style="background: var(--accent); color: var(--accent-text);">2</span>
+                <div>
+                  <p class="font-semibold text-sm" style="color: var(--text-primary);">Enter Details</p>
+                  <p class="text-sm" style="color: var(--text-secondary);">Fill in creditor name, original amount, current balance, interest rate, and monthly payment for each debt.</p>
+                </div>
+              </div>
+              <div class="flex gap-4">
+                <span class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-bold" style="background: var(--accent); color: var(--accent-text);">3</span>
+                <div>
+                  <p class="font-semibold text-sm" style="color: var(--text-primary);">Add Collateral</p>
+                  <p class="text-sm" style="color: var(--text-secondary);">Note any collateral pledged (real estate, equipment, blanket UCC, etc.) to give lenders full visibility.</p>
+                </div>
+              </div>
+              <div class="flex gap-4">
+                <span class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-bold" style="background: var(--accent); color: var(--accent-text);">4</span>
+                <div>
+                  <p class="font-semibold text-sm" style="color: var(--text-primary);">Review Totals</p>
+                  <p class="text-sm" style="color: var(--text-secondary);">Check total debt load and annual debt service to assess the business's capacity for additional financing.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Pro Tips -->
+          <div class="rounded-xl p-5" style="background: linear-gradient(135deg, var(--accent-glow), transparent); border: 1px solid var(--accent);">
+            <h3 class="text-sm font-bold mb-3 flex items-center gap-2" style="color: var(--accent);">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+              Pro Tips
+            </h3>
+            <ul class="space-y-2 text-sm" style="color: var(--text-secondary);">
+              <li>• Download as PDF and include with your funding application package</li>
+              <li>• Include ALL debts, even those with small balances — lenders value transparency</li>
+              <li>• Update the schedule before each new funding application</li>
+            </ul>
+          </div>
+          
+          <!-- Go to Report Button -->
+          <button onclick="switchTool('debtschedule')" class="w-full py-3 px-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all" style="background: var(--accent); color: var(--accent-text);">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Open Debt Schedule Report
+          </button>
+        </div>`;
+    }
+    
+    function renderGuideArAging(container) {
+      container.innerHTML = `
+        <div class="flex items-center gap-3 mb-6">
+          <div class="section-indicator"></div>
+          <div>
+            <h2 class="text-xl font-bold" style="color: var(--text-primary);">A/R Aging Guide</h2>
+            <p class="text-sm" style="color: var(--text-muted);">How to use the Accounts Receivable Aging report</p>
+          </div>
+        </div>
+        
+        <div class="space-y-6">
+          <!-- Overview -->
+          <div class="rounded-xl p-5" style="background: var(--bg-option-card); border: 1px solid var(--border-secondary);">
+            <h3 class="text-sm font-bold mb-3" style="color: var(--text-primary);">What is A/R Aging?</h3>
+            <p class="text-sm leading-relaxed" style="color: var(--text-secondary);">
+              An Accounts Receivable Aging report breaks down outstanding customer invoices by how long they've been unpaid. It helps lenders assess the quality of receivables and the business's ability to collect, which is especially important for factoring or receivables-based financing.
+            </p>
+          </div>
+          
+          <!-- Steps -->
+          <div class="rounded-xl p-5" style="background: var(--bg-option-card); border: 1px solid var(--border-secondary);">
+            <h3 class="text-sm font-bold mb-4" style="color: var(--text-primary);">Step-by-Step Instructions</h3>
+            <div class="space-y-4">
+              <div class="flex gap-4">
+                <span class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-bold" style="background: var(--accent); color: var(--accent-text);">1</span>
+                <div>
+                  <p class="font-semibold text-sm" style="color: var(--text-primary);">Add Receivables</p>
+                  <p class="text-sm" style="color: var(--text-secondary);">Click "+ Add Receivable" to add each outstanding invoice or customer balance.</p>
+                </div>
+              </div>
+              <div class="flex gap-4">
+                <span class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-bold" style="background: var(--accent); color: var(--accent-text);">2</span>
+                <div>
+                  <p class="font-semibold text-sm" style="color: var(--text-primary);">Enter Invoice Details</p>
+                  <p class="text-sm" style="color: var(--text-secondary);">Fill in customer name, invoice number, invoice date, and total amount.</p>
+                </div>
+              </div>
+              <div class="flex gap-4">
+                <span class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-bold" style="background: var(--accent); color: var(--accent-text);">3</span>
+                <div>
+                  <p class="font-semibold text-sm" style="color: var(--text-primary);">Age the Balances</p>
+                  <p class="text-sm" style="color: var(--text-secondary);">Break down each amount into aging buckets: Current, 30, 60, 90, and 90+ days past due.</p>
+                </div>
+              </div>
+              <div class="flex gap-4">
+                <span class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-bold" style="background: var(--accent); color: var(--accent-text);">4</span>
+                <div>
+                  <p class="font-semibold text-sm" style="color: var(--text-primary);">Monitor Health</p>
+                  <p class="text-sm" style="color: var(--text-secondary);">Review the Past Due % indicator: Green = healthy, Yellow = watch closely, Red = collection risk.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Pro Tips -->
+          <div class="rounded-xl p-5" style="background: linear-gradient(135deg, var(--accent-glow), transparent); border: 1px solid var(--accent);">
+            <h3 class="text-sm font-bold mb-3 flex items-center gap-2" style="color: var(--accent);">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+              Pro Tips
+            </h3>
+            <ul class="space-y-2 text-sm" style="color: var(--text-secondary);">
+              <li>• Keep Past Due % under 15% for the healthiest receivables profile</li>
+              <li>• Lenders typically won't advance on receivables over 90 days old</li>
+              <li>• Customer concentration matters — diversified receivables are preferred</li>
+            </ul>
+          </div>
+          
+          <!-- Go to Report Button -->
+          <button onclick="switchTool('araging')" class="w-full py-3 px-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all" style="background: var(--accent); color: var(--accent-text);">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Open A/R Aging Report
+          </button>
+        </div>`;
+    }
+    
+    function renderGuideWIP(container) {
+      container.innerHTML = `
+        <div class="flex items-center gap-3 mb-6">
+          <div class="section-indicator"></div>
+          <div>
+            <h2 class="text-xl font-bold" style="color: var(--text-primary);">WIP Report Guide</h2>
+            <p class="text-sm" style="color: var(--text-muted);">How to use the Work in Progress report</p>
+          </div>
+        </div>
+        
+        <div class="space-y-6">
+          <!-- Overview -->
+          <div class="rounded-xl p-5" style="background: var(--bg-option-card); border: 1px solid var(--border-secondary);">
+            <h3 class="text-sm font-bold mb-3" style="color: var(--text-primary);">What is a WIP Report?</h3>
+            <p class="text-sm leading-relaxed" style="color: var(--text-secondary);">
+              A Work in Progress (WIP) report tracks active contracts and projects, comparing costs incurred versus revenue billed. It's essential for construction, contractors, and project-based businesses to demonstrate cash flow timing and project profitability to lenders.
+            </p>
+          </div>
+          
+          <!-- Steps -->
+          <div class="rounded-xl p-5" style="background: var(--bg-option-card); border: 1px solid var(--border-secondary);">
+            <h3 class="text-sm font-bold mb-4" style="color: var(--text-primary);">Step-by-Step Instructions</h3>
+            <div class="space-y-4">
+              <div class="flex gap-4">
+                <span class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-bold" style="background: var(--accent); color: var(--accent-text);">1</span>
+                <div>
+                  <p class="font-semibold text-sm" style="color: var(--text-primary);">Add Projects</p>
+                  <p class="text-sm" style="color: var(--text-secondary);">Click "+ Add Project" to add each active job or contract you're tracking.</p>
+                </div>
+              </div>
+              <div class="flex gap-4">
+                <span class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-bold" style="background: var(--accent); color: var(--accent-text);">2</span>
+                <div>
+                  <p class="font-semibold text-sm" style="color: var(--text-primary);">Enter Financials</p>
+                  <p class="text-sm" style="color: var(--text-secondary);">Fill in contract amount, costs incurred to date, and estimated total costs for each project.</p>
+                </div>
+              </div>
+              <div class="flex gap-4">
+                <span class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-bold" style="background: var(--accent); color: var(--accent-text);">3</span>
+                <div>
+                  <p class="font-semibold text-sm" style="color: var(--text-primary);">Track Progress</p>
+                  <p class="text-sm" style="color: var(--text-secondary);">Set % Complete for each project to calculate earned revenue vs. billed amounts.</p>
+                </div>
+              </div>
+              <div class="flex gap-4">
+                <span class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-bold" style="background: var(--accent); color: var(--accent-text);">4</span>
+                <div>
+                  <p class="font-semibold text-sm" style="color: var(--text-primary);">Review Over/Under</p>
+                  <p class="text-sm" style="color: var(--text-secondary);">Green = overbilled (ahead on billing), Red = underbilled (behind on billing). Aim for balanced or slightly overbilled.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Pro Tips -->
+          <div class="rounded-xl p-5" style="background: linear-gradient(135deg, var(--accent-glow), transparent); border: 1px solid var(--accent);">
+            <h3 class="text-sm font-bold mb-3 flex items-center gap-2" style="color: var(--accent);">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+              Pro Tips
+            </h3>
+            <ul class="space-y-2 text-sm" style="color: var(--text-secondary);">
+              <li>• Use "Share" to send this report to your lender — they can fill in the data and submit it back</li>
+              <li>• Consistent underbilling can signal cash flow problems to lenders</li>
+              <li>• Keep gross margins above 15-20% for healthy project profitability</li>
+            </ul>
+          </div>
+          
+          <!-- Go to Report Button -->
+          <button onclick="switchTool('wip')" class="w-full py-3 px-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all" style="background: var(--accent); color: var(--accent-text);">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+            Open WIP Report
+          </button>
+        </div>`;
+    }
+    
     // Share Report Function
     function shareReport(type) {
       const data = type === 'debtschedule' ? reportState.debtSchedule : 
@@ -18415,6 +19296,11 @@ Government Issued ID</textarea>
       }
       
       const reportNames = { debtschedule: 'Debt Schedule', araging: 'A/R Aging', wip: 'WIP Report' };
+      const reportIcons = { 
+        debtschedule: '📊', 
+        araging: '📈', 
+        wip: '🏗️' 
+      };
       const data = type === 'debtschedule' ? reportState.debtSchedule : 
                    type === 'araging' ? reportState.arAging : reportState.wip;
       
@@ -18427,24 +19313,243 @@ Government Issued ID</textarea>
           <title>${reportNames[type]} - ${data.businessName || 'Report'}</title>
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 40px; color: #1f2937; }
-            h1 { font-size: 24px; margin-bottom: 8px; }
-            .meta { color: #6b7280; font-size: 14px; margin-bottom: 24px; }
-            table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
-            th, td { border: 1px solid #e5e7eb; padding: 10px 12px; text-align: left; font-size: 13px; }
-            th { background: #f9fafb; font-weight: 600; }
-            .total-row { background: #f3f4f6; font-weight: 600; }
-            .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 24px; }
-            .summary-card { background: #f9fafb; padding: 16px; border-radius: 8px; text-align: center; }
-            .summary-label { font-size: 11px; color: #6b7280; text-transform: uppercase; }
-            .summary-value { font-size: 20px; font-weight: 700; color: #111827; margin-top: 4px; }
-            @media print { body { padding: 20px; } }
+            body { 
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+              padding: 0; 
+              color: #1f2937; 
+              background: #f8fafc;
+              min-height: 100vh;
+            }
+            .report-container {
+              max-width: 1100px;
+              margin: 0 auto;
+              background: white;
+              min-height: 100vh;
+              box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }
+            .report-header {
+              background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+              color: white;
+              padding: 32px 40px;
+              position: relative;
+              overflow: hidden;
+            }
+            .report-header::before {
+              content: '';
+              position: absolute;
+              top: -50%;
+              right: -10%;
+              width: 300px;
+              height: 300px;
+              background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+              border-radius: 50%;
+            }
+            .report-header::after {
+              content: '';
+              position: absolute;
+              bottom: -30%;
+              left: 10%;
+              width: 200px;
+              height: 200px;
+              background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+              border-radius: 50%;
+            }
+            .header-content {
+              position: relative;
+              z-index: 1;
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+            }
+            .header-left h1 {
+              font-size: 28px;
+              font-weight: 700;
+              margin-bottom: 8px;
+              letter-spacing: -0.5px;
+            }
+            .header-left .business-name {
+              font-size: 18px;
+              font-weight: 500;
+              opacity: 0.9;
+              margin-bottom: 4px;
+            }
+            .header-left .report-date {
+              font-size: 13px;
+              opacity: 0.7;
+            }
+            .header-right {
+              text-align: right;
+            }
+            .header-right .logo-text {
+              font-size: 11px;
+              text-transform: uppercase;
+              letter-spacing: 2px;
+              opacity: 0.6;
+              margin-bottom: 4px;
+            }
+            .header-right .powered-by {
+              font-size: 16px;
+              font-weight: 600;
+              opacity: 0.9;
+            }
+            .report-body {
+              padding: 32px 40px;
+            }
+            .section-title {
+              font-size: 11px;
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 1px;
+              color: #64748b;
+              margin-bottom: 16px;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+            }
+            .section-title::after {
+              content: '';
+              flex: 1;
+              height: 1px;
+              background: #e2e8f0;
+            }
+            table { 
+              width: 100%; 
+              border-collapse: separate;
+              border-spacing: 0;
+              margin-bottom: 32px; 
+              border-radius: 12px;
+              overflow: hidden;
+              box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            }
+            th { 
+              background: #f8fafc; 
+              font-weight: 600;
+              font-size: 10px;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              color: #64748b;
+              padding: 14px 16px;
+              text-align: left;
+              border-bottom: 2px solid #e2e8f0;
+            }
+            td { 
+              padding: 14px 16px; 
+              text-align: left; 
+              font-size: 13px;
+              border-bottom: 1px solid #f1f5f9;
+              color: #334155;
+            }
+            tr:last-child td {
+              border-bottom: none;
+            }
+            tr:hover td {
+              background: #f8fafc;
+            }
+            .total-row { 
+              background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important; 
+            }
+            .total-row td {
+              font-weight: 700;
+              color: #1e293b;
+              border-bottom: none;
+              padding: 16px;
+            }
+            .summary { 
+              display: grid; 
+              grid-template-columns: repeat(4, 1fr); 
+              gap: 16px; 
+              margin-top: 8px; 
+            }
+            .summary-card { 
+              background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+              padding: 20px; 
+              border-radius: 12px; 
+              text-align: center;
+              border: 1px solid #e2e8f0;
+              position: relative;
+              overflow: hidden;
+            }
+            .summary-card::before {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              height: 3px;
+              background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            }
+            .summary-label { 
+              font-size: 10px; 
+              color: #64748b; 
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              font-weight: 600;
+            }
+            .summary-value { 
+              font-size: 24px; 
+              font-weight: 700; 
+              color: #1e293b; 
+              margin-top: 8px;
+              letter-spacing: -0.5px;
+            }
+            .report-footer {
+              padding: 24px 40px;
+              background: #f8fafc;
+              border-top: 1px solid #e2e8f0;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              font-size: 11px;
+              color: #94a3b8;
+            }
+            .footer-left {
+              display: flex;
+              align-items: center;
+              gap: 16px;
+            }
+            .footer-divider {
+              width: 1px;
+              height: 16px;
+              background: #cbd5e1;
+            }
+            @media print { 
+              body { padding: 0; background: white; }
+              .report-container { box-shadow: none; }
+              .report-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+              .summary-card::before { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            }
           </style>
         </head>
         <body>
-          <h1>${reportNames[type]}</h1>
-          <div class="meta">${data.businessName || 'Business Name'} • ${data.preparedDate || data.asOfDate || new Date().toLocaleDateString()}</div>
-          ${generateReportHTML(type, data)}
+          <div class="report-container">
+            <div class="report-header">
+              <div class="header-content">
+                <div class="header-left">
+                  <h1>${reportIcons[type]} ${reportNames[type]}</h1>
+                  <div class="business-name">${data.businessName || 'Business Name'}</div>
+                  <div class="report-date">Prepared ${data.preparedDate || data.asOfDate || new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
+                </div>
+                <div class="header-right">
+                  <div class="logo-text">Generated by</div>
+                  <div class="powered-by">Ables.AI</div>
+                </div>
+              </div>
+            </div>
+            <div class="report-body">
+              <div class="section-title">Detailed Breakdown</div>
+              ${generateReportHTML(type, data)}
+            </div>
+            <div class="report-footer">
+              <div class="footer-left">
+                <span>Report ID: ${currentReportId || 'LOCAL-' + Date.now().toString(36).toUpperCase()}</span>
+                <div class="footer-divider"></div>
+                <span>Generated ${new Date().toLocaleString()}</span>
+              </div>
+              <div class="footer-right">
+                ables.ai
+              </div>
+            </div>
+          </div>
           <script>window.print();<\/script>
         </body>
         </html>
@@ -18698,9 +19803,10 @@ Government Issued ID</textarea>
       }
       
       const reportNames = { debtschedule: 'Debt Schedule', araging: 'A/R Aging', wip: 'WIP Report' };
+      const reportIcons = { debtschedule: '📊', araging: '📈', wip: '🏗️' };
       const data = completed.data;
       
-      // Generate printable HTML (same as downloadReport)
+      // Generate printable HTML with improved styling
       const printWindow = window.open('', '_blank');
       printWindow.document.write(`
         <!DOCTYPE html>
@@ -18709,25 +19815,241 @@ Government Issued ID</textarea>
           <title>${reportNames[completed.type]} - ${data.businessName || 'Report'}</title>
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 40px; color: #1f2937; }
-            h1 { font-size: 24px; margin-bottom: 8px; }
-            .meta { color: #6b7280; font-size: 14px; margin-bottom: 24px; }
-            .submitted-badge { display: inline-block; background: #8b5cf620; color: #8b5cf6; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; margin-left: 12px; }
-            table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
-            th, td { border: 1px solid #e5e7eb; padding: 10px 12px; text-align: left; font-size: 13px; }
-            th { background: #f9fafb; font-weight: 600; }
-            .total-row { background: #f3f4f6; font-weight: 600; }
-            .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 24px; }
-            .summary-card { background: #f9fafb; padding: 16px; border-radius: 8px; text-align: center; }
-            .summary-label { font-size: 11px; color: #6b7280; text-transform: uppercase; }
-            .summary-value { font-size: 20px; font-weight: 700; color: #111827; margin-top: 4px; }
-            @media print { body { padding: 20px; } }
+            body { 
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+              padding: 0; 
+              color: #1f2937; 
+              background: #f8fafc;
+              min-height: 100vh;
+            }
+            .report-container {
+              max-width: 1100px;
+              margin: 0 auto;
+              background: white;
+              min-height: 100vh;
+              box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }
+            .report-header {
+              background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+              color: white;
+              padding: 32px 40px;
+              position: relative;
+              overflow: hidden;
+            }
+            .report-header::before {
+              content: '';
+              position: absolute;
+              top: -50%;
+              right: -10%;
+              width: 300px;
+              height: 300px;
+              background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+              border-radius: 50%;
+            }
+            .header-content {
+              position: relative;
+              z-index: 1;
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+            }
+            .header-left h1 {
+              font-size: 28px;
+              font-weight: 700;
+              margin-bottom: 8px;
+              letter-spacing: -0.5px;
+            }
+            .header-left .business-name {
+              font-size: 18px;
+              font-weight: 500;
+              opacity: 0.9;
+              margin-bottom: 4px;
+            }
+            .header-left .report-date {
+              font-size: 13px;
+              opacity: 0.7;
+            }
+            .submitted-badge {
+              display: inline-flex;
+              align-items: center;
+              gap: 6px;
+              background: rgba(255,255,255,0.2);
+              padding: 6px 14px;
+              border-radius: 20px;
+              font-size: 12px;
+              font-weight: 600;
+              margin-left: 12px;
+              vertical-align: middle;
+            }
+            .header-right {
+              text-align: right;
+            }
+            .header-right .logo-text {
+              font-size: 11px;
+              text-transform: uppercase;
+              letter-spacing: 2px;
+              opacity: 0.6;
+              margin-bottom: 4px;
+            }
+            .header-right .powered-by {
+              font-size: 16px;
+              font-weight: 600;
+              opacity: 0.9;
+            }
+            .report-body {
+              padding: 32px 40px;
+            }
+            .section-title {
+              font-size: 11px;
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 1px;
+              color: #64748b;
+              margin-bottom: 16px;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+            }
+            .section-title::after {
+              content: '';
+              flex: 1;
+              height: 1px;
+              background: #e2e8f0;
+            }
+            table { 
+              width: 100%; 
+              border-collapse: separate;
+              border-spacing: 0;
+              margin-bottom: 32px; 
+              border-radius: 12px;
+              overflow: hidden;
+              box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            }
+            th { 
+              background: #f8fafc; 
+              font-weight: 600;
+              font-size: 10px;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              color: #64748b;
+              padding: 14px 16px;
+              text-align: left;
+              border-bottom: 2px solid #e2e8f0;
+            }
+            td { 
+              padding: 14px 16px; 
+              text-align: left; 
+              font-size: 13px;
+              border-bottom: 1px solid #f1f5f9;
+              color: #334155;
+            }
+            tr:last-child td { border-bottom: none; }
+            tr:hover td { background: #f8fafc; }
+            .total-row { 
+              background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important; 
+            }
+            .total-row td {
+              font-weight: 700;
+              color: #1e293b;
+              border-bottom: none;
+              padding: 16px;
+            }
+            .summary { 
+              display: grid; 
+              grid-template-columns: repeat(4, 1fr); 
+              gap: 16px; 
+              margin-top: 8px; 
+            }
+            .summary-card { 
+              background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+              padding: 20px; 
+              border-radius: 12px; 
+              text-align: center;
+              border: 1px solid #e2e8f0;
+              position: relative;
+              overflow: hidden;
+            }
+            .summary-card::before {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              height: 3px;
+              background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+            }
+            .summary-label { 
+              font-size: 10px; 
+              color: #64748b; 
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              font-weight: 600;
+            }
+            .summary-value { 
+              font-size: 24px; 
+              font-weight: 700; 
+              color: #1e293b; 
+              margin-top: 8px;
+              letter-spacing: -0.5px;
+            }
+            .report-footer {
+              padding: 24px 40px;
+              background: #f8fafc;
+              border-top: 1px solid #e2e8f0;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              font-size: 11px;
+              color: #94a3b8;
+            }
+            .footer-left {
+              display: flex;
+              align-items: center;
+              gap: 16px;
+            }
+            .footer-divider {
+              width: 1px;
+              height: 16px;
+              background: #cbd5e1;
+            }
+            @media print { 
+              body { padding: 0; background: white; }
+              .report-container { box-shadow: none; }
+              .report-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+              .summary-card::before { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            }
           </style>
         </head>
         <body>
-          <h1>${reportNames[completed.type]}<span class="submitted-badge">✓ Submitted</span></h1>
-          <div class="meta">${data.businessName || 'Business Name'} • ${data.preparedDate || data.asOfDate || new Date().toLocaleDateString()} • Submitted ${new Date(completed.submittedAt).toLocaleString()}</div>
-          ${generateReportHTML(completed.type, data)}
+          <div class="report-container">
+            <div class="report-header">
+              <div class="header-content">
+                <div class="header-left">
+                  <h1>${reportIcons[completed.type]} ${reportNames[completed.type]}<span class="submitted-badge">✓ Submitted</span></h1>
+                  <div class="business-name">${data.businessName || 'Business Name'}</div>
+                  <div class="report-date">Submitted ${new Date(completed.submittedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' })}</div>
+                </div>
+                <div class="header-right">
+                  <div class="logo-text">Generated by</div>
+                  <div class="powered-by">Ables.AI</div>
+                </div>
+              </div>
+            </div>
+            <div class="report-body">
+              <div class="section-title">Detailed Breakdown</div>
+              ${generateReportHTML(completed.type, data)}
+            </div>
+            <div class="report-footer">
+              <div class="footer-left">
+                <span>Report ID: ${reportId}</span>
+                <div class="footer-divider"></div>
+                <span>Originally Prepared ${data.preparedDate || data.asOfDate || 'N/A'}</span>
+              </div>
+              <div class="footer-right">
+                ables.ai
+              </div>
+            </div>
+          </div>
           <script>window.print();<\/script>
         </body>
         </html>
@@ -18799,7 +20121,40 @@ Government Issued ID</textarea>
             <h3 class="text-lg font-bold" style="color: var(--text-primary);">Shared Reports</h3>
             <button onclick="this.closest('#reportsDashboardModal').remove()" class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--bg-tertiary); color: var(--text-muted);">✕</button>
           </div>
-          <div class="overflow-auto" style="max-height: calc(80vh - 60px);">
+          
+          <!-- HOW TO SHARE EXPLAINER -->
+          <div class="p-4" style="border-bottom: 1px solid var(--border-secondary); background: var(--bg-tertiary);">
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: var(--accent-glow);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" style="color: var(--accent);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+              </div>
+              <div class="flex-1">
+                <h4 class="font-bold text-sm mb-2" style="color: var(--text-primary);">How to Share Reports</h4>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs" style="color: var(--text-secondary);">
+                  <div class="flex items-start gap-2">
+                    <span class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-bold" style="background: var(--accent); color: var(--accent-text);">1</span>
+                    <span>Open any report (Debt Schedule, A/R Aging, or WIP)</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <span class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-bold" style="background: var(--accent); color: var(--accent-text);">2</span>
+                    <span>Click <strong>Share</strong> to generate a unique link</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <span class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-bold" style="background: var(--accent); color: var(--accent-text);">3</span>
+                    <span>Send the link to your client to fill in</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <span class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-bold" style="background: var(--accent); color: var(--accent-text);">4</span>
+                    <span>Track views & edits here until submitted</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="overflow-auto" style="max-height: calc(80vh - 160px);">
             <table class="w-full">
               <thead>
                 <tr style="background: var(--bg-tertiary);">
@@ -18877,7 +20232,7 @@ Government Issued ID</textarea>
     function renderPreQualify(input, result) {
       const s = loanState;
       
-      // Initialize criteria with new v4.1 fields
+      // Initialize criteria with new v4.2 fields
       const criteria = s.prequalCriteria || {
         monthlyRevenue: 50000,
         avgDailyBalance: 8000,
@@ -18885,13 +20240,17 @@ Government Issued ID</textarea>
         monthsInBusiness: 24,
         nsfCount: 2,
         negativeDays: 1,
-        isRestricted: false
+        isRestricted: false,
+        industry: 'general',
+        fleetSize: 5,
+        existingDebt: 0,
+        existingDebtFreq: 'monthly'
       };
       
       // Save criteria to state
       loanState.prequalCriteria = criteria;
       
-      // Run ABLESCORE v4.1 Engine
+      // Run ABLESCORE v4.2 Engine
       const engine = new PerrepusAI_v4_1(criteria);
       const result_data = engine.process();
       
@@ -18922,7 +20281,7 @@ Government Issued ID</textarea>
       input.innerHTML = `
         <div class="flex items-center gap-3 mb-6">
           <div class="section-indicator"></div>
-          <h3 class="section-title">ABLESCORE v4.1 Credit Engine</h3>
+          <h3 class="section-title">ABLESCORE v4.2 Credit Engine</h3>
         </div>
         
         <!-- Live Score Breakdown Panel -->
@@ -19044,15 +20403,88 @@ Government Issued ID</textarea>
           ${prequalSlider('Monthly Revenue', 'monthlyRevenue', 5000, 500000, 5000, criteria.monthlyRevenue, formatCurrency)}
           ${prequalSlider('Average Daily Balance', 'avgDailyBalance', 500, 100000, 500, criteria.avgDailyBalance, formatCurrency)}
           ${prequalSlider('Credit Score (FICO)', 'creditScore', 450, 850, 5, criteria.creditScore, v=>v)}
-          ${prequalSlider('Time in Business (Months)', 'monthsInBusiness', 3, 120, 3, criteria.monthsInBusiness, v=>v+' mo')}
+          ${prequalSlider('Time in Business (Months)', 'monthsInBusiness', 3, 240, 3, criteria.monthsInBusiness, v=> v >= 12 ? Math.floor(v/12) + 'yr ' + (v%12) + 'mo' : v+' mo')}
           ${prequalSlider('NSF/Overdrafts (Monthly)', 'nsfCount', 0, 15, 1, criteria.nsfCount, v=>v)}
           ${prequalSlider('Negative Balance Days', 'negativeDays', 0, 15, 1, criteria.negativeDays, v=>v+' days')}
+          
+          <!-- v4.2: Industry Select -->
+          <div class="rounded-2xl p-5 border" style="background: var(--bg-option-card); border-color: var(--border-secondary); margin-bottom: 16px;">
+            <label class="text-xs font-bold uppercase tracking-wide block mb-2" style="color: var(--text-muted);">Industry</label>
+            <select id="prequal_industry" onchange="handlePrequalIndustry(this.value)" 
+              class="w-full p-3 rounded-xl text-sm font-semibold" 
+              style="background: var(--bg-input); color: var(--text-primary); border: 1px solid var(--border-secondary);">
+              <option value="general" ${criteria.industry === 'general' ? 'selected' : ''}>General / Retail</option>
+              <option value="restaurant" ${criteria.industry === 'restaurant' ? 'selected' : ''}>Restaurant / Food Service</option>
+              <option value="construction" ${criteria.industry === 'construction' ? 'selected' : ''}>Construction</option>
+              <option value="medical" ${criteria.industry === 'medical' ? 'selected' : ''}>Medical / Healthcare</option>
+              <option value="trucking" ${criteria.industry === 'trucking' ? 'selected' : ''}>Trucking / Transportation</option>
+              <option value="auto" ${criteria.industry === 'auto' ? 'selected' : ''}>Auto Repair / Dealership</option>
+              <option value="ecommerce" ${criteria.industry === 'ecommerce' ? 'selected' : ''}>E-Commerce</option>
+              <option value="manufacturing" ${criteria.industry === 'manufacturing' ? 'selected' : ''}>Manufacturing</option>
+              <optgroup label="⚠️ Prohibited Industries">
+                <option value="gambling" ${criteria.industry === 'gambling' ? 'selected' : ''} style="color: #ef4444;">🚫 Gambling / Casino</option>
+                <option value="cannabis" ${criteria.industry === 'cannabis' ? 'selected' : ''} style="color: #ef4444;">🚫 Cannabis / Marijuana</option>
+                <option value="adult" ${criteria.industry === 'adult' ? 'selected' : ''} style="color: #ef4444;">🚫 Adult Entertainment</option>
+                <option value="weapons" ${criteria.industry === 'weapons' ? 'selected' : ''} style="color: #ef4444;">🚫 Weapons / Firearms</option>
+                <option value="payday_lending" ${criteria.industry === 'payday_lending' ? 'selected' : ''} style="color: #ef4444;">🚫 Payday Lending</option>
+                <option value="crypto_exchange" ${criteria.industry === 'crypto_exchange' ? 'selected' : ''} style="color: #ef4444;">🚫 Crypto Exchange</option>
+              </optgroup>
+            </select>
+          </div>
+          
+          <!-- v4.2: Fleet Size (Trucking Only) -->
+          <div id="fleetSizeContainer" class="rounded-2xl p-5 border" style="background: var(--bg-option-card); border-color: var(--border-secondary); margin-bottom: 16px; display: ${criteria.industry === 'trucking' ? 'block' : 'none'};">
+            <label class="text-xs font-bold uppercase tracking-wide block mb-2" style="color: var(--text-muted);">Fleet Size (Trucking)</label>
+            <div class="flex items-baseline gap-1.5 mb-3">
+              <span class="text-xl font-bold" style="color: var(--text-primary);" id="prequal_fleetSizeDisplay">${criteria.fleetSize} vehicles</span>
+              ${criteria.fleetSize < 5 ? '<span class="text-xs px-2 py-1 rounded-full font-bold ml-2" style="background: #ef444420; color: #ef4444;">Min 5 Required</span>' : ''}
+            </div>
+            <input type="range" class="slider w-full" id="prequal_fleetSize" min="1" max="50" step="1" value="${criteria.fleetSize}" 
+              oninput="handlePrequalSlider('fleetSize', this.value)">
+            <div class="flex justify-between text-[10px] font-semibold mt-2 uppercase tracking-wider" style="color: var(--text-muted);">
+              <span>1</span>
+              <span>50</span>
+            </div>
+          </div>
+          
+          <!-- v4.2: Existing Debt -->
+          <div class="rounded-2xl p-5 border" style="background: var(--bg-option-card); border-color: var(--border-secondary); margin-bottom: 16px;">
+            <label class="text-xs font-bold uppercase tracking-wide block mb-2" style="color: var(--text-muted);">Existing MCA/Debt Payment</label>
+            <div class="flex items-baseline gap-1.5 mb-3">
+              <span class="text-xl font-bold" style="color: var(--text-primary);" id="prequal_existingDebtDisplay">${formatCurrency(criteria.existingDebt)}</span>
+              <span class="text-sm font-semibold" style="color: var(--text-muted);">/ ${criteria.existingDebtFreq}</span>
+            </div>
+            <input type="range" class="slider w-full" id="prequal_existingDebt" min="0" max="10000" step="100" value="${criteria.existingDebt}" 
+              oninput="handlePrequalSlider('existingDebt', this.value)">
+            <div class="flex justify-between text-[10px] font-semibold mt-2 uppercase tracking-wider" style="color: var(--text-muted);">
+              <span>$0</span>
+              <span>$10,000</span>
+            </div>
+            <div class="flex gap-2 mt-4" style="background: var(--bg-toggle); padding: 4px; border-radius: 10px;">
+              <button onclick="setExistingDebtFreq('daily')" id="debtFreqDaily" 
+                class="flex-1 py-3 rounded-lg text-sm font-semibold transition-all"
+                style="background: ${criteria.existingDebtFreq === 'daily' ? 'var(--accent)' : 'transparent'}; color: ${criteria.existingDebtFreq === 'daily' ? 'var(--accent-text)' : 'var(--text-secondary)'};">
+                Daily
+              </button>
+              <button onclick="setExistingDebtFreq('weekly')" id="debtFreqWeekly"
+                class="flex-1 py-3 rounded-lg text-sm font-semibold transition-all"
+                style="background: ${criteria.existingDebtFreq === 'weekly' ? 'var(--accent)' : 'transparent'}; color: ${criteria.existingDebtFreq === 'weekly' ? 'var(--accent-text)' : 'var(--text-secondary)'};">
+                Weekly
+              </button>
+              <button onclick="setExistingDebtFreq('monthly')" id="debtFreqMonthly"
+                class="flex-1 py-3 rounded-lg text-sm font-semibold transition-all"
+                style="background: ${criteria.existingDebtFreq === 'monthly' ? 'var(--accent)' : 'transparent'}; color: ${criteria.existingDebtFreq === 'monthly' ? 'var(--accent-text)' : 'var(--text-secondary)'};">
+                Monthly
+              </button>
+            </div>
+          </div>
+          
           <div class="rounded-2xl p-5 border" style="background: var(--bg-option-card); border-color: var(--border-secondary);">
             <label class="flex items-center gap-3 cursor-pointer">
               <input type="checkbox" ${criteria.isRestricted ? 'checked' : ''} 
                 onchange="loanState.prequalCriteria.isRestricted=this.checked;updatePrequalScoreAndResult();"
                 class="w-4 h-4 rounded" style="accent-color: var(--accent);">
-              <span class="text-xs font-semibold" style="color: var(--text-secondary);">Restricted Industry (Cannabis, Firearms, Adult, etc.)</span>
+              <span class="text-xs font-semibold" style="color: var(--text-secondary);">Other Restricted Industry Flag</span>
             </label>
           </div>
         </div>
@@ -19243,8 +20675,8 @@ Government Issued ID</textarea>
       return `
         <div class="rounded-2xl p-5 border" style="background: var(--bg-option-card); border-color: var(--border-secondary); margin-bottom: 16px;">
           <label class="text-xs font-bold uppercase tracking-wide block mb-2" style="color: var(--text-muted);">${label}</label>
-          <div class="flex items-baseline gap-1.5 mb-4">
-            <span class="text-3xl font-extrabold" style="color: var(--text-primary);" id="${displayId}Display">${format(value)}</span>
+          <div class="flex items-baseline gap-1.5 mb-3">
+            <span class="text-xl font-bold" style="color: var(--text-primary);" id="${displayId}Display">${format(value)}</span>
           </div>
           <input type="range" class="slider w-full" id="${displayId}" min="${min}" max="${max}" step="${step}" value="${value}" 
             oninput="handlePrequalSlider('${key}', this.value)">
@@ -19268,7 +20700,11 @@ Government Issued ID</textarea>
           monthsInBusiness: 24,
           nsfCount: 2,
           negativeDays: 1,
-          isRestricted: false
+          isRestricted: false,
+          industry: 'general',
+          fleetSize: 5,
+          existingDebt: 0,
+          existingDebtFreq: 'monthly'
         };
       }
       
@@ -19277,18 +20713,69 @@ Government Issued ID</textarea>
       
       // Update display text
       if (display) {
-        if (key === 'monthlyRevenue' || key === 'avgDailyBalance') {
+        if (key === 'monthlyRevenue' || key === 'avgDailyBalance' || key === 'existingDebt') {
           display.textContent = formatCurrency(val);
         } else if (key === 'monthsInBusiness') {
-          display.textContent = val + ' mo';
+          display.textContent = val >= 12 ? Math.floor(val/12) + 'yr ' + (val%12) + 'mo' : val + ' mo';
         } else if (key === 'negativeDays') {
           display.textContent = val + ' days';
+        } else if (key === 'fleetSize') {
+          display.innerHTML = val + ' vehicles' + (val < 5 ? '<span class="text-xs px-2 py-1 rounded-full font-bold ml-2" style="background: #ef444420; color: #ef4444;">Min 5 Required</span>' : '');
         } else {
           display.textContent = val;
         }
       }
       
       // Update score panel and result card
+      updatePrequalScoreAndResult();
+    }
+    
+    // v4.2: Industry selection handler
+    function handlePrequalIndustry(value) {
+      if (!loanState.prequalCriteria) return;
+      
+      loanState.prequalCriteria.industry = value;
+      
+      // Show/hide fleet size for trucking
+      const fleetContainer = document.getElementById('fleetSizeContainer');
+      if (fleetContainer) {
+        fleetContainer.style.display = value === 'trucking' ? 'block' : 'none';
+      }
+      
+      // Auto-set isRestricted based on prohibited industries
+      const prohibited = ['gambling', 'casino', 'adult', 'cannabis', 'marijuana', 'weapons', 
+        'firearms', 'payday_lending', 'crypto_exchange', 'telemarketing',
+        'money_service', 'pawn', 'bail_bonds', 'tobacco'];
+      
+      if (prohibited.includes(value.toLowerCase())) {
+        loanState.prequalCriteria.isRestricted = true;
+      }
+      
+      updatePrequalScoreAndResult();
+    }
+    
+    // v4.2: Existing debt frequency handler
+    function setExistingDebtFreq(freq) {
+      if (!loanState.prequalCriteria) return;
+      
+      loanState.prequalCriteria.existingDebtFreq = freq;
+      
+      // Update button styles to match main toggle pattern
+      ['daily', 'weekly', 'monthly'].forEach(f => {
+        const btn = document.getElementById('debtFreq' + f.charAt(0).toUpperCase() + f.slice(1));
+        if (btn) {
+          const isActive = f === freq;
+          btn.style.background = isActive ? 'var(--accent)' : 'transparent';
+          btn.style.color = isActive ? 'var(--accent-text)' : 'var(--text-secondary)';
+        }
+      });
+      
+      // Update display suffix
+      const display = document.getElementById('prequal_existingDebtDisplay');
+      if (display && display.nextElementSibling) {
+        display.nextElementSibling.textContent = '/ ' + freq;
+      }
+      
       updatePrequalScoreAndResult();
     }
     
@@ -19734,22 +21221,6 @@ Government Issued ID</textarea>
     function closeSettings() {
       document.getElementById('settingsOverlay').classList.remove('active');
     }
-
-    function toggleTheme() {
-      const toggle = document.getElementById('themeToggle');
-      const isLight = document.body.classList.toggle('light-theme');
-      toggle.classList.toggle('active', isLight);
-      localStorage.setItem('ab_theme', isLight ? 'light' : 'dark');
-    }
-
-    // Load saved theme on page load
-    document.addEventListener('DOMContentLoaded', () => {
-      const savedTheme = localStorage.getItem('ab_theme');
-      if (savedTheme === 'light') {
-        document.body.classList.add('light-theme');
-        document.getElementById('themeToggle')?.classList.add('active');
-      }
-    });
   </script>
 
   <!-- Settings Modal -->
