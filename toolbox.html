@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" class="theme-black accent-gold">
+<html lang="en" class="theme-black accent-gold" style="background: #0a0a0a;">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Offer Builder | AblesAI</title>
   
   <link rel="icon" href="data:image/svg+xml,%3Csvg viewBox='0 0 70 70' xmlns='http://www.w3.org/2000/svg'%3E%3Cstyle%3E@keyframes orbit{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}@keyframes moon-colors{0%25,100%25{fill:%23a855f7}33%25{fill:%23ec4899}66%25{fill:%23eab308}}.orbit-path{animation:orbit 10s linear infinite;transform-origin:32px 32px}.moon-color{animation:moon-colors 6s ease-in-out infinite}%3C/style%3E%3Ccircle cx='32' cy='32' r='24' stroke='%2310b981' stroke-width='6' fill='none'/%3E%3Cline x1='8' y1='56' x2='56' y2='8' stroke='%2334d399' stroke-width='5' stroke-linecap='round'/%3E%3Ccircle cx='56' cy='8' r='4' fill='%2334d399'/%3E%3Ccircle cx='8' cy='56' r='3' fill='%2310b981'/%3E%3Cg class='orbit-path' style='transform:rotate(45deg);transform-origin:32px 32px'%3E%3Ccircle class='moon-color' cx='64' cy='32' r='2'/%3E%3C/g%3E%3C/svg%3E">
@@ -115,13 +117,20 @@
       animation: moon-colors 6s ease-in-out infinite;
     }
 
-    /* Backward compatibility - map old theme classes to AblesAI */
-    .theme-light, .theme-dark, .theme-black,
+    /* Accent color classes - all use gold */
     .accent-mint, .accent-blue, .accent-purple,
     .accent-rainbow, .accent-orange, .accent-cyan,
     .accent-gold, .accent-slate, .accent-lime,
     .accent-teal, .accent-pink, .accent-indigo {
-      /* All mapped to AblesAI gold accent - no visual change needed */
+      --accent: #eab308;
+      --accent-light: #facc15;
+      --accent-dark: #ca8a04;
+    }
+
+    html {
+      background: #0a0a0a;
+      margin: 0;
+      padding: 0;
     }
 
     * {
@@ -134,6 +143,9 @@
       background: var(--bg-body);
       color: var(--text-primary); 
       min-height: 100vh;
+      min-height: 100dvh;
+      margin: 0;
+      padding: 0;
     }
 
     /* Subtle background pattern */
@@ -148,9 +160,167 @@
     }
 
     /* ============================================
+       BLACK THEME (True Black - matches :root)
+       ============================================ */
+    .theme-black {
+      --bg-body: #0a0a0a;
+      --bg-body-gradient: #0a0a0a;
+      --bg-card: #111111;
+      --bg-card-inner: #1a1a1a;
+      --bg-input: #1a1a1a;
+      --bg-toggle: #1a1a1a;
+      --bg-option-card: #111111;
+      --bg-stat-hover: rgba(234, 179, 8, 0.15);
+      --border-primary: #1f1f1f;
+      --border-secondary: #1a1a1a;
+      --text-primary: #ffffff;
+      --text-secondary: #a1a1aa;
+      --text-muted: #6b7280;
+      --slider-track: #1f1f1f;
+      --pattern-color: rgba(255,255,255,0.01);
+      --chart-bg: #1a1a1a;
+      --modal-overlay: rgba(0, 0, 0, 0.8);
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.5);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.6), 0 2px 4px -2px rgb(0 0 0 / 0.5);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.7), 0 4px 6px -4px rgb(0 0 0 / 0.6);
+      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.7), 0 8px 10px -6px rgb(0 0 0 / 0.6);
+      --preview-header-bg: linear-gradient(135deg, #0a0a0a 0%, #111111 50%, #0a0a0a 100%);
+      --preview-header-text: #ffffff;
+    }
+
+    .theme-black .main-header {
+      background: #111111;
+      border-bottom-color: #1f1f1f;
+    }
+
+    .theme-black .main-header h1 {
+      color: #ffffff;
+    }
+
+    .theme-black .settings-btn {
+      color: #a1a1aa;
+    }
+
+    .theme-black .settings-btn:hover {
+      color: var(--accent);
+    }
+
+    .theme-black .settings-modal {
+      background: #111111;
+      border-color: #1f1f1f;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    }
+
+    .theme-black .settings-header {
+      border-bottom-color: #1f1f1f;
+    }
+
+    .theme-black .settings-row {
+      background: #1a1a1a;
+    }
+
+    .theme-black .toggle-switch {
+      background: #1f1f1f;
+    }
+
+    .theme-black .toggle-switch.active {
+      background: var(--accent);
+    }
+
+    .theme-black .card {
+      background: #111111 !important;
+      border-color: #1f1f1f;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+
+    .theme-black .preview-card {
+      background: #111111;
+      border-color: var(--accent);
+    }
+
+    /* ============================================
+       DARK THEME (Dark Gray)
+       ============================================ */
+    .theme-dark {
+      --bg-body: #18181b;
+      --bg-body-gradient: linear-gradient(135deg, #18181b 0%, #1f1f23 100%);
+      --bg-card: #27272a;
+      --bg-card-inner: #3f3f46;
+      --bg-input: #3f3f46;
+      --bg-toggle: #3f3f46;
+      --bg-option-card: #27272a;
+      --bg-stat-hover: rgba(234, 179, 8, 0.15);
+      --border-primary: #3f3f46;
+      --border-secondary: #52525b;
+      --text-primary: #fafafa;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+      --slider-track: #3f3f46;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.4);
+      --preview-header-bg: linear-gradient(135deg, #18181b 0%, #27272a 50%, #18181b 100%);
+      --preview-header-text: #fafafa;
+      --pattern-color: rgba(255,255,255,0.02);
+      --chart-bg: #27272a;
+      --modal-overlay: rgba(0, 0, 0, 0.6);
+    }
+
+    .theme-dark .main-header {
+      background: #27272a;
+      border-bottom-color: #3f3f46;
+    }
+
+    .theme-dark .main-header h1 {
+      color: #fafafa;
+    }
+
+    .theme-dark .settings-btn {
+      color: #a1a1aa;
+    }
+
+    .theme-dark .settings-btn:hover {
+      color: var(--accent);
+    }
+
+    .theme-dark .settings-modal {
+      background: #27272a;
+      border-color: #3f3f46;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+    }
+
+    .theme-dark .settings-header {
+      border-bottom-color: #3f3f46;
+    }
+
+    .theme-dark .settings-row {
+      background: #3f3f46;
+    }
+
+    .theme-dark .toggle-switch {
+      background: #52525b;
+    }
+
+    .theme-dark .toggle-switch.active {
+      background: var(--accent);
+    }
+
+    .theme-dark .card {
+      background: #27272a !important;
+      border-color: #3f3f46;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .theme-dark .preview-card {
+      background: #27272a;
+      border-color: var(--accent);
+    }
+
+    /* ============================================
        LIGHT THEME
        ============================================ */
-    body.light-theme {
+    .theme-light {
       --bg-body: #f8fafc;
       --bg-body-gradient: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
       --bg-card: #ffffff;
@@ -176,54 +346,129 @@
       --modal-overlay: rgba(0, 0, 0, 0.4);
     }
 
-    body.light-theme .main-header {
+    .theme-light .main-header {
       background: #ffffff;
       border-bottom-color: #e2e8f0;
     }
 
-    body.light-theme .main-header h1 {
+    .theme-light .main-header h1 {
       color: #0f172a;
     }
 
-    body.light-theme .settings-btn {
+    .theme-light .settings-btn {
       color: #64748b;
     }
 
-    body.light-theme .settings-btn:hover {
+    .theme-light .settings-btn:hover {
       color: var(--accent);
     }
 
-    body.light-theme .settings-modal {
+    .theme-light .settings-modal {
       background: #ffffff;
       border-color: #e2e8f0;
       box-shadow: 0 25px 50px rgba(0,0,0,0.15);
     }
 
-    body.light-theme .settings-header {
+    .theme-light .settings-header {
       border-bottom-color: #e2e8f0;
     }
 
-    body.light-theme .settings-row {
+    .theme-light .settings-row {
       background: #f8fafc;
     }
 
-    body.light-theme .toggle-switch {
+    .theme-light .toggle-switch {
       background: #cbd5e1;
     }
 
-    body.light-theme .toggle-switch.active {
+    .theme-light .toggle-switch.active {
       background: var(--accent);
     }
 
-    body.light-theme .card {
+    .theme-light .card {
       background: #ffffff !important;
       border-color: #e2e8f0;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
-    body.light-theme .preview-card {
+    .theme-light .preview-card {
       background: #ffffff;
       border-color: var(--accent);
+    }
+
+    .theme-light .landing-header {
+      background: var(--bg-card);
+      border-radius: 0;
+      border: none;
+      border-bottom: 1px solid var(--border-secondary);
+    }
+
+    .theme-light .landing-btn {
+      background: var(--bg-card);
+      border-color: var(--border-secondary);
+    }
+
+    .theme-light .landing-footer p {
+      color: var(--text-muted);
+    }
+
+    .theme-light .amount-display {
+      background: linear-gradient(180deg, #0f172a 0%, #334155 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+    }
+
+    .theme-light .calc-preview-label {
+      color: var(--text-muted);
+    }
+
+    .theme-light .calc-preview-amount {
+      color: var(--text-primary);
+      text-shadow: none;
+    }
+
+    .theme-light .calc-preview-header {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #f8fafc 100%);
+    }
+
+    .theme-light .business-name-display {
+      color: var(--text-primary);
+      text-shadow: none;
+    }
+
+    .theme-light .calc-card-share-btn {
+      background: rgba(0,0,0,0.08);
+      border-color: rgba(0,0,0,0.15);
+      color: var(--text-muted);
+    }
+
+    .theme-light .calc-card-share-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #000;
+    }
+
+    .theme-light .mobile-back-header {
+      background: #ffffff;
+      border-bottom-color: #e2e8f0;
+    }
+
+    .theme-light .mobile-back-header .back-btn {
+      background: #f1f5f9;
+      border-color: #e2e8f0;
+      color: #334155;
+    }
+
+    .theme-light .mobile-back-header .back-btn:hover {
+      background: var(--accent-glow);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .theme-light .mobile-back-header .header-title {
+      color: #0f172a;
     }
 
     /* ============================================
@@ -361,54 +606,261 @@
     /* ============================================
        OFFER BUILDER PRODUCT TABS
        ============================================ */
-    .offer-product-tabs {
+    @media (max-width: 768px) {
+      .main-header {
+        display: none !important;
+      }
+      body {
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      .main-content-wrapper {
+        margin: 0 !important;
+        padding: 0 !important;
+        padding-top: 60px !important;
+      }
+    }
+    
+    /* Mobile Back Header */
+    .mobile-back-header {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-primary);
+      padding: 12px 16px;
+      align-items: center;
+      gap: 12px;
+    }
+    .mobile-back-header .back-btn {
       display: flex;
-      gap: 6px;
-      padding: 6px;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      background: var(--bg-toggle);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .mobile-back-header .back-btn:hover {
+      background: var(--accent-glow);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .mobile-back-header .back-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+    .mobile-back-header .header-title {
+      flex: 1;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .mobile-back-header .header-logo {
+      width: 32px;
+      height: 32px;
+    }
+    @media (max-width: 768px) {
+      .mobile-back-header {
+        display: flex;
+      }
+      /* Add padding for fixed mobile header */
+      #mainContentWrapper {
+        padding-top: 60px !important;
+      }
+      /* Force no gap above mobile header */
+      html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      /* Extend background to cover safe area */
+      html {
+        background: var(--bg-body);
+      }
+      #adminPanel {
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      /* Hide all desktop navigation on mobile */
+      .sidebar-card,
+      .sidebar-nav,
+      .top-nav,
+      #topNav,
+      #sidebarCard,
+      #sidebarNav {
+        display: none !important;
+        height: 0 !important;
+        overflow: hidden !important;
+        visibility: hidden !important;
+      }
+      /* Hide landing page when not needed */
+      #landingPage.hidden {
+        display: none !important;
+        height: 0 !important;
+      }
+      /* Landing page no top padding */
+      #landingPage {
+        padding-top: 0 !important;
+        min-height: 100vh;
+        min-height: 100dvh;
+      }
+    }
+    
+    /* Desktop: Hide landing page, show main app */
+    @media (min-width: 769px) {
+      #landingPage {
+        display: none !important;
+      }
+      .sidebar-nav.hidden,
+      .main-content-wrapper.hidden {
+        display: flex !important;
+      }
+      .main-content-wrapper.hidden {
+        display: block !important;
+      }
+    }
+
+    /* ============================================
+       MOBILE LANDING PAGE STYLES
+       ============================================ */
+    .landing-header {
+      position: relative;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-primary);
+    }
+    
+    .landing-header > svg {
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+    }
+    
+    .landing-header button svg {
+      width: 18px;
+      height: 18px;
+    }
+    
+    .landing-header .landing-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      flex: 1;
+      text-align: center;
+    }
+    
+    .landing-section-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #eab308;
+      margin-bottom: 12px;
+      padding-left: 4px;
+    }
+    
+    .landing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    
+    .landing-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 20px 12px;
       background: var(--bg-card);
       border: 1px solid var(--border-primary);
       border-radius: 16px;
-      margin-bottom: 16px;
-      overflow-x: auto;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      flex-shrink: 0;
-    }
-    .offer-product-tabs::-webkit-scrollbar {
-      display: none;
-    }
-    .offer-product-tab {
-      flex-shrink: 0;
-      padding: 10px 16px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-muted);
-      background: transparent;
-      border: 1px solid transparent;
-      border-radius: 10px;
       cursor: pointer;
-      transition: all 0.2s ease;
-      white-space: nowrap;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
     }
-    .offer-product-tab:hover:not(.active) {
+    
+    .landing-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(234, 179, 8, 0.15) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .landing-btn:hover::before,
+    .landing-btn:active::before {
+      opacity: 1;
+    }
+    
+    .landing-btn:hover,
+    .landing-btn:active {
+      border-color: rgba(234, 179, 8, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 
+        0 0 20px rgba(234, 179, 8, 0.15),
+        0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .landing-btn svg {
+      width: 28px;
+      height: 28px;
+      color: var(--text-muted);
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .landing-btn:hover svg,
+    .landing-btn:active svg {
+      color: #eab308;
+      filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.5));
+    }
+    
+    .landing-btn span {
+      font-size: 12px;
+      font-weight: 500;
       color: var(--text-secondary);
-      background: var(--bg-toggle);
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
     }
-    .offer-product-tab.active {
-      color: var(--accent);
-      background: var(--accent-glow);
-      border-color: var(--accent);
+    
+    .landing-btn:hover span,
+    .landing-btn:active span {
+      color: var(--text-primary);
     }
-    @media (max-width: 768px) {
-      .offer-product-tabs {
-        margin-bottom: 16px;
-        padding: 4px;
-        gap: 4px;
-      }
-      .offer-product-tab {
-        padding: 8px 12px;
-        font-size: 12px;
-      }
+    
+    .landing-section {
+      margin-bottom: 20px;
+    }
+    
+    .landing-footer {
+      text-align: center;
+      padding: 24px 0 16px;
+      border-top: 1px solid rgba(234, 179, 8, 0.1);
+      margin-top: 16px;
+    }
+    
+    .landing-footer p {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin: 4px 0;
     }
 
     /* ============================================
@@ -4713,8 +5165,9 @@
       flex: 1;
       margin-left: 252px;
       padding: 16px 16px 16px 0;
-      min-height: calc(100vh - 32px);
+      min-height: 100vh;
       margin-top: 0;
+      padding-top: 0;
     }
     .main-content-area {
       width: 100%;
@@ -4735,7 +5188,18 @@
     @media (max-width: 900px) {
       .main-content-wrapper {
         margin-left: 0 !important;
-        padding-top: 16px;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        padding-bottom: 0 !important;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      #mainContentWrapper {
+        margin: 0 !important;
+        padding: 0 !important;
+        padding-top: 60px !important;
+        min-height: 100vh !important;
       }
     }
     
@@ -5393,14 +5857,21 @@
       .mobile-mega-header {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: flex-start;
+        gap: 12px;
         padding: 16px 20px;
         border-bottom: 1px solid var(--border-primary);
         background: var(--bg-body);
       }
       
+      .mobile-mega-header svg {
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
+      }
+      
       .mobile-mega-header h2 {
-        font-size: 16px;
+        font-size: 18px;
         font-weight: 700;
         color: var(--text-primary);
         margin: 0;
@@ -5856,27 +6327,9 @@
     }
   </style>
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen" style="margin: 0; padding: 0; background: #0a0a0a;">
 
-  <!-- HEADER -->
-  <header class="main-header">
-    <svg viewBox='0 0 70 70' xmlns='http://www.w3.org/2000/svg'>
-      <circle cx='32' cy='32' r='24' stroke='#10b981' stroke-width='6' fill='none'/>
-      <line x1='8' y1='56' x2='56' y2='8' stroke='#34d399' stroke-width='5' stroke-linecap='round'/>
-      <circle cx='56' cy='8' r='4' fill='#34d399'/>
-      <circle cx='8' cy='56' r='3' fill='#10b981'/>
-      <g class='orbit-path' style='transform:rotate(45deg);transform-origin:32px 32px'>
-        <circle class='moon-color' cx='64' cy='32' r='2'/>
-      </g>
-    </svg>
-    <h1>Offer Builder</h1>
-    <button class="settings-btn" onclick="openSettings()" title="Settings">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="3"></circle>
-        <path d="M12 1v6m0 6v6m-9-5h6m6 0h6m-2.636-6.364l-4.243 4.243m0 0l-4.242 4.242m12.728 0l-4.242-4.242m0 0l-4.243-4.243"></path>
-      </svg>
-    </button>
-  </header>
+
 
   <!-- SVG GRADIENT DEFINITION -->
   <svg width="0" height="0" style="position:absolute">
@@ -5888,7 +6341,196 @@
     </defs>
   </svg>
 
-  <!-- WELCOME SCREEN -->
+  <!-- WELCOME SCREEN / LANDING PAGE -->
+  <div id="landingPage" class="min-h-screen" style="background: var(--bg-body); padding: 0;">
+    
+    <!-- Header with Logo - Horizontal Bar -->
+    <div class="landing-header">
+      <!-- Logo (left) -->
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 36px; height: 36px; overflow: visible;">
+        <defs>
+          <radialGradient id="landingPlanetGrad" cx="35%" cy="35%" r="60%">
+            <stop offset="0%" stop-color="#fcd34d"/>
+            <stop offset="50%" stop-color="#eab308"/>
+            <stop offset="100%" stop-color="#ca8a04"/>
+          </radialGradient>
+          <filter id="landingPlanetGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2" result="glow"/>
+            <feMerge>
+              <feMergeNode in="glow"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          <linearGradient id="landingRingGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ffab40"/>
+            <stop offset="50%" stop-color="#ff8c00"/>
+            <stop offset="100%" stop-color="#ff6d00"/>
+          </linearGradient>
+          <filter id="landingMoonGlow" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="1.5" result="glow"/>
+            <feMerge>
+              <feMergeNode in="glow"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        <style>
+          .landing-moon-base { transform-origin: 32px 32px; animation: landingOrbit 3s linear infinite, landingMoonColor 2s ease-in-out infinite; filter: url(#landingMoonGlow); }
+          .landing-moon-back { animation: landingOrbit 3s linear infinite, landingMoonColor 2s ease-in-out infinite, landingMoonBackOpacity 3s linear infinite; }
+          .landing-moon-front { animation: landingOrbit 3s linear infinite, landingMoonColor 2s ease-in-out infinite, landingMoonFrontOpacity 3s linear infinite; }
+          @keyframes landingOrbit {
+            0% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
+            12.5% { transform: rotate(-20deg) translate(18px, 5px) scale(0.85); }
+            25% { transform: rotate(-20deg) translate(0, 7px) scale(0.7); }
+            37.5% { transform: rotate(-20deg) translate(-18px, 5px) scale(0.55); }
+            50% { transform: rotate(-20deg) translate(-26px, 0) scale(0.5); }
+            62.5% { transform: rotate(-20deg) translate(-18px, -5px) scale(0.55); }
+            75% { transform: rotate(-20deg) translate(0, -7px) scale(0.7); }
+            87.5% { transform: rotate(-20deg) translate(18px, -5px) scale(0.85); }
+            100% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
+          }
+          @keyframes landingMoonBackOpacity { 0%, 15% { opacity: 0; } 25% { opacity: 1; } 75% { opacity: 1; } 85%, 100% { opacity: 0; } }
+          @keyframes landingMoonFrontOpacity { 0%, 15% { opacity: 1; } 25% { opacity: 0; } 75% { opacity: 0; } 85%, 100% { opacity: 1; } }
+          @keyframes landingMoonColor { 0%, 100% { fill: #a855f7; } 25% { fill: #3b82f6; } 50% { fill: #ec4899; } 75% { fill: #10b981; } }
+        </style>
+        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#landingRingGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" opacity="0.6"/>
+        <circle class="landing-moon-base landing-moon-back" cx="32" cy="32" r="4" fill="#a855f7"/>
+        <circle cx="32" cy="32" r="14" fill="#eab308" opacity="0.2" filter="url(#landingPlanetGlow)"/>
+        <circle cx="32" cy="32" r="12" fill="url(#landingPlanetGrad)" filter="url(#landingPlanetGlow)"/>
+        <ellipse cx="28" cy="28" rx="4" ry="3" fill="#fef3c7" opacity="0.4"/>
+        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#landingRingGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
+        <circle class="landing-moon-base landing-moon-front" cx="32" cy="32" r="4" fill="#a855f7"/>
+      </svg>
+      <!-- Title (center) -->
+      <div class="landing-title"><span style="color: var(--text-primary);">Ables</span><span style="color: var(--text-muted);">AI</span></div>
+      <!-- Settings button (right) -->
+      <button onclick="openMobileSettings()" style="background: transparent; border: 1px solid var(--border-primary); border-radius: 8px; padding: 8px; color: var(--text-muted); cursor: pointer; flex-shrink: 0;" onmouseover="this.style.borderColor='var(--accent)'; this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border-primary)'; this.style.color='var(--text-muted)'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </button>
+    </div>
+    
+    <!-- SCORING Section -->
+    <div class="landing-section">
+      <div class="landing-section-title">Scoring</div>
+      <div class="landing-grid">
+        <button onclick="goToTool('prequal')" class="landing-btn">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>Pre-Qual</span>
+        </button>
+        <button onclick="goToTool('perrepus')" class="landing-btn">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          <span>ABLESCORE</span>
+        </button>
+        <button onclick="goToTool('offer')" class="landing-btn">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <span>Offer Builder</span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- CALCULATORS Section -->
+    <div class="landing-section">
+      <div class="landing-section-title">Calculators</div>
+      <div class="landing-grid">
+        <button onclick="goToTool('mca')" class="landing-btn">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>MCA</span>
+        </button>
+        <button onclick="goToTool('working')" class="landing-btn">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7c-2 0-3 1-3 3zm8 0v10m-4-5h8" />
+          </svg>
+          <span>Working Cap</span>
+        </button>
+        <button onclick="goToTool('term')" class="landing-btn">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <span>Term</span>
+        </button>
+        <button onclick="goToTool('loc')" class="landing-btn">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+          </svg>
+          <span>LOC</span>
+        </button>
+        <button onclick="goToTool('sba')" class="landing-btn">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+          </svg>
+          <span>SBA</span>
+        </button>
+        <button onclick="goToTool('equipment')" class="landing-btn">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+          </svg>
+          <span>Equipment</span>
+        </button>
+        <button onclick="goToTool('cre')" class="landing-btn">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+          </svg>
+          <span>CRE</span>
+        </button>
+        <button onclick="goToTool('factoring')" class="landing-btn">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          </svg>
+          <span>Factoring</span>
+        </button>
+        <button onclick="goToTool('apr')" class="landing-btn">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          </svg>
+          <span>APR Calc</span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- TOOLS Section -->
+    <div class="landing-section">
+      <div class="landing-section-title">Tools</div>
+      <div class="landing-grid">
+        <button onclick="goToTool('payoff')" class="landing-btn">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>Payoff</span>
+        </button>
+        <button onclick="goToTool('debtschedule')" class="landing-btn">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+          </svg>
+          <span>Debt Schedule</span>
+        </button>
+        <button onclick="goToTool('araging')" class="landing-btn">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>AR Aging</span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Footer Signature -->
+    <div class="landing-footer">
+      <p>ABLESCORE v4.2 Engine</p>
+      <p>2025 AblesAI</p>
+    </div>
+    
+  </div>
+
   <!-- DASHBOARD MODAL -->
   <div id="dashboardModal" class="dashboard-modal hidden">
     <div class="dashboard-backdrop" onclick="closeDashboard()"></div>
@@ -6049,7 +6691,61 @@
     <!-- Mobile Mega Menu -->
     <div class="mobile-mega-menu" id="mobileMegaMenu">
       <div class="mobile-mega-header">
-        <h2>Navigation</h2>
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow: visible;">
+          <defs>
+            <radialGradient id="mobilePlanetGrad" cx="35%" cy="35%" r="60%">
+              <stop offset="0%" stop-color="#fcd34d"/>
+              <stop offset="50%" stop-color="#eab308"/>
+              <stop offset="100%" stop-color="#ca8a04"/>
+            </radialGradient>
+            <filter id="mobilePlanetGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="2" result="glow"/>
+              <feMerge>
+                <feMergeNode in="glow"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            <linearGradient id="mobileRingGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#ffab40"/>
+              <stop offset="50%" stop-color="#ff8c00"/>
+              <stop offset="100%" stop-color="#ff6d00"/>
+            </linearGradient>
+            <filter id="mobileMoonGlow" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur stdDeviation="1.5" result="glow"/>
+              <feMerge>
+                <feMergeNode in="glow"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <style>
+            .mobile-moon-base { transform-origin: 32px 32px; animation: mobileOrbit 3s linear infinite, mobileMoonColor 2s ease-in-out infinite; filter: url(#mobileMoonGlow); }
+            .mobile-moon-back { animation: mobileOrbit 3s linear infinite, mobileMoonColor 2s ease-in-out infinite, mobileMoonBackOpacity 3s linear infinite; }
+            .mobile-moon-front { animation: mobileOrbit 3s linear infinite, mobileMoonColor 2s ease-in-out infinite, mobileMoonFrontOpacity 3s linear infinite; }
+            @keyframes mobileOrbit {
+              0% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
+              12.5% { transform: rotate(-20deg) translate(18px, 5px) scale(0.85); }
+              25% { transform: rotate(-20deg) translate(0, 7px) scale(0.7); }
+              37.5% { transform: rotate(-20deg) translate(-18px, 5px) scale(0.55); }
+              50% { transform: rotate(-20deg) translate(-26px, 0) scale(0.5); }
+              62.5% { transform: rotate(-20deg) translate(-18px, -5px) scale(0.55); }
+              75% { transform: rotate(-20deg) translate(0, -7px) scale(0.7); }
+              87.5% { transform: rotate(-20deg) translate(18px, -5px) scale(0.85); }
+              100% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
+            }
+            @keyframes mobileMoonBackOpacity { 0%, 15% { opacity: 0; } 25% { opacity: 1; } 75% { opacity: 1; } 85%, 100% { opacity: 0; } }
+            @keyframes mobileMoonFrontOpacity { 0%, 15% { opacity: 1; } 25% { opacity: 0; } 75% { opacity: 0; } 85%, 100% { opacity: 1; } }
+            @keyframes mobileMoonColor { 0%, 100% { fill: #a855f7; } 25% { fill: #3b82f6; } 50% { fill: #ec4899; } 75% { fill: #10b981; } }
+          </style>
+          <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#mobileRingGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" opacity="0.6"/>
+          <circle class="mobile-moon-base mobile-moon-back" cx="32" cy="32" r="4" fill="#a855f7"/>
+          <circle cx="32" cy="32" r="14" fill="#eab308" opacity="0.2" filter="url(#mobilePlanetGlow)"/>
+          <circle cx="32" cy="32" r="12" fill="url(#mobilePlanetGrad)" filter="url(#mobilePlanetGlow)"/>
+          <ellipse cx="28" cy="28" rx="4" ry="3" fill="#fef3c7" opacity="0.4"/>
+          <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#mobileRingGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
+          <circle class="mobile-moon-base mobile-moon-front" cx="32" cy="32" r="4" fill="#a855f7"/>
+        </svg>
+        <h2><span style="color: var(--text-primary);">Ables</span><span style="color: var(--text-muted);">AI</span></h2>
       </div>
       <div class="mobile-mega-content">
         <div class="mobile-mega-section">
@@ -6195,11 +6891,11 @@
           <circle class="moon-base moon-front" cx="32" cy="32" r="4" fill="#a855f7"/>
         </svg>
       </a>
-      <h1><span style="color: #ffffff;">Ables</span><span style="color: #6b7280;">AI</span></h1>
+      <h1><span style="color: var(--text-primary);">Ables</span><span style="color: var(--text-muted);">AI</span></h1>
     </div>
     
     <!-- SIDEBAR NAVIGATION -->
-    <nav class="sidebar-nav" id="sidebarNav">
+    <nav class="sidebar-nav hidden" id="sidebarNav">
       <!-- Mobile Brand Header -->
       <div class="sidebar-mobile-brand">
         <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 28px; height: 28px; overflow: visible;">
@@ -6212,7 +6908,7 @@
           </defs>
           <circle cx="32" cy="32" r="12" fill="url(#planetGrad2)"/>
         </svg>
-        <h1><span style="color: #ffffff;">Ables</span><span style="color: #6b7280;">AI</span></h1>
+        <h1><span style="color: var(--text-primary);">Ables</span><span style="color: var(--text-muted);">AI</span></h1>
       </div>
       
       <!-- Assessment Section -->
@@ -6597,7 +7293,36 @@
     </nav>
     
     <!-- MAIN CONTENT WRAPPER -->
-    <div class="main-content-wrapper">
+    <div class="main-content-wrapper hidden" id="mainContentWrapper">
+
+      <!-- Mobile Back Header -->
+      <div class="mobile-back-header">
+        <button class="back-btn" onclick="goToLanding()" title="Back to Menu">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <span class="header-title" id="mobileHeaderTitle">Offer Builder</span>
+        <svg class="header-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="mobileLogoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#d4a855"/>
+              <stop offset="50%" style="stop-color:#f4d58d"/>
+              <stop offset="100%" style="stop-color:#d4a855"/>
+            </linearGradient>
+          </defs>
+          <circle cx="50" cy="50" r="35" fill="none" stroke="url(#mobileLogoGradient)" stroke-width="2" opacity="0.3"/>
+          <circle cx="50" cy="50" r="6" fill="url(#mobileLogoGradient)">
+            <animate attributeName="r" values="6;7;6" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <ellipse cx="50" cy="50" rx="18" ry="18" fill="none" stroke="url(#mobileLogoGradient)" stroke-width="1.5" transform="rotate(-30 50 50)">
+            <animateTransform attributeName="transform" type="rotate" values="-30 50 50;330 50 50" dur="20s" repeatCount="indefinite"/>
+          </ellipse>
+          <circle cx="50" cy="32" r="3" fill="url(#mobileLogoGradient)">
+            <animateTransform attributeName="transform" type="rotate" values="-30 50 50;330 50 50" dur="20s" repeatCount="indefinite"/>
+          </circle>
+        </svg>
+      </div>
 
       <!-- ========================================== -->
       <!-- ADMIN PANEL                                -->
@@ -6633,18 +7358,6 @@
 
           <!-- OFFER BUILDER TOOL SECTION -->
           <div id="offerBuilderSection" class="tool-section">
-
-          <!-- PRODUCT TYPE TABS -->
-          <div class="offer-product-tabs" id="offerProductTabs">
-            <button class="offer-product-tab active" data-product="mca" onclick="switchOfferProduct('mca')">MCA</button>
-            <button class="offer-product-tab" data-product="working" onclick="switchOfferProduct('working')">Working Capital</button>
-            <button class="offer-product-tab" data-product="term" onclick="switchOfferProduct('term')">Term Loan</button>
-            <button class="offer-product-tab" data-product="loc" onclick="switchOfferProduct('loc')">Line of Credit</button>
-            <button class="offer-product-tab" data-product="sba" onclick="switchOfferProduct('sba')">SBA 7(a)</button>
-            <button class="offer-product-tab" data-product="equipment" onclick="switchOfferProduct('equipment')">Equipment</button>
-            <button class="offer-product-tab" data-product="cre" onclick="switchOfferProduct('cre')">CRE</button>
-            <button class="offer-product-tab" data-product="factoring" onclick="switchOfferProduct('factoring')">Factoring</button>
-          </div>
 
           <!-- ADMIN GRID -->
           <div class="flex flex-col lg:flex-row gap-8 w-full">
@@ -7785,8 +8498,8 @@ Government Issued ID</textarea>
   </div>
 
   <!-- Share Modal -->
-  <div id="shareModal" class="modal-overlay fixed inset-0 z-50 hidden flex items-center justify-center p-4">
-    <div class="modal-content rounded-2xl w-full max-w-3xl overflow-hidden" style="background: var(--bg-card); border: 1px solid var(--border-primary); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);">
+  <div id="shareModal" class="modal-overlay fixed inset-0 z-50 hidden flex items-center justify-center p-4" onclick="if(event.target === this) addClass('shareModal', 'hidden')">
+    <div class="modal-content rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-auto" style="background: var(--bg-card); border: 1px solid var(--border-primary); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);">
       <div class="flex items-center justify-between p-4 border-b" style="border-color: var(--border-primary);">
         <h3 class="text-lg font-bold" style="color: var(--text-primary);">Share Offer</h3>
         <button onclick="addClass('shareModal', 'hidden')" class="w-8 h-8 rounded-lg flex items-center justify-center transition-all" style="background: var(--bg-card-inner); color: var(--text-muted);" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-muted)'">
@@ -8764,11 +9477,54 @@ Government Issued ID</textarea>
         else if (a.monthsInBusiness >= 12) stabPts = tibWeight * 0.4;
         else stabPts = tibWeight * 0.1;
 
-        // BUFFER COMPONENT (balance/revenue ratio)
+        // BUFFER COMPONENT (balance/revenue ratio) - granular scale
         const buffer = a.avgDailyBalance / a.monthlyRevenue;
         let bufferPts = 0;
-        if (buffer >= 0.10) bufferPts = industryWeight;
-        else if (buffer >= 0.05) bufferPts = industryWeight * 0.5;
+        // Scale: 0-5% = 0pts, 5-10% = 2pts, 10-15% = 4pts, 15-20% = 5pts, 20%+ = 6pts
+        if (buffer >= 0.20) bufferPts = industryWeight * 0.6;
+        else if (buffer >= 0.15) bufferPts = industryWeight * 0.5;
+        else if (buffer >= 0.10) bufferPts = industryWeight * 0.4;
+        else if (buffer >= 0.05) bufferPts = industryWeight * 0.2;
+        else bufferPts = 0;
+        
+        // v4.2: INDUSTRY RISK MODIFIER (adds to or subtracts from industry/buffer weight)
+        const industryLower = (a.industry || 'general').toLowerCase();
+        let industryPts = 0;
+        const industryRisk = {
+          'medical': 1.0,        // +full points (stable, recurring revenue)
+          'auto': 0.8,           // +80%
+          'general': 0.6,        // +60% (baseline)
+          'ecommerce': 0.5,      // +50%
+          'trucking': 0.4,       // +40% (volatile fuel costs)
+          'construction': 0.3,   // +30% (seasonal, project-based)
+          'restaurant': 0.2      // +20% (high failure rate)
+        };
+        const riskMultiplier = industryRisk[industryLower] ?? 0.6;
+        industryPts = (industryWeight * 0.4) * riskMultiplier;
+        
+        // v4.2: FLEET SIZE BONUS for trucking (5+ vehicles = stable operation)
+        if (industryLower === 'trucking' && a.fleetSize >= 5) {
+          const fleetBonus = Math.min(3, (a.fleetSize - 5) * 0.2); // up to +3 pts for 20+ vehicles
+          industryPts += fleetBonus;
+          if (a.fleetSize >= 10) reasons.push("Fleet Size Bonus");
+        }
+        
+        // v4.2: EXISTING DEBT PENALTY (reduces score based on debt burden)
+        let debtPenalty = 0;
+        const monthlyDebt = this.getMonthlyExistingDebt();
+        if (monthlyDebt > 0 && a.monthlyRevenue > 0) {
+          const debtRatio = monthlyDebt / a.monthlyRevenue;
+          // 0-5% debt = no penalty, 5-15% = small penalty, 15-25% = medium, 25%+ = large
+          if (debtRatio > 0.25) {
+            debtPenalty = 10;
+            reasons.push("High Existing Debt Burden");
+          } else if (debtRatio > 0.15) {
+            debtPenalty = 6;
+            reasons.push("Moderate Debt Burden");
+          } else if (debtRatio > 0.05) {
+            debtPenalty = 3;
+          }
+        }
         
         // RESTRICTED INDUSTRY PENALTY
         if (a.isRestricted) {
@@ -8777,7 +9533,7 @@ Government Issued ID</textarea>
         }
 
         // Total score (capped 0-100)
-        let totalScore = Math.round(creditPts + behavePts + revPts + stabPts + bufferPts);
+        let totalScore = Math.round(creditPts + behavePts + revPts + stabPts + bufferPts + industryPts - debtPenalty);
         totalScore = Math.max(0, Math.min(100, totalScore));
 
         return { 
@@ -8789,7 +9545,9 @@ Government Issued ID</textarea>
             behavior: behavePts,
             revenue: revPts,
             stability: stabPts,
-            buffer: bufferPts
+            buffer: bufferPts,
+            industry: industryPts,
+            debtPenalty: -debtPenalty
           }
         };
       }
@@ -15138,10 +15896,75 @@ Government Issued ID</textarea>
     // ============================================
     let currentTool = 'prequal';
     
+    // Navigate from landing page to specific tool
+    function goToTool(tool) {
+      // Hide landing page
+      const landing = document.getElementById('landingPage');
+      if (landing) landing.classList.add('hidden');
+      
+      // Show header and main content
+      const header = document.getElementById('mainHeader');
+      const sidebar = document.getElementById('sidebarNav');
+      const mainWrapper = document.getElementById('mainContentWrapper');
+      if (header) header.classList.remove('hidden');
+      if (sidebar) sidebar.classList.remove('hidden');
+      if (mainWrapper) mainWrapper.classList.remove('hidden');
+      
+      // Switch to the requested tool
+      switchTool(tool);
+    }
+    
+    // Go back to landing page
+    function goToLanding() {
+      const landing = document.getElementById('landingPage');
+      const header = document.getElementById('mainHeader');
+      const sidebar = document.getElementById('sidebarNav');
+      const mainWrapper = document.getElementById('mainContentWrapper');
+      
+      if (landing) landing.classList.remove('hidden');
+      if (header) header.classList.add('hidden');
+      if (sidebar) sidebar.classList.add('hidden');
+      if (mainWrapper) mainWrapper.classList.add('hidden');
+    }
+    
+    // Check if should skip landing page (URL has params)
+    function checkSkipLanding() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('calc') || params.has('d') || params.has('tool')) {
+        goToTool(params.get('calc') || params.get('tool') || 'prequal');
+        return true;
+      }
+      return false;
+    }
+    
     function switchTool(tool) {
       console.log('switchTool called with:', tool);
       currentTool = tool;
       console.log('currentTool set to:', currentTool);
+      
+      // Update mobile header title
+      const mobileHeaderTitle = document.getElementById('mobileHeaderTitle');
+      if (mobileHeaderTitle) {
+        const titleMap = {
+          'offer': 'Offer Builder',
+          'prequal': 'PreQual Calculator',
+          'perrepus': 'ABLESCORE',
+          'mca': 'MCA Calculator',
+          'working': 'Working Capital',
+          'term': 'Term Loan',
+          'loc': 'Line of Credit',
+          'sba': 'SBA 7(a)',
+          'equipment': 'Equipment Finance',
+          'cre': 'Commercial RE',
+          'factoring': 'Invoice Factoring',
+          'payoff': 'Early Payoff',
+          'apr': 'APR Calculator',
+          'debtschedule': 'Debt Schedule',
+          'araging': 'A/R Aging',
+          'wip': 'WIP Schedule'
+        };
+        mobileHeaderTitle.textContent = titleMap[tool] || 'AblesAI';
+      }
       
       // Update sidebar buttons
       document.querySelectorAll('.sidebar-nav-btn').forEach(btn => {
@@ -16490,7 +17313,7 @@ Government Issued ID</textarea>
       const s = loanState;
       const theme = state.theme || {};
       const primaryColor = theme.primary || '#6366f1';
-      const companyName = state.companyName || 'Trust Capital Funding';
+      const companyName = state.companyName || 'AblesAI';
       const logoUrl = state.logoUrl || '';
       
       const baseStyles = `
@@ -20387,11 +21210,11 @@ Government Issued ID</textarea>
           <!-- Tier Scale -->
           <div class="px-4 pb-4">
             <div class="flex rounded-lg overflow-hidden text-center text-[10px] font-bold">
-              <div class="flex-1 py-1" style="background: #10b981; color: white;">A 80+</div>
-              <div class="flex-1 py-1" style="background: #22c55e; color: white;">B 65+</div>
-              <div class="flex-1 py-1" style="background: #eab308; color: white;">C 50+</div>
-              <div class="flex-1 py-1" style="background: #f97316; color: white;">D 35+</div>
               <div class="flex-1 py-1" style="background: #ef4444; color: white;">E &lt;35</div>
+              <div class="flex-1 py-1" style="background: #f97316; color: white;">D 35+</div>
+              <div class="flex-1 py-1" style="background: #eab308; color: white;">C 50+</div>
+              <div class="flex-1 py-1" style="background: #22c55e; color: white;">B 65+</div>
+              <div class="flex-1 py-1" style="background: #10b981; color: white;">A 80+</div>
             </div>
             <div class="relative mt-1" style="height: 4px;">
               <div class="absolute top-0 w-2 h-2 rounded-full border-2" style="left: ${Math.min(100, Math.max(0, score))}%; transform: translateX(-50%); background: white; border-color: ${gradeColor};"></div>
@@ -20839,11 +21662,11 @@ Government Issued ID</textarea>
           </div>
           <div class="px-4 pb-4">
             <div class="flex rounded-lg overflow-hidden text-center text-[10px] font-bold">
-              <div class="flex-1 py-1" style="background: #10b981; color: white;">A 80+</div>
-              <div class="flex-1 py-1" style="background: #22c55e; color: white;">B 65+</div>
-              <div class="flex-1 py-1" style="background: #eab308; color: white;">C 50+</div>
-              <div class="flex-1 py-1" style="background: #f97316; color: white;">D 35+</div>
               <div class="flex-1 py-1" style="background: #ef4444; color: white;">E &lt;35</div>
+              <div class="flex-1 py-1" style="background: #f97316; color: white;">D 35+</div>
+              <div class="flex-1 py-1" style="background: #eab308; color: white;">C 50+</div>
+              <div class="flex-1 py-1" style="background: #22c55e; color: white;">B 65+</div>
+              <div class="flex-1 py-1" style="background: #10b981; color: white;">A 80+</div>
             </div>
             <div class="relative mt-1" style="height: 4px;">
               <div class="absolute top-0 w-2 h-2 rounded-full border-2" style="left: ${Math.min(100, Math.max(0, score))}%; transform: translateX(-50%); background: white; border-color: ${gradeColor};"></div>
@@ -21066,6 +21889,20 @@ Government Issued ID</textarea>
           </div>
         </div>`;
     }
+    
+    // ============================================
+    // APP INITIALIZATION
+    // ============================================
+    // Check on load if we should skip landing page
+    (function initApp() {
+      // If URL has parameters, skip landing and go to tool
+      if (!checkSkipLanding()) {
+        // Show landing page by default (already shown)
+        // Make sure landing is visible
+        const landing = document.getElementById('landingPage');
+        if (landing) landing.classList.remove('hidden');
+      }
+    })();
   </script>
 
   <!-- Mobile Settings Sheet -->
