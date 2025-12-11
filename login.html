@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In | AblesAI</title>
+  
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><ellipse cx=%2232%22 cy=%2232%22 rx=%2228%22 ry=%228%22 stroke=%22%23ea580c%22 stroke-width=%222.5%22 fill=%22none%22 transform=%22rotate(-20 32 32)%22 stroke-dasharray=%2270 140%22/><circle cx=%2232%22 cy=%2232%22 r=%2212%22 fill=%22%23eab308%22/><ellipse cx=%2232%22 cy=%2232%22 rx=%2228%22 ry=%228%22 stroke=%22%23ea580c%22 stroke-width=%222.5%22 fill=%22none%22 transform=%22rotate(-20 32 32)%22 stroke-dasharray=%2270 140%22 stroke-dashoffset=%22-70%22/><circle cx=%2254%22 cy=%2228%22 r=%224%22 fill=%22%23a855f7%22/></svg>">
+  
+  <!-- Outseta -->
+  <script>
+    var o_options = {
+      domain: 'trustbureauai.outseta.com',
+      load: 'nocode,auth'
+    };
+  </script>
+  <script src="https://cdn.outseta.com/outseta.min.js" data-options="o_options"></script>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --orange-primary: #ea580c;
+      --orange-light: #fb923c;
+      --orange-dark: #c2410c;
+      --yellow: #eab308;
+      --purple: #a855f7;
+      --black: #000000;
+      --gray-900: #0a0a0a;
+      --gray-800: #1a1a1a;
+      --gray-700: #2a2a2a;
+      --gray-600: #444444;
+      --gray-400: #888888;
+      --gray-200: #cccccc;
+      --white: #ffffff;
+    }
+    
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--black);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    /* Animated background grid */
+    .bg-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(var(--gray-800) 1px, transparent 1px),
+        linear-gradient(90deg, var(--gray-800) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.3;
+      z-index: 1;
+      animation: gridPulse 8s ease-in-out infinite;
+    }
+    
+    @keyframes gridPulse {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 0.4; }
+    }
+    
+    /* Orbiting accent elements */
+    .orbit-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 800px;
+      height: 800px;
+      margin-left: -400px;
+      margin-top: -400px;
+      z-index: 2;
+      pointer-events: none;
+    }
+    
+    .orbit-ring {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      border: 2px solid var(--gray-800);
+      border-radius: 50%;
+      transform: translate(-50%, -50%) rotate(-20deg);
+      animation: orbitRotate 60s linear infinite;
+    }
+    
+    .orbit-element {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+    }
+    
+    .orbit-element:nth-child(1) {
+      background: var(--orange-primary);
+      box-shadow: 0 0 20px var(--orange-primary);
+      animation: orbit1 20s linear infinite;
+    }
+    
+    .orbit-element:nth-child(2) {
+      background: var(--yellow);
+      box-shadow: 0 0 20px var(--yellow);
+      animation: orbit2 15s linear infinite;
+    }
+    
+    .orbit-element:nth-child(3) {
+      background: var(--purple);
+      box-shadow: 0 0 20px var(--purple);
+      animation: orbit3 25s linear infinite;
+    }
+    
+    @keyframes orbitRotate {
+      from { transform: translate(-50%, -50%) rotate(-20deg); }
+      to { transform: translate(-50%, -50%) rotate(340deg); }
+    }
+    
+    @keyframes orbit1 {
+      from { transform: translate(-50%, -50%) rotate(0deg) translateX(400px) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg) translateX(400px) rotate(-360deg); }
+    }
+    
+    @keyframes orbit2 {
+      from { transform: translate(-50%, -50%) rotate(120deg) translateX(320px) rotate(-120deg); }
+      to { transform: translate(-50%, -50%) rotate(480deg) translateX(320px) rotate(-480deg); }
+    }
+    
+    @keyframes orbit3 {
+      from { transform: translate(-50%, -50%) rotate(240deg) translateX(360px) rotate(-240deg); }
+      to { transform: translate(-50%, -50%) rotate(600deg) translateX(360px) rotate(-600deg); }
+    }
+    
+    /* Main container */
+    .login-container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 480px;
+      padding: 20px;
+      animation: fadeInUp 0.8s ease-out;
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Logo */
+    .logo-wrapper {
+      text-align: center;
+      margin-bottom: 48px;
+      animation: fadeInUp 0.8s ease-out 0.1s both;
+    }
+    
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .logo svg {
+      width: 48px;
+      height: 48px;
+      filter: drop-shadow(0 0 20px rgba(234, 88, 12, 0.4));
+    }
+    
+    .orbiting-moon {
+      transform-origin: 32px 32px;
+      animation: orbitMoon 3s linear infinite, moonColor 2s ease-in-out infinite;
+    }
+    
+    @keyframes orbitMoon {
+      0% { transform: rotate(-20deg) translate(26px, 0) scale(1); opacity: 1; }
+      12.5% { transform: rotate(-20deg) translate(18px, 5px) scale(0.9); opacity: 1; }
+      25% { transform: rotate(-20deg) translate(0, 7px) scale(0.75); opacity: 0.7; }
+      37.5% { transform: rotate(-20deg) translate(-18px, 5px) scale(0.6); opacity: 0.5; }
+      50% { transform: rotate(-20deg) translate(-26px, 0) scale(0.5); opacity: 0.4; }
+      62.5% { transform: rotate(-20deg) translate(-18px, -5px) scale(0.6); opacity: 0.5; }
+      75% { transform: rotate(-20deg) translate(0, -7px) scale(0.75); opacity: 0.7; }
+      87.5% { transform: rotate(-20deg) translate(18px, -5px) scale(0.9); opacity: 1; }
+      100% { transform: rotate(-20deg) translate(26px, 0) scale(1); opacity: 1; }
+    }
+    
+    @keyframes moonColor {
+      0%, 100% { fill: #a855f7; }
+      25% { fill: #3b82f6; }
+      50% { fill: #ec4899; }
+      75% { fill: #10b981; }
+    }
+    
+    .logo h1 {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, var(--white) 0%, var(--gray-200) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .logo h1 span {
+      background: linear-gradient(135deg, var(--orange-primary) 0%, var(--orange-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .tagline {
+      font-size: 15px;
+      color: var(--gray-400);
+      font-weight: 300;
+      letter-spacing: 0.5px;
+    }
+    
+    /* Card */
+    .login-card {
+      background: linear-gradient(135deg, var(--gray-900) 0%, var(--black) 100%);
+      border: 1px solid var(--gray-800);
+      border-radius: 24px;
+      padding: 48px;
+      box-shadow: 
+        0 0 0 1px rgba(234, 88, 12, 0.1),
+        0 20px 60px rgba(0, 0, 0, 0.8);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+    
+    .login-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        var(--orange-primary) 50%, 
+        transparent 100%);
+      opacity: 0.6;
+    }
+    
+    .login-card::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(234, 88, 12, 0.03) 0%, transparent 70%);
+      animation: rotate 30s linear infinite;
+      pointer-events: none;
+    }
+    
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .card-header {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    
+    .card-header h2 {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+    
+    .card-header p {
+      font-size: 15px;
+      color: var(--gray-400);
+      font-weight: 400;
+    }
+    
+    /* Outseta embed container */
+    .auth-embed {
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* Override Outseta styles for dark theme */
+    #o-anonymous,
+    [data-o-auth] {
+      background: transparent !important;
+    }
+    
+    /* Footer */
+    .login-footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      margin-top: 32px;
+      padding-top: 32px;
+      border-top: 1px solid var(--gray-800);
+      animation: fadeInUp 0.8s ease-out 0.3s both;
+    }
+    
+    .login-footer p {
+      font-size: 14px;
+      color: var(--gray-400);
+      margin-bottom: 12px;
+    }
+    
+    .login-footer a {
+      color: var(--orange-primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .login-footer a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--orange-primary);
+      transition: width 0.3s ease;
+    }
+    
+    .login-footer a:hover {
+      color: var(--orange-light);
+    }
+    
+    .login-footer a:hover::after {
+      width: 100%;
+    }
+    
+    /* Responsive */
+    @media (max-width: 640px) {
+      .login-card {
+        padding: 32px 24px;
+        border-radius: 20px;
+      }
+      
+      .logo h1 {
+        font-size: 28px;
+      }
+      
+      .logo svg {
+        width: 40px;
+        height: 40px;
+      }
+      
+      .card-header h2 {
+        font-size: 24px;
+      }
+      
+      .orbit-container {
+        width: 500px;
+        height: 500px;
+        margin-left: -250px;
+        margin-top: -250px;
+      }
+    }
+    
+    /* Accessibility */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+    
+    /* Loading state */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid var(--gray-700);
+      border-top-color: var(--orange-primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated background -->
+  <div class="bg-grid"></div>
+  
+  <!-- Orbiting elements -->
+  <div class="orbit-container">
+    <div class="orbit-ring"></div>
+    <div class="orbit-element"></div>
+    <div class="orbit-element"></div>
+    <div class="orbit-element"></div>
+  </div>
+  
+  <!-- Main login container -->
+  <div class="login-container">
+    <!-- Logo -->
+    <div class="logo-wrapper">
+      <div class="logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+          <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
+          <circle cx="32" cy="32" r="12" fill="#eab308"/>
+          <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
+          <circle class="orbiting-moon" cx="54" cy="28" r="4" fill="#a855f7"/>
+        </svg>
+        <h1>Ables<span>.ai</span></h1>
+      </div>
+      <p class="tagline">Intelligent Financial Tools</p>
+    </div>
+    
+    <!-- Login card -->
+    <div class="login-card">
+      <div class="card-header">
+        <h2>Welcome Back</h2>
+        <p>Sign in to access your account</p>
+      </div>
+      
+      <div class="auth-embed">
+        <div data-o-auth="1"
+             data-mode="embed"
+             data-widget-mode="login">
+        </div>
+      </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="login-footer">
+      <p>Don't have an account? <a href="https://trustbureauai.outseta.com/auth?widgetMode=register">Sign up</a></p>
+      <p><a href="https://ables.ai">← Back to home</a></p>
+    </div>
+  </div>
+</body>
+</html>
