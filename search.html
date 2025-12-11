@@ -42,15 +42,60 @@
     }
 
     [data-theme="light"] {
-      --bg-primary: #ffffff;
-      --bg-secondary: #f9fafb;
-      --bg-tertiary: #f3f4f6;
+      --bg-primary: #f8f9fa;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #e9ecef;
       --bg-card: #ffffff;
-      --text-primary: #111827;
-      --text-secondary: #4b5563;
-      --text-muted: #6b7280;
-      --border-primary: #e5e7eb;
-      --border-secondary: #f3f4f6;
+      --text-primary: #1a1a2e;
+      --text-secondary: #374151;
+      --text-muted: #5a5a6e;
+      --border-primary: #d1d5db;
+      --border-secondary: #e5e7eb;
+    }
+
+    [data-theme="light"] .bg-grid {
+      background-image: 
+        linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+    }
+
+    [data-theme="light"] .bg-gradient {
+      background: radial-gradient(ellipse at 50% 0%, rgba(234, 179, 8, 0.08) 0%, transparent 60%);
+    }
+
+    [data-theme="light"] .result-card {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.05);
+    }
+
+    [data-theme="light"] .profile-item {
+      background: #f8f9fa;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .reasoning-box,
+    [data-theme="light"] .owners-section {
+      background: #f8f9fa;
+      border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .routing-queue {
+      background: linear-gradient(135deg, rgba(234, 179, 8, 0.08), rgba(234, 179, 8, 0.03));
+      border-color: rgba(234, 179, 8, 0.3);
+    }
+
+    [data-theme="light"] .search-input-container {
+      background: #ffffff;
+      border-color: #d1d5db;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    [data-theme="light"] .model-btn {
+      background: #ffffff;
+      border-color: #d1d5db;
+    }
+
+    [data-theme="light"] .search-logo-large svg {
+      filter: drop-shadow(0 0 20px rgba(234, 179, 8, 0.4));
     }
 
     * {
@@ -265,7 +310,7 @@
     .tab-btn {
       padding: 8px 16px;
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: var(--text-muted);
@@ -297,8 +342,8 @@
       background: #a855f7;
       color: #fff;
       border-radius: 4px;
-      text-transform: uppercase;
       margin-left: 6px;
+      text-transform: none;
     }
 
     .free-badge {
@@ -308,8 +353,8 @@
       background: #22c55e;
       color: #000;
       border-radius: 4px;
-      text-transform: uppercase;
       margin-left: 6px;
+      text-transform: none;
     }
 
     [data-theme="light"] .tab-btn {
@@ -446,6 +491,18 @@
       font-family: inherit;
       letter-spacing: 2px;
       text-align: center;
+      -webkit-text-security: disc;
+    }
+
+    .api-key-inline input:-webkit-autofill,
+    .api-key-inline input:-webkit-autofill:hover,
+    .api-key-inline input:-webkit-autofill:focus,
+    .search-input-container input:-webkit-autofill,
+    .search-input-container input:-webkit-autofill:hover,
+    .search-input-container input:-webkit-autofill:focus {
+      -webkit-box-shadow: 0 0 0 1000px var(--bg-card) inset !important;
+      -webkit-text-fill-color: var(--text-primary) !important;
+      background-color: transparent !important;
     }
 
     .api-key-inline input:focus {
@@ -537,127 +594,6 @@
     .model-badge.pro {
       background: #8b5cf6;
       color: #fff;
-    }
-
-    /* API Key Settings - Minimal */
-    .api-settings {
-      margin-top: 2rem;
-      text-align: center;
-    }
-
-    .api-toggle-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: transparent;
-      border: 1px solid var(--border-secondary);
-      border-radius: 8px;
-      color: var(--text-muted);
-      font-size: 0.8rem;
-      font-family: inherit;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .api-toggle-btn:hover {
-      background: var(--bg-secondary);
-      color: var(--text-secondary);
-    }
-
-    .api-toggle-btn svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    .api-toggle-btn .chevron {
-      transition: transform 0.2s;
-    }
-
-    .api-toggle-btn.open .chevron {
-      transform: rotate(180deg);
-    }
-
-    .api-content {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease;
-    }
-
-    .api-content.open {
-      max-height: 200px;
-    }
-
-    .api-inner {
-      padding-top: 1rem;
-    }
-
-    .api-row {
-      display: flex;
-      gap: 0.5rem;
-      max-width: 400px;
-      margin: 0 auto;
-    }
-
-    .api-row input {
-      flex: 1;
-      padding: 0.75rem 1rem;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-secondary);
-      border-radius: 8px;
-      color: var(--text-primary);
-      font-size: 0.85rem;
-      font-family: inherit;
-    }
-
-    .api-row input:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-
-    .api-btn {
-      width: 38px;
-      height: 42px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-secondary);
-      border-radius: 8px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-muted);
-      transition: all 0.2s;
-    }
-
-    .api-btn:hover {
-      background: var(--bg-tertiary);
-      color: var(--text-primary);
-    }
-
-    .api-btn svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    .api-status {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      margin-top: 0.75rem;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .api-status-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--tier-e);
-    }
-
-    .api-status-dot.connected {
-      background: var(--tier-a);
     }
 
     .error-message {
@@ -787,6 +723,78 @@
       font-size: 0.9rem;
       font-weight: 600;
       color: var(--text-primary);
+      flex: 1;
+    }
+
+    .profile-value-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .copy-btn {
+      background: transparent;
+      border: none;
+      padding: 4px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s, color 0.2s;
+      color: var(--text-muted);
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .copy-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .profile-item:hover .copy-btn {
+      opacity: 0.6;
+    }
+
+    .copy-btn:hover {
+      opacity: 1 !important;
+      color: var(--accent);
+    }
+
+    .copy-btn.copied {
+      color: var(--tier-a);
+      opacity: 1;
+    }
+
+    .copy-btn-header {
+      position: absolute;
+      right: 8px;
+      top: 8px;
+      opacity: 0;
+    }
+
+    .state-badge,
+    .confidence-meter {
+      position: relative;
+    }
+
+    .state-badge:hover .copy-btn-header,
+    .confidence-meter:hover .copy-btn-header {
+      opacity: 0.6;
+    }
+
+    .copy-btn-header:hover {
+      opacity: 1 !important;
+    }
+
+    .copy-btn-owners {
+      margin-left: auto;
+      opacity: 0.4;
+    }
+
+    .owners-title:hover .copy-btn-owners {
+      opacity: 0.7;
+    }
+
+    .copy-btn-owners:hover {
+      opacity: 1 !important;
     }
 
     .profile-value.status-active {
@@ -948,15 +956,45 @@
       color: var(--text-secondary);
     }
 
-    /* ==================== IMMERSIVE LOADING OVERLAY ==================== */
+    .copy-all-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      margin-top: 1.5rem;
+      padding: 0.75rem 1rem;
+      background: transparent;
+      border: 1px dashed var(--border-primary);
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .copy-all-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .copy-all-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(234, 179, 8, 0.05);
+    }
+
+    .copy-all-btn.copied {
+      border-color: var(--tier-a);
+      color: var(--tier-a);
+      background: rgba(34, 197, 94, 0.05);
+    }
+
+    /* ==================== PONG GAME LOADING OVERLAY ==================== */
     .loading-overlay {
       position: fixed;
       inset: 0;
       background: var(--bg-primary);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
       z-index: 1000;
       opacity: 0;
       visibility: hidden;
@@ -968,323 +1006,104 @@
       visibility: visible;
     }
 
-    .loading-container {
-      text-align: center;
-      max-width: 550px;
-      padding: 2rem;
+    #pongCanvas {
+      position: absolute;
+      inset: 0;
       width: 100%;
+      height: 100%;
     }
 
-    /* Loading Animation */
-    .loading-visual {
-      position: relative;
-      width: 220px;
-      height: 220px;
-      margin: 0 auto 2rem;
-    }
-
-    .loading-planet {
+    .pong-ui {
       position: absolute;
-      top: 50%;
+      bottom: 30px;
       left: 50%;
-      transform: translate(-50%, -50%);
-      width: 70px;
-      height: 70px;
-      background: radial-gradient(circle at 30% 30%, #fcd34d, #eab308, #ca8a04);
-      border-radius: 50%;
-      box-shadow: 0 0 50px rgba(234, 179, 8, 0.4), inset -10px -10px 25px rgba(0,0,0,0.3);
-      animation: planet-pulse 3s ease-in-out infinite;
+      transform: translateX(-50%);
+      text-align: center;
+      z-index: 10;
+      pointer-events: none;
     }
 
-    @keyframes planet-pulse {
-      0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 50px rgba(234, 179, 8, 0.4); }
-      50% { transform: translate(-50%, -50%) scale(1.05); box-shadow: 0 0 70px rgba(234, 179, 8, 0.5); }
+    .pong-header {
+      margin-bottom: 1rem;
     }
 
-    .loading-ring {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      border: 2px solid rgba(234, 179, 8, 0.15);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    .loading-ring-1 { width: 110px; height: 110px; animation: ring-pulse 2s ease-in-out infinite; }
-    .loading-ring-2 { width: 150px; height: 150px; animation: ring-pulse 2s ease-in-out infinite 0.4s; }
-    .loading-ring-3 { width: 190px; height: 190px; animation: ring-pulse 2s ease-in-out infinite 0.8s; }
-
-    @keyframes ring-pulse {
-      0%, 100% { opacity: 0.15; transform: translate(-50%, -50%) scale(1); border-color: rgba(234, 179, 8, 0.15); }
-      50% { opacity: 0.4; transform: translate(-50%, -50%) scale(1.02); border-color: rgba(234, 179, 8, 0.3); }
-    }
-
-    .loading-moon {
-      position: absolute;
-      border-radius: 50%;
-      top: 50%;
-      left: 50%;
-    }
-
-    .loading-moon-1 { width: 14px; height: 14px; background: #a855f7; box-shadow: 0 0 12px #a855f7; animation: lmoon1 2.5s linear infinite; }
-    .loading-moon-2 { width: 10px; height: 10px; background: #22c55e; box-shadow: 0 0 10px #22c55e; animation: lmoon2 3.5s linear infinite; }
-    .loading-moon-3 { width: 12px; height: 12px; background: #3b82f6; box-shadow: 0 0 10px #3b82f6; animation: lmoon3 4s linear infinite; }
-
-    @keyframes lmoon1 { from { transform: translate(-50%, -50%) rotate(0deg) translateX(90px); } to { transform: translate(-50%, -50%) rotate(360deg) translateX(90px); } }
-    @keyframes lmoon2 { from { transform: translate(-50%, -50%) rotate(120deg) translateX(75px); } to { transform: translate(-50%, -50%) rotate(480deg) translateX(75px); } }
-    @keyframes lmoon3 { from { transform: translate(-50%, -50%) rotate(240deg) translateX(105px); } to { transform: translate(-50%, -50%) rotate(600deg) translateX(105px); } }
-
-    /* Search Query Display */
-    .loading-query {
-      font-size: 1rem;
+    .pong-query {
+      font-size: 0.9rem;
       color: var(--text-muted);
-      margin-bottom: 0.5rem;
     }
 
-    .loading-query span {
+    .pong-query span {
       color: var(--accent);
       font-weight: 600;
     }
 
-    .loading-model {
-      font-size: 0.85rem;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.4rem;
-      font-weight: 600;
-    }
-
-    .loading-model.flash {
-      color: #60a5fa;
-    }
-
-    .loading-model.pro {
-      color: #c084fc;
-    }
-
-    /* Status */
-    .loading-status {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 0.5rem;
-      min-height: 2.5rem;
-    }
-
-    .loading-substatus {
-      font-size: 0.95rem;
+    .pong-model {
+      font-size: 0.75rem;
       color: var(--text-muted);
-      margin-bottom: 1.5rem;
-      min-height: 1.5rem;
+      opacity: 0.7;
     }
 
-    /* Progress Bar */
-    .loading-progress {
-      width: 100%;
-      height: 6px;
+    .pong-status {
+      margin-bottom: 1rem;
+    }
+
+    .pong-status span {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .pong-progress {
+      width: 200px;
+      height: 4px;
       background: var(--border-primary);
-      border-radius: 3px;
+      border-radius: 2px;
       overflow: hidden;
-      margin-bottom: 1.5rem;
+      margin: 0 auto;
     }
 
-    .loading-progress-bar {
+    .pong-progress-bar {
       height: 100%;
-      background: linear-gradient(90deg, var(--accent), var(--tier-a), var(--accent-light));
-      background-size: 200% 100%;
-      border-radius: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--tier-a));
+      border-radius: 2px;
       width: 0%;
       transition: width 0.5s ease;
-      animation: progress-shimmer 2s linear infinite;
     }
 
-    @keyframes progress-shimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-
-    /* Steps */
-    .loading-steps {
-      display: flex;
-      justify-content: center;
-      gap: 3rem;
-      margin-bottom: 2rem;
-    }
-
-    .loading-step {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
-      opacity: 0.4;
-      transition: all 0.3s;
-    }
-
-    .loading-step.active {
-      opacity: 1;
-    }
-
-    .loading-step.complete {
-      opacity: 1;
-    }
-
-    .loading-step .step-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: var(--bg-secondary);
-      border: 2px solid var(--border-primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s;
-      position: relative;
-    }
-
-    .loading-step.active .step-icon {
-      border-color: var(--accent);
-      box-shadow: 0 0 20px rgba(234, 179, 8, 0.3);
-    }
-
-    .loading-step.active .step-icon::after {
-      content: '';
-      position: absolute;
-      inset: -4px;
-      border-radius: 50%;
-      border: 2px solid var(--accent);
-      opacity: 0.3;
-      animation: step-ping 1.5s ease-out infinite;
-    }
-
-    @keyframes step-ping {
-      0% { transform: scale(1); opacity: 0.3; }
-      100% { transform: scale(1.3); opacity: 0; }
-    }
-
-    .loading-step.complete .step-icon {
-      background: var(--tier-a);
-      border-color: var(--tier-a);
-    }
-
-    .loading-step .step-icon svg {
-      width: 20px;
-      height: 20px;
+    .pong-instructions {
+      font-size: 0.7rem;
       color: var(--text-muted);
+      opacity: 0.6;
     }
 
-    .loading-step.active .step-icon svg {
-      color: var(--accent);
-    }
-
-    .loading-step.complete .step-icon svg {
-      color: #fff;
-    }
-
-    .loading-step.complete .step-icon svg.check-icon {
-      display: block;
-    }
-
-    .loading-step .step-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-
-    .loading-step.active .step-label {
-      color: var(--accent);
-    }
-
-    .loading-step.complete .step-label {
-      color: var(--tier-a);
-    }
-
-    /* Fact/Tip Card */
-    .loading-card {
+    .pong-key {
+      display: inline-block;
+      padding: 2px 6px;
       background: var(--bg-secondary);
       border: 1px solid var(--border-primary);
-      border-radius: 16px;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      min-height: 140px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      transition: all 0.5s ease;
+      border-radius: 4px;
+      font-family: monospace;
+      margin: 0 2px;
     }
 
-    .loading-card-header {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .loading-card-header svg {
-      width: 16px;
-      height: 16px;
-      color: var(--accent);
-    }
-
-    .loading-card-label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent);
+    .pong-score {
+      position: absolute;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 3rem;
       font-weight: 700;
-    }
-
-    .loading-card-text {
-      font-size: 1rem;
-      color: var(--text-secondary);
-      line-height: 1.6;
-      animation: fade-in 0.5s ease;
-    }
-
-    @keyframes fade-in {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .loading-card-text strong {
       color: var(--text-primary);
-    }
-
-    .loading-card-text .highlight {
-      color: var(--accent);
-      font-weight: 600;
-    }
-
-    /* Stats Counter */
-    .loading-stats {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      padding: 1rem;
-      background: rgba(234, 179, 8, 0.05);
-      border: 1px solid rgba(234, 179, 8, 0.1);
-      border-radius: 12px;
-    }
-
-    .loading-stat {
-      text-align: center;
-    }
-
-    .loading-stat-value {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--accent);
+      opacity: 0.15;
+      z-index: 5;
+      pointer-events: none;
       font-variant-numeric: tabular-nums;
     }
 
-    .loading-stat-label {
-      font-size: 0.7rem;
+    .pong-divider {
+      margin: 0 0.5rem;
       color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
     }
 
     /* Footer */
@@ -1304,22 +1123,37 @@
     @media (max-width: 768px) {
       .tab-nav { display: none; }
       .entity-profile { grid-template-columns: repeat(2, 1fr); }
-      .loading-steps { gap: 1.5rem; }
-      .loading-stats { gap: 1rem; }
-      .loading-stat-value { font-size: 1.25rem; }
-      .search-hero h1 { font-size: 1.25rem; }
-      .search-actions { flex-direction: column; }
-      .model-toggle { width: 100%; justify-content: center; }
-      .search-btn { width: 100%; }
+      .search-title { font-size: 2rem; }
+      .search-input-container {
+        flex-wrap: wrap;
+        border-radius: 24px;
+        padding: 12px;
+      }
+      .search-input-container input[type="text"] {
+        width: 100%;
+        padding: 0.5rem;
+      }
+      .api-key-inline {
+        flex: 1;
+      }
+      .api-key-inline input {
+        width: 100%;
+      }
+      .model-toggle {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .model-btn {
+        justify-content: center;
+      }
+      .pong-score {
+        font-size: 2rem;
+        top: 70px;
+      }
     }
 
     @media (max-width: 480px) {
       .entity-profile { grid-template-columns: 1fr; }
-      .loading-visual { width: 180px; height: 180px; }
-      .loading-planet { width: 50px; height: 50px; }
-      .loading-ring-1 { width: 80px; height: 80px; }
-      .loading-ring-2 { width: 110px; height: 110px; }
-      .loading-ring-3 { width: 140px; height: 140px; }
     }
   </style>
 </head>
@@ -1450,94 +1284,32 @@
     </nav>
   </header>
 
-  <!-- Loading Overlay -->
+  <!-- Loading Overlay - Pong Game -->
   <div class="loading-overlay" id="loadingOverlay">
-    <div class="loading-container">
-      <!-- Visual Animation -->
-      <div class="loading-visual">
-        <div class="loading-ring loading-ring-1"></div>
-        <div class="loading-ring loading-ring-2"></div>
-        <div class="loading-ring loading-ring-3"></div>
-        <div class="loading-planet"></div>
-        <div class="loading-moon loading-moon-1"></div>
-        <div class="loading-moon loading-moon-2"></div>
-        <div class="loading-moon loading-moon-3"></div>
+    <canvas id="pongCanvas"></canvas>
+    
+    <div class="pong-ui">
+      <div class="pong-header">
+        <div class="pong-query">Searching for <span id="loadingQueryName">...</span></div>
+        <div class="pong-model" id="loadingModel">Gemini 3 Pro</div>
       </div>
       
-      <!-- Search Query -->
-      <div class="loading-query">Searching for <span id="loadingQueryName">...</span></div>
-      <div class="loading-model" id="loadingModel">Using Gemini Flash</div>
-      
-      <!-- Status -->
-      <div class="loading-status" id="loadingStatus">Initializing Search...</div>
-      <div class="loading-substatus" id="loadingSubstatus">Connecting to AI engine</div>
-      
-      <!-- Progress Bar -->
-      <div class="loading-progress">
-        <div class="loading-progress-bar" id="loadingProgressBar"></div>
-      </div>
-      
-      <!-- Steps -->
-      <div class="loading-steps">
-        <div class="loading-step" id="step1">
-          <div class="step-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <path d="M2 12h20"></path>
-              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-            </svg>
-          </div>
-          <span class="step-label">Search</span>
-        </div>
-        <div class="loading-step" id="step2">
-          <div class="step-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-              <polyline points="14 2 14 8 20 8"></polyline>
-              <line x1="16" y1="13" x2="8" y2="13"></line>
-              <line x1="16" y1="17" x2="8" y2="17"></line>
-            </svg>
-          </div>
-          <span class="step-label">Analyze</span>
-        </div>
-        <div class="loading-step" id="step3">
-          <div class="step-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-            </svg>
-          </div>
-          <span class="step-label">Predict</span>
+      <div class="pong-status">
+        <span id="loadingStatus">Initializing...</span>
+        <div class="pong-progress">
+          <div class="pong-progress-bar" id="loadingProgressBar"></div>
         </div>
       </div>
       
-      <!-- Rotating Facts/Tips Card -->
-      <div class="loading-card" id="loadingCard">
-        <div class="loading-card-header">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <path d="M12 16v-4"></path>
-            <path d="M12 8h.01"></path>
-          </svg>
-          <span class="loading-card-label" id="loadingCardLabel">Did You Know?</span>
-        </div>
-        <div class="loading-card-text" id="loadingCardText">Delaware is home to over <strong>1.8 million</strong> business entities — more than the state's population.</div>
+      <div class="pong-instructions">
+        <span class="pong-key">W</span><span class="pong-key">S</span> or <span class="pong-key">Mouse</span> to play
       </div>
-      
-      <!-- Live Stats -->
-      <div class="loading-stats">
-        <div class="loading-stat">
-          <div class="loading-stat-value" id="statSources">0</div>
-          <div class="loading-stat-label">Sources Checked</div>
-        </div>
-        <div class="loading-stat">
-          <div class="loading-stat-value" id="statRecords">0</div>
-          <div class="loading-stat-label">Records Scanned</div>
-        </div>
-        <div class="loading-stat">
-          <div class="loading-stat-value" id="statTime">0s</div>
-          <div class="loading-stat-label">Elapsed</div>
-        </div>
-      </div>
+    </div>
+    
+    <div class="pong-score">
+      <span id="pongPlayerScore">0</span>
+      <span class="pong-divider">:</span>
+      <span id="pongAiScore">0</span>
     </div>
   </div>
 
@@ -1595,7 +1367,7 @@
       </div>
 
       <!-- Title -->
-      <h1 class="search-title"><span class="accent">search</span><span class="white">Ables</span><span class="muted">AI</span></h1>
+      <h1 class="search-title"><span class="accent">Search</span><span class="white">Ables</span><span class="muted">AI</span></h1>
       <p class="search-subtitle">Corporate Domicile Router</p>
 
       <!-- Search Box -->
@@ -1603,9 +1375,9 @@
         <div class="error-message" id="errorMessage"></div>
         
         <div class="search-input-container">
-          <input type="text" id="entityName" placeholder="Company name...">
+          <input type="text" id="entityName" placeholder="Company name..." autocomplete="off" spellcheck="false">
           <div class="api-key-inline">
-            <input type="password" id="apiKey" placeholder="API Key">
+            <input type="text" id="apiKey" placeholder="API Key" autocomplete="off" spellcheck="false">
           </div>
           <button class="search-btn-round" id="searchBtn" onclick="analyzeEntity()">
             <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1637,37 +1409,73 @@
               <div class="state-name" id="stateName">--</div>
               <div class="state-label">Primary Jurisdiction</div>
             </div>
+            <button class="copy-btn copy-btn-header" data-copy-type="jurisdiction" title="Copy jurisdiction">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
           </div>
           <div class="confidence-meter">
             <div class="confidence-value" id="confidenceValue">--%</div>
             <div class="confidence-label">Confidence</div>
+            <button class="copy-btn copy-btn-header" data-copy-type="confidence" title="Copy confidence">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
           </div>
         </div>
 
         <div class="entity-profile">
           <div class="profile-item">
             <div class="profile-label">Entity Type</div>
-            <div class="profile-value" id="entityType">--</div>
+            <div class="profile-value-row">
+              <div class="profile-value" id="entityType">--</div>
+              <button class="copy-btn" data-target="entityType" title="Copy to clipboard">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              </button>
+            </div>
           </div>
           <div class="profile-item">
             <div class="profile-label">Industry</div>
-            <div class="profile-value" id="industry">--</div>
+            <div class="profile-value-row">
+              <div class="profile-value" id="industry">--</div>
+              <button class="copy-btn" data-target="industry" title="Copy to clipboard">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              </button>
+            </div>
           </div>
           <div class="profile-item">
             <div class="profile-label">HQ Location</div>
-            <div class="profile-value" id="hqLocation">--</div>
+            <div class="profile-value-row">
+              <div class="profile-value" id="hqLocation">--</div>
+              <button class="copy-btn" data-target="hqLocation" title="Copy to clipboard">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              </button>
+            </div>
           </div>
           <div class="profile-item">
             <div class="profile-label">Formation Date</div>
-            <div class="profile-value" id="formationDate">--</div>
+            <div class="profile-value-row">
+              <div class="profile-value" id="formationDate">--</div>
+              <button class="copy-btn" data-target="formationDate" title="Copy to clipboard">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              </button>
+            </div>
           </div>
           <div class="profile-item">
             <div class="profile-label">Status</div>
-            <div class="profile-value" id="regStatus">--</div>
+            <div class="profile-value-row">
+              <div class="profile-value" id="regStatus">--</div>
+              <button class="copy-btn" data-target="regStatus" title="Copy to clipboard">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              </button>
+            </div>
           </div>
           <div class="profile-item">
             <div class="profile-label">Registered Agent</div>
-            <div class="profile-value" id="regAgent">--</div>
+            <div class="profile-value-row">
+              <div class="profile-value" id="regAgent">--</div>
+              <button class="copy-btn" data-target="regAgent" title="Copy to clipboard">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -1680,6 +1488,9 @@
               <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
             </svg>
             Owners / Officers / Members
+            <button class="copy-btn copy-btn-owners" data-copy-type="owners" title="Copy all owners">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
           </div>
           <div class="owners-list" id="ownersList"></div>
         </div>
@@ -1705,6 +1516,11 @@
           <div class="sources-title">Data Quality</div>
           <span class="source-badge" id="sourceQuality">--</span>
         </div>
+
+        <button class="copy-all-btn" id="copyAllBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copy All Results
+        </button>
       </div>
     </section>
   </div>
@@ -1714,53 +1530,260 @@
   </footer>
 
   <script>
-    // ==================== LOADING CONTENT ====================
-    const loadingContent = {
-      facts: [
-        { label: "Did You Know?", text: "Delaware is home to over <strong>1.8 million</strong> business entities — more than the state's entire population." },
-        { label: "Fun Fact", text: "<strong>67%</strong> of Fortune 500 companies are incorporated in Delaware, including Apple, Google, and Coca-Cola." },
-        { label: "State Trivia", text: "Wyoming was the first state to allow LLCs in <strong>1977</strong>. Today it's a top choice for privacy-focused businesses." },
-        { label: "Did You Know?", text: "Nevada has <strong>no state corporate income tax</strong>, making it popular for holding companies and asset protection." },
-        { label: "Fun Fact", text: "The Delaware Court of Chancery has been handling business disputes since <strong>1792</strong> — over 230 years of corporate law expertise." },
-        { label: "State Trivia", text: "Texas is the <strong>2nd largest</strong> state for business formations, with over 3 million active entities." },
-        { label: "Did You Know?", text: "A <strong>registered agent</strong> is required in every state where a business operates — they receive legal documents on behalf of the company." },
-        { label: "Fun Fact", text: "The first American corporation was the <strong>Virginia Company</strong>, chartered in 1606 to colonize North America." },
-        { label: "State Trivia", text: "California requires <strong>annual franchise taxes</strong> of $800 minimum, even for dormant LLCs." },
-        { label: "Did You Know?", text: "Benefit corporations (B-Corps) are legally required to consider <strong>social and environmental impact</strong>, not just profits." },
-        { label: "Fun Fact", text: "The term <strong>'Inc.'</strong> stands for 'Incorporated' and typically indicates a C-Corporation structure." },
-        { label: "State Trivia", text: "New York charges one of the <strong>highest filing fees</strong> for LLCs — over $200 for formation plus biennial statements." },
-        { label: "Did You Know?", text: "Series LLCs allow you to create <strong>separate liability shields</strong> within a single LLC — popular in Delaware and Texas." },
-        { label: "Fun Fact", text: "The average startup takes <strong>3-5 business days</strong> to incorporate, but expedited filing can happen in 24 hours." },
-        { label: "State Trivia", text: "Florida has <strong>no state income tax</strong> and is the 4th most popular state for business formations." },
-      ],
-      tips: [
-        { label: "Pro Tip", text: "Add context like <span class='highlight'>\"fintech company\"</span> or <span class='highlight'>\"based in Austin\"</span> to improve search accuracy." },
-        { label: "Search Tip", text: "Include the business suffix like <span class='highlight'>\"Inc.\"</span> or <span class='highlight'>\"LLC\"</span> if you know it — this helps narrow results." },
-        { label: "Pro Tip", text: "For common names, add the <span class='highlight'>industry</span> or <span class='highlight'>city</span> to distinguish from similar businesses." },
-        { label: "Did You Know?", text: "Public companies file with the SEC. Their state of incorporation is in their <span class='highlight'>10-K annual report</span>." },
-        { label: "Search Tip", text: "Try the <span class='highlight'>exact legal name</span> from contracts or invoices for best results." },
-        { label: "Pro Tip", text: "Most VC-backed startups incorporate in <span class='highlight'>Delaware</span> for its business-friendly court system." },
-      ],
-      statuses: [
-        { main: "Searching Web...", sub: "Scanning SEC filings, state registries, and business databases" },
-        { main: "Gathering Intel...", sub: "Checking OpenCorporates, LinkedIn, and company websites" },
-        { main: "Cross-Referencing...", sub: "Matching data across multiple sources" },
-        { main: "Analyzing Data...", sub: "Processing entity structure and corporate history" },
-        { main: "Identifying Patterns...", sub: "Applying industry heuristics and state patterns" },
-        { main: "Verifying Sources...", sub: "Confirming information from official registries" },
-        { main: "Building Profile...", sub: "Compiling entity information and ownership data" },
-        { main: "Calculating Confidence...", sub: "Scoring prediction reliability" },
-        { main: "Finalizing Results...", sub: "Preparing comprehensive entity report" },
-      ]
+    // ==================== PONG GAME ====================
+    let pongCanvas, pongCtx;
+    let pongAnimationId = null;
+    let pongRunning = false;
+    
+    // Game state
+    const pong = {
+      player: { y: 0, height: 80, width: 12, score: 0 },
+      ai: { y: 0, height: 80, width: 12, score: 0, speed: 6 },
+      ball: { x: 0, y: 0, vx: 8, vy: 5, radius: 10 },
+      keys: { w: false, s: false },
+      mouse: { y: null },
+      paddleOffset: 40
     };
+    
+    function initPong() {
+      pongCanvas = document.getElementById('pongCanvas');
+      pongCtx = pongCanvas.getContext('2d');
+      resizePong();
+      
+      // Keyboard controls
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'w' || e.key === 'W') pong.keys.w = true;
+        if (e.key === 's' || e.key === 'S') pong.keys.s = true;
+        if (e.key === 'ArrowUp') pong.keys.w = true;
+        if (e.key === 'ArrowDown') pong.keys.s = true;
+      });
+      
+      document.addEventListener('keyup', (e) => {
+        if (e.key === 'w' || e.key === 'W') pong.keys.w = false;
+        if (e.key === 's' || e.key === 'S') pong.keys.s = false;
+        if (e.key === 'ArrowUp') pong.keys.w = false;
+        if (e.key === 'ArrowDown') pong.keys.s = false;
+      });
+      
+      // Mouse/touch controls
+      pongCanvas.addEventListener('mousemove', (e) => {
+        pong.mouse.y = e.clientY;
+      });
+      
+      pongCanvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        pong.mouse.y = e.touches[0].clientY;
+      }, { passive: false });
+      
+      window.addEventListener('resize', resizePong);
+    }
+    
+    function resizePong() {
+      if (!pongCanvas) return;
+      pongCanvas.width = window.innerWidth;
+      pongCanvas.height = window.innerHeight;
+      resetBall();
+      pong.player.y = pongCanvas.height / 2 - pong.player.height / 2;
+      pong.ai.y = pongCanvas.height / 2 - pong.ai.height / 2;
+    }
+    
+    function resetBall() {
+      pong.ball.x = pongCanvas.width / 2;
+      pong.ball.y = pongCanvas.height / 2;
+      pong.ball.vx = (Math.random() > 0.5 ? 1 : -1) * 8;
+      pong.ball.vy = (Math.random() - 0.5) * 10;
+    }
+    
+    function updatePong() {
+      if (!pongRunning) return;
+      
+      const w = pongCanvas.width;
+      const h = pongCanvas.height;
+      const paddleSpeed = 8;
+      
+      // Player movement
+      if (pong.mouse.y !== null) {
+        const targetY = pong.mouse.y - pong.player.height / 2;
+        pong.player.y += (targetY - pong.player.y) * 0.15;
+      } else {
+        if (pong.keys.w) pong.player.y -= paddleSpeed;
+        if (pong.keys.s) pong.player.y += paddleSpeed;
+      }
+      
+      // Clamp player paddle
+      pong.player.y = Math.max(0, Math.min(h - pong.player.height, pong.player.y));
+      
+      // AI movement - follows ball with some delay
+      const aiCenter = pong.ai.y + pong.ai.height / 2;
+      const ballCenter = pong.ball.y;
+      const diff = ballCenter - aiCenter;
+      
+      if (Math.abs(diff) > 10) {
+        pong.ai.y += Math.sign(diff) * Math.min(pong.ai.speed, Math.abs(diff) * 0.12);
+      }
+      pong.ai.y = Math.max(0, Math.min(h - pong.ai.height, pong.ai.y));
+      
+      // Ball movement
+      pong.ball.x += pong.ball.vx;
+      pong.ball.y += pong.ball.vy;
+      
+      // Top/bottom collision
+      if (pong.ball.y - pong.ball.radius <= 0 || pong.ball.y + pong.ball.radius >= h) {
+        pong.ball.vy *= -1;
+        pong.ball.y = Math.max(pong.ball.radius, Math.min(h - pong.ball.radius, pong.ball.y));
+      }
+      
+      // Player paddle collision (left side)
+      if (pong.ball.x - pong.ball.radius <= pong.paddleOffset + pong.player.width &&
+          pong.ball.y >= pong.player.y && pong.ball.y <= pong.player.y + pong.player.height &&
+          pong.ball.vx < 0) {
+        pong.ball.vx *= -1.05;
+        pong.ball.x = pong.paddleOffset + pong.player.width + pong.ball.radius;
+        // Add spin based on where ball hits paddle
+        const hitPos = (pong.ball.y - pong.player.y) / pong.player.height;
+        pong.ball.vy = (hitPos - 0.5) * 14;
+      }
+      
+      // AI paddle collision (right side)
+      if (pong.ball.x + pong.ball.radius >= w - pong.paddleOffset - pong.ai.width &&
+          pong.ball.y >= pong.ai.y && pong.ball.y <= pong.ai.y + pong.ai.height &&
+          pong.ball.vx > 0) {
+        pong.ball.vx *= -1.05;
+        pong.ball.x = w - pong.paddleOffset - pong.ai.width - pong.ball.radius;
+        const hitPos = (pong.ball.y - pong.ai.y) / pong.ai.height;
+        pong.ball.vy = (hitPos - 0.5) * 14;
+      }
+      
+      // Limit ball speed
+      const maxSpeed = 22;
+      pong.ball.vx = Math.sign(pong.ball.vx) * Math.min(Math.abs(pong.ball.vx), maxSpeed);
+      pong.ball.vy = Math.sign(pong.ball.vy) * Math.min(Math.abs(pong.ball.vy), maxSpeed);
+      
+      // Score
+      if (pong.ball.x < 0) {
+        pong.ai.score++;
+        updatePongScore();
+        resetBall();
+      } else if (pong.ball.x > w) {
+        pong.player.score++;
+        updatePongScore();
+        resetBall();
+      }
+    }
+    
+    function updatePongScore() {
+      document.getElementById('pongPlayerScore').textContent = pong.player.score;
+      document.getElementById('pongAiScore').textContent = pong.ai.score;
+    }
+    
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+      ctx.fill();
+    }
+    
+    function drawPong() {
+      if (!pongCtx || !pongRunning) return;
+      
+      const w = pongCanvas.width;
+      const h = pongCanvas.height;
+      const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+      
+      // Clear
+      pongCtx.fillStyle = isDark ? '#0a0a0f' : '#f5f5f5';
+      pongCtx.fillRect(0, 0, w, h);
+      
+      // Center line
+      pongCtx.setLineDash([20, 15]);
+      pongCtx.strokeStyle = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+      pongCtx.lineWidth = 4;
+      pongCtx.beginPath();
+      pongCtx.moveTo(w / 2, 0);
+      pongCtx.lineTo(w / 2, h);
+      pongCtx.stroke();
+      pongCtx.setLineDash([]);
+      
+      // Paddles
+      const paddleColor = '#eab308';
+      const paddleRadius = 6;
+      
+      // Player paddle (left) with glow and rounded corners
+      pongCtx.shadowColor = paddleColor;
+      pongCtx.shadowBlur = 20;
+      pongCtx.fillStyle = paddleColor;
+      roundRect(pongCtx, pong.paddleOffset, pong.player.y, pong.player.width, pong.player.height, paddleRadius);
+      
+      // AI paddle (right)
+      pongCtx.shadowColor = isDark ? '#a855f7' : '#8b5cf6';
+      pongCtx.fillStyle = isDark ? '#a855f7' : '#8b5cf6';
+      roundRect(pongCtx, w - pong.paddleOffset - pong.ai.width, pong.ai.y, pong.ai.width, pong.ai.height, paddleRadius);
+      
+      // Ball with glow
+      pongCtx.shadowColor = paddleColor;
+      pongCtx.shadowBlur = 25;
+      pongCtx.fillStyle = '#fff';
+      pongCtx.beginPath();
+      pongCtx.arc(pong.ball.x, pong.ball.y, pong.ball.radius, 0, Math.PI * 2);
+      pongCtx.fill();
+      
+      // Reset shadow
+      pongCtx.shadowBlur = 0;
+    }
+    
+    function pongLoop() {
+      updatePong();
+      drawPong();
+      if (pongRunning) {
+        pongAnimationId = requestAnimationFrame(pongLoop);
+      }
+    }
+    
+    function startPong() {
+      if (!pongCanvas) initPong();
+      pong.player.score = 0;
+      pong.ai.score = 0;
+      updatePongScore();
+      resizePong();
+      pongRunning = true;
+      pongLoop();
+    }
+    
+    function stopPong() {
+      pongRunning = false;
+      if (pongAnimationId) {
+        cancelAnimationFrame(pongAnimationId);
+        pongAnimationId = null;
+      }
+    }
+    
+    // Init pong on load
+    document.addEventListener('DOMContentLoaded', initPong);
 
+    // ==================== LOADING ANIMATION ====================
     let loadingInterval = null;
-    let statsInterval = null;
-    let contentIndex = 0;
+    let selectedModel = 'gemini-3-pro-preview';
+    
+    const statusMessages = [
+      "Searching Web...",
+      "Gathering Intel...",
+      "Cross-Referencing...",
+      "Analyzing Data...",
+      "Identifying Patterns...",
+      "Verifying Sources...",
+      "Building Profile...",
+      "Calculating Confidence...",
+      "Finalizing Results..."
+    ];
     let statusIndex = 0;
-    let elapsedSeconds = 0;
-    let sourcesChecked = 0;
-    let recordsScanned = 0;
 
     function startLoadingAnimation(entityName) {
       const overlay = document.getElementById('loadingOverlay');
@@ -1772,124 +1795,65 @@
       // Set model name
       const isFlash = selectedModel.includes('flash');
       const modelName = isFlash ? 'Gemini 2.5 Flash' : 'Gemini 3 Pro';
-      const modelEl = document.getElementById('loadingModel');
-      modelEl.textContent = modelName;
-      modelEl.className = 'loading-model ' + (isFlash ? 'flash' : 'pro');
+      document.getElementById('loadingModel').textContent = modelName;
       
-      // Reset
-      contentIndex = 0;
-      statusIndex = 0;
-      elapsedSeconds = 0;
-      sourcesChecked = 0;
-      recordsScanned = 0;
+      // Reset progress
       document.getElementById('loadingProgressBar').style.width = '0%';
-      document.getElementById('step1').className = 'loading-step active';
-      document.getElementById('step2').className = 'loading-step';
-      document.getElementById('step3').className = 'loading-step';
+      statusIndex = 0;
       
-      // Start content rotation (every 4 seconds)
+      // Start Pong
+      startPong();
+      
+      // Rotate status messages
       loadingInterval = setInterval(() => {
-        rotateContent();
-      }, 4000);
-      
-      // Start stats counter
-      statsInterval = setInterval(() => {
-        elapsedSeconds++;
-        sourcesChecked += Math.floor(Math.random() * 3) + 1;
-        recordsScanned += Math.floor(Math.random() * 50) + 20;
-        
-        document.getElementById('statTime').textContent = elapsedSeconds + 's';
-        document.getElementById('statSources').textContent = Math.min(sourcesChecked, 25);
-        document.getElementById('statRecords').textContent = recordsScanned.toLocaleString();
-        
-        // Rotate status every 3 seconds
-        if (elapsedSeconds % 3 === 0) {
-          rotateStatus();
-        }
-      }, 1000);
-      
-      // Initial content
-      rotateContent();
-    }
-
-    function rotateContent() {
-      const allContent = [...loadingContent.facts, ...loadingContent.tips];
-      const item = allContent[contentIndex % allContent.length];
-      
-      document.getElementById('loadingCardLabel').textContent = item.label;
-      document.getElementById('loadingCardText').innerHTML = item.text;
-      
-      // Re-trigger animation
-      const textEl = document.getElementById('loadingCardText');
-      textEl.style.animation = 'none';
-      textEl.offsetHeight; // Trigger reflow
-      textEl.style.animation = 'fade-in 0.5s ease';
-      
-      contentIndex++;
-    }
-
-    function rotateStatus() {
-      const status = loadingContent.statuses[statusIndex % loadingContent.statuses.length];
-      document.getElementById('loadingStatus').textContent = status.main;
-      document.getElementById('loadingSubstatus').textContent = status.sub;
-      statusIndex++;
+        statusIndex = (statusIndex + 1) % statusMessages.length;
+        document.getElementById('loadingStatus').textContent = statusMessages[statusIndex];
+      }, 2500);
     }
 
     function updateLoadingStep(step, progress) {
       document.getElementById('loadingProgressBar').style.width = progress + '%';
-      
-      if (step >= 1) {
-        document.getElementById('step1').className = step === 1 ? 'loading-step active' : 'loading-step complete';
-      }
-      if (step >= 2) {
-        document.getElementById('step2').className = step === 2 ? 'loading-step active' : 'loading-step complete';
-      }
-      if (step >= 3) {
-        document.getElementById('step3').className = step === 3 ? 'loading-step active' : 'loading-step complete';
-      }
     }
 
     function stopLoadingAnimation() {
       clearInterval(loadingInterval);
-      clearInterval(statsInterval);
+      stopPong();
       document.getElementById('loadingOverlay').classList.remove('active');
     }
 
     // ==================== MODEL SELECTION ====================
-    let selectedModel = 'gemini-3-pro-preview';
+    // Load saved model preference
+    const savedModel = localStorage.getItem('ai_business_search_model');
+    if (savedModel) {
+      selectedModel = savedModel;
+      if (savedModel.includes('flash')) {
+        document.getElementById('modelFlash').classList.add('active');
+        document.getElementById('modelPro').classList.remove('active');
+      } else {
+        document.getElementById('modelPro').classList.add('active');
+        document.getElementById('modelFlash').classList.remove('active');
+      }
+    }
 
     document.getElementById('modelFlash').addEventListener('click', function() {
       selectedModel = this.dataset.model;
+      localStorage.setItem('ai_business_search_model', selectedModel);
       document.getElementById('modelFlash').classList.add('active');
       document.getElementById('modelPro').classList.remove('active');
     });
 
     document.getElementById('modelPro').addEventListener('click', function() {
       selectedModel = this.dataset.model;
+      localStorage.setItem('ai_business_search_model', selectedModel);
       document.getElementById('modelPro').classList.add('active');
       document.getElementById('modelFlash').classList.remove('active');
     });
 
     // ==================== API KEY MANAGEMENT ====================
-    function toggleApiSettings() {
-      const btn = document.getElementById('apiToggle');
-      const content = document.getElementById('apiContent');
-      btn.classList.toggle('open');
-      content.classList.toggle('open');
-    }
-
     function updateApiStatus() {
       const savedKey = localStorage.getItem('gemini_api_key_ai_business_search');
-      const dot = document.getElementById('apiStatusDot');
-      const text = document.getElementById('apiStatusText');
-      
       if (savedKey) {
-        dot.classList.add('connected');
-        text.textContent = 'API key saved';
         document.getElementById('apiKey').value = savedKey;
-      } else {
-        dot.classList.remove('connected');
-        text.textContent = 'No API key saved';
       }
     }
 
@@ -1904,7 +1868,6 @@
       if (!apiKey) {
         errorEl.textContent = 'Please enter your Gemini API key';
         errorEl.classList.add('active');
-        document.getElementById('apiToggle').click(); // Open API settings
         return;
       }
       
@@ -1922,7 +1885,6 @@
         // Step 1: Grounding search
         updateLoadingStep(1, 15);
         document.getElementById('loadingStatus').textContent = 'Searching Web...';
-        document.getElementById('loadingSubstatus').textContent = 'Finding information about ' + entityName;
         
         const groundingPrompt = `Search for comprehensive information about "${entityName}".
 Find: 
@@ -1942,7 +1904,6 @@ Look for SEC filings, state corporation databases, OpenCorporates, company websi
         // Step 2: Analysis
         updateLoadingStep(2, 50);
         document.getElementById('loadingStatus').textContent = 'Analyzing Data...';
-        document.getElementById('loadingSubstatus').textContent = 'Processing entity information';
         
         const routingPrompt = `Based on this research about "${entityName}":
 
@@ -1985,7 +1946,6 @@ Always make a prediction. Use heuristics if no direct information found. Set con
         // Step 3: Prediction
         updateLoadingStep(3, 85);
         document.getElementById('loadingStatus').textContent = 'Generating Report...';
-        document.getElementById('loadingSubstatus').textContent = 'Compiling final results';
         
         const routingResponse = await callGemini(apiKey, routingPrompt);
         
@@ -2148,11 +2108,95 @@ Always make a prediction. Use heuristics if no direct information found. Set con
       if (e.key === 'Enter') analyzeEntity();
     });
 
+    document.getElementById('apiKey').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') analyzeEntity();
+    });
+
     document.getElementById('themeToggle').addEventListener('click', function() {
       const current = document.documentElement.getAttribute('data-theme');
       const next = current === 'light' ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', next);
       localStorage.setItem('theme', next);
+    });
+
+    // ==================== COPY TO CLIPBOARD ====================
+    const copyIconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>';
+    const checkIconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>';
+
+    function copyToClipboard(text, btn) {
+      navigator.clipboard.writeText(text).then(() => {
+        btn.classList.add('copied');
+        if (btn.id === 'copyAllBtn') {
+          btn.innerHTML = checkIconSvg + ' Copied!';
+          setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.innerHTML = copyIconSvg + ' Copy All Results';
+          }, 1500);
+        } else {
+          btn.innerHTML = checkIconSvg;
+          setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.innerHTML = copyIconSvg;
+          }, 1500);
+        }
+      });
+    }
+
+    // Copy All Results button
+    document.getElementById('copyAllBtn').addEventListener('click', function() {
+      const stateCode = document.getElementById('stateCode').textContent;
+      const stateName = document.getElementById('stateName').textContent;
+      const confidence = document.getElementById('confidenceValue').textContent;
+      const entityType = document.getElementById('entityType').textContent;
+      const industry = document.getElementById('industry').textContent;
+      const hqLocation = document.getElementById('hqLocation').textContent;
+      const formationDate = document.getElementById('formationDate').textContent;
+      const regStatus = document.getElementById('regStatus').textContent;
+      const regAgent = document.getElementById('regAgent').textContent;
+      
+      const ownerBadges = document.querySelectorAll('#ownersList .owner-badge');
+      const owners = ownerBadges.length > 0 
+        ? Array.from(ownerBadges).map(badge => badge.textContent.trim()).join(', ')
+        : 'Unknown';
+      
+      const allResults = `Primary Jurisdiction: ${stateName} (${stateCode})
+Confidence: ${confidence}
+Entity Type: ${entityType}
+Industry: ${industry}
+HQ Location: ${hqLocation}
+Formation Date: ${formationDate}
+Status: ${regStatus}
+Registered Agent: ${regAgent}
+Owners/Officers/Members: ${owners}`;
+      
+      copyToClipboard(allResults, this);
+    });
+
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const copyType = this.dataset.copyType;
+        
+        if (copyType === 'jurisdiction') {
+          const stateCode = document.getElementById('stateCode').textContent;
+          const stateName = document.getElementById('stateName').textContent;
+          copyToClipboard(`Primary Jurisdiction: ${stateName} (${stateCode})`, this);
+        } else if (copyType === 'confidence') {
+          const confidence = document.getElementById('confidenceValue').textContent;
+          copyToClipboard(`Confidence: ${confidence}`, this);
+        } else if (copyType === 'owners') {
+          const ownerBadges = document.querySelectorAll('#ownersList .owner-badge');
+          const owners = Array.from(ownerBadges).map(badge => badge.textContent.trim()).join(', ');
+          copyToClipboard(`Owners/Officers/Members: ${owners}`, this);
+        } else {
+          const targetId = this.dataset.target;
+          const targetEl = document.getElementById(targetId);
+          if (targetEl) {
+            const label = targetEl.closest('.profile-item').querySelector('.profile-label').textContent;
+            const value = targetEl.textContent;
+            copyToClipboard(`${label}: ${value}`, this);
+          }
+        }
+      });
     });
 
     // Initialize
