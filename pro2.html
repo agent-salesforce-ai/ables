@@ -1,0 +1,1958 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-tier="C">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABLESAI PRO | Underwriting Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','system-ui','sans-serif']}}}}</script>
+  <style>
+    *{box-sizing:border-box}
+    
+    /* Theme Variables */
+    :root{
+      --bg-base:#0a0a0a;
+      --bg-elevated:#0d0d0d;
+      --bg-surface:rgba(18,18,18,0.85);
+      --bg-surface-hover:rgba(26,26,26,0.9);
+      --bg-inset:rgba(0,0,0,0.3);
+      --border-subtle:rgba(255,255,255,0.06);
+      --border-default:rgba(255,255,255,0.08);
+      --border-strong:rgba(255,255,255,0.12);
+      --text-primary:#f5f5f5;
+      --text-secondary:#999;
+      --text-tertiary:#666;
+      --text-muted:#444;
+      --accent:#eab308;
+      --accent-muted:rgba(234,179,8,0.15);
+      --accent-subtle:rgba(234,179,8,0.08);
+      --success:#22c55e;
+      --success-muted:rgba(34,197,94,0.15);
+      --warning:#f97316;
+      --warning-muted:rgba(249,115,22,0.15);
+      --danger:#ef4444;
+      --danger-muted:rgba(239,68,68,0.15);
+      --glass-blur:16px;
+      --shadow-sm:0 2px 8px rgba(0,0,0,0.3);
+      --shadow-md:0 8px 32px rgba(0,0,0,0.4);
+      --shadow-glow:0 0 20px rgba(234,179,8,0.15);
+    }
+    
+    /* Tier-based accent colors */
+    html[data-tier="A"]{--accent:#22c55e;--accent-muted:rgba(34,197,94,0.2);--accent-subtle:rgba(34,197,94,0.1);--shadow-glow:0 0 20px rgba(34,197,94,0.15)}
+    html[data-tier="B"]{--accent:#84cc16;--accent-muted:rgba(132,204,22,0.2);--accent-subtle:rgba(132,204,22,0.1);--shadow-glow:0 0 20px rgba(132,204,22,0.15)}
+    html[data-tier="C"]{--accent:#eab308;--accent-muted:rgba(234,179,8,0.2);--accent-subtle:rgba(234,179,8,0.1);--shadow-glow:0 0 20px rgba(234,179,8,0.15)}
+    html[data-tier="D"]{--accent:#f97316;--accent-muted:rgba(249,115,22,0.2);--accent-subtle:rgba(249,115,22,0.1);--shadow-glow:0 0 20px rgba(249,115,22,0.15)}
+    html[data-tier="E"]{--accent:#ef4444;--accent-muted:rgba(239,68,68,0.2);--accent-subtle:rgba(239,68,68,0.1);--shadow-glow:0 0 20px rgba(239,68,68,0.15)}
+    
+    [data-theme="light"]{
+      --bg-base:#f8f9fa;
+      --bg-elevated:#ffffff;
+      --bg-surface:rgba(255,255,255,0.9);
+      --bg-surface-hover:rgba(248,249,250,0.95);
+      --bg-inset:rgba(0,0,0,0.03);
+      --border-subtle:rgba(0,0,0,0.06);
+      --border-default:rgba(0,0,0,0.08);
+      --border-strong:rgba(0,0,0,0.12);
+      --text-primary:#1a1a1a;
+      --text-secondary:#555;
+      --text-tertiary:#777;
+      --text-muted:#aaa;
+      --accent:#ca8a04;
+      --accent-muted:rgba(202,138,4,0.12);
+      --accent-subtle:rgba(202,138,4,0.06);
+      --success:#16a34a;
+      --success-muted:rgba(22,163,74,0.12);
+      --warning:#ea580c;
+      --warning-muted:rgba(234,88,12,0.12);
+      --danger:#dc2626;
+      --danger-muted:rgba(220,38,38,0.12);
+      --shadow-sm:0 2px 8px rgba(0,0,0,0.08);
+      --shadow-md:0 8px 32px rgba(0,0,0,0.1);
+      --shadow-glow:0 0 20px rgba(202,138,4,0.1);
+    }
+    
+    /* Light theme tier colors */
+    html[data-theme="light"][data-tier="A"]{--accent:#16a34a;--accent-muted:rgba(22,163,74,0.15);--accent-subtle:rgba(22,163,74,0.08);--shadow-glow:0 0 20px rgba(22,163,74,0.1)}
+    html[data-theme="light"][data-tier="B"]{--accent:#65a30d;--accent-muted:rgba(101,163,13,0.15);--accent-subtle:rgba(101,163,13,0.08);--shadow-glow:0 0 20px rgba(101,163,13,0.1)}
+    html[data-theme="light"][data-tier="C"]{--accent:#ca8a04;--accent-muted:rgba(202,138,4,0.15);--accent-subtle:rgba(202,138,4,0.08);--shadow-glow:0 0 20px rgba(202,138,4,0.1)}
+    html[data-theme="light"][data-tier="D"]{--accent:#ea580c;--accent-muted:rgba(234,88,12,0.15);--accent-subtle:rgba(234,88,12,0.08);--shadow-glow:0 0 20px rgba(234,88,12,0.1)}
+    html[data-theme="light"][data-tier="E"]{--accent:#dc2626;--accent-muted:rgba(220,38,38,0.15);--accent-subtle:rgba(220,38,38,0.08);--shadow-glow:0 0 20px rgba(220,38,38,0.1)}
+    
+    body{background:var(--bg-base);color:var(--text-primary);font-family:'Inter',sans-serif;margin:0;height:100vh;overflow:hidden;transition:background 0.3s,color 0.3s}
+    ::-webkit-scrollbar{width:5px}
+    ::-webkit-scrollbar-thumb{background:var(--text-muted);border-radius:3px}
+    ::-webkit-scrollbar-track{background:transparent}
+
+    .app{display:grid;grid-template-rows:52px auto 40px 1fr;height:100vh;overflow:hidden}
+    
+    /* Header */
+    .header{background:var(--bg-elevated);border-bottom:1px solid var(--border-subtle);padding:0 20px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(var(--glass-blur))}
+    .logo-mark{width:28px;height:28px;display:flex;align-items:center;justify-content:center;transition:transform 0.3s}
+    .logo-mark:hover{transform:scale(1.1)}
+    .logo-mark svg{width:28px;height:28px}
+    .orbiting-moon{transform-origin:14px 14px;animation:orbit 3s linear infinite,moonColor 2s ease-in-out infinite}
+    @keyframes orbit{
+      0%{transform:rotate(-20deg) translate(11px,0) scale(1);opacity:1}
+      12.5%{transform:rotate(-20deg) translate(8px,2px) scale(0.9);opacity:1}
+      25%{transform:rotate(-20deg) translate(0,3px) scale(0.75);opacity:0.7}
+      37.5%{transform:rotate(-20deg) translate(-8px,2px) scale(0.6);opacity:0.5}
+      50%{transform:rotate(-20deg) translate(-11px,0) scale(0.5);opacity:0.4}
+      62.5%{transform:rotate(-20deg) translate(-8px,-2px) scale(0.6);opacity:0.5}
+      75%{transform:rotate(-20deg) translate(0,-3px) scale(0.75);opacity:0.7}
+      87.5%{transform:rotate(-20deg) translate(8px,-2px) scale(0.9);opacity:1}
+      100%{transform:rotate(-20deg) translate(11px,0) scale(1);opacity:1}
+    }
+    @keyframes moonColor{0%,100%{fill:#a855f7}25%{fill:#3b82f6}50%{fill:#ec4899}75%{fill:#f97316}}
+    .badge-pro{font-size:9px;font-weight:700;color:var(--accent);background:var(--accent-muted);padding:3px 8px;border-radius:4px;letter-spacing:0.05em;transition:color 0.3s,background 0.3s}
+    .header-divider{width:1px;height:20px;background:var(--border-default)}
+    
+    /* Buttons */
+    .btn{padding:7px 14px;font-size:11px;font-weight:600;border-radius:6px;border:none;cursor:pointer;transition:all 0.2s}
+    .btn-ghost{background:transparent;color:var(--text-secondary);border:1px solid var(--border-default)}
+    .btn-ghost:hover{background:var(--bg-surface);border-color:var(--border-strong);color:var(--text-primary)}
+    .btn-primary{background:var(--accent);color:#000;box-shadow:var(--shadow-sm);transition:background 0.3s,box-shadow 0.3s}
+    .btn-primary:hover{box-shadow:var(--shadow-glow);transform:translateY(-1px);filter:brightness(1.1)}
+    .icon-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-default);border-radius:8px;color:var(--text-secondary);cursor:pointer;transition:all 0.2s}
+    .icon-btn:hover{background:var(--bg-surface);border-color:var(--border-strong);color:var(--text-primary)}
+    
+    /* Score Hero */
+    .score-hero{background:var(--bg-surface);backdrop-filter:blur(var(--glass-blur));-webkit-backdrop-filter:blur(var(--glass-blur));border-bottom:1px solid var(--border-subtle);padding:12px 24px;display:flex;align-items:center;gap:20px;overflow:hidden}
+    
+    /* Hero Left - Tier & Score Slider */
+    .hero-left{display:flex;align-items:center;gap:16px;flex:1;min-width:0}
+    .tier-box{background:linear-gradient(135deg,var(--accent-subtle) 0%,transparent 100%);border:2px solid var(--accent-muted);border-radius:10px;padding:8px 16px;text-align:center;min-width:60px;flex-shrink:0;transition:all 0.3s;box-shadow:0 0 20px var(--accent-subtle)}
+    .tier-box-label{font-size:8px;font-weight:700;color:var(--text-tertiary);letter-spacing:0.12em}
+    .tier-box-letter{font-size:36px;font-weight:900;color:var(--accent);line-height:1;transition:color 0.3s;text-shadow:0 0 20px var(--accent)}
+    
+    .score-slider-wrap{flex:1;min-width:0;max-width:500px}
+    .score-slider-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+    .score-slider-title{font-size:10px;font-weight:700;color:var(--text-secondary);letter-spacing:0.08em}
+    .score-slider-metrics{display:flex;align-items:center;gap:14px}
+    .score-slider-value{font-size:18px;font-weight:800;color:var(--text-primary)}
+    .score-slider-value span{color:var(--accent);transition:color 0.3s}
+    .score-metric{display:flex;flex-direction:column;align-items:flex-end}
+    .score-metric-label{font-size:7px;font-weight:600;color:var(--text-muted);letter-spacing:0.05em}
+    .score-metric-value{font-size:12px;font-weight:700;color:var(--text-primary)}
+    .score-slider-track{position:relative;height:18px;background:linear-gradient(90deg,#ef4444 0%,#f97316 25%,#eab308 50%,#84cc16 75%,#22c55e 100%);border-radius:4px;box-shadow:inset 0 2px 4px rgba(0,0,0,0.3)}
+    .score-slider-fill{position:absolute;right:0;top:0;bottom:0;background:rgba(0,0,0,0.6);border-radius:0 4px 4px 0;transition:width 0.3s}
+    .score-slider-marker{position:absolute;top:-5px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;transition:left 0.3s}
+    .marker-value{background:var(--bg-elevated);border:2px solid var(--accent);color:var(--accent);font-size:11px;font-weight:800;padding:2px 6px;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,0.3);transition:border-color 0.3s,color 0.3s}
+    .marker-value::after{content:'';position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);border:3px solid transparent;border-top-color:var(--accent);transition:border-top-color 0.3s}
+    .tier-grade-bar{display:flex;margin-top:4px;border-radius:3px;overflow:hidden}
+    .tier-grade{flex:1;padding:2px 0;text-align:center;font-size:8px;font-weight:700;color:#000}
+    .tier-grade.tier-a{background:#22c55e}
+    .tier-grade.tier-b{background:#84cc16}
+    .tier-grade.tier-c{background:#eab308}
+    .tier-grade.tier-d{background:#f97316}
+    .tier-grade.tier-e{background:#ef4444}
+    
+    /* Hero Center - Risk Cards */
+    .hero-center{display:flex;gap:10px;flex-shrink:0}
+    .risk-card{background:var(--bg-inset);border:1px solid var(--border-subtle);border-radius:10px;padding:10px 14px;text-align:center;min-width:70px}
+    .risk-card-value{font-size:18px;font-weight:800;color:var(--accent);transition:color 0.3s}
+    .risk-card-value.risk-low{color:#22c55e}
+    .risk-card-value.risk-med{color:#eab308}
+    .risk-card-value.risk-high{color:#ef4444}
+    .risk-card-label{font-size:8px;font-weight:700;color:var(--text-tertiary);letter-spacing:0.08em;margin-top:3px}
+    
+    /* Hero Right - Offer Preview */
+    .hero-right{flex-shrink:0;display:none}
+    .offer-preview{background:linear-gradient(180deg,var(--bg-inset) 0%,rgba(0,0,0,0.2) 100%);border:2px solid var(--accent-muted);border-radius:12px;padding:10px 16px;width:220px;transition:border-color 0.3s;box-shadow:inset 0 1px 0 rgba(255,255,255,0.03)}
+    .offer-preview-header{font-size:9px;font-weight:600;color:var(--text-tertiary);letter-spacing:0.08em;text-align:center;margin-bottom:4px}
+    .offer-preview-amount{font-size:28px;font-weight:900;color:var(--text-primary);text-align:center;line-height:1;margin-bottom:8px}
+    .offer-preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;padding-bottom:8px;border-bottom:1px solid var(--border-subtle)}
+    .offer-preview-footer{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;padding-top:8px}
+    .offer-preview-item{text-align:center}
+    .offer-preview-label{display:block;font-size:7px;font-weight:700;color:var(--text-muted);letter-spacing:0.08em}
+    .offer-preview-value{display:block;font-size:12px;font-weight:700;color:var(--text-primary);margin-top:1px}
+    
+    @media(min-width:1200px){.hero-right{display:block}}
+    
+    .tier-badge{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--accent-subtle);border:1px solid var(--accent-muted);border-radius:10px;transition:background 0.3s,border-color 0.3s}
+    
+    .metrics-row{display:flex;gap:12px;flex:1}
+    .metric-box{flex:1;text-align:center;padding:10px 8px;background:var(--bg-inset);border:1px solid var(--border-subtle);border-radius:8px}
+    .metric-box.highlight{background:var(--accent-subtle);border-color:var(--accent-muted);transition:background 0.3s,border-color 0.3s}
+    
+    /* Tabs */
+    .tabs{display:flex;gap:4px;padding:0 16px;background:var(--bg-elevated);border-bottom:1px solid var(--border-subtle);align-items:center}
+    .tab-btn{padding:10px 18px;font-size:11px;font-weight:600;color:var(--text-tertiary);background:none;border:none;cursor:pointer;transition:color 0.2s;position:relative}
+    .tab-btn:hover{color:var(--text-secondary)}
+    .tab-btn.active{color:var(--accent);transition:color 0.3s}
+    .tab-btn.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);border-radius:2px 2px 0 0;transition:background 0.3s}
+    
+    /* Main Grid */
+    .main-grid{display:grid;grid-template-columns:300px 1fr 260px;gap:12px;padding:12px 16px;overflow:hidden;height:100%;min-height:0}
+    
+    .panel{background:var(--bg-surface);backdrop-filter:blur(var(--glass-blur));-webkit-backdrop-filter:blur(var(--glass-blur));border:1px solid var(--border-subtle);border-radius:14px;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-md),inset 0 1px 0 rgba(255,255,255,0.04)}
+    .panel-header{padding:12px 16px;border-bottom:1px solid var(--border-subtle);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-tertiary);flex-shrink:0;background:var(--bg-inset)}
+    .panel-body{padding:16px;overflow-y:auto;flex:1}
+    
+    /* Inputs */
+    .input-group{margin-bottom:16px}
+    .input-group:last-child{margin-bottom:0}
+    .input-label{display:flex;justify-content:space-between;margin-bottom:8px}
+    .input-label span:first-child{font-size:10px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.03em}
+    .input-label span:last-child{font-size:13px;font-weight:700;color:var(--text-primary)}
+    
+    .slider{-webkit-appearance:none;width:100%;height:4px;background:var(--border-default);border-radius:2px;outline:none}
+    .slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;background:var(--text-primary);border:2px solid var(--accent);border-radius:50%;cursor:pointer;box-shadow:var(--shadow-sm)}
+    .slider-range{display:flex;justify-content:space-between;font-size:9px;color:var(--text-muted);margin-top:4px}
+    
+    .select-input{width:100%;background:var(--bg-inset);border:1px solid var(--border-default);border-radius:6px;padding:8px 12px;font-size:11px;color:var(--text-primary)}
+    
+    /* Breakdown */
+    .breakdown-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border-subtle)}
+    .breakdown-item:last-child{border-bottom:none}
+    .breakdown-label{width:70px;font-size:10px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase}
+    .breakdown-bar{flex:1;height:8px;background:var(--border-default);border-radius:4px;overflow:visible;position:relative}
+    .breakdown-fill{height:100%;border-radius:4px;transition:width 0.4s;position:relative;overflow:visible}
+    .breakdown-fill::after{content:'';position:absolute;right:-2px;top:-2px;bottom:-2px;width:6px;background:#eab308;border-radius:3px;box-shadow:0 0 4px rgba(234,179,8,0.5)}
+    .breakdown-score{width:45px;font-size:11px;font-weight:700;text-align:right}
+    
+    /* Gradient fills for breakdown bars */
+    .fill-gradient{background:linear-gradient(90deg,#ef4444 0%,#f97316 25%,#eab308 50%,#84cc16 75%,#22c55e 100%);background-size:200% 100%}
+    .fill-gradient[data-pct="low"]{background-position:100% 0}
+    .fill-gradient[data-pct="mid"]{background-position:50% 0}
+    .fill-gradient[data-pct="high"]{background-position:0% 0}
+    
+    /* Risk */
+    .risk-item{padding:12px 0;border-bottom:1px solid var(--border-subtle)}
+    .risk-item:last-child{border-bottom:none}
+    .risk-header{display:flex;justify-content:space-between;margin-bottom:6px}
+    .risk-label{font-size:11px;color:var(--text-tertiary)}
+    .risk-value{font-size:13px;font-weight:700}
+    .risk-bar{height:6px;background:var(--border-default);border-radius:3px;overflow:visible;position:relative}
+    .risk-fill{height:100%;border-radius:3px;transition:width 0.4s;position:relative;overflow:visible}
+    .risk-fill::after{content:'';position:absolute;right:-2px;top:-2px;bottom:-2px;width:5px;background:#eab308;border-radius:2px;box-shadow:0 0 4px rgba(234,179,8,0.5)}
+    .risk-fill.fill-gradient{background:linear-gradient(90deg,#ef4444 0%,#f97316 25%,#eab308 50%,#84cc16 75%,#22c55e 100%);background-size:200% 100%}
+    
+    /* Decision */
+    .decision-box{padding:12px;border-radius:10px;display:flex;align-items:center;gap:10px;margin-top:12px}
+    .decision-box.approved{background:var(--success-muted);border:1px solid var(--success)}
+    .decision-box.declined{background:var(--danger-muted);border:1px solid var(--danger)}
+    
+    /* Quick Actions */
+    .quick-action{display:flex;align-items:center;gap:6px;padding:8px 10px;background:var(--bg-inset);border:1px solid var(--border-default);border-radius:6px;font-size:10px;font-weight:600;color:var(--text-tertiary);cursor:pointer;margin-bottom:6px;transition:all 0.2s}
+    .quick-action:hover{border-color:var(--accent);color:var(--accent)}
+    
+    /* Fills */
+    .fill-green{background:var(--success)}
+    .fill-yellow{background:var(--accent)}
+    .fill-orange{background:var(--warning)}
+    .fill-red{background:var(--danger)}
+    
+    /* Debt */
+    .debt-row{display:flex;gap:6px;margin-bottom:6px}
+    .debt-input{flex:1;background:var(--bg-inset);border:1px solid var(--border-default);border-radius:4px;padding:5px 8px;font-size:10px;color:var(--text-primary)}
+    .debt-remove{background:none;border:none;color:var(--text-tertiary);cursor:pointer}
+    .debt-remove:hover{color:var(--danger)}
+    
+    /* Tab panels */
+    .tab-panel{display:none;height:100%;overflow:hidden}
+    .tab-panel.active{display:block}
+    
+    /* Notification */
+    @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+    .notification{position:fixed;bottom:16px;right:16px;padding:10px 16px;background:var(--accent);color:#000;border-radius:8px;font-size:11px;font-weight:600;animation:slideIn 0.3s;z-index:1000;box-shadow:var(--shadow-md)}
+    
+    /* Frequency Buttons */
+    .freq-btn{flex:1;padding:8px;background:var(--bg-inset);border:1px solid var(--border-default);border-radius:6px;font-size:10px;font-weight:600;color:var(--text-tertiary);cursor:pointer;transition:all 0.2s}
+    .freq-btn:hover{border-color:var(--border-strong);color:var(--text-secondary)}
+    .freq-btn.active{background:var(--accent-muted);border-color:var(--accent);color:var(--accent)}
+    
+    /* Compare Table */
+    .compare-table{font-size:11px}
+    .compare-header,.compare-row{display:grid;grid-template-columns:90px 1fr 1fr 70px;gap:8px;padding:8px 0;border-bottom:1px solid var(--border-subtle)}
+    .compare-header{font-size:9px;font-weight:700;text-transform:uppercase;color:var(--text-tertiary)}
+    .compare-label{color:var(--text-secondary);font-weight:500}
+    .compare-col{text-align:right;font-weight:600}
+    .compare-col.highlight{color:var(--accent)}
+    .compare-row:last-child{border-bottom:none}
+    
+    /* Settings Panel */
+    .settings-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);z-index:900;opacity:0;visibility:hidden;transition:all 0.3s}
+    .settings-overlay.open{opacity:1;visibility:visible}
+    .settings-panel{position:fixed;top:0;right:-420px;width:420px;height:100vh;background:var(--bg-elevated);border-left:1px solid var(--border-subtle);z-index:1000;display:flex;flex-direction:column;transition:right 0.3s ease;box-shadow:-8px 0 32px rgba(0,0,0,0.3)}
+    .settings-panel.open{right:0}
+    .settings-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border-subtle)}
+    .settings-title{font-size:14px;font-weight:700;color:var(--text-primary)}
+    .settings-close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-default);border-radius:8px;color:var(--text-secondary);cursor:pointer;transition:all 0.2s}
+    .settings-close:hover{background:var(--bg-surface);color:var(--text-primary)}
+    .settings-body{flex:1;overflow-y:auto;padding:20px}
+    .settings-section{margin-bottom:24px}
+    .settings-section:last-child{margin-bottom:0}
+    .settings-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-tertiary);margin-bottom:12px}
+    
+    /* Theme Toggle */
+    .theme-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--bg-inset);border-radius:8px;font-size:11px}
+    .theme-switch{display:flex;align-items:center;gap:8px;cursor:pointer}
+    .theme-switch-track{width:40px;height:22px;background:var(--border-default);border-radius:11px;padding:2px;transition:background 0.2s}
+    .theme-switch-thumb{width:18px;height:18px;background:var(--text-primary);border-radius:50%;transition:transform 0.2s;box-shadow:var(--shadow-sm)}
+    [data-theme="light"] .theme-switch-thumb{transform:translateX(18px)}
+    [data-theme="light"] .theme-switch-track{background:var(--accent)}
+    
+    /* Settings Btn */
+    .settings-btn{padding:10px 14px;background:var(--bg-inset);border:1px solid var(--border-default);border-radius:8px;font-size:11px;font-weight:500;color:var(--text-secondary);cursor:pointer;transition:all 0.2s;text-align:center}
+    .settings-btn:hover{background:var(--bg-surface-hover);border-color:var(--border-strong);color:var(--text-primary)}
+    
+    /* Weight Total */
+    .weight-total{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg-inset);border-radius:8px;margin-bottom:16px;font-size:11px}
+    .weight-total.invalid{border:1px solid var(--danger)}
+    .weight-total.invalid #weightStatus{color:var(--danger)!important}
+    
+    /* Schedule Box */
+    .sched-box{background:var(--bg-inset);border:1px solid var(--border-default);border-radius:8px;padding:12px;text-align:center}
+    
+    /* Rate Box */
+    .rate-box{background:var(--bg-inset);border:1px solid var(--border-default);border-radius:8px;padding:12px;text-align:center}
+    
+    /* Summary Card */
+    .summary-card{background:var(--bg-inset);border:1px solid var(--border-default);border-radius:10px;padding:14px;text-align:center}
+    .summary-card.highlight{background:var(--accent-subtle);border-color:var(--accent-muted)}
+    
+    /* Offer Warning */
+    .offer-warning{display:flex;align-items:center;gap:6px;padding:10px 12px;background:var(--warning-muted);border:1px solid var(--warning);border-radius:8px;font-size:10px;color:var(--warning)}
+    .offer-warning.hidden{display:none}
+    
+    /* Analytics - Component Items */
+    .component-item{padding:10px 0;border-bottom:1px solid var(--border-subtle)}
+    .component-item:last-child{border-bottom:none}
+    .comp-header{display:flex;align-items:baseline;gap:4px;font-size:10px;margin-bottom:6px}
+    .comp-header span:first-child{flex:1;color:var(--text-secondary)}
+    .comp-header span:nth-child(2){font-weight:700;font-size:12px}
+    .comp-max{color:var(--text-muted);font-size:9px}
+    .comp-bar{height:8px;background:var(--border-default);border-radius:4px;overflow:visible;position:relative}
+    .comp-fill{height:100%;background:var(--accent);border-radius:4px;transition:width 0.3s;position:relative;overflow:visible}
+    .comp-fill::after{content:'';position:absolute;right:-2px;top:-2px;bottom:-2px;width:6px;background:#eab308;border-radius:3px;box-shadow:0 0 4px rgba(234,179,8,0.5)}
+    .comp-fill.fill-green{background:var(--success)}
+    .comp-fill.fill-yellow{background:var(--accent)}
+    .comp-fill.fill-red{background:var(--danger)}
+    .comp-fill.fill-gradient{background:linear-gradient(90deg,#ef4444 0%,#f97316 25%,#eab308 50%,#84cc16 75%,#22c55e 100%);background-size:200% 100%}
+    .comp-detail{font-size:9px;color:var(--text-tertiary);margin-top:4px}
+    
+    /* Score Distribution */
+    .score-dist{display:flex;align-items:flex-end;gap:6px;height:60px;padding:10px;background:var(--bg-inset);border-radius:8px}
+    .dist-bar{flex:1;background:var(--accent);border-radius:4px 4px 0 0;display:flex;align-items:flex-end;justify-content:center;min-height:10px;transition:height 0.3s}
+    .dist-bar span{font-size:8px;font-weight:700;color:#000;padding-bottom:2px}
+    
+    /* Sensitivity Grid */
+    .sens-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .sens-item{padding:12px;background:var(--bg-inset);border-radius:8px;border-left:3px solid var(--success)}
+    .sens-item.negative{border-left-color:var(--danger)}
+    .sens-trigger{font-size:10px;color:var(--text-secondary);margin-bottom:4px}
+    .sens-impact{font-size:14px;font-weight:700;color:var(--success)}
+    .sens-item.negative .sens-impact{color:var(--danger)}
+    .sens-score{font-size:9px;color:var(--text-tertiary);margin-top:4px}
+    
+    /* Tier Track */
+    .tier-track{position:relative;height:24px;background:linear-gradient(90deg,var(--danger) 0%,var(--warning) 35%,var(--accent) 50%,#84cc16 65%,var(--success) 80%);border-radius:12px;margin-top:8px}
+    .tier-marker{position:absolute;top:-2px;transform:translateX(-50%);text-align:center}
+    .tier-label{display:block;font-size:9px;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.5)}
+    .tier-val{display:block;font-size:8px;color:var(--text-secondary);margin-top:20px}
+    .tier-current{position:absolute;top:-4px;width:4px;height:32px;background:var(--text-primary);border-radius:2px;box-shadow:0 0 8px rgba(255,255,255,0.5);transform:translateX(-50%);transition:left 0.3s}
+    
+    /* Tier Distance Boxes */
+    .tier-dist-box{background:var(--bg-inset);border-radius:8px;padding:12px;text-align:center;border:1px solid var(--border-subtle)}
+    .tier-dist-box.upgrade{border-color:var(--success-muted)}
+    .tier-dist-box.downgrade{border-color:var(--danger-muted)}
+    
+    /* AI Recommendation */
+    .ai-rec-box{background:var(--bg-inset);border-radius:10px;border-left:4px solid var(--accent);overflow:hidden}
+    .ai-rec-header{display:flex;align-items:center;gap:6px;padding:10px 12px;background:var(--accent-subtle);font-size:10px;font-weight:700;text-transform:uppercase;color:var(--accent)}
+    .ai-rec-body{padding:12px;font-size:11px;line-height:1.5;color:var(--text-secondary)}
+    
+    /* Risk Factors */
+    .risk-factors{space-y:6px}
+    .risk-factor-item{display:flex;align-items:center;gap:6px;padding:8px 10px;background:var(--bg-inset);border-radius:6px;font-size:10px;margin-bottom:6px}
+    .risk-factor-item.warning{border-left:3px solid var(--warning);color:var(--warning)}
+    .risk-factor-item.ok{border-left:3px solid var(--success);color:var(--text-secondary)}
+    .risk-factor-item.critical{border-left:3px solid var(--danger);color:var(--danger)}
+    .rf-icon{font-size:11px}
+    
+    /* Improvement List */
+    .improve-list{space-y:6px}
+    .improve-item{padding:10px;background:var(--bg-inset);border-radius:6px;margin-bottom:6px}
+    .improve-action{font-size:10px;font-weight:600;color:var(--text-primary)}
+    .improve-result{font-size:9px;color:var(--success);margin-top:3px}
+    
+    /* Stat Mini */
+    .stat-mini{background:var(--bg-inset);border-radius:8px;padding:10px;text-align:center}
+    
+    /* Settings Styles */
+    .mode-toggle{display:flex;gap:4px;padding:4px;background:var(--bg-inset);border-radius:10px}
+    .mode-btn{flex:1;padding:10px 14px;font-size:10px;font-weight:600;color:var(--text-tertiary);background:none;border:none;border-radius:8px;cursor:pointer;transition:all 0.2s}
+    .mode-btn:hover{color:var(--text-secondary)}
+    .mode-btn.active{background:var(--bg-surface);color:var(--accent);box-shadow:var(--shadow-sm)}
+    
+    .param-section{padding:12px 0;border-bottom:1px solid var(--border-subtle)}
+    .param-section:last-child{border-bottom:none}
+    .param-title{font-size:11px;font-weight:700;color:var(--text-primary);margin-bottom:2px}
+    .param-desc{font-size:9px;color:var(--text-tertiary);margin-bottom:8px}
+    
+    .advanced-section{display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border-default)}
+    .advanced-section.show{display:block}
+    
+    .tier-inputs{display:flex;gap:8px;flex-wrap:wrap}
+    .tier-input-row{display:flex;align-items:center;gap:6px}
+    .tier-label-sm{font-size:10px;font-weight:700;color:var(--accent);width:16px}
+    .tier-threshold{width:52px;padding:8px;background:var(--bg-inset);border:1px solid var(--border-default);border-radius:6px;color:var(--text-primary);font-size:11px;text-align:center}
+    .tier-threshold:focus{border-color:var(--accent);outline:none}
+    
+    .preset-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .preset-btn{padding:14px 12px;background:var(--bg-inset);border:1px solid var(--border-subtle);border-radius:10px;text-align:center;cursor:pointer;transition:all 0.2s}
+    .preset-btn:hover{border-color:var(--border-strong);background:var(--bg-surface-hover)}
+    .preset-btn.active{border-color:var(--accent-muted);background:var(--accent-subtle);box-shadow:var(--shadow-glow)}
+    .preset-icon{font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;width:28px;height:28px;background:var(--bg-surface);border:1px solid var(--border-default);border-radius:8px;margin:0 auto 8px;color:var(--text-secondary)}
+    .preset-btn.active .preset-icon{background:var(--accent-muted);border-color:var(--accent);color:var(--accent)}
+    .preset-name{font-size:10px;font-weight:600;color:var(--text-primary);display:block}
+    .preset-desc{font-size:9px;color:var(--text-tertiary);display:block;margin-top:2px}
+    
+    .config-summary{background:var(--bg-inset);border-radius:8px;padding:12px}
+    .config-row{display:flex;justify-content:space-between;font-size:10px;padding:5px 0;border-bottom:1px solid var(--border-subtle)}
+    .config-row:last-child{border-bottom:none}
+    .config-row span:first-child{color:var(--text-tertiary)}
+    .config-row span:last-child{font-weight:600;color:var(--text-primary)}
+    
+    /* Light theme panel adjustments */
+    [data-theme="light"] .panel{box-shadow:0 4px 20px rgba(0,0,0,0.08),inset 0 1px 0 rgba(255,255,255,0.8)}
+    [data-theme="light"] .settings-panel{box-shadow:-4px 0 24px rgba(0,0,0,0.1)}
+    [data-theme="light"] .tier-current{background:var(--text-primary);box-shadow:0 0 8px rgba(0,0,0,0.3)}
+    
+    /* Custom Utility Classes */
+    .text-accent{color:var(--accent)!important;transition:color 0.3s}
+    .text-muted{color:var(--text-tertiary)!important}
+    .text-tertiary{color:var(--text-tertiary)!important}
+    .bg-accent{background:var(--accent)!important}
+    .bg-inset{background:var(--bg-inset)!important}
+    .border-subtle{border-color:var(--border-subtle)!important}
+    .text-success{color:var(--success)!important}
+    .text-danger{color:var(--danger)!important}
+    .text-warning{color:var(--warning)!important}
+    .bg-success-muted{background:var(--success-muted)!important}
+    .bg-danger-muted{background:var(--danger-muted)!important}
+    
+    /* Responsive */
+    @media(max-width:1100px){.main-grid{grid-template-columns:260px 1fr 220px}.score-metric{display:none}}
+    @media(max-width:900px){
+      .main-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto auto}
+      .main-grid .panel:nth-child(3){grid-column:span 2}
+      .score-hero{flex-wrap:wrap;padding:12px 16px;gap:12px}
+      .hero-left{width:100%;gap:12px}
+      .hero-center{width:100%;justify-content:center}
+      .score-slider-wrap{max-width:none}
+    }
+    @media(max-width:700px){
+      .app{grid-template-rows:48px auto 36px 1fr}
+      .main-grid{grid-template-columns:1fr;gap:12px;padding:12px;overflow-y:auto}
+      .main-grid .panel:nth-child(3){grid-column:span 1}
+      .header{padding:0 12px}
+      .logo-mark{width:24px;height:24px}
+      .logo-mark svg{width:24px;height:24px}
+      .orbiting-moon{transform-origin:12px 12px}
+      .badge-pro{display:none}
+      .btn{padding:6px 10px;font-size:9px}
+      .icon-btn{width:28px;height:28px}
+      .score-hero{padding:10px 12px;gap:10px}
+      .tier-box{padding:6px 12px;min-width:50px}
+      .tier-box-letter{font-size:28px}
+      .tier-box-label{font-size:7px}
+      .score-slider-header{flex-wrap:wrap;gap:6px}
+      .score-slider-title{width:100%}
+      .score-slider-value{font-size:16px}
+      .score-slider-track{height:14px}
+      .marker-value{font-size:10px;padding:2px 4px}
+      .tier-grade{font-size:7px;padding:1px 0}
+      .hero-center{gap:8px}
+      .risk-card{padding:8px 10px;min-width:60px}
+      .risk-card-value{font-size:14px}
+      .risk-card-label{font-size:7px}
+      .tabs{padding:0 12px;overflow-x:auto}
+      .tab-btn{padding:8px 12px;font-size:10px;white-space:nowrap}
+      .panel{border-radius:10px;max-height:none;overflow:visible}
+      .panel-header{font-size:10px;padding:10px 12px}
+      .panel-body{padding:12px;max-height:none;overflow:visible}
+      .input-group{margin-bottom:12px}
+      .input-label{font-size:10px}
+      .breakdown-row{padding:8px 0}
+      .breakdown-label{font-size:10px}
+    }
+    @media(max-width:500px){
+      .hero-center{flex-wrap:wrap}
+      .risk-card{flex:1;min-width:70px}
+      .score-slider-metrics{gap:10px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    
+    <!-- HEADER -->
+    <header class="header">
+      <div class="flex items-center gap-3">
+        <div class="logo-mark">
+          <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="14" cy="14" rx="12" ry="3.5" stroke="#ea580c" stroke-width="1.2" fill="none" transform="rotate(-20 14 14)" stroke-dasharray="30 60"/>
+            <circle cx="14" cy="14" r="5" fill="#eab308"/>
+            <ellipse cx="14" cy="14" rx="12" ry="3.5" stroke="#ea580c" stroke-width="1.2" fill="none" transform="rotate(-20 14 14)" stroke-dasharray="30 60" stroke-dashoffset="-30"/>
+            <circle class="orbiting-moon" cx="14" cy="14" r="1.8" fill="#a855f7"/>
+          </svg>
+        </div>
+        <span class="font-semibold text-sm tracking-tight">ABLES<span class="text-accent">AI</span></span>
+        <span class="badge-pro">PRO</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="btn btn-ghost" onclick="saveDeal()">Save</button>
+        <button class="btn btn-ghost" onclick="loadDeal()">Load</button>
+        <button class="btn btn-primary" onclick="exportPDF()">Export</button>
+        <div class="header-divider"></div>
+        <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme">
+          <svg id="themeIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="toggleSettings()" title="Settings">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- SCORE HERO -->
+    <div class="score-hero">
+      <!-- Left: Tier & Score -->
+      <div class="hero-left">
+        <div class="tier-box">
+          <div class="tier-box-label">TIER</div>
+          <div class="tier-box-letter" id="tierLetter">C</div>
+        </div>
+        <div class="score-slider-wrap">
+          <div class="score-slider-header">
+            <span class="score-slider-title">ABLESAI SCORE</span>
+            <div class="score-slider-metrics">
+              <span class="score-slider-value"><span id="scoreValue">62</span>/100</span>
+              <span class="score-metric"><span class="score-metric-label">FUNDING</span><span class="score-metric-value" id="metricFundingSmall">$17,500</span></span>
+              <span class="score-metric"><span class="score-metric-label">FACTOR</span><span class="score-metric-value" id="metricFactorSmall">1.32x</span></span>
+              <span class="score-metric"><span class="score-metric-label">TERM</span><span class="score-metric-value" id="metricTermSmall">9 mo</span></span>
+            </div>
+          </div>
+          <div class="score-slider-track">
+            <div class="score-slider-fill" id="scoreSliderFill"></div>
+            <div class="score-slider-marker" id="scoreSliderMarker">
+              <span class="marker-value" id="scoreMarkerValue">62</span>
+            </div>
+          </div>
+          <div class="tier-grade-bar">
+            <div class="tier-grade tier-e">E &lt;35</div>
+            <div class="tier-grade tier-d">D 35+</div>
+            <div class="tier-grade tier-c">C 50+</div>
+            <div class="tier-grade tier-b">B 65+</div>
+            <div class="tier-grade tier-a">A 80+</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Center: Risk Metrics -->
+      <div class="hero-center">
+        <div class="risk-card">
+          <div class="risk-card-value" id="riskPDHero">10.0%</div>
+          <div class="risk-card-label">PD</div>
+        </div>
+        <div class="risk-card">
+          <div class="risk-card-value" id="riskDSCRHero">2.50x</div>
+          <div class="risk-card-label">DSCR</div>
+        </div>
+        <div class="risk-card">
+          <div class="risk-card-value risk-low" id="riskLevelHero">Low</div>
+          <div class="risk-card-label">RISK</div>
+        </div>
+      </div>
+      
+      <!-- Right: Offer Preview -->
+      <div class="hero-right">
+        <div class="offer-preview">
+          <div class="offer-preview-header">
+            <span>ABLESAI TIER <span id="tierLetterSmall">C</span> - <span id="approvalStatus">APPROVED</span></span>
+          </div>
+          <div class="offer-preview-amount" id="metricFunding">$17,500</div>
+          <div class="offer-preview-grid">
+            <div class="offer-preview-item">
+              <span class="offer-preview-label">FACTOR RATE</span>
+              <span class="offer-preview-value" id="metricFactor">1.32x</span>
+            </div>
+            <div class="offer-preview-item">
+              <span class="offer-preview-label">TERM</span>
+              <span class="offer-preview-value" id="metricTerm">9 Months</span>
+            </div>
+            <div class="offer-preview-item">
+              <span class="offer-preview-label">TOTAL PAYBACK</span>
+              <span class="offer-preview-value" id="metricPayback">$23,100</span>
+            </div>
+            <div class="offer-preview-item">
+              <span class="offer-preview-label">DAILY PAYMENT</span>
+              <span class="offer-preview-value text-accent" id="metricDaily">$128</span>
+            </div>
+          </div>
+          <div class="offer-preview-footer">
+            <div class="offer-preview-item">
+              <span class="offer-preview-label">HOLDBACK</span>
+              <span class="offer-preview-value text-accent" id="metricHoldback">12%</span>
+            </div>
+            <div class="offer-preview-item">
+              <span class="offer-preview-label">EST. APR</span>
+              <span class="offer-preview-value text-accent" id="metricAPR">35.3%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('score')">Model Score</button>
+      <button class="tab-btn" onclick="switchTab('offer')">Offer Builder</button>
+      <button class="tab-btn" onclick="switchTab('analytics')">Analytics</button>
+    </div>
+
+    <!-- MODEL SCORE TAB -->
+    <div id="tab-score" class="tab-panel active">
+      <div class="main-grid">
+        
+        <!-- INPUTS -->
+        <div class="panel">
+          <div class="panel-header">Merchant Inputs</div>
+          <div class="panel-body">
+            <div class="input-group">
+              <div class="input-label"><span>Credit Score</span><span id="valCredit">650</span></div>
+              <input type="range" class="slider" id="sliderCredit" min="500" max="800" value="650" oninput="calculate()">
+              <div class="slider-range"><span>500</span><span>800</span></div>
+            </div>
+            <div class="input-group">
+              <div class="input-label"><span>Monthly Revenue</span><span id="valRevenue">$50,000</span></div>
+              <input type="range" class="slider" id="sliderRevenue" min="10000" max="500000" step="5000" value="50000" oninput="calculate()">
+              <div class="slider-range"><span>$10K</span><span>$500K</span></div>
+            </div>
+            <div class="input-group">
+              <div class="input-label"><span>Time in Business</span><span id="valTIB">24 mo</span></div>
+              <input type="range" class="slider" id="sliderTIB" min="3" max="120" value="24" oninput="calculate()">
+              <div class="slider-range"><span>3 mo</span><span>10 yrs</span></div>
+            </div>
+            <div class="input-group">
+              <div class="input-label"><span>Avg Daily Balance</span><span id="valBalance">$8,000</span></div>
+              <input type="range" class="slider" id="sliderBalance" min="0" max="100000" step="1000" value="8000" oninput="calculate()">
+              <div class="slider-range"><span>$0</span><span>$100K</span></div>
+            </div>
+            <div class="input-group">
+              <div class="input-label"><span>NSF (90d)</span><span id="valNSF">2</span></div>
+              <input type="range" class="slider" id="sliderNSF" min="0" max="15" value="2" oninput="calculate()">
+            </div>
+            <div class="input-group">
+              <div class="input-label"><span>Neg Days (90d)</span><span id="valNegDays">3</span></div>
+              <input type="range" class="slider" id="sliderNegDays" min="0" max="30" value="3" oninput="calculate()">
+            </div>
+            <div class="input-group">
+              <div class="input-label"><span>Industry</span><span></span></div>
+              <select id="selectIndustry" class="select-input" onchange="calculate()">
+                <option value="retail">Retail / E-commerce</option>
+                <option value="restaurant">Restaurant / Food</option>
+                <option value="construction">Construction</option>
+                <option value="medical">Medical / Healthcare</option>
+                <option value="auto">Auto Services</option>
+                <option value="professional">Professional Services</option>
+                <option value="trucking">Trucking</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- BREAKDOWN + DEBT -->
+        <div class="panel">
+          <div class="panel-header">Score Breakdown</div>
+          <div class="panel-body">
+            <div class="breakdown-item">
+              <div class="breakdown-label">Credit</div>
+              <div class="breakdown-bar"><div class="breakdown-fill fill-gradient" id="barCredit" style="width:50%"></div></div>
+              <div class="breakdown-score" id="scoreCredit">15/30</div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-label">Behavior</div>
+              <div class="breakdown-bar"><div class="breakdown-fill fill-gradient" id="barBehavior" style="width:70%"></div></div>
+              <div class="breakdown-score" id="scoreBehavior">21/30</div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-label">Revenue</div>
+              <div class="breakdown-bar"><div class="breakdown-fill fill-gradient" id="barRevenue" style="width:45%"></div></div>
+              <div class="breakdown-score" id="scoreRevenue">9/20</div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-label">Stability</div>
+              <div class="breakdown-bar"><div class="breakdown-fill fill-gradient" id="barStability" style="width:70%"></div></div>
+              <div class="breakdown-score" id="scoreStability">7/10</div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-label">Buffer</div>
+              <div class="breakdown-bar"><div class="breakdown-fill fill-gradient" id="barBuffer" style="width:100%"></div></div>
+              <div class="breakdown-score" id="scoreBuffer">10/10</div>
+            </div>
+            
+            <div class="mt-4 pt-3 border-t border-subtle">
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-[10px] font-bold text-muted uppercase">Existing MCA</span>
+                <button class="text-[9px] text-accent hover:underline" onclick="addDebtPosition()">+ Add</button>
+              </div>
+              <div id="debtPositions"></div>
+              <div class="flex justify-between mt-2 pt-2 border-t border-subtle">
+                <span class="text-[10px] text-muted">Total Monthly</span>
+                <span class="text-xs font-bold" id="totalDebt">$0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RISK + ACTIONS -->
+        <div class="panel">
+          <div class="panel-header">Risk & Decision</div>
+          <div class="panel-body">
+            <div class="risk-item">
+              <div class="risk-header"><span class="risk-label">Default Probability</span><span class="risk-value" id="riskPD">8.5%</span></div>
+              <div class="risk-bar"><div class="risk-fill fill-gradient" id="fillPD" style="width:28%"></div></div>
+            </div>
+            <div class="risk-item">
+              <div class="risk-header"><span class="risk-label">Debt Service (DSCR)</span><span class="risk-value" id="riskDSCR">1.95x</span></div>
+              <div class="risk-bar"><div class="risk-fill fill-gradient" id="fillDSCR" style="width:65%"></div></div>
+            </div>
+            <div class="risk-item">
+              <div class="risk-header"><span class="risk-label">Utilization</span><span class="risk-value" id="riskUtil">35%</span></div>
+              <div class="risk-bar"><div class="risk-fill fill-gradient" id="fillUtil" style="width:35%"></div></div>
+            </div>
+            
+            <div class="decision-box approved" id="decisionBox">
+              <div class="w-7 h-7 rounded-full bg-success-muted flex items-center justify-center">
+                <svg class="w-3.5 h-3.5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="decisionIcon"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-success" id="decisionText">APPROVED</div>
+                <div class="text-[9px] text-muted" id="decisionReason">Meets criteria</div>
+              </div>
+            </div>
+            
+            <div class="mt-4 pt-3 border-t border-subtle">
+              <div class="text-[10px] font-bold text-muted uppercase mb-2">Presets</div>
+              <div class="quick-action" onclick="loadPreset('strong')">🏆 Strong Profile</div>
+              <div class="quick-action" onclick="loadPreset('new')">🌱 New Business</div>
+              <div class="quick-action" onclick="loadPreset('established')">🏢 Established</div>
+              <div class="quick-action" onclick="loadPreset('risky')">! Risky Profile</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- OFFER BUILDER TAB -->
+    <div id="tab-offer" class="tab-panel">
+      <div class="main-grid">
+        
+        <!-- LEFT: OVERRIDE CONTROLS -->
+        <div class="panel">
+          <div class="panel-header">Override Controls</div>
+          <div class="panel-body">
+            <div class="input-group">
+              <div class="input-label"><span>Funding Amount</span><span id="offerFunding">$17,500</span></div>
+              <input type="range" class="slider" id="sliderOverrideFunding" min="5000" max="250000" step="2500" value="17500" oninput="updateOffer()">
+              <div class="slider-range"><span>$5K</span><span>$250K</span></div>
+              <div class="text-[9px] text-accent/70 mt-1">Model: <span id="offerModelFunding">$17,500</span></div>
+            </div>
+            <div class="input-group">
+              <div class="input-label"><span>Factor Rate</span><span id="offerFactor">1.32x</span></div>
+              <input type="range" class="slider" id="sliderOverrideFactor" min="1.10" max="1.50" step="0.01" value="1.32" oninput="updateOffer()">
+              <div class="slider-range"><span>1.10x</span><span>1.50x</span></div>
+              <div class="text-[9px] text-accent/70 mt-1">Model: <span id="offerModelFactor">1.32x</span></div>
+            </div>
+            <div class="input-group">
+              <div class="input-label"><span>Term (Months)</span><span id="offerTerm">9</span></div>
+              <input type="range" class="slider" id="sliderOverrideTerm" min="3" max="18" value="9" oninput="updateOffer()">
+              <div class="slider-range"><span>3 mo</span><span>18 mo</span></div>
+              <div class="text-[9px] text-accent/70 mt-1">Model: <span id="offerModelTerm">9 mo</span></div>
+            </div>
+            <div class="input-group">
+              <div class="input-label"><span>Payment Frequency</span><span></span></div>
+              <div class="flex gap-2">
+                <button class="freq-btn active" id="freqDaily" onclick="setFrequency('daily')">Daily</button>
+                <button class="freq-btn" id="freqWeekly" onclick="setFrequency('weekly')">Weekly</button>
+              </div>
+            </div>
+            
+            <div class="mt-4 pt-3 border-t border-subtle">
+              <div class="input-label"><span>Commission (%)</span><span id="offerCommPct">10%</span></div>
+              <input type="range" class="slider" id="sliderCommission" min="0" max="15" step="0.5" value="10" oninput="updateOffer()">
+              <div class="slider-range"><span>0%</span><span>15%</span></div>
+            </div>
+            
+            <div class="mt-4 pt-3 border-t border-subtle">
+              <button class="w-full py-2 text-[10px] font-bold text-accent border border-accent-muted rounded hover:bg-accent/10 transition" onclick="resetToModel()">↺ Reset to Model</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CENTER: OFFER COMPARISON -->
+        <div class="panel">
+          <div class="panel-header">Offer Comparison</div>
+          <div class="panel-body">
+            
+            <!-- Comparison Table -->
+            <div class="compare-table">
+              <div class="compare-header">
+                <div class="compare-label"></div>
+                <div class="compare-col">Model</div>
+                <div class="compare-col highlight">Override</div>
+                <div class="compare-col">Δ Change</div>
+              </div>
+              <div class="compare-row">
+                <div class="compare-label">Funding</div>
+                <div class="compare-col" id="cmpModelFunding">$17,500</div>
+                <div class="compare-col highlight" id="cmpOverrideFunding">$17,500</div>
+                <div class="compare-col" id="cmpDeltaFunding">—</div>
+              </div>
+              <div class="compare-row">
+                <div class="compare-label">Factor Rate</div>
+                <div class="compare-col" id="cmpModelFactor">1.32x</div>
+                <div class="compare-col highlight" id="cmpOverrideFactor">1.32x</div>
+                <div class="compare-col" id="cmpDeltaFactor">—</div>
+              </div>
+              <div class="compare-row">
+                <div class="compare-label">Term</div>
+                <div class="compare-col" id="cmpModelTerm">9 mo</div>
+                <div class="compare-col highlight" id="cmpOverrideTerm">9 mo</div>
+                <div class="compare-col" id="cmpDeltaTerm">—</div>
+              </div>
+              <div class="compare-row">
+                <div class="compare-label">Payback</div>
+                <div class="compare-col" id="cmpModelPayback">$23,100</div>
+                <div class="compare-col highlight" id="cmpOverridePayback">$23,100</div>
+                <div class="compare-col" id="cmpDeltaPayback">—</div>
+              </div>
+              <div class="compare-row">
+                <div class="compare-label">Daily Payment</div>
+                <div class="compare-col" id="cmpModelDaily">$128</div>
+                <div class="compare-col highlight" id="cmpOverrideDaily">$128</div>
+                <div class="compare-col" id="cmpDeltaDaily">—</div>
+              </div>
+              <div class="compare-row">
+                <div class="compare-label">Cost of Capital</div>
+                <div class="compare-col" id="cmpModelCost">$5,600</div>
+                <div class="compare-col highlight" id="cmpOverrideCost">$5,600</div>
+                <div class="compare-col" id="cmpDeltaCost">—</div>
+              </div>
+            </div>
+            
+            <!-- Payment Schedule -->
+            <div class="mt-4 pt-3 border-t border-subtle">
+              <div class="text-[10px] font-bold text-muted uppercase mb-3">Payment Schedule</div>
+              <div class="grid grid-cols-4 gap-2">
+                <div class="sched-box">
+                  <div class="text-[9px] text-muted">Daily</div>
+                  <div class="text-sm font-bold" id="schedDaily">$128</div>
+                </div>
+                <div class="sched-box">
+                  <div class="text-[9px] text-muted">Weekly</div>
+                  <div class="text-sm font-bold" id="schedWeekly">$640</div>
+                </div>
+                <div class="sched-box">
+                  <div class="text-[9px] text-muted">Monthly</div>
+                  <div class="text-sm font-bold" id="schedMonthly">$2,567</div>
+                </div>
+                <div class="sched-box">
+                  <div class="text-[9px] text-muted">Total Pmts</div>
+                  <div class="text-sm font-bold" id="schedTotal">198</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- APR / Effective Rate -->
+            <div class="mt-4 pt-3 border-t border-subtle">
+              <div class="text-[10px] font-bold text-muted uppercase mb-3">Effective Rates</div>
+              <div class="grid grid-cols-3 gap-2">
+                <div class="rate-box">
+                  <div class="text-[9px] text-muted">Holdback %</div>
+                  <div class="text-sm font-bold" id="rateHoldback">5.6%</div>
+                </div>
+                <div class="rate-box">
+                  <div class="text-[9px] text-muted">Est. APR</div>
+                  <div class="text-sm font-bold text-warning" id="rateAPR">42.7%</div>
+                </div>
+                <div class="rate-box">
+                  <div class="text-[9px] text-muted">Buy Rate</div>
+                  <div class="text-sm font-bold" id="rateBuy">1.22x</div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+
+        <!-- RIGHT: OFFER SUMMARY & ACTIONS -->
+        <div class="panel">
+          <div class="panel-header">Offer Summary</div>
+          <div class="panel-body">
+            
+            <!-- Big Numbers -->
+            <div class="summary-card highlight mb-3">
+              <div class="text-[9px] text-muted uppercase">Funding Amount</div>
+              <div class="text-2xl font-black text-accent" id="summaryFunding">$17,500</div>
+            </div>
+            <div class="grid grid-cols-2 gap-2 mb-3">
+              <div class="summary-card">
+                <div class="text-[9px] text-muted uppercase">Payback</div>
+                <div class="text-lg font-bold" id="summaryPayback">$23,100</div>
+              </div>
+              <div class="summary-card">
+                <div class="text-[9px] text-muted uppercase">Payment</div>
+                <div class="text-lg font-bold" id="summaryPayment">$128/d</div>
+              </div>
+            </div>
+            
+            <!-- DSCR Impact -->
+            <div class="mt-3 pt-3 border-t border-subtle">
+              <div class="text-[10px] font-bold text-muted uppercase mb-2">DSCR Impact</div>
+              <div class="risk-item" style="padding:8px 0">
+                <div class="risk-header">
+                  <span class="risk-label">New DSCR</span>
+                  <span class="risk-value" id="offerDSCR">1.85x</span>
+                </div>
+                <div class="risk-bar"><div class="risk-fill fill-gradient" id="offerDSCRFill" style="width:62%"></div></div>
+              </div>
+              <div class="flex justify-between text-[10px] mt-2">
+                <span class="text-muted">Monthly Revenue</span>
+                <span id="offerRevenue">$50,000</span>
+              </div>
+              <div class="flex justify-between text-[10px]">
+                <span class="text-muted">Monthly Obligation</span>
+                <span id="offerObligation">$2,816</span>
+              </div>
+            </div>
+            
+            <!-- Commission -->
+            <div class="mt-3 pt-3 border-t border-subtle">
+              <div class="text-[10px] font-bold text-muted uppercase mb-2">Commission</div>
+              <div class="flex justify-between text-[10px]">
+                <span class="text-muted">Gross Commission</span>
+                <span class="font-bold text-success" id="offerCommission">$1,750</span>
+              </div>
+              <div class="flex justify-between text-[10px] mt-1">
+                <span class="text-muted">Points</span>
+                <span id="offerPoints">10 pts</span>
+              </div>
+            </div>
+            
+            <!-- Warning -->
+            <div class="offer-warning hidden mt-3" id="offerWarning">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+              <span id="offerWarningText">DSCR below 1.2x threshold</span>
+            </div>
+            
+            <!-- Actions -->
+            <div class="mt-4 pt-3 border-t border-subtle space-y-2">
+              <button class="w-full py-2.5 bg-accent text-black text-[11px] font-bold rounded hover:shadow-lg hover:shadow-glow transition" onclick="applyOffer()">✓ Apply This Offer</button>
+              <button class="w-full py-2 bg-inset text-[10px] font-semibold rounded hover:bg-zinc-700 transition" onclick="saveOfferVariant()">Save as Variant</button>
+            </div>
+            
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ANALYTICS TAB -->
+    <div id="tab-analytics" class="tab-panel">
+      <div class="main-grid">
+        
+        <!-- LEFT: COMPONENT BREAKDOWN -->
+        <div class="panel">
+          <div class="panel-header">Score Components</div>
+          <div class="panel-body">
+            <div class="component-item">
+              <div class="comp-header"><span>Credit Score</span><span id="analyticsCredit">15</span><span class="comp-max">/30</span></div>
+              <div class="comp-bar"><div class="comp-fill fill-gradient" id="analyticsBarCredit" style="width:50%"></div></div>
+              <div class="comp-detail">Raw: <span id="analyticsCreditRaw">620</span> → Weight: 30%</div>
+            </div>
+            <div class="component-item">
+              <div class="comp-header"><span>Behavior</span><span id="analyticsBehavior">21</span><span class="comp-max">/30</span></div>
+              <div class="comp-bar"><div class="comp-fill fill-gradient" id="analyticsBarBehavior" style="width:70%"></div></div>
+              <div class="comp-detail">NSF: <span id="analyticsBehaviorNSF">3</span> | Neg Days: <span id="analyticsBehaviorNeg">2</span></div>
+            </div>
+            <div class="component-item">
+              <div class="comp-header"><span>Revenue</span><span id="analyticsRevenue">9</span><span class="comp-max">/20</span></div>
+              <div class="comp-bar"><div class="comp-fill fill-gradient" id="analyticsBarRevenue" style="width:45%"></div></div>
+              <div class="comp-detail">Monthly: <span id="analyticsRevenueRaw">$50K</span></div>
+            </div>
+            <div class="component-item">
+              <div class="comp-header"><span>Stability</span><span id="analyticsStability">7</span><span class="comp-max">/10</span></div>
+              <div class="comp-bar"><div class="comp-fill fill-gradient" id="analyticsBarStability" style="width:70%"></div></div>
+              <div class="comp-detail">Time in Business: <span id="analyticsStabilityTIB">24</span> mo</div>
+            </div>
+            <div class="component-item">
+              <div class="comp-header"><span>Buffer</span><span id="analyticsBuffer">10</span><span class="comp-max">/10</span></div>
+              <div class="comp-bar"><div class="comp-fill fill-gradient" id="analyticsBarBuffer" style="width:100%"></div></div>
+              <div class="comp-detail">Avg Balance: <span id="analyticsBufferRaw">$12K</span></div>
+            </div>
+            
+            <div class="mt-4 pt-3 border-t border-subtle">
+              <div class="text-[10px] font-bold text-muted uppercase mb-2">Score Distribution</div>
+              <div class="score-dist">
+                <div class="dist-bar" id="distCredit" style="height:50%"><span>C</span></div>
+                <div class="dist-bar" id="distBehavior" style="height:70%"><span>B</span></div>
+                <div class="dist-bar" id="distRevenue" style="height:45%"><span>R</span></div>
+                <div class="dist-bar" id="distStability" style="height:70%"><span>S</span></div>
+                <div class="dist-bar" id="distBuffer" style="height:100%"><span>Bu</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CENTER: SENSITIVITY & BENCHMARKS -->
+        <div class="panel">
+          <div class="panel-header">Sensitivity Analysis</div>
+          <div class="panel-body">
+            
+            <!-- What-If Scenarios -->
+            <div class="text-[10px] font-bold text-muted uppercase mb-2">Impact on Funding</div>
+            <div class="sens-grid">
+              <div class="sens-item positive">
+                <div class="sens-trigger">Credit +50 pts</div>
+                <div class="sens-impact" id="sensCredit">+$3,500</div>
+                <div class="sens-score">Score: +8 → Tier B</div>
+              </div>
+              <div class="sens-item positive">
+                <div class="sens-trigger">Revenue +20%</div>
+                <div class="sens-impact" id="sensRevenue">+$2,800</div>
+                <div class="sens-score">Score: +4</div>
+              </div>
+              <div class="sens-item positive">
+                <div class="sens-trigger">TIB +12 months</div>
+                <div class="sens-impact" id="sensTIB">+$1,200</div>
+                <div class="sens-score">Score: +2</div>
+              </div>
+              <div class="sens-item positive">
+                <div class="sens-trigger">NSF → 0</div>
+                <div class="sens-impact" id="sensNSF">+$2,100</div>
+                <div class="sens-score">Score: +6</div>
+              </div>
+              <div class="sens-item negative">
+                <div class="sens-trigger">Credit -50 pts</div>
+                <div class="sens-impact" id="sensCredit2">-$4,200</div>
+                <div class="sens-score">Score: -8 → Tier D</div>
+              </div>
+              <div class="sens-item negative">
+                <div class="sens-trigger">NSF +3</div>
+                <div class="sens-impact" id="sensNSF2">-$2,800</div>
+                <div class="sens-score">Score: -5</div>
+              </div>
+            </div>
+            
+            <!-- Tier Thresholds -->
+            <div class="mt-4 pt-3 border-t border-subtle">
+              <div class="text-[10px] font-bold text-muted uppercase mb-2">Tier Thresholds</div>
+              <div class="tier-track">
+                <div class="tier-marker" style="left:0%"><span class="tier-label">E</span><span class="tier-val">0</span></div>
+                <div class="tier-marker" style="left:35%"><span class="tier-label">D</span><span class="tier-val">35</span></div>
+                <div class="tier-marker" style="left:50%"><span class="tier-label">C</span><span class="tier-val">50</span></div>
+                <div class="tier-marker" style="left:65%"><span class="tier-label">B</span><span class="tier-val">65</span></div>
+                <div class="tier-marker" style="left:80%"><span class="tier-label">A</span><span class="tier-val">80</span></div>
+                <div class="tier-current" id="tierCurrentMarker" style="left:62%"></div>
+              </div>
+              <div class="flex justify-between text-[9px] text-muted mt-1">
+                <span>High Risk</span>
+                <span>Prime</span>
+              </div>
+            </div>
+            
+            <!-- Points to Next Tier -->
+            <div class="mt-4 pt-3 border-t border-subtle">
+              <div class="text-[10px] font-bold text-muted uppercase mb-2">Distance to Tiers</div>
+              <div class="grid grid-cols-2 gap-2">
+                <div class="tier-dist-box upgrade">
+                  <div class="text-[9px] text-muted">To Tier B</div>
+                  <div class="text-sm font-bold text-success" id="distToB">+3 pts</div>
+                </div>
+                <div class="tier-dist-box upgrade">
+                  <div class="text-[9px] text-muted">To Tier A</div>
+                  <div class="text-sm font-bold text-success" id="distToA">+18 pts</div>
+                </div>
+                <div class="tier-dist-box downgrade">
+                  <div class="text-[9px] text-muted">To Tier D</div>
+                  <div class="text-sm font-bold text-danger" id="distToD">-12 pts</div>
+                </div>
+                <div class="tier-dist-box downgrade">
+                  <div class="text-[9px] text-muted">To Tier E</div>
+                  <div class="text-sm font-bold text-danger" id="distToE">-27 pts</div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+
+        <!-- RIGHT: INSIGHTS & RECOMMENDATIONS -->
+        <div class="panel">
+          <div class="panel-header">AI Insights</div>
+          <div class="panel-body">
+            
+            <!-- AI Recommendation -->
+            <div class="ai-rec-box">
+              <div class="ai-rec-header">
+                <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                <span>Deal Assessment</span>
+              </div>
+              <div class="ai-rec-body" id="aiRecommendation">
+                <strong>Mid-Prime (Tier C)</strong> deal with moderate risk. Strong daily balance provides buffer. Credit score limits funding. Recommend 3 months bank statements. Position: 30-35% of monthly revenue.
+              </div>
+            </div>
+            
+            <!-- Risk Factors -->
+            <div class="mt-3 pt-3 border-t border-subtle">
+              <div class="text-[10px] font-bold text-muted uppercase mb-2">Risk Factors</div>
+              <div class="risk-factors">
+                <div class="risk-factor-item warning" id="riskFactor1">
+                  <span class="rf-icon">⚠</span>
+                  <span>Credit below 650 threshold</span>
+                </div>
+                <div class="risk-factor-item ok" id="riskFactor2">
+                  <span class="rf-icon">✓</span>
+                  <span>NSF count acceptable</span>
+                </div>
+                <div class="risk-factor-item ok" id="riskFactor3">
+                  <span class="rf-icon">✓</span>
+                  <span>Strong balance buffer</span>
+                </div>
+                <div class="risk-factor-item warning" id="riskFactor4">
+                  <span class="rf-icon">⚠</span>
+                  <span>Limited time in business</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Improvement Actions -->
+            <div class="mt-3 pt-3 border-t border-subtle">
+              <div class="text-[10px] font-bold text-muted uppercase mb-2">Improvement Path</div>
+              <div class="improve-list">
+                <div class="improve-item">
+                  <div class="improve-action">Improve credit to 670+</div>
+                  <div class="improve-result">→ Tier B, +$5K funding</div>
+                </div>
+                <div class="improve-item">
+                  <div class="improve-action">Clear NSF items</div>
+                  <div class="improve-result">→ +6 pts, better rate</div>
+                </div>
+                <div class="improve-item">
+                  <div class="improve-action">Wait 6 months TIB</div>
+                  <div class="improve-result">→ +2 pts stability</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="mt-3 pt-3 border-t border-subtle">
+              <div class="text-[10px] font-bold text-muted uppercase mb-2">Deal Profile</div>
+              <div class="grid grid-cols-2 gap-2">
+                <div class="stat-mini">
+                  <div class="text-[9px] text-muted">Risk Level</div>
+                  <div class="text-xs font-bold text-accent" id="statRisk">MODERATE</div>
+                </div>
+                <div class="stat-mini">
+                  <div class="text-[9px] text-muted">Confidence</div>
+                  <div class="text-xs font-bold" id="statConfidence">78%</div>
+                </div>
+                <div class="stat-mini">
+                  <div class="text-[9px] text-muted">Industry Adj</div>
+                  <div class="text-xs font-bold" id="statIndustry">1.0x</div>
+                </div>
+                <div class="stat-mini">
+                  <div class="text-[9px] text-muted">Position</div>
+                  <div class="text-xs font-bold" id="statPosition">1st</div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS PANEL -->
+  <div class="settings-overlay" id="settingsOverlay" onclick="toggleSettings()"></div>
+  <div class="settings-panel" id="settingsPanel">
+    <div class="settings-header">
+      <span class="settings-title">Settings</span>
+      <button class="settings-close" onclick="toggleSettings()">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="settings-body">
+      
+      <!-- Theme -->
+      <div class="settings-section">
+        <div class="settings-section-title">Appearance</div>
+        <div class="theme-toggle-row">
+          <span>Theme</span>
+          <div class="theme-switch" onclick="toggleTheme()">
+            <div class="theme-switch-track" id="themeTrack">
+              <div class="theme-switch-thumb" id="themeThumb"></div>
+            </div>
+            <span id="themeLabel">Dark</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Mode Toggle -->
+      <div class="settings-section">
+        <div class="settings-section-title">Mode</div>
+        <div class="mode-toggle">
+          <button class="mode-btn active" id="modeSimple" onclick="setMode('simple')">Simple</button>
+          <button class="mode-btn" id="modeAdvanced" onclick="setMode('advanced')">Advanced</button>
+        </div>
+      </div>
+      
+      <!-- Component Weights -->
+      <div class="settings-section">
+        <div class="settings-section-title">Component Weights</div>
+        <div class="weight-total">
+          <span style="color:var(--text-tertiary)">Total</span>
+          <span class="font-bold" id="weightTotal">100</span>
+          <span id="weightStatus" style="color:var(--success)">Valid</span>
+        </div>
+        <div class="input-group">
+          <div class="input-label"><span>Credit</span><span id="weightCredit">30</span></div>
+          <input type="range" class="slider" id="sliderWeightCredit" min="0" max="50" value="30" oninput="updateWeights()">
+        </div>
+        <div class="input-group">
+          <div class="input-label"><span>Behavior</span><span id="weightBehavior">30</span></div>
+          <input type="range" class="slider" id="sliderWeightBehavior" min="0" max="50" value="30" oninput="updateWeights()">
+        </div>
+        <div class="input-group">
+          <div class="input-label"><span>Revenue</span><span id="weightRevenue">20</span></div>
+          <input type="range" class="slider" id="sliderWeightRevenue" min="0" max="40" value="20" oninput="updateWeights()">
+        </div>
+        <div class="input-group">
+          <div class="input-label"><span>Stability</span><span id="weightStability">10</span></div>
+          <input type="range" class="slider" id="sliderWeightStability" min="0" max="30" value="10" oninput="updateWeights()">
+        </div>
+        <div class="input-group">
+          <div class="input-label"><span>Buffer</span><span id="weightBuffer">10</span></div>
+          <input type="range" class="slider" id="sliderWeightBuffer" min="0" max="30" value="10" oninput="updateWeights()">
+        </div>
+      </div>
+      
+      <!-- Model Parameters -->
+      <div class="settings-section">
+        <div class="settings-section-title">Model Parameters</div>
+        <div class="input-group">
+          <div class="input-label"><span>Collectability</span><span id="paramCollectability">50%</span></div>
+          <input type="range" class="slider" id="sliderCollectability" min="0" max="100" value="50" oninput="updateParams()">
+          <div class="slider-range"><span>Independent</span><span>Blended</span></div>
+        </div>
+        <div class="input-group">
+          <div class="input-label"><span>Risk Tolerance</span><span id="paramRisk">Balanced</span></div>
+          <input type="range" class="slider" id="sliderRiskTolerance" min="1" max="5" value="3" oninput="updateParams()">
+          <div class="slider-range"><span>Conservative</span><span>Aggressive</span></div>
+        </div>
+      </div>
+      
+      <!-- Advanced Settings -->
+      <div class="settings-section advanced-section" id="advancedParams">
+        <div class="settings-section-title">Tier Thresholds</div>
+        <div class="tier-inputs">
+          <div class="tier-input-row"><span class="tier-label-sm">A</span><input type="number" class="tier-threshold" id="threshA" value="80" oninput="updateParams()"></div>
+          <div class="tier-input-row"><span class="tier-label-sm">B</span><input type="number" class="tier-threshold" id="threshB" value="65" oninput="updateParams()"></div>
+          <div class="tier-input-row"><span class="tier-label-sm">C</span><input type="number" class="tier-threshold" id="threshC" value="50" oninput="updateParams()"></div>
+          <div class="tier-input-row"><span class="tier-label-sm">D</span><input type="number" class="tier-threshold" id="threshD" value="35" oninput="updateParams()"></div>
+        </div>
+        <div class="settings-section-title" style="margin-top:16px">Factor Rate Range</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="input-group">
+            <div class="input-label"><span>Min</span><span id="paramFactorMin">1.10x</span></div>
+            <input type="range" class="slider" id="sliderFactorMin" min="1.05" max="1.25" step="0.01" value="1.10" oninput="updateParams()">
+          </div>
+          <div class="input-group">
+            <div class="input-label"><span>Max</span><span id="paramFactorMax">1.50x</span></div>
+            <input type="range" class="slider" id="sliderFactorMax" min="1.30" max="1.60" step="0.01" value="1.50" oninput="updateParams()">
+          </div>
+        </div>
+        <div class="settings-section-title" style="margin-top:16px">Funding Limits</div>
+        <div class="input-group">
+          <div class="input-label"><span>Max Funding</span><span id="paramMaxFunding">$250K</span></div>
+          <input type="range" class="slider" id="sliderMaxFunding" min="50000" max="500000" step="25000" value="250000" oninput="updateParams()">
+        </div>
+        <div class="input-group">
+          <div class="input-label"><span>Revenue Cap</span><span id="paramRevenueCap">150%</span></div>
+          <input type="range" class="slider" id="sliderRevenueCap" min="50" max="300" step="10" value="150" oninput="updateParams()">
+        </div>
+      </div>
+      
+      <!-- Presets -->
+      <div class="settings-section">
+        <div class="settings-section-title">Presets</div>
+        <div class="preset-grid">
+          <button class="preset-btn" onclick="loadModelPreset('conservative')"><span class="preset-icon">C</span><span class="preset-name">Conservative</span></button>
+          <button class="preset-btn active" onclick="loadModelPreset('balanced')"><span class="preset-icon">B</span><span class="preset-name">Balanced</span></button>
+          <button class="preset-btn" onclick="loadModelPreset('aggressive')"><span class="preset-icon">A</span><span class="preset-name">Aggressive</span></button>
+          <button class="preset-btn" onclick="loadModelPreset('custom')"><span class="preset-icon">+</span><span class="preset-name">Custom</span></button>
+        </div>
+      </div>
+      
+      <!-- Actions -->
+      <div class="settings-section">
+        <div class="settings-section-title">Configuration</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button class="settings-btn" onclick="exportConfig()">Export Config</button>
+          <button class="settings-btn" onclick="importConfig()">Import Config</button>
+          <button class="settings-btn" onclick="resetWeights()">Reset to Defaults</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <script>
+    let TIERS={A:{min:80,factor:1.18,term:12,mult:1.4,label:'Prime'},B:{min:65,factor:1.24,term:10,mult:1.0,label:'Near-Prime'},C:{min:50,factor:1.32,term:9,mult:0.65,label:'Mid-Prime'},D:{min:35,factor:1.38,term:6,mult:0.5,label:'Sub-Prime'},E:{min:0,factor:1.45,term:4,mult:0.4,label:'High-Risk'}};
+    const INDUSTRY={retail:1.0,restaurant:0.85,construction:0.80,medical:1.10,auto:0.90,professional:1.05,trucking:0.75,other:0.90};
+    let debtPositions=[],currentDeal={};
+
+    function calculate(){
+      const credit=+document.getElementById('sliderCredit').value;
+      const revenue=+document.getElementById('sliderRevenue').value;
+      const tib=+document.getElementById('sliderTIB').value;
+      const balance=+document.getElementById('sliderBalance').value;
+      const nsf=+document.getElementById('sliderNSF').value;
+      const negDays=+document.getElementById('sliderNegDays').value;
+      const industry=document.getElementById('selectIndustry').value;
+
+      document.getElementById('valCredit').textContent=credit;
+      document.getElementById('valRevenue').textContent=formatCurrency(revenue);
+      document.getElementById('valTIB').textContent=tib+' mo';
+      document.getElementById('valBalance').textContent=formatCurrency(balance);
+      document.getElementById('valNSF').textContent=nsf;
+      document.getElementById('valNegDays').textContent=negDays;
+
+      // Dynamic weights from admin config
+      const w=modelConfig.weights;
+      const creditScore=credit<500?0:credit>=750?w.credit:Math.round(((credit-500)/250)*w.credit);
+      const behaviorScore=Math.max(0,w.behavior-(nsf+negDays)*3*(w.behavior/30));
+      const revenueScore=revenue<7500?0:revenue>=100000?w.revenue:Math.round(((revenue-7500)/92500)*w.revenue);
+      const stabilityScore=tib>=36?w.stability:tib>=24?w.stability*0.7:tib>=12?w.stability*0.4:w.stability*0.1;
+      const bufferScore=balance/Math.max(revenue,1)>=0.10?w.buffer:balance/Math.max(revenue,1)>=0.05?w.buffer*0.5:0;
+      
+      // Apply collectability blending
+      const coll=modelConfig.collectability/100;
+      const avgScore=(creditScore+behaviorScore+revenueScore+stabilityScore+bufferScore)/5;
+      const blendedCredit=creditScore*(1-coll)+avgScore*coll*(w.credit/20);
+      const blendedBehavior=behaviorScore*(1-coll)+avgScore*coll*(w.behavior/20);
+      const blendedRevenue=revenueScore*(1-coll)+avgScore*coll*(w.revenue/20);
+      const blendedStability=stabilityScore*(1-coll)+avgScore*coll*(w.stability/20);
+      const blendedBuffer=bufferScore*(1-coll)+avgScore*coll*(w.buffer/20);
+      
+      const totalScore=Math.round(blendedCredit+blendedBehavior+blendedRevenue+blendedStability+blendedBuffer);
+      const tier=totalScore>=modelConfig.thresholds.A?'A':totalScore>=modelConfig.thresholds.B?'B':totalScore>=modelConfig.thresholds.C?'C':totalScore>=modelConfig.thresholds.D?'D':'E';
+      const tierData=TIERS[tier];
+
+      const industryMult=INDUSTRY[industry]||1.0;
+      const riskMult=[0,0.7,0.85,1.0,1.15,1.3][modelConfig.riskTolerance];
+      const totalDebt=debtPositions.reduce((s,p)=>s+(p.payment||0)*22,0);
+      const availableRev=revenue-totalDebt;
+      const fundingRaw=Math.round((availableRev*tierData.mult*industryMult*riskMult)/500)*500;
+      const fundingCapped=Math.min(fundingRaw,modelConfig.maxFunding,revenue*(modelConfig.revenueCap/100));
+      const funding=Math.max(0,fundingCapped);
+      const payback=Math.round(funding*tierData.factor);
+      const daily=Math.round(payback/(tierData.term*22));
+      const pd=Math.max(1,Math.min(30,25-totalScore*0.2+(nsf+negDays)*0.5));
+      const dscr=revenue/Math.max(daily*22,1);
+      const util=funding/Math.max(revenue,1);
+
+      currentDeal={score:totalScore,tier,funding,factor:tierData.factor,term:tierData.term,payback,daily,pd,dscr,components:{creditScore:blendedCredit,behaviorScore:blendedBehavior,revenueScore:blendedRevenue,stabilityScore:blendedStability,bufferScore:blendedBuffer}};
+
+      // Set tier on document for CSS variable switching
+      document.documentElement.setAttribute('data-tier',tier);
+      
+      // Update score slider
+      document.getElementById('scoreValue').textContent=totalScore;
+      document.getElementById('scoreMarkerValue').textContent=totalScore;
+      const fillWidth=100-totalScore;
+      document.getElementById('scoreSliderFill').style.width=fillWidth+'%';
+      document.getElementById('scoreSliderMarker').style.left=totalScore+'%';
+      
+      // Update tier display
+      document.getElementById('tierLetter').textContent=tier;
+      document.getElementById('tierLetterSmall').textContent=tier;
+      
+      // Update risk cards
+      document.getElementById('riskPDHero').textContent=pd.toFixed(1)+'%';
+      document.getElementById('riskDSCRHero').textContent=dscr.toFixed(2)+'x';
+      const riskLevelEl=document.getElementById('riskLevelHero');
+      riskLevelEl.className='risk-card-value';
+      if(pd<10){riskLevelEl.textContent='Low';riskLevelEl.classList.add('risk-low');}
+      else if(pd<20){riskLevelEl.textContent='Med';riskLevelEl.classList.add('risk-med');}
+      else{riskLevelEl.textContent='High';riskLevelEl.classList.add('risk-high');}
+      
+      // Calculate APR estimate
+      const costOfCapital=payback-funding;
+      const apr=((costOfCapital/funding)/(tierData.term/12)*100).toFixed(1);
+      const holdback=Math.round((daily*22/revenue)*100);
+      
+      // Update offer preview
+      const minApprovalScore=modelConfig.thresholds.D;
+      const approved=totalScore>=minApprovalScore&&revenue>=7500&&(nsf+negDays)<=10&&funding>=5000;
+      document.getElementById('approvalStatus').textContent=approved?'APPROVED':'DECLINED';
+      document.getElementById('metricFunding').textContent=formatCurrency(funding);
+      document.getElementById('metricFactor').textContent=tierData.factor.toFixed(2)+'x';
+      document.getElementById('metricTerm').textContent=tierData.term+' Months';
+      document.getElementById('metricDaily').textContent=formatCurrency(daily);
+      document.getElementById('metricPayback').textContent=formatCurrency(payback);
+      document.getElementById('metricHoldback').textContent=holdback+'%';
+      document.getElementById('metricAPR').textContent=apr+'%';
+      
+      // Update small metrics in score header
+      document.getElementById('metricFundingSmall').textContent=formatCurrency(funding);
+      document.getElementById('metricFactorSmall').textContent=tierData.factor.toFixed(2)+'x';
+      document.getElementById('metricTermSmall').textContent=tierData.term+' mo';
+
+      updateBar('barCredit',blendedCredit,w.credit,'scoreCredit');
+      updateBar('barBehavior',blendedBehavior,w.behavior,'scoreBehavior');
+      updateBar('barRevenue',blendedRevenue,w.revenue,'scoreRevenue');
+      updateBar('barStability',blendedStability,w.stability,'scoreStability');
+      updateBar('barBuffer',blendedBuffer,w.buffer,'scoreBuffer');
+
+      document.getElementById('riskPD').textContent=pd.toFixed(1)+'%';
+      document.getElementById('riskDSCR').textContent=dscr.toFixed(2)+'x';
+      document.getElementById('riskUtil').textContent=Math.round(util*100)+'%';
+      updateRiskBar('fillPD',pd,30,true);
+      updateRiskBar('fillDSCR',Math.min(dscr,3),3,false);
+      updateRiskBar('fillUtil',util*100,100,true);
+
+      const box=document.getElementById('decisionBox');
+      const icon=document.getElementById('decisionIcon');
+      box.className='decision-box '+(approved?'approved':'declined');
+      document.getElementById('decisionText').textContent=approved?'APPROVED':'DECLINED';
+      document.getElementById('decisionText').style.color=approved?'var(--success)':'var(--danger)';
+      icon.innerHTML=approved?'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>':'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>';
+      icon.className='w-3.5 h-3.5 '+(approved?'text-success':'text-danger');
+      box.querySelector('div:first-child').className='w-7 h-7 rounded-full flex items-center justify-content '+(approved?'bg-success-muted':'bg-danger-muted');
+
+      updateOfferBuilder();
+      updateAnalytics();
+    }
+
+    function updateBar(barId,value,max,scoreId){
+      const pct=(value/max)*100;
+      const el=document.getElementById(barId);
+      el.style.width=pct+'%';
+      el.className='breakdown-fill fill-gradient';
+      // Position gradient based on score - low scores show red, high scores show green
+      el.style.backgroundPosition=(100-pct)+'% 0';
+      document.getElementById(scoreId).textContent=Math.round(value)+'/'+max;
+    }
+
+    function updateRiskBar(id,value,max,inverse){
+      const pct=Math.min((value/max)*100,100);
+      const el=document.getElementById(id);
+      el.style.width=pct+'%';
+      el.className='risk-fill fill-gradient';
+      // For inverse metrics (lower is better): low pct shows green, high shows red
+      // For normal metrics (higher is better): high pct shows green, low shows red
+      if(inverse){
+        el.style.backgroundPosition=pct+'% 0';
+      } else {
+        el.style.backgroundPosition=(100-pct)+'% 0';
+      }
+    }
+
+    let paymentFrequency='daily';
+
+    function updateOfferBuilder(){
+      document.getElementById('offerModelFunding').textContent=formatCurrency(currentDeal.funding);
+      document.getElementById('offerModelFactor').textContent=currentDeal.factor.toFixed(2)+'x';
+      document.getElementById('offerModelTerm').textContent=currentDeal.term+' mo';
+      document.getElementById('sliderOverrideFunding').value=currentDeal.funding;
+      document.getElementById('sliderOverrideFactor').value=currentDeal.factor;
+      document.getElementById('sliderOverrideTerm').value=currentDeal.term;
+      updateOffer();
+    }
+
+    function updateOffer(){
+      const funding=+document.getElementById('sliderOverrideFunding').value;
+      const factor=+document.getElementById('sliderOverrideFactor').value;
+      const term=+document.getElementById('sliderOverrideTerm').value;
+      const commission=+document.getElementById('sliderCommission').value;
+      const payback=Math.round(funding*factor);
+      const totalPayments=term*22;
+      const daily=Math.round(payback/totalPayments);
+      const weekly=daily*5;
+      const monthly=Math.round(payback/term);
+      const cost=payback-funding;
+      const revenue=+document.getElementById('sliderRevenue').value;
+      const obligation=paymentFrequency==='daily'?daily*22:weekly*4.33;
+      const dscr=revenue/Math.max(obligation,1);
+      const holdback=(daily*22/revenue*100).toFixed(1);
+      const apr=((factor-1)/term*12*100).toFixed(1);
+      const buyRate=(factor-commission/100).toFixed(2);
+      const commissionAmt=Math.round(funding*commission/100);
+
+      // Left panel
+      document.getElementById('offerFunding').textContent=formatCurrency(funding);
+      document.getElementById('offerFactor').textContent=factor.toFixed(2)+'x';
+      document.getElementById('offerTerm').textContent=term;
+      document.getElementById('offerCommPct').textContent=commission+'%';
+
+      // Center - Comparison
+      document.getElementById('cmpModelFunding').textContent=formatCurrency(currentDeal.funding);
+      document.getElementById('cmpModelFactor').textContent=currentDeal.factor.toFixed(2)+'x';
+      document.getElementById('cmpModelTerm').textContent=currentDeal.term+' mo';
+      document.getElementById('cmpModelPayback').textContent=formatCurrency(currentDeal.payback);
+      document.getElementById('cmpModelDaily').textContent=formatCurrency(currentDeal.daily);
+      document.getElementById('cmpModelCost').textContent=formatCurrency(currentDeal.payback-currentDeal.funding);
+
+      document.getElementById('cmpOverrideFunding').textContent=formatCurrency(funding);
+      document.getElementById('cmpOverrideFactor').textContent=factor.toFixed(2)+'x';
+      document.getElementById('cmpOverrideTerm').textContent=term+' mo';
+      document.getElementById('cmpOverridePayback').textContent=formatCurrency(payback);
+      document.getElementById('cmpOverrideDaily').textContent=formatCurrency(daily);
+      document.getElementById('cmpOverrideCost').textContent=formatCurrency(cost);
+
+      // Deltas
+      setDelta('cmpDeltaFunding',funding-currentDeal.funding,true);
+      setDelta('cmpDeltaFactor',(factor-currentDeal.factor)*100,false,'pts');
+      setDelta('cmpDeltaTerm',term-currentDeal.term,false,' mo');
+      setDelta('cmpDeltaPayback',payback-currentDeal.payback,true);
+      setDelta('cmpDeltaDaily',daily-currentDeal.daily,true);
+      setDelta('cmpDeltaCost',cost-(currentDeal.payback-currentDeal.funding),true);
+
+      // Schedule
+      document.getElementById('schedDaily').textContent=formatCurrency(daily);
+      document.getElementById('schedWeekly').textContent=formatCurrency(weekly);
+      document.getElementById('schedMonthly').textContent=formatCurrency(monthly);
+      document.getElementById('schedTotal').textContent=totalPayments;
+
+      // Rates
+      document.getElementById('rateHoldback').textContent=holdback+'%';
+      document.getElementById('rateAPR').textContent=apr+'%';
+      document.getElementById('rateBuy').textContent=buyRate+'x';
+
+      // Right - Summary
+      document.getElementById('summaryFunding').textContent=formatCurrency(funding);
+      document.getElementById('summaryPayback').textContent=formatCurrency(payback);
+      document.getElementById('summaryPayment').textContent=formatCurrency(paymentFrequency==='daily'?daily:weekly)+(paymentFrequency==='daily'?'/d':'/w');
+      document.getElementById('offerDSCR').textContent=dscr.toFixed(2)+'x';
+      document.getElementById('offerRevenue').textContent=formatCurrency(revenue);
+      document.getElementById('offerObligation').textContent=formatCurrency(Math.round(obligation));
+      document.getElementById('offerCommission').textContent=formatCurrency(commissionAmt);
+      document.getElementById('offerPoints').textContent=commission+' pts';
+
+      // DSCR bar
+      const dscrPct=Math.min((dscr/3)*100,100);
+      document.getElementById('offerDSCRFill').style.width=dscrPct+'%';
+      document.getElementById('offerDSCRFill').className='risk-fill fill-gradient';
+      document.getElementById('offerDSCRFill').style.backgroundPosition=(100-dscrPct)+'% 0';
+
+      // Warning
+      const warning=document.getElementById('offerWarning');
+      const warningText=document.getElementById('offerWarningText');
+      if(dscr<1.2){
+        warning.classList.remove('hidden');
+        warningText.textContent='DSCR below 1.2x threshold';
+      }else if(holdback>15){
+        warning.classList.remove('hidden');
+        warningText.textContent='Holdback exceeds 15%';
+      }else{
+        warning.classList.add('hidden');
+      }
+    }
+
+    function setDelta(id,value,isCurrency,suffix=''){
+      const el=document.getElementById(id);
+      if(Math.abs(value)<0.01){el.textContent='—';el.className='compare-col';return}
+      const sign=value>0?'+':'';
+      const display=isCurrency?sign+formatCurrency(Math.abs(value))*(value<0?-1:1):sign+value.toFixed(suffix==='pts'?0:0)+suffix;
+      el.textContent=isCurrency?(value>=0?'+'+formatCurrency(value):'-'+formatCurrency(Math.abs(value))):sign+(suffix==='pts'?value.toFixed(0):value)+suffix;
+      el.className='compare-col '+(value>0?'text-success':value<0?'text-danger':'');
+    }
+
+    function setFrequency(freq){
+      paymentFrequency=freq;
+      document.getElementById('freqDaily').classList.toggle('active',freq==='daily');
+      document.getElementById('freqWeekly').classList.toggle('active',freq==='weekly');
+      updateOffer();
+    }
+
+    function resetToModel(){
+      document.getElementById('sliderOverrideFunding').value=currentDeal.funding;
+      document.getElementById('sliderOverrideFactor').value=currentDeal.factor;
+      document.getElementById('sliderOverrideTerm').value=currentDeal.term;
+      updateOffer();
+      notify('Reset to model');
+    }
+
+    function applyOffer(){
+      notify('Offer applied');
+    }
+
+    function saveOfferVariant(){
+      notify('Variant saved');
+    }
+
+    function updateAnalytics(){
+      const c=currentDeal.components;
+      const credit=+document.getElementById('sliderCredit').value;
+      const nsf=+document.getElementById('sliderNSF').value;
+      const negDays=+document.getElementById('sliderNegDays').value;
+      const revenue=+document.getElementById('sliderRevenue').value;
+      const tib=+document.getElementById('sliderTIB').value;
+      const balance=+document.getElementById('sliderBalance').value;
+      const total=currentDeal.score;
+      
+      // Component scores
+      document.getElementById('analyticsCredit').textContent=Math.round(c.creditScore);
+      document.getElementById('analyticsBehavior').textContent=Math.round(c.behaviorScore);
+      document.getElementById('analyticsRevenue').textContent=Math.round(c.revenueScore);
+      document.getElementById('analyticsStability').textContent=Math.round(c.stabilityScore);
+      document.getElementById('analyticsBuffer').textContent=Math.round(c.bufferScore);
+      
+      // Component bars
+      const creditPct=(c.creditScore/30)*100;
+      const behaviorPct=(c.behaviorScore/30)*100;
+      const revenuePct=(c.revenueScore/20)*100;
+      const stabilityPct=(c.stabilityScore/10)*100;
+      const bufferPct=(c.bufferScore/10)*100;
+      
+      document.getElementById('analyticsBarCredit').style.width=creditPct+'%';
+      document.getElementById('analyticsBarBehavior').style.width=behaviorPct+'%';
+      document.getElementById('analyticsBarRevenue').style.width=revenuePct+'%';
+      document.getElementById('analyticsBarStability').style.width=stabilityPct+'%';
+      document.getElementById('analyticsBarBuffer').style.width=bufferPct+'%';
+      
+      // Gradient position based on percentage
+      ['Credit','Behavior','Revenue','Stability','Buffer'].forEach(comp=>{
+        const pct=comp==='Credit'?creditPct:comp==='Behavior'?behaviorPct:comp==='Revenue'?revenuePct:comp==='Stability'?stabilityPct:bufferPct;
+        const el=document.getElementById('analyticsBar'+comp);
+        el.className='comp-fill fill-gradient';
+        el.style.backgroundPosition=(100-pct)+'% 0';
+      });
+      
+      // Component details
+      document.getElementById('analyticsCreditRaw').textContent=credit;
+      document.getElementById('analyticsBehaviorNSF').textContent=nsf;
+      document.getElementById('analyticsBehaviorNeg').textContent=negDays;
+      document.getElementById('analyticsRevenueRaw').textContent=formatCurrency(revenue);
+      document.getElementById('analyticsStabilityTIB').textContent=tib;
+      document.getElementById('analyticsBufferRaw').textContent=formatCurrency(balance);
+      
+      // Distribution bars
+      document.getElementById('distCredit').style.height=Math.max(10,creditPct)+'%';
+      document.getElementById('distBehavior').style.height=Math.max(10,behaviorPct)+'%';
+      document.getElementById('distRevenue').style.height=Math.max(10,revenuePct)+'%';
+      document.getElementById('distStability').style.height=Math.max(10,stabilityPct)+'%';
+      document.getElementById('distBuffer').style.height=Math.max(10,bufferPct)+'%';
+      
+      // Tier track marker
+      document.getElementById('tierCurrentMarker').style.left=total+'%';
+      
+      // Distance to tiers
+      document.getElementById('distToB').textContent=total>=65?'✓ Current':'+'+(65-total)+' pts';
+      document.getElementById('distToA').textContent=total>=80?'✓ Current':'+'+(80-total)+' pts';
+      document.getElementById('distToD').textContent=total<35?'Current':'-'+(total-35)+' pts';
+      document.getElementById('distToE').textContent='-'+total+' pts';
+      
+      // Sensitivity calculations
+      const f=currentDeal.funding;
+      document.getElementById('sensCredit').textContent='+'+formatCurrency(Math.round(f*0.20));
+      document.getElementById('sensRevenue').textContent='+'+formatCurrency(Math.round(f*0.16));
+      document.getElementById('sensTIB').textContent='+'+formatCurrency(Math.round(f*0.07));
+      document.getElementById('sensNSF').textContent='+'+formatCurrency(Math.round(f*0.12));
+      document.getElementById('sensCredit2').textContent='-'+formatCurrency(Math.round(f*0.24));
+      document.getElementById('sensNSF2').textContent='-'+formatCurrency(Math.round(f*0.16));
+      
+      // Risk factors
+      updateRiskFactors(credit,nsf,negDays,tib,balance,revenue);
+      
+      // Stats
+      const riskLevel=total>=65?'LOW':total>=50?'MODERATE':'HIGH';
+      document.getElementById('statRisk').textContent=riskLevel;
+      document.getElementById('statRisk').className='text-xs font-bold '+(riskLevel==='LOW'?'text-success':riskLevel==='MODERATE'?'text-accent':'text-danger');
+      document.getElementById('statConfidence').textContent=Math.min(95,60+Math.round(total/3))+'%';
+      document.getElementById('statIndustry').textContent=INDUSTRY[document.getElementById('selectIndustry').value]+'x';
+      document.getElementById('statPosition').textContent=debtPositions.length>0?(debtPositions.length+1)+getOrdinal(debtPositions.length+1):'1st';
+    }
+    
+    function updateRiskFactors(credit,nsf,negDays,tib,balance,revenue){
+      const factors=[
+        {id:'riskFactor1',condition:credit<650,warning:'Credit below 650 threshold',ok:'Credit score acceptable'},
+        {id:'riskFactor2',condition:nsf>5,warning:'High NSF count ('+nsf+')',ok:'NSF count acceptable'},
+        {id:'riskFactor3',condition:balance<revenue*0.1,warning:'Low balance buffer',ok:'Strong balance buffer'},
+        {id:'riskFactor4',condition:tib<12,warning:'Limited time in business',ok:'Established business history'}
+      ];
+      factors.forEach(f=>{
+        const el=document.getElementById(f.id);
+        if(f.condition){
+          el.className='risk-factor-item warning';
+          el.innerHTML='<span class="rf-icon">⚠</span><span>'+f.warning+'</span>';
+        }else{
+          el.className='risk-factor-item ok';
+          el.innerHTML='<span class="rf-icon">✓</span><span>'+f.ok+'</span>';
+        }
+      });
+    }
+    
+    function getOrdinal(n){return n===1?'st':n===2?'nd':n===3?'rd':'th'}
+
+    // Admin Panel Functions
+    let modelConfig={
+      mode:'simple',
+      weights:{credit:30,behavior:30,revenue:20,stability:10,buffer:10},
+      collectability:50,
+      riskTolerance:3,
+      thresholds:{A:80,B:65,C:50,D:35},
+      factorMin:1.10,
+      factorMax:1.50,
+      maxFunding:250000,
+      revenueCap:150
+    };
+
+    function setMode(mode){
+      modelConfig.mode=mode;
+      document.getElementById('modeSimple').classList.toggle('active',mode==='simple');
+      document.getElementById('modeAdvanced').classList.toggle('active',mode==='advanced');
+      document.getElementById('advancedParams').classList.toggle('show',mode==='advanced');
+      document.getElementById('cfgMode').textContent=mode==='simple'?'Simple':'Advanced';
+    }
+
+    function updateWeights(){
+      const w={
+        credit:+document.getElementById('sliderWeightCredit').value,
+        behavior:+document.getElementById('sliderWeightBehavior').value,
+        revenue:+document.getElementById('sliderWeightRevenue').value,
+        stability:+document.getElementById('sliderWeightStability').value,
+        buffer:+document.getElementById('sliderWeightBuffer').value
+      };
+      modelConfig.weights=w;
+      const total=w.credit+w.behavior+w.revenue+w.stability+w.buffer;
+      
+      document.getElementById('weightCredit').textContent=w.credit;
+      document.getElementById('weightBehavior').textContent=w.behavior;
+      document.getElementById('weightRevenue').textContent=w.revenue;
+      document.getElementById('weightStability').textContent=w.stability;
+      document.getElementById('weightBuffer').textContent=w.buffer;
+      document.getElementById('weightTotal').textContent=total;
+      
+      const valid=total===100;
+      document.getElementById('weightStatus').textContent=valid?'':'('+total+')';
+      document.querySelector('.weight-total').classList.toggle('invalid',!valid);
+      document.getElementById('cfgWeights').textContent=`${w.credit}/${w.behavior}/${w.revenue}/${w.stability}/${w.buffer}`;
+      
+      calculate();
+    }
+
+    function updateParams(){
+      const coll=+document.getElementById('sliderCollectability').value;
+      const risk=+document.getElementById('sliderRiskTolerance').value;
+      const riskLabels=['','Very Conservative','Conservative','Balanced','Aggressive','Very Aggressive'];
+      
+      modelConfig.collectability=coll;
+      modelConfig.riskTolerance=risk;
+      modelConfig.thresholds={
+        A:+document.getElementById('threshA').value,
+        B:+document.getElementById('threshB').value,
+        C:+document.getElementById('threshC').value,
+        D:+document.getElementById('threshD').value
+      };
+      modelConfig.factorMin=+document.getElementById('sliderFactorMin').value;
+      modelConfig.factorMax=+document.getElementById('sliderFactorMax').value;
+      modelConfig.maxFunding=+document.getElementById('sliderMaxFunding').value;
+      modelConfig.revenueCap=+document.getElementById('sliderRevenueCap').value;
+      
+      document.getElementById('paramCollectability').textContent=coll+'%';
+      document.getElementById('paramRisk').textContent=riskLabels[risk];
+      document.getElementById('paramFactorMin').textContent=modelConfig.factorMin.toFixed(2)+'x';
+      document.getElementById('paramFactorMax').textContent=modelConfig.factorMax.toFixed(2)+'x';
+      document.getElementById('paramMaxFunding').textContent=formatCurrency(modelConfig.maxFunding);
+      document.getElementById('paramRevenueCap').textContent=modelConfig.revenueCap+'%';
+      
+      document.getElementById('cfgCollectability').textContent=coll+'%';
+      document.getElementById('cfgRisk').textContent=riskLabels[risk];
+      document.getElementById('cfgFactors').textContent=modelConfig.factorMin.toFixed(2)+'-'+modelConfig.factorMax.toFixed(2)+'x';
+      document.getElementById('cfgMaxFund').textContent=formatCurrency(modelConfig.maxFunding);
+      
+      // Update TIERS dynamically
+      TIERS.A.min=modelConfig.thresholds.A;
+      TIERS.B.min=modelConfig.thresholds.B;
+      TIERS.C.min=modelConfig.thresholds.C;
+      TIERS.D.min=modelConfig.thresholds.D;
+      
+      // Update factor rates based on range
+      const fMin=modelConfig.factorMin;
+      const fMax=modelConfig.factorMax;
+      const fStep=(fMax-fMin)/4;
+      TIERS.A.factor=fMin;
+      TIERS.B.factor=fMin+fStep;
+      TIERS.C.factor=fMin+fStep*2;
+      TIERS.D.factor=fMin+fStep*3;
+      TIERS.E.factor=fMax;
+      
+      calculate();
+    }
+
+    function resetWeights(){
+      document.getElementById('sliderWeightCredit').value=30;
+      document.getElementById('sliderWeightBehavior').value=30;
+      document.getElementById('sliderWeightRevenue').value=20;
+      document.getElementById('sliderWeightStability').value=10;
+      document.getElementById('sliderWeightBuffer').value=10;
+      updateWeights();
+      notify('Weights reset to default');
+    }
+
+    function loadModelPreset(preset){
+      document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));
+      event.target.closest('.preset-btn').classList.add('active');
+      
+      const presets={
+        conservative:{collectability:30,risk:2,factorMin:1.15,factorMax:1.40,maxFunding:150000,revenueCap:100},
+        balanced:{collectability:50,risk:3,factorMin:1.10,factorMax:1.50,maxFunding:250000,revenueCap:150},
+        aggressive:{collectability:70,risk:4,factorMin:1.08,factorMax:1.55,maxFunding:400000,revenueCap:200},
+        custom:modelConfig
+      };
+      
+      const p=presets[preset]||presets.balanced;
+      document.getElementById('sliderCollectability').value=p.collectability;
+      document.getElementById('sliderRiskTolerance').value=p.risk;
+      document.getElementById('sliderFactorMin').value=p.factorMin;
+      document.getElementById('sliderFactorMax').value=p.factorMax;
+      document.getElementById('sliderMaxFunding').value=p.maxFunding;
+      document.getElementById('sliderRevenueCap').value=p.revenueCap;
+      updateParams();
+      notify(preset.charAt(0).toUpperCase()+preset.slice(1)+' preset loaded');
+    }
+
+    function exportConfig(){
+      const json=JSON.stringify(modelConfig,null,2);
+      const blob=new Blob([json],{type:'application/json'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url;a.download='ables_model_config.json';a.click();
+      notify('Config exported');
+    }
+
+    function importConfig(){
+      const input=document.createElement('input');
+      input.type='file';input.accept='.json';
+      input.onchange=e=>{
+        const file=e.target.files[0];
+        const reader=new FileReader();
+        reader.onload=ev=>{
+          try{
+            const cfg=JSON.parse(ev.target.result);
+            Object.assign(modelConfig,cfg);
+            applyConfigToUI();
+            notify('Config imported');
+          }catch(err){notify('Invalid config file')}
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    }
+
+    function applyConfigToUI(){
+      document.getElementById('sliderWeightCredit').value=modelConfig.weights.credit;
+      document.getElementById('sliderWeightBehavior').value=modelConfig.weights.behavior;
+      document.getElementById('sliderWeightRevenue').value=modelConfig.weights.revenue;
+      document.getElementById('sliderWeightStability').value=modelConfig.weights.stability;
+      document.getElementById('sliderWeightBuffer').value=modelConfig.weights.buffer;
+      document.getElementById('sliderCollectability').value=modelConfig.collectability;
+      document.getElementById('sliderRiskTolerance').value=modelConfig.riskTolerance;
+      document.getElementById('threshA').value=modelConfig.thresholds.A;
+      document.getElementById('threshB').value=modelConfig.thresholds.B;
+      document.getElementById('threshC').value=modelConfig.thresholds.C;
+      document.getElementById('threshD').value=modelConfig.thresholds.D;
+      document.getElementById('sliderFactorMin').value=modelConfig.factorMin;
+      document.getElementById('sliderFactorMax').value=modelConfig.factorMax;
+      document.getElementById('sliderMaxFunding').value=modelConfig.maxFunding;
+      document.getElementById('sliderRevenueCap').value=modelConfig.revenueCap;
+      setMode(modelConfig.mode);
+      updateWeights();
+      updateParams();
+    }
+
+    function saveAsCustom(){
+      localStorage.setItem('ablesCustomConfig',JSON.stringify(modelConfig));
+      notify('Saved as custom preset');
+    }
+
+    function applyConfig(){
+      calculate();
+      notify('Configuration applied');
+    }
+
+    function switchTab(tab){
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('tab-'+tab).classList.add('active');
+    }
+
+    function addDebtPosition(){debtPositions.push({id:Date.now(),payment:0,balance:0});renderDebt()}
+    function removeDebt(id){debtPositions=debtPositions.filter(p=>p.id!==id);renderDebt();calculate()}
+    function updateDebt(id,field,val){const p=debtPositions.find(x=>x.id===id);if(p)p[field]=+val||0;document.getElementById('totalDebt').textContent=formatCurrency(debtPositions.reduce((s,p)=>s+(p.payment||0)*22,0))+'/mo';calculate()}
+    function renderDebt(){document.getElementById('debtPositions').innerHTML=debtPositions.map(p=>`<div class="debt-row"><input type="number" class="debt-input" placeholder="Daily $" value="${p.payment||''}" onchange="updateDebt(${p.id},'payment',this.value)"><input type="number" class="debt-input" placeholder="Balance" value="${p.balance||''}" onchange="updateDebt(${p.id},'balance',this.value)"><button class="debt-remove" onclick="removeDebt(${p.id})">✕</button></div>`).join('');document.getElementById('totalDebt').textContent=formatCurrency(debtPositions.reduce((s,p)=>s+(p.payment||0)*22,0))+'/mo'}
+
+    function loadPreset(type){
+      const presets={strong:{credit:720,revenue:85000,tib:48,balance:12000,nsf:0,negDays:0},new:{credit:620,revenue:25000,tib:6,balance:3000,nsf:1,negDays:2},established:{credit:680,revenue:150000,tib:84,balance:25000,nsf:1,negDays:1},risky:{credit:550,revenue:35000,tib:12,balance:2000,nsf:5,negDays:8}};
+      const p=presets[type];if(!p)return;
+      document.getElementById('sliderCredit').value=p.credit;
+      document.getElementById('sliderRevenue').value=p.revenue;
+      document.getElementById('sliderTIB').value=p.tib;
+      document.getElementById('sliderBalance').value=p.balance;
+      document.getElementById('sliderNSF').value=p.nsf;
+      document.getElementById('sliderNegDays').value=p.negDays;
+      calculate();notify('Loaded '+type);
+    }
+
+    function saveDeal(){localStorage.setItem('ablesai_deal',JSON.stringify({credit:document.getElementById('sliderCredit').value,revenue:document.getElementById('sliderRevenue').value,tib:document.getElementById('sliderTIB').value,balance:document.getElementById('sliderBalance').value,nsf:document.getElementById('sliderNSF').value,negDays:document.getElementById('sliderNegDays').value,industry:document.getElementById('selectIndustry').value,debtPositions}));notify('Saved')}
+    function loadDeal(){const data=localStorage.getItem('ablesai_deal');if(!data)return notify('No saved deal');const d=JSON.parse(data);document.getElementById('sliderCredit').value=d.credit;document.getElementById('sliderRevenue').value=d.revenue;document.getElementById('sliderTIB').value=d.tib;document.getElementById('sliderBalance').value=d.balance;document.getElementById('sliderNSF').value=d.nsf;document.getElementById('sliderNegDays').value=d.negDays;document.getElementById('selectIndustry').value=d.industry||'retail';debtPositions=d.debtPositions||[];renderDebt();calculate();notify('Loaded')}
+    function exportPDF(){notify('Exporting...');setTimeout(()=>notify('Exported'),1000)}
+
+    function formatCurrency(v){return'$'+Math.round(v).toLocaleString()}
+    function notify(msg){const el=document.createElement('div');el.className='notification';el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),2500)}
+
+    // Theme & Settings Toggle
+    function toggleTheme(){
+      const html=document.documentElement;
+      const isDark=html.getAttribute('data-theme')==='dark';
+      html.setAttribute('data-theme',isDark?'light':'dark');
+      document.getElementById('themeLabel').textContent=isDark?'Light':'Dark';
+      const icon=document.getElementById('themeIcon');
+      icon.innerHTML=isDark?
+        '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>':
+        '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>';
+      localStorage.setItem('ablesai_theme',isDark?'light':'dark');
+    }
+    function toggleSettings(){
+      document.getElementById('settingsPanel').classList.toggle('open');
+      document.getElementById('settingsOverlay').classList.toggle('open');
+    }
+    function initTheme(){
+      const saved=localStorage.getItem('ablesai_theme');
+      if(saved==='light'){
+        document.documentElement.setAttribute('data-theme','light');
+        document.getElementById('themeLabel').textContent='Light';
+        document.getElementById('themeIcon').innerHTML='<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded',()=>{calculate();initTheme();});
+  </script>
+</body>
+</html>
