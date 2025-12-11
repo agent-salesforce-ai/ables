@@ -1258,6 +1258,19 @@
       color: var(--accent);
     }
 
+    .tab-btn .api-badge {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: var(--accent);
+      color: #000;
+      padding: 2px 5px;
+      border-radius: 4px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
     /* Theme Toggle */
     .theme-toggle {
       width: 32px;
@@ -5110,6 +5123,7 @@
     </div>
     <nav class="tab-nav">
       <button class="tab-btn" id="headerModelBtn">Model</button>
+      <a href="https://ables.ai/ai-search.html" class="tab-btn">AI Search<span class="api-badge">API</span></a>
       <a href="https://ables.ai/calculator.html" class="tab-btn">Calculator<span class="lite-badge">Lite</span></a>
       <a href="https://ables.ai/toolbox.html" class="tab-btn">Toolbox<span class="free-badge">Free</span></a>
       <a href="#pricing" class="tab-btn">Pricing</a>
@@ -5405,14 +5419,14 @@
           <div class="chart-overlay">
              <svg viewBox="0 0 36 36">
                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#222" stroke-width="2" />
-               <path id="staticIsoCommPath" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#a855f7" stroke-width="2" stroke-dasharray="16, 100" />
+               <path id="staticIsoCommPath" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#a855f7" stroke-width="2" stroke-dasharray="19, 100" />
              </svg>
              <div class="chart-text">
                 <div class="chart-sub">Earnings</div>
-                <div class="chart-main" id="staticIsoTotalDisplay">$9.3k</div>
+                <div class="chart-main" id="staticIsoTotalDisplay">$10.9k</div>
              </div>
           </div>
-          <div class="expanded-amount purple" id="staticIsoCommission">$9,300</div>
+          <div class="expanded-amount purple" id="staticIsoCommission">$10,850</div>
           <div class="expanded-label">Total Commission</div>
         </div>
         <div class="expanded-body">
@@ -5433,16 +5447,16 @@
             </div>
           </div>
           <div class="slider-group">
-            <div class="slider-header"><span class="slider-label">Upsell Points</span><span class="slider-value" id="staticIsoUpsellValue">+6 pts</span></div>
-            <input type="range" class="slider iso-slider" id="staticIsoUpsellSlider" min="0" max="8" step="0.5" value="6">
+            <div class="slider-header"><span class="slider-label">Upsell Points</span><span class="slider-value" id="staticIsoUpsellValue">+7 pts</span></div>
+            <input type="range" class="slider iso-slider" id="staticIsoUpsellSlider" min="0" max="8" step="0.5" value="7">
             <div class="slider-range">
                 <span>0 pts</span>
                 <span class="upsell-max-label">Max: 8 pts</span>
             </div>
           </div>
           <div class="expanded-results">
-            <div class="result-row"><span>Sell Rate</span><span id="staticIsoSellRate">1.34x</span></div>
-            <div class="result-row"><span>Points Income</span><span id="staticIsoPoints">$9,300</span></div>
+            <div class="result-row"><span>Sell Rate</span><span id="staticIsoSellRate">1.35x</span></div>
+            <div class="result-row"><span>Points Income</span><span id="staticIsoPoints">$10,850</span></div>
             <div class="result-row"><span>Net to Merchant</span><span id="staticIsoNet">$151,900</span></div>
           </div>
           <button class="expanded-cta iso-cta" id="staticIsoCta">Share Proposed Terms with Client</button>
