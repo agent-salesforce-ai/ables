@@ -8,6 +8,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
+  <script>
+var o_options = {
+    domain: 'trustbureauai.outseta.com',
+    load: 'auth,customForm,emailList,leadCapture,nocode,profile,support'
+};
+</script>
+<script src="https://cdn.outseta.com/outseta.min.js"
+        data-options="o_options">
+</script>
   <style>
     *, *::before, *::after {
       box-sizing: border-box;
@@ -1313,20 +1322,13 @@
         </span>
       </div>
 
-      <form class="cta-form" id="signupForm">
-        <input type="text" name="company" id="formCompany" placeholder="Company Name" required>
-        <div class="cta-form-row">
-          <input type="text" name="firstName" placeholder="First Name" required>
-          <input type="text" name="lastName" placeholder="Last Name" required>
-        </div>
-        <input type="email" name="email" placeholder="Email Address" required>
-        <button type="submit" class="cta-submit">
-          Continue to Payment
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M5 12h14M12 5l7 7-7 7"/>
-          </svg>
-        </button>
-      </form>
+      <div data-o-auth="1"
+           data-widget-mode="register"
+           data-plan-uid="xmeM5PmV"
+           data-plan-payment-term="month"
+           data-skip-plan-options="true"
+           data-mode="embed">
+      </div>
 
       <p class="cta-secure">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
