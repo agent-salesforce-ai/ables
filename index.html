@@ -1366,6 +1366,23 @@
       box-shadow: 0 10px 30px rgba(234, 179, 8, 0.3);
     }
 
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .hero-cta-secondary {
+      background: transparent;
+      color: var(--accent);
+      border: 2px solid var(--accent);
+    }
+
+    .hero-cta-secondary:hover {
+      background: var(--accent);
+      color: #000;
+    }
+
     .hero-card {
       background: var(--bg-card);
       border: 1px solid var(--border-secondary);
@@ -4459,7 +4476,7 @@
       <button class="tab-btn" id="headerModelBtn">Model</button>
       <a href="https://ables.ai/calculator.html" class="tab-btn">Calculator</a>
       <a href="https://ables.ai/toolbox.html" class="tab-btn">Toolbox</a>
-      <button class="tab-btn active" id="loginBtn">Login</button>
+      <a href="https://ables.ai/login" class="tab-btn active">Login</a>
     </nav>
   </header>
 
@@ -4514,7 +4531,10 @@
         <p class="hero-desc">
           Unified infrastructure for Lenders, ISOs, and Merchants. Connect underwriting, deal structuring, and checkout in one seamless flow.
         </p>
-        <a href="https://ables.ai/credit-model.html" class="hero-cta">View Demo</a>
+        <div class="hero-buttons">
+          <a href="https://ables.ai/credit-model.html" class="hero-cta">View Demo</a>
+          <a href="https://ables.ai/signup" class="hero-cta hero-cta-secondary">Sign Up</a>
+        </div>
       </div>
       
       <div class="hero-card">
