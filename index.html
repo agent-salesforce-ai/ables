@@ -5329,30 +5329,6 @@
     </div>
   </section>
 
-  <!-- Client Logos Section -->
-  <section class="client-logos-section">
-    <div class="client-logos-container">
-      <p class="client-logos-label">Trusted by Leading Lenders & ISOs</p>
-      <div class="client-logos">
-        <div class="client-logo">
-          <svg viewBox="0 0 120 32" fill="currentColor"><text x="0" y="24" font-family="DM Sans, sans-serif" font-size="20" font-weight="700" fill="#888">Velocity</text></svg>
-        </div>
-        <div class="client-logo">
-          <svg viewBox="0 0 120 32" fill="currentColor"><text x="0" y="24" font-family="DM Sans, sans-serif" font-size="20" font-weight="700" fill="#888">FundFast</text></svg>
-        </div>
-        <div class="client-logo">
-          <svg viewBox="0 0 140 32" fill="currentColor"><text x="0" y="24" font-family="DM Sans, sans-serif" font-size="20" font-weight="700" fill="#888">CapitalFlow</text></svg>
-        </div>
-        <div class="client-logo">
-          <svg viewBox="0 0 120 32" fill="currentColor"><text x="0" y="24" font-family="DM Sans, sans-serif" font-size="20" font-weight="700" fill="#888">MerchPro</text></svg>
-        </div>
-        <div class="client-logo">
-          <svg viewBox="0 0 130 32" fill="currentColor"><text x="0" y="24" font-family="DM Sans, sans-serif" font-size="20" font-weight="700" fill="#888">QuickFund</text></svg>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- Full Lender Card Section -->
   <section class="feature-section">
     <div class="approval-cards-header">
@@ -6015,11 +5991,11 @@
           </div>
 
           <div class="engine-tier-scale">
-            <div class="tier-band tier-a">A 80+</div>
-            <div class="tier-band tier-b">B 65+</div>
-            <div class="tier-band tier-c">C 50+</div>
-            <div class="tier-band tier-d">D 35+</div>
             <div class="tier-band tier-e">E &lt;35</div>
+            <div class="tier-band tier-d">D 35+</div>
+            <div class="tier-band tier-c">C 50+</div>
+            <div class="tier-band tier-b">B 65+</div>
+            <div class="tier-band tier-a">A 80+</div>
           </div>
         </div>
 
@@ -6041,11 +6017,11 @@
                 </div>
               </div>
               <div class="calc-tier-scale">
-                <div class="tier-segment tier-a">A 80+</div>
-                <div class="tier-segment tier-b">B 65+</div>
-                <div class="tier-segment tier-c">C 50+</div>
-                <div class="tier-segment tier-d">D 35+</div>
                 <div class="tier-segment tier-e">E &lt;35</div>
+                <div class="tier-segment tier-d">D 35+</div>
+                <div class="tier-segment tier-c">C 50+</div>
+                <div class="tier-segment tier-b">B 65+</div>
+                <div class="tier-segment tier-a">A 80+</div>
                 <div class="tier-marker" id="calcTierMarker" style="left: 74%;"></div>
               </div>
             </div>
@@ -7928,7 +7904,7 @@
         // Update tier marker position
         const tierMarker = document.getElementById('calcTierMarker');
         if (tierMarker) {
-          const markerPos = hasKnockout ? 100 : (100 - totalScore);
+          const markerPos = hasKnockout ? 0 : totalScore;
           tierMarker.style.left = markerPos + '%';
         }
 
