@@ -1,1156 +1,1706 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Corporate Domicile Router | Entity Resolution Intelligence</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-primary: #0a0b0d;
-            --bg-secondary: #12141a;
-            --bg-tertiary: #1a1d26;
-            --bg-card: #15171f;
-            --text-primary: #f0f2f5;
-            --text-secondary: #8b919e;
-            --text-muted: #5a6070;
-            --accent-blue: #3b82f6;
-            --accent-cyan: #22d3ee;
-            --accent-green: #10b981;
-            --accent-yellow: #f59e0b;
-            --accent-red: #ef4444;
-            --accent-purple: #a855f7;
-            --border-color: rgba(255,255,255,0.08);
-            --glow-blue: rgba(59, 130, 246, 0.15);
-            --glow-cyan: rgba(34, 211, 238, 0.1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* Background Grid Pattern */
-        .bg-grid {
-            position: fixed;
-            inset: 0;
-            background-image: 
-                linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
-            background-size: 60px 60px;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .bg-gradient {
-            position: fixed;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            height: 600px;
-            background: radial-gradient(ellipse 80% 50% at 50% 0%, var(--glow-blue), transparent);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .container {
-            position: relative;
-            z-index: 1;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        /* Header */
-        header {
-            text-align: center;
-            margin-bottom: 3rem;
-            padding-top: 2rem;
-        }
-
-        .logo-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            padding: 0.5rem 1rem;
-            border-radius: 100px;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--accent-cyan);
-            margin-bottom: 1.5rem;
-        }
-
-        .logo-badge::before {
-            content: '';
-            width: 8px;
-            height: 8px;
-            background: var(--accent-cyan);
-            border-radius: 50%;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.2); }
-        }
-
-        h1 {
-            font-family: 'Instrument Serif', serif;
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 400;
-            line-height: 1.1;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .subtitle {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            max-width: 700px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-
-        /* Main Layout */
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 420px;
-            gap: 2rem;
-        }
-
-        @media (max-width: 1100px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Card Styles */
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            overflow: hidden;
-        }
-
-        .card-header {
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .card-title {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .card-title svg {
-            width: 16px;
-            height: 16px;
-            opacity: 0.6;
-        }
-
-        .card-body {
-            padding: 1.5rem;
-        }
-
-        /* Search Section */
-        .search-section {
-            margin-bottom: 2rem;
-        }
-
-        .input-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-wrapper input {
-            width: 100%;
-            padding: 1rem 1.25rem;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-size: 1rem;
-            font-family: inherit;
-            transition: all 0.2s ease;
-        }
-
-        .input-wrapper input:focus {
-            outline: none;
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 0 3px var(--glow-blue);
-        }
-
-        .input-wrapper input::placeholder {
-            color: var(--text-muted);
-        }
-
-        .api-key-input {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-        }
-
-        .api-key-container {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .api-key-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 0;
-        }
-
-        .api-key-wrapper input {
-            border-radius: 10px 0 0 10px;
-            flex: 1;
-        }
-
-        .api-key-buttons {
-            display: flex;
-            background: var(--surface-elevated);
-            border: 1px solid var(--border-color);
-            border-left: none;
-            border-radius: 0 10px 10px 0;
-        }
-
-        .key-btn {
-            width: 40px;
-            height: 48px;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-            border-left: 1px solid var(--border-color);
-        }
-
-        .key-btn:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .key-btn.save:hover {
-            background: rgba(34, 197, 94, 0.1);
-        }
-
-        .key-btn.clear:hover {
-            background: rgba(239, 68, 68, 0.1);
-        }
-
-        .key-icon {
-            font-size: 1rem;
-            opacity: 0.7;
-        }
-
-        .key-btn:hover .key-icon {
-            opacity: 1;
-        }
-
-        .key-status {
-            font-size: 0.75rem;
-            font-family: 'IBM Plex Mono', monospace;
-            padding-left: 0.5rem;
-            min-height: 1rem;
-        }
-
-        .key-status.saved {
-            color: var(--success);
-        }
-
-        .key-status.cleared {
-            color: var(--text-muted);
-        }
-
-        .key-status.loaded {
-            color: var(--accent-cyan);
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 1rem 2rem;
-            background: linear-gradient(135deg, var(--accent-blue) 0%, #2563eb 100%);
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-size: 1rem;
-            font-weight: 600;
-            font-family: inherit;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.3);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .btn-primary svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        /* Results Section */
-        .results-section {
-            display: none;
-        }
-
-        .results-section.active {
-            display: block;
-            animation: fadeIn 0.4s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Prediction Card */
-        .prediction-card {
-            background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-card) 100%);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .prediction-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue), var(--accent-purple));
-        }
-
-        .prediction-header {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-        }
-
-        .state-badge {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .state-code {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 3rem;
-            font-weight: 600;
-            color: var(--accent-cyan);
-            line-height: 1;
-        }
-
-        .state-name {
-            font-size: 1.1rem;
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-
-        .state-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-        }
-
-        .confidence-meter {
-            text-align: right;
-        }
-
-        .confidence-value {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 2rem;
-            font-weight: 600;
-            color: var(--accent-green);
-        }
-
-        .confidence-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-        }
-
-        /* Entity Profile */
-        .entity-profile {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .profile-item {
-            background: var(--bg-secondary);
-            padding: 1rem;
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
-        }
-
-        .profile-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--text-muted);
-            margin-bottom: 0.35rem;
-        }
-
-        .profile-value {
-            font-size: 0.95rem;
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-
-        /* Reasoning Section */
-        .reasoning-box {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1.25rem;
-        }
-
-        .reasoning-title {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--accent-blue);
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .reasoning-text {
-            font-size: 0.9rem;
-            line-height: 1.7;
-            color: var(--text-secondary);
-        }
-
-        /* Routing Queue */
-        .routing-queue {
-            margin-top: 1.5rem;
-        }
-
-        .queue-title {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--text-muted);
-            margin-bottom: 1rem;
-        }
-
-        .queue-items {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-        }
-
-        .queue-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            padding: 0.6rem 1rem;
-            border-radius: 8px;
-            font-size: 0.85rem;
-        }
-
-        .queue-item .rank {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-
-        .queue-item .state {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .queue-item.primary {
-            border-color: var(--accent-cyan);
-            background: rgba(34, 211, 238, 0.1);
-        }
-
-        .queue-item.primary .state {
-            color: var(--accent-cyan);
-        }
-
-        /* Sidebar - Heuristics Reference */
-        .sidebar {
-            position: sticky;
-            top: 2rem;
-        }
-
-        .heuristics-list {
-            list-style: none;
-        }
-
-        .heuristic-item {
-            padding: 1rem 0;
-            border-bottom: 1px solid var(--border-color);
-            display: grid;
-            grid-template-columns: 80px 1fr 80px;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .heuristic-item:last-child {
-            border-bottom: none;
-        }
-
-        .heuristic-signal {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.75rem;
-            color: var(--accent-yellow);
-            background: rgba(245, 158, 11, 0.1);
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-        }
-
-        .heuristic-desc {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-
-        .heuristic-route {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.8rem;
-            color: var(--accent-cyan);
-            text-align: right;
-        }
-
-        /* Loading State */
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(10, 11, 13, 0.9);
-            z-index: 100;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .loading-overlay.active {
-            display: flex;
-        }
-
-        .loader {
-            width: 60px;
-            height: 60px;
-            border: 3px solid var(--border-color);
-            border-top-color: var(--accent-cyan);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        .loading-steps {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .loading-step {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            transition: all 0.3s ease;
-        }
-
-        .loading-step.active {
-            color: var(--accent-cyan);
-        }
-
-        .loading-step.complete {
-            color: var(--accent-green);
-        }
-
-        .loading-step .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--text-muted);
-        }
-
-        .loading-step.active .dot {
-            background: var(--accent-cyan);
-            animation: pulse 1s ease-in-out infinite;
-        }
-
-        .loading-step.complete .dot {
-            background: var(--accent-green);
-        }
-
-        /* Error State */
-        .error-message {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-radius: 12px;
-            padding: 1rem 1.25rem;
-            color: var(--accent-red);
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-            display: none;
-        }
-
-        .error-message.active {
-            display: block;
-        }
-
-        /* Grounding Sources */
-        .sources-section {
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .sources-title {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--text-muted);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .source-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-            padding: 0.75rem;
-            background: var(--bg-secondary);
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-
-        .source-item a {
-            color: var(--accent-blue);
-            text-decoration: none;
-        }
-
-        .source-item a:hover {
-            text-decoration: underline;
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 3rem 0 2rem;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-        }
-
-        footer a {
-            color: var(--accent-blue);
-            text-decoration: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Business Search | AblesAI</title>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NLL9GDQY8S"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-NLL9GDQY8S');
+  </script>
+  <!-- Cookiebot Consent -->
+  <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="f4131404-42af-4d2e-9472-473077a790bb" type="text/javascript" async></script>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 64 64' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3CradialGradient id='pg' cx='35%25' cy='35%25' r='60%25'%3E%3Cstop offset='0%25' stop-color='%23fcd34d'/%3E%3Cstop offset='50%25' stop-color='%23eab308'/%3E%3Cstop offset='100%25' stop-color='%23ca8a04'/%3E%3C/radialGradient%3E%3ClinearGradient id='rg' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23f97316'/%3E%3Cstop offset='100%25' stop-color='%23dc2626'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cellipse cx='32' cy='32' rx='28' ry='8' stroke='url(%23rg)' stroke-width='2.5' fill='none' transform='rotate(-20 32 32)' stroke-dasharray='70 140' opacity='0.6'/%3E%3Ccircle cx='32' cy='32' r='12' fill='url(%23pg)'/%3E%3Cellipse cx='28' cy='28' rx='4' ry='3' fill='%23fef3c7' opacity='0.4'/%3E%3Cellipse cx='32' cy='32' rx='28' ry='8' stroke='url(%23rg)' stroke-width='2.5' fill='none' transform='rotate(-20 32 32)' stroke-dasharray='70 140' stroke-dashoffset='-70'/%3E%3Ccircle cx='58' cy='28' r='4' fill='%23a855f7'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #111111;
+      --bg-tertiary: #1a1a1a;
+      --bg-card: #111111;
+      --text-primary: #f5f5f5;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+      --accent: #eab308;
+      --accent-light: #facc15;
+      --tier-a: #22c55e;
+      --tier-b: #84cc16;
+      --tier-c: #eab308;
+      --tier-d: #f97316;
+      --tier-e: #ef4444;
+      --accent-blue: #3b82f6;
+      --accent-purple: #a855f7;
+      --border-primary: #27272a;
+      --border-secondary: #1f1f22;
+      --glow-gold: rgba(234, 179, 8, 0.15);
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f9fafb;
+      --bg-tertiary: #f3f4f6;
+      --bg-card: #ffffff;
+      --text-primary: #111827;
+      --text-secondary: #4b5563;
+      --text-muted: #6b7280;
+      --border-primary: #e5e7eb;
+      --border-secondary: #f3f4f6;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+      padding-top: 65px;
+    }
+
+    /* Background Effects */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(234, 179, 8, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(234, 179, 8, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-gradient {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      height: 600px;
+      background: radial-gradient(ellipse 80% 50% at 50% 0%, var(--glow-gold), transparent);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    [data-theme="light"] .bg-grid {
+      background-image: 
+        linear-gradient(rgba(234, 179, 8, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(234, 179, 8, 0.06) 1px, transparent 1px);
+    }
+
+    /* Orbital Animation System */
+    .orbit-system {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 800px;
+      height: 800px;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.7;
+    }
+
+    .orbit-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle, rgba(234, 179, 8, 0.4) 0%, rgba(234, 179, 8, 0.1) 40%, transparent 70%);
+      border-radius: 50%;
+      filter: blur(20px);
+    }
+
+    .orbit-ring {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      border: 1px solid rgba(234, 179, 8, 0.15);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .orbit-ring-1 {
+      width: 300px;
+      height: 300px;
+      animation: orbit-rotate 30s linear infinite;
+    }
+
+    .orbit-ring-2 {
+      width: 450px;
+      height: 450px;
+      animation: orbit-rotate 45s linear infinite reverse;
+    }
+
+    .orbit-ring-3 {
+      width: 600px;
+      height: 600px;
+      animation: orbit-rotate 60s linear infinite;
+    }
+
+    @keyframes orbit-rotate {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .orbit-particle {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(0.5px);
+    }
+
+    .particle-1 {
+      width: 10px;
+      height: 10px;
+      background: #eab308;
+      box-shadow: 0 0 15px 5px rgba(234, 179, 8, 0.5);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: orbit-1 20s linear infinite;
+    }
+
+    .particle-2 {
+      width: 8px;
+      height: 8px;
+      background: #a855f7;
+      box-shadow: 0 0 12px 4px rgba(168, 85, 247, 0.5);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: orbit-2 25s linear infinite;
+    }
+
+    .particle-3 {
+      width: 6px;
+      height: 6px;
+      background: #22c55e;
+      box-shadow: 0 0 10px 3px rgba(34, 197, 94, 0.5);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: orbit-3 18s linear infinite reverse;
+    }
+
+    .particle-4 {
+      width: 8px;
+      height: 8px;
+      background: #f97316;
+      box-shadow: 0 0 12px 4px rgba(249, 115, 22, 0.5);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: orbit-4 30s linear infinite;
+    }
+
+    .particle-5 {
+      width: 5px;
+      height: 5px;
+      background: #3b82f6;
+      box-shadow: 0 0 10px 3px rgba(59, 130, 246, 0.5);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: orbit-5 22s linear infinite reverse;
+    }
+
+    .particle-6 {
+      width: 7px;
+      height: 7px;
+      background: #ec4899;
+      box-shadow: 0 0 12px 4px rgba(236, 72, 153, 0.5);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: orbit-6 35s linear infinite;
+    }
+
+    @keyframes orbit-1 {
+      from { transform: translate(-50%, -50%) rotate(0deg) translateX(150px) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg) translateX(150px) rotate(-360deg); }
+    }
+
+    @keyframes orbit-2 {
+      from { transform: translate(-50%, -50%) rotate(60deg) translateX(225px) rotate(-60deg); }
+      to { transform: translate(-50%, -50%) rotate(420deg) translateX(225px) rotate(-420deg); }
+    }
+
+    @keyframes orbit-3 {
+      from { transform: translate(-50%, -50%) rotate(120deg) translateX(300px) rotate(-120deg); }
+      to { transform: translate(-50%, -50%) rotate(480deg) translateX(300px) rotate(-480deg); }
+    }
+
+    @keyframes orbit-4 {
+      from { transform: translate(-50%, -50%) rotate(180deg) translateX(175px) rotate(-180deg); }
+      to { transform: translate(-50%, -50%) rotate(540deg) translateX(175px) rotate(-540deg); }
+    }
+
+    @keyframes orbit-5 {
+      from { transform: translate(-50%, -50%) rotate(240deg) translateX(275px) rotate(-240deg); }
+      to { transform: translate(-50%, -50%) rotate(600deg) translateX(275px) rotate(-600deg); }
+    }
+
+    @keyframes orbit-6 {
+      from { transform: translate(-50%, -50%) rotate(300deg) translateX(250px) rotate(-300deg); }
+      to { transform: translate(-50%, -50%) rotate(660deg) translateX(250px) rotate(-660deg); }
+    }
+
+    @media (max-width: 768px) {
+      .orbit-system {
+        width: 500px;
+        height: 500px;
+        opacity: 0.5;
+      }
+      .orbit-ring-1 { width: 180px; height: 180px; }
+      .orbit-ring-2 { width: 280px; height: 280px; }
+      .orbit-ring-3 { width: 380px; height: 380px; }
+      @keyframes orbit-1 {
+        from { transform: translate(-50%, -50%) rotate(0deg) translateX(90px) rotate(0deg); }
+        to { transform: translate(-50%, -50%) rotate(360deg) translateX(90px) rotate(-360deg); }
+      }
+      @keyframes orbit-2 {
+        from { transform: translate(-50%, -50%) rotate(60deg) translateX(140px) rotate(-60deg); }
+        to { transform: translate(-50%, -50%) rotate(420deg) translateX(140px) rotate(-420deg); }
+      }
+      @keyframes orbit-3 {
+        from { transform: translate(-50%, -50%) rotate(120deg) translateX(190px) rotate(-120deg); }
+        to { transform: translate(-50%, -50%) rotate(480deg) translateX(190px) rotate(-480deg); }
+      }
+      @keyframes orbit-4 {
+        from { transform: translate(-50%, -50%) rotate(180deg) translateX(110px) rotate(-180deg); }
+        to { transform: translate(-50%, -50%) rotate(540deg) translateX(110px) rotate(-540deg); }
+      }
+      @keyframes orbit-5 {
+        from { transform: translate(-50%, -50%) rotate(240deg) translateX(170px) rotate(-240deg); }
+        to { transform: translate(-50%, -50%) rotate(600deg) translateX(170px) rotate(-600deg); }
+      }
+      @keyframes orbit-6 {
+        from { transform: translate(-50%, -50%) rotate(300deg) translateX(155px) rotate(-300deg); }
+        to { transform: translate(-50%, -50%) rotate(660deg) translateX(155px) rotate(-660deg); }
+      }
+    }
+
+    /* Header - Matches Index */
+    .main-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      background: rgba(10, 10, 10, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-primary);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+    }
+
+    [data-theme="light"] .main-header {
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-logo a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .header-logo svg {
+      width: 32px;
+      height: 32px;
+    }
+
+    .header-logo h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+    }
+
+    .header-logo h1 span {
+      color: var(--text-muted);
+      font-size: inherit;
+      font-weight: inherit;
+    }
+
+    [data-theme="light"] .header-logo h1 {
+      color: #111827;
+    }
+
+    [data-theme="light"] .header-logo h1 span {
+      color: var(--accent);
+    }
+
+    .theme-toggle {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      margin-left: 8px;
+    }
+
+    .theme-toggle:hover {
+      background: rgba(255,255,255,0.05);
+      color: var(--text-primary);
+    }
+
+    [data-theme="light"] .theme-toggle:hover {
+      background: rgba(0,0,0,0.05);
+    }
+
+    .theme-toggle svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .sun-icon { display: none; }
+    .moon-icon { display: block; }
+    [data-theme="light"] .sun-icon { display: block; }
+    [data-theme="light"] .moon-icon { display: none; }
+
+    .tab-nav {
+      display: flex;
+      gap: 4px;
+    }
+
+    .tab-btn {
+      padding: 8px 16px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .tab-btn:hover {
+      background: rgba(255,255,255,0.05);
+      color: var(--text-primary);
+    }
+
+    [data-theme="light"] .tab-btn:hover {
+      background: rgba(0,0,0,0.05);
+    }
+
+    .tab-btn.active {
+      background: rgba(234, 179, 8, 0.1);
+      border-color: rgba(234, 179, 8, 0.2);
+      color: var(--accent);
+    }
+
+    .tab-btn .free-badge {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: var(--tier-a);
+      color: #000;
+      padding: 2px 5px;
+      border-radius: 4px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    .tab-btn .lite-badge {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: #a855f7;
+      color: #fff;
+      padding: 2px 5px;
+      border-radius: 4px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    /* Container */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Page Header */
+    .page-header {
+      text-align: center;
+      padding: 2rem 0 3rem;
+    }
+
+    .page-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      padding: 0.5rem 1rem;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+
+    .page-badge::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+    }
+
+    .page-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      letter-spacing: -2px;
+      background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .page-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Main Grid */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 2rem;
+    }
+
+    @media (max-width: 1100px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Card Styles */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-primary);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-title svg {
+      width: 14px;
+      height: 14px;
+      opacity: 0.6;
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    /* Input Styles */
+    .input-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .input-wrapper input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--glow-gold);
+    }
+
+    .input-wrapper input::placeholder {
+      color: var(--text-muted);
+    }
+
+    /* API Key */
+    .api-key-wrapper {
+      display: flex;
+      gap: 0;
+    }
+
+    .api-key-wrapper input {
+      border-radius: 10px 0 0 10px;
+      flex: 1;
+    }
+
+    .api-key-buttons {
+      display: flex;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-left: none;
+      border-radius: 0 10px 10px 0;
+    }
+
+    .key-btn {
+      width: 42px;
+      height: 46px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      transition: all 0.2s;
+      border-left: 1px solid var(--border-primary);
+    }
+
+    .key-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+    }
+
+    .key-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .key-status {
+      font-size: 0.75rem;
+      margin-top: 0.5rem;
+      min-height: 1rem;
+    }
+
+    .key-status.saved { color: var(--tier-a); }
+    .key-status.cleared { color: var(--text-muted); }
+    .key-status.loaded { color: var(--accent); }
+
+    /* Button */
+    .btn-primary {
+      width: 100%;
+      padding: 1rem 1.5rem;
+      background: linear-gradient(135deg, var(--accent) 0%, #f59e0b 100%);
+      border: none;
+      border-radius: 10px;
+      color: #000;
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(234, 179, 8, 0.3);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-primary svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Results */
+    .results-section {
+      display: none;
+      margin-top: 1.5rem;
+    }
+
+    .results-section.active {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Prediction Card */
+    .prediction-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-primary);
+      border-radius: 16px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .prediction-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-light), var(--tier-d));
+    }
+
+    .prediction-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .state-badge {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .state-code {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+
+    .state-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .state-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .confidence-meter {
+      text-align: right;
+    }
+
+    .confidence-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--tier-a);
+      line-height: 1;
+    }
+
+    .confidence-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Entity Profile */
+    .entity-profile {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .profile-item {
+      background: var(--bg-secondary);
+      padding: 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-secondary);
+    }
+
+    .profile-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .profile-value {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .profile-value.status-active {
+      color: var(--tier-a);
+    }
+
+    .profile-value.status-inactive {
+      color: var(--tier-e);
+    }
+
+    /* Owners Section */
+    .owners-section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-secondary);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .owners-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+    }
+
+    .owners-title svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .owners-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .owner-tag {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      color: var(--text-primary);
+    }
+
+    .owner-tag .owner-title {
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      margin-left: 0.25rem;
+    }
+
+    /* Reasoning */
+    .reasoning-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-secondary);
+      border-radius: 12px;
+      padding: 1rem;
+    }
+
+    .reasoning-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+    }
+
+    .reasoning-title svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .reasoning-text {
+      font-size: 0.85rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
+    /* Routing Queue */
+    .routing-queue {
+      margin-top: 1.25rem;
+    }
+
+    .queue-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+    }
+
+    .queue-items {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .queue-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-secondary);
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+    }
+
+    .queue-item.primary {
+      background: rgba(234, 179, 8, 0.1);
+      border-color: rgba(234, 179, 8, 0.3);
+    }
+
+    .queue-item .rank {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .queue-item.primary .rank {
+      color: var(--accent);
+    }
+
+    .queue-item .state {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* Sources */
+    .sources-section {
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border-secondary);
+    }
+
+    .sources-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+    }
+
+    .sources-title svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .source-item {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border-secondary);
+      font-size: 0.85rem;
+    }
+
+    .source-item:last-child {
+      border-bottom: none;
+    }
+
+    .source-item a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .source-item a:hover {
+      text-decoration: underline;
+    }
+
+    /* Sidebar */
+    .sidebar .card {
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar .card:last-child {
+      margin-bottom: 0;
+    }
+
+    .heuristics-list {
+      list-style: none;
+    }
+
+    .heuristic-item {
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      gap: 0.75rem;
+      align-items: center;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--border-secondary);
+      font-size: 0.8rem;
+    }
+
+    .heuristic-item:last-child {
+      border-bottom: none;
+    }
+
+    .heuristic-signal {
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .heuristic-desc {
+      color: var(--text-muted);
+    }
+
+    .heuristic-route {
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* Stats Card */
+    .stat-display {
+      text-align: center;
+      padding: 1.25rem 0;
+    }
+
+    .stat-display:first-child {
+      border-bottom: 1px solid var(--border-secondary);
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+
+    .stat-number.gold { color: var(--accent); }
+    .stat-number.green { color: var(--tier-a); }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Loading */
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 10, 10, 0.9);
+      backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+
+    .loading-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .loader {
+      width: 48px;
+      height: 48px;
+      border: 3px solid var(--border-primary);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      margin-top: 1.25rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .loading-steps {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .loading-step {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      transition: color 0.3s;
+    }
+
+    .loading-step .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border-primary);
+      transition: all 0.3s;
+    }
+
+    .loading-step.active {
+      color: var(--text-primary);
+    }
+
+    .loading-step.active .dot {
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    .loading-step.complete .dot {
+      background: var(--tier-a);
+    }
+
+    /* Error */
+    .error-message {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      color: var(--tier-e);
+      font-size: 0.85rem;
+      display: none;
+    }
+
+    .error-message.active {
+      display: block;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 3rem 0 2rem;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .tab-nav {
+        display: none;
+      }
+
+      .entity-profile {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .prediction-header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .confidence-meter {
+        text-align: left;
+      }
+
+      .state-code {
+        font-size: 2.5rem;
+      }
+
+      .heuristic-item {
+        grid-template-columns: 70px 1fr auto;
+        font-size: 0.75rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .entity-profile {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="bg-grid"></div>
-    <div class="bg-gradient"></div>
+  <div class="bg-grid"></div>
+  <div class="bg-gradient"></div>
+  
+  <!-- Orbital Animation -->
+  <div class="orbit-system">
+    <div class="orbit-center"></div>
+    <div class="orbit-ring orbit-ring-1"></div>
+    <div class="orbit-ring orbit-ring-2"></div>
+    <div class="orbit-ring orbit-ring-3"></div>
+    <div class="orbit-particle particle-1"></div>
+    <div class="orbit-particle particle-2"></div>
+    <div class="orbit-particle particle-3"></div>
+    <div class="orbit-particle particle-4"></div>
+    <div class="orbit-particle particle-5"></div>
+    <div class="orbit-particle particle-6"></div>
+  </div>
 
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loader"></div>
-        <div class="loading-text">Analyzing Entity...</div>
-        <div class="loading-steps">
-            <div class="loading-step" id="step1">
-                <span class="dot"></span>
-                <span>Grounding: Searching web for entity context</span>
-            </div>
-            <div class="loading-step" id="step2">
-                <span class="dot"></span>
-                <span>Profiling: Identifying industry & structure</span>
-            </div>
-            <div class="loading-step" id="step3">
-                <span class="dot"></span>
-                <span>Routing: Calculating domicile probability</span>
-            </div>
-        </div>
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loader"></div>
+    <div class="loading-text">Searching Entity...</div>
+    <div class="loading-steps">
+      <div class="loading-step" id="step1">
+        <span class="dot"></span>
+        <span>Grounding: Searching web for entity context</span>
+      </div>
+      <div class="loading-step" id="step2">
+        <span class="dot"></span>
+        <span>Profiling: Identifying industry & structure</span>
+      </div>
+      <div class="loading-step" id="step3">
+        <span class="dot"></span>
+        <span>Routing: Calculating domicile probability</span>
+      </div>
+    </div>
+  </div>
+
+  <header class="main-header">
+    <div class="header-logo">
+      <a href="https://ables.ai">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="planetGrad" cx="35%" cy="35%" r="60%">
+              <stop offset="0%" stop-color="#fcd34d"/>
+              <stop offset="50%" stop-color="#eab308"/>
+              <stop offset="100%" stop-color="#ca8a04"/>
+            </radialGradient>
+            <filter id="planetGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="2" result="glow"/>
+              <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#ffab40"/>
+              <stop offset="50%" stop-color="#ff8c00"/>
+              <stop offset="100%" stop-color="#ff6d00"/>
+            </linearGradient>
+            <filter id="moonGlow" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur stdDeviation="1.5" result="glow"/>
+              <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <style>
+            .moon-base {
+              transform-origin: 32px 32px;
+              animation: orbit 3s linear infinite, moonColor 2s ease-in-out infinite;
+              filter: url(#moonGlow);
+            }
+            .moon-back { animation: orbit 3s linear infinite, moonColor 2s ease-in-out infinite, moonBackOpacity 3s linear infinite; }
+            .moon-front { animation: orbit 3s linear infinite, moonColor 2s ease-in-out infinite, moonFrontOpacity 3s linear infinite; }
+            @keyframes orbit {
+              0% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
+              12.5% { transform: rotate(-20deg) translate(18px, 5px) scale(0.85); }
+              25% { transform: rotate(-20deg) translate(0, 7px) scale(0.7); }
+              37.5% { transform: rotate(-20deg) translate(-18px, 5px) scale(0.55); }
+              50% { transform: rotate(-20deg) translate(-26px, 0) scale(0.5); }
+              62.5% { transform: rotate(-20deg) translate(-18px, -5px) scale(0.55); }
+              75% { transform: rotate(-20deg) translate(0, -7px) scale(0.7); }
+              87.5% { transform: rotate(-20deg) translate(18px, -5px) scale(0.85); }
+              100% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
+            }
+            @keyframes moonBackOpacity { 0%, 15% { opacity: 0; } 25% { opacity: 1; } 75% { opacity: 1; } 85%, 100% { opacity: 0; } }
+            @keyframes moonFrontOpacity { 0%, 15% { opacity: 1; } 25% { opacity: 0; } 75% { opacity: 0; } 85%, 100% { opacity: 1; } }
+            @keyframes moonColor { 0%, 100% { fill: #a855f7; } 25% { fill: #3b82f6; } 50% { fill: #ec4899; } 75% { fill: #10b981; } }
+          </style>
+          <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#ringGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" opacity="0.6"/>
+          <circle class="moon-base moon-back" cx="32" cy="32" r="4" fill="#a855f7"/>
+          <circle cx="32" cy="32" r="14" fill="#eab308" opacity="0.2" filter="url(#planetGlow)"/>
+          <circle cx="32" cy="32" r="12" fill="url(#planetGrad)" filter="url(#planetGlow)"/>
+          <ellipse cx="28" cy="28" rx="4" ry="3" fill="#fef3c7" opacity="0.4"/>
+          <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#ringGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
+          <circle class="moon-base moon-front" cx="32" cy="32" r="4" fill="#a855f7"/>
+        </svg>
+        <h1>Ables<span>AI</span></h1>
+      </a>
+      <button class="theme-toggle" id="themeToggle" title="Toggle light/dark mode">
+        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </div>
+    <nav class="tab-nav">
+      <a href="https://ables.ai" class="tab-btn">Home</a>
+      <a href="https://ables.ai/calculator.html" class="tab-btn">Calculator<span class="lite-badge">Lite</span></a>
+      <a href="https://ables.ai/toolbox.html" class="tab-btn">Toolbox<span class="free-badge">Free</span></a>
+      <a href="#" class="tab-btn active">Business Search</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="page-header">
+      <div class="page-badge">
+        <span>Entity Intelligence</span>
+      </div>
+      <h1 class="page-title">AI Business Search</h1>
+      <p class="page-subtitle">
+        AI-powered business entity search. Find incorporation state, entity type, and company details instantly with intelligent routing.
+      </p>
     </div>
 
-    <div class="container">
-        <header>
-            <div class="logo-badge">
-                <span>Gemini-Powered Entity Resolution</span>
+    <div class="main-grid">
+      <main>
+        <section class="card">
+          <div class="card-header">
+            <span class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              Entity Search
+            </span>
+          </div>
+          <div class="card-body">
+            <div class="error-message" id="errorMessage"></div>
+            
+            <div class="input-group">
+              <label>Gemini API Key</label>
+              <div class="input-wrapper api-key-wrapper">
+                <input type="password" id="apiKey" placeholder="Enter your Gemini API key">
+                <div class="api-key-buttons">
+                  <button type="button" id="toggleKey" class="key-btn" title="Show/Hide">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </button>
+                  <button type="button" id="saveKey" class="key-btn" title="Save to Browser">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"></path>
+                      <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                      <polyline points="7 3 7 8 15 8"></polyline>
+                    </svg>
+                  </button>
+                  <button type="button" id="clearKey" class="key-btn" title="Clear Saved">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div id="keyStatus" class="key-status"></div>
             </div>
-            <h1>Corporate Domicile Router</h1>
-            <p class="subtitle">
-                AI-powered predictive routing for U.S. corporate entity searches. 
-                Transform the N+1 registry problem into an O(1) prediction task.
-            </p>
-        </header>
 
-        <div class="main-grid">
-            <main>
-                <section class="search-section card">
-                    <div class="card-header">
-                        <span class="card-title">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                            </svg>
-                            Entity Search
-                        </span>
-                    </div>
-                    <div class="card-body">
-                        <div class="error-message" id="errorMessage"></div>
-                        
-                        <div class="input-group">
-                            <label>Gemini API Key</label>
-                            <div class="api-key-container">
-                                <div class="input-wrapper api-key-wrapper">
-                                    <input 
-                                        type="password" 
-                                        id="apiKey" 
-                                        class="api-key-input"
-                                        placeholder="Enter your Gemini API key"
-                                    >
-                                    <div class="api-key-buttons">
-                                        <button type="button" id="toggleKey" class="key-btn" title="Show/Hide">
-                                            <span class="key-icon">[O]</span>
-                                        </button>
-                                        <button type="button" id="saveKey" class="key-btn save" title="Save to Browser">
-                                            <span class="key-icon">[S]</span>
-                                        </button>
-                                        <button type="button" id="clearKey" class="key-btn clear" title="Clear Saved">
-                                            <span class="key-icon">[X]</span>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div id="keyStatus" class="key-status"></div>
-                            </div>
-                        </div>
+            <div class="input-group">
+              <label>Business Name</label>
+              <div class="input-wrapper">
+                <input type="text" id="entityName" placeholder="e.g., Stripe, Inc. or Blue Bottle Coffee LLC">
+              </div>
+            </div>
 
-                        <div class="input-group">
-                            <label>Entity Name</label>
-                            <div class="input-wrapper">
-                                <input 
-                                    type="text" 
-                                    id="entityName" 
-                                    placeholder="e.g., Stripe, Inc. or Blue Bottle Coffee LLC"
-                                >
-                            </div>
-                        </div>
+            <div class="input-group">
+              <label>Additional Context (Optional)</label>
+              <div class="input-wrapper">
+                <input type="text" id="additionalContext" placeholder="e.g., headquartered in Austin, TX or fintech company">
+              </div>
+            </div>
 
-                        <div class="input-group">
-                            <label>Additional Context (Optional)</label>
-                            <div class="input-wrapper">
-                                <input 
-                                    type="text" 
-                                    id="additionalContext" 
-                                    placeholder="e.g., headquartered in Austin, TX or fintech company"
-                                >
-                            </div>
-                        </div>
+            <button class="btn-primary" id="searchBtn" onclick="analyzeEntity()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              Search Business
+            </button>
+          </div>
+        </section>
 
-                        <button class="btn-primary" id="searchBtn" onclick="analyzeEntity()">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-                            </svg>
-                            Analyze & Route Entity
-                        </button>
-                    </div>
-                </section>
-
-                <section class="results-section" id="resultsSection">
-                    <div class="prediction-card" id="predictionCard">
-                        <div class="prediction-header">
-                            <div class="state-badge">
-                                <div class="state-code" id="stateCode">--</div>
-                                <div>
-                                    <div class="state-name" id="stateName">--</div>
-                                    <div class="state-label">Primary Jurisdiction</div>
-                                </div>
-                            </div>
-                            <div class="confidence-meter">
-                                <div class="confidence-value" id="confidenceValue">--%</div>
-                                <div class="confidence-label">Confidence</div>
-                            </div>
-                        </div>
-
-                        <div class="entity-profile" id="entityProfile">
-                            <div class="profile-item">
-                                <div class="profile-label">Entity Type</div>
-                                <div class="profile-value" id="entityType">--</div>
-                            </div>
-                            <div class="profile-item">
-                                <div class="profile-label">Industry</div>
-                                <div class="profile-value" id="industry">--</div>
-                            </div>
-                            <div class="profile-item">
-                                <div class="profile-label">HQ Location</div>
-                                <div class="profile-value" id="hqLocation">--</div>
-                            </div>
-                        </div>
-
-                        <div class="reasoning-box">
-                            <div class="reasoning-title">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"></path>
-                                    <path d="M12 16v-4"></path>
-                                    <path d="M12 8h.01"></path>
-                                </svg>
-                                Chain of Thought Reasoning
-                            </div>
-                            <div class="reasoning-text" id="reasoningText">--</div>
-                        </div>
-
-                        <div class="routing-queue">
-                            <div class="queue-title">Priority Search Queue</div>
-                            <div class="queue-items" id="queueItems">
-                                <!-- Dynamically populated -->
-                            </div>
-                        </div>
-
-                        <div class="sources-section" id="sourcesSection" style="display: none;">
-                            <div class="sources-title">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                                </svg>
-                                Grounding Sources
-                            </div>
-                            <div id="sourcesList"></div>
-                        </div>
-                    </div>
-                </section>
-            </main>
-
-            <aside class="sidebar">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                            </svg>
-                            Routing Heuristics
-                        </span>
-                    </div>
-                    <div class="card-body">
-                        <ul class="heuristics-list">
-                            <li class="heuristic-item">
-                                <span class="heuristic-signal">Inc. + Tech</span>
-                                <span class="heuristic-desc">VC-backed startups & public corps</span>
-                                <span class="heuristic-route">→ DE</span>
-                            </li>
-                            <li class="heuristic-item">
-                                <span class="heuristic-signal">LLC + RE</span>
-                                <span class="heuristic-desc">Real estate holding entities</span>
-                                <span class="heuristic-route">→ Situs</span>
-                            </li>
-                            <li class="heuristic-item">
-                                <span class="heuristic-signal">Crypto/DAO</span>
-                                <span class="heuristic-desc">Digital asset organizations</span>
-                                <span class="heuristic-route">→ WY</span>
-                            </li>
-                            <li class="heuristic-item">
-                                <span class="heuristic-signal">Local Biz</span>
-                                <span class="heuristic-desc">Single-state operations</span>
-                                <span class="heuristic-route">→ HQ State</span>
-                            </li>
-                            <li class="heuristic-item">
-                                <span class="heuristic-signal">DExit</span>
-                                <span class="heuristic-desc">Recent reincorporation signals</span>
-                                <span class="heuristic-route">→ TX/NV</span>
-                            </li>
-                            <li class="heuristic-item">
-                                <span class="heuristic-signal">Privacy</span>
-                                <span class="heuristic-desc">Anonymous LLC structures</span>
-                                <span class="heuristic-route">→ WY/NV</span>
-                            </li>
-                            <li class="heuristic-item">
-                                <span class="heuristic-signal">Fortune 500</span>
-                                <span class="heuristic-desc">Large public corporations</span>
-                                <span class="heuristic-route">→ DE (99%)</span>
-                            </li>
-                        </ul>
-                    </div>
+        <section class="results-section" id="resultsSection">
+          <div class="prediction-card">
+            <div class="prediction-header">
+              <div class="state-badge">
+                <div class="state-code" id="stateCode">--</div>
+                <div>
+                  <div class="state-name" id="stateName">--</div>
+                  <div class="state-label">Primary Jurisdiction</div>
                 </div>
+              </div>
+              <div class="confidence-meter">
+                <div class="confidence-value" id="confidenceValue">--%</div>
+                <div class="confidence-label">Confidence</div>
+              </div>
+            </div>
 
-                <div class="card" style="margin-top: 1.5rem;">
-                    <div class="card-header">
-                        <span class="card-title">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polyline points="12 6 12 12 16 14"></polyline>
-                            </svg>
-                            The Delaware Singularity
-                        </span>
-                    </div>
-                    <div class="card-body">
-                        <div style="text-align: center; margin-bottom: 1rem;">
-                            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 2.5rem; color: var(--accent-cyan);">68%</div>
-                            <div style="font-size: 0.8rem; color: var(--text-muted);">of Fortune 500</div>
-                        </div>
-                        <div style="text-align: center;">
-                            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 2.5rem; color: var(--accent-purple);">81.4%</div>
-                            <div style="font-size: 0.8rem; color: var(--text-muted);">of 2024 IPOs</div>
-                        </div>
-                    </div>
-                </div>
-            </aside>
+            <div class="entity-profile">
+              <div class="profile-item">
+                <div class="profile-label">Entity Type</div>
+                <div class="profile-value" id="entityType">--</div>
+              </div>
+              <div class="profile-item">
+                <div class="profile-label">Industry</div>
+                <div class="profile-value" id="industry">--</div>
+              </div>
+              <div class="profile-item">
+                <div class="profile-label">HQ Location</div>
+                <div class="profile-value" id="hqLocation">--</div>
+              </div>
+              <div class="profile-item">
+                <div class="profile-label">Formation Date</div>
+                <div class="profile-value" id="formationDate">--</div>
+              </div>
+              <div class="profile-item">
+                <div class="profile-label">Status</div>
+                <div class="profile-value" id="regStatus">--</div>
+              </div>
+              <div class="profile-item">
+                <div class="profile-label">Registered Agent</div>
+                <div class="profile-value" id="regAgent">--</div>
+              </div>
+            </div>
+
+            <div class="owners-section" id="ownersSection" style="display: none;">
+              <div class="owners-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                Owners / Officers / Members
+              </div>
+              <div class="owners-list" id="ownersList"></div>
+            </div>
+
+            <div class="reasoning-box">
+              <div class="reasoning-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M12 16v-4"></path>
+                  <path d="M12 8h.01"></path>
+                </svg>
+                Chain of Thought Reasoning
+              </div>
+              <div class="reasoning-text" id="reasoningText">--</div>
+            </div>
+
+            <div class="routing-queue">
+              <div class="queue-title">Priority Search Queue</div>
+              <div class="queue-items" id="queueItems"></div>
+            </div>
+
+            <div class="sources-section" id="sourcesSection" style="display: none;">
+              <div class="sources-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"></path>
+                  <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"></path>
+                </svg>
+                Grounding Sources
+              </div>
+              <div id="sourcesList"></div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <aside class="sidebar">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path>
+              </svg>
+              Routing Heuristics
+            </span>
+          </div>
+          <div class="card-body">
+            <ul class="heuristics-list">
+              <li class="heuristic-item">
+                <span class="heuristic-signal">Inc. + Tech</span>
+                <span class="heuristic-desc">VC-backed startups</span>
+                <span class="heuristic-route">→ DE</span>
+              </li>
+              <li class="heuristic-item">
+                <span class="heuristic-signal">LLC + RE</span>
+                <span class="heuristic-desc">Real estate holding</span>
+                <span class="heuristic-route">→ Situs</span>
+              </li>
+              <li class="heuristic-item">
+                <span class="heuristic-signal">Crypto/DAO</span>
+                <span class="heuristic-desc">Digital assets</span>
+                <span class="heuristic-route">→ WY</span>
+              </li>
+              <li class="heuristic-item">
+                <span class="heuristic-signal">Local Biz</span>
+                <span class="heuristic-desc">Single-state ops</span>
+                <span class="heuristic-route">→ HQ State</span>
+              </li>
+              <li class="heuristic-item">
+                <span class="heuristic-signal">DExit</span>
+                <span class="heuristic-desc">Reincorporation</span>
+                <span class="heuristic-route">→ TX/NV</span>
+              </li>
+              <li class="heuristic-item">
+                <span class="heuristic-signal">Privacy</span>
+                <span class="heuristic-desc">Anonymous LLCs</span>
+                <span class="heuristic-route">→ WY/NV</span>
+              </li>
+              <li class="heuristic-item">
+                <span class="heuristic-signal">Fortune 500</span>
+                <span class="heuristic-desc">Large public corps</span>
+                <span class="heuristic-route">→ DE (99%)</span>
+              </li>
+            </ul>
+          </div>
         </div>
 
-        <footer>
-            Powered by <a href="https://ai.google.dev/" target="_blank">Gemini API</a> with Search Grounding | 
-            Based on ReAct Agent Architecture
-        </footer>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              The Delaware Singularity
+            </span>
+          </div>
+          <div class="card-body" style="padding: 0;">
+            <div class="stat-display">
+              <div class="stat-number gold">68%</div>
+              <div class="stat-label">of Fortune 500</div>
+            </div>
+            <div class="stat-display">
+              <div class="stat-number green">81.4%</div>
+              <div class="stat-label">of 2024 IPOs</div>
+            </div>
+          </div>
+        </div>
+      </aside>
     </div>
 
-    <script>
-        // State name mapping
-        const STATE_NAMES = {
-            'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas',
-            'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut', 'DE': 'Delaware',
-            'FL': 'Florida', 'GA': 'Georgia', 'HI': 'Hawaii', 'ID': 'Idaho',
-            'IL': 'Illinois', 'IN': 'Indiana', 'IA': 'Iowa', 'KS': 'Kansas',
-            'KY': 'Kentucky', 'LA': 'Louisiana', 'ME': 'Maine', 'MD': 'Maryland',
-            'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota', 'MS': 'Mississippi',
-            'MO': 'Missouri', 'MT': 'Montana', 'NE': 'Nebraska', 'NV': 'Nevada',
-            'NH': 'New Hampshire', 'NJ': 'New Jersey', 'NM': 'New Mexico', 'NY': 'New York',
-            'NC': 'North Carolina', 'ND': 'North Dakota', 'OH': 'Ohio', 'OK': 'Oklahoma',
-            'OR': 'Oregon', 'PA': 'Pennsylvania', 'RI': 'Rhode Island', 'SC': 'South Carolina',
-            'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah',
-            'VT': 'Vermont', 'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia',
-            'WI': 'Wisconsin', 'WY': 'Wyoming', 'DC': 'District of Columbia'
-        };
+    <footer>
+      Powered by <a href="https://ai.google.dev/" target="_blank">Gemini API</a> with Search Grounding
+    </footer>
+  </div>
 
-        // API Key Storage
-        const API_KEY_STORAGE_KEY = 'gemini_api_key_corporate_router';
+  <script>
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
 
-        function loadSavedApiKey() {
-            const savedKey = localStorage.getItem(API_KEY_STORAGE_KEY);
-            if (savedKey) {
-                document.getElementById('apiKey').value = savedKey;
-                showKeyStatus('Key loaded from browser storage', 'loaded');
-            }
-        }
+    themeToggle.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    });
 
-        function saveApiKey() {
-            const apiKey = document.getElementById('apiKey').value.trim();
-            if (apiKey) {
-                localStorage.setItem(API_KEY_STORAGE_KEY, apiKey);
-                showKeyStatus('Key saved to browser storage', 'saved');
-            } else {
-                showKeyStatus('Enter a key first', 'cleared');
-            }
-        }
+    // State names
+    const STATE_NAMES = {
+      'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas',
+      'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut', 'DE': 'Delaware',
+      'FL': 'Florida', 'GA': 'Georgia', 'HI': 'Hawaii', 'ID': 'Idaho',
+      'IL': 'Illinois', 'IN': 'Indiana', 'IA': 'Iowa', 'KS': 'Kansas',
+      'KY': 'Kentucky', 'LA': 'Louisiana', 'ME': 'Maine', 'MD': 'Maryland',
+      'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota', 'MS': 'Mississippi',
+      'MO': 'Missouri', 'MT': 'Montana', 'NE': 'Nebraska', 'NV': 'Nevada',
+      'NH': 'New Hampshire', 'NJ': 'New Jersey', 'NM': 'New Mexico', 'NY': 'New York',
+      'NC': 'North Carolina', 'ND': 'North Dakota', 'OH': 'Ohio', 'OK': 'Oklahoma',
+      'OR': 'Oregon', 'PA': 'Pennsylvania', 'RI': 'Rhode Island', 'SC': 'South Carolina',
+      'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah',
+      'VT': 'Vermont', 'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia',
+      'WI': 'Wisconsin', 'WY': 'Wyoming', 'DC': 'District of Columbia'
+    };
 
-        function clearApiKey() {
-            localStorage.removeItem(API_KEY_STORAGE_KEY);
-            document.getElementById('apiKey').value = '';
-            showKeyStatus('Saved key cleared', 'cleared');
-        }
+    // API Key Storage
+    const API_KEY_STORAGE_KEY = 'gemini_api_key_ai_business_search';
 
-        function toggleKeyVisibility() {
-            const input = document.getElementById('apiKey');
-            const btn = document.getElementById('toggleKey');
-            if (input.type === 'password') {
-                input.type = 'text';
-                btn.querySelector('.key-icon').textContent = '[*]';
-            } else {
-                input.type = 'password';
-                btn.querySelector('.key-icon').textContent = '[O]';
-            }
-        }
+    function loadSavedApiKey() {
+      const savedKey = localStorage.getItem(API_KEY_STORAGE_KEY);
+      if (savedKey) {
+        document.getElementById('apiKey').value = savedKey;
+        showKeyStatus('Key loaded from browser storage', 'loaded');
+      }
+    }
 
-        function showKeyStatus(message, type) {
-            const status = document.getElementById('keyStatus');
-            status.textContent = message;
-            status.className = 'key-status ' + type;
-            setTimeout(() => {
-                status.textContent = '';
-                status.className = 'key-status';
-            }, 3000);
-        }
+    function saveApiKey() {
+      const apiKey = document.getElementById('apiKey').value.trim();
+      if (apiKey) {
+        localStorage.setItem(API_KEY_STORAGE_KEY, apiKey);
+        showKeyStatus('Key saved to browser storage', 'saved');
+      } else {
+        showKeyStatus('Enter a key first', 'cleared');
+      }
+    }
 
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            loadSavedApiKey();
-            
-            document.getElementById('toggleKey').addEventListener('click', toggleKeyVisibility);
-            document.getElementById('saveKey').addEventListener('click', saveApiKey);
-            document.getElementById('clearKey').addEventListener('click', clearApiKey);
-        });
+    function clearApiKey() {
+      localStorage.removeItem(API_KEY_STORAGE_KEY);
+      document.getElementById('apiKey').value = '';
+      showKeyStatus('Saved key cleared', 'cleared');
+    }
 
-        function showLoading(show) {
-            const overlay = document.getElementById('loadingOverlay');
-            overlay.classList.toggle('active', show);
-            
-            // Reset steps
-            ['step1', 'step2', 'step3'].forEach(id => {
-                document.getElementById(id).classList.remove('active', 'complete');
-            });
-        }
+    function toggleKeyVisibility() {
+      const input = document.getElementById('apiKey');
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
 
-        function updateLoadingStep(stepNum, status) {
-            const step = document.getElementById(`step${stepNum}`);
-            step.classList.remove('active', 'complete');
-            step.classList.add(status);
-        }
+    function showKeyStatus(message, type) {
+      const status = document.getElementById('keyStatus');
+      status.textContent = message;
+      status.className = 'key-status ' + type;
+      setTimeout(() => {
+        status.textContent = '';
+        status.className = 'key-status';
+      }, 3000);
+    }
 
-        function showError(message) {
-            const errorEl = document.getElementById('errorMessage');
-            errorEl.textContent = message;
-            errorEl.classList.add('active');
-        }
+    document.addEventListener('DOMContentLoaded', function() {
+      loadSavedApiKey();
+      document.getElementById('toggleKey').addEventListener('click', toggleKeyVisibility);
+      document.getElementById('saveKey').addEventListener('click', saveApiKey);
+      document.getElementById('clearKey').addEventListener('click', clearApiKey);
+    });
 
-        function hideError() {
-            document.getElementById('errorMessage').classList.remove('active');
-        }
+    function showLoading(show) {
+      const overlay = document.getElementById('loadingOverlay');
+      overlay.classList.toggle('active', show);
+      ['step1', 'step2', 'step3'].forEach(id => {
+        document.getElementById(id).classList.remove('active', 'complete');
+      });
+    }
 
-        function showNotFound(entityName) {
-            const resultsSection = document.getElementById('resultsSection');
-            resultsSection.classList.add('active');
-            
-            document.getElementById('stateCode').textContent = '--';
-            document.getElementById('stateName').textContent = 'NO EXACT MATCH';
-            document.getElementById('confidenceValue').textContent = '0%';
-            document.getElementById('confidenceFill').style.width = '0%';
-            document.getElementById('confidenceFill').className = 'confidence-fill';
-            
-            document.getElementById('entityType').textContent = '--';
-            document.getElementById('industry').textContent = '--';
-            document.getElementById('hqLocation').textContent = '--';
-            
-            document.getElementById('reasoningText').innerHTML = 
-                'No exact match found for: "' + entityName + '"';
-            
-            document.getElementById('routingQueue').innerHTML = '';
-            document.getElementById('sourcesList').innerHTML = '';
-        }
+    function updateLoadingStep(step, status) {
+      const el = document.getElementById('step' + step);
+      el.classList.remove('active', 'complete');
+      el.classList.add(status);
+    }
 
-        async function analyzeEntity() {
-            const apiKey = document.getElementById('apiKey').value.trim();
-            const entityName = document.getElementById('entityName').value.trim();
-            const additionalContext = document.getElementById('additionalContext').value.trim();
+    function showError(message) {
+      const errorEl = document.getElementById('errorMessage');
+      errorEl.textContent = message;
+      errorEl.classList.add('active');
+      setTimeout(() => errorEl.classList.remove('active'), 5000);
+    }
 
-            hideError();
+    async function analyzeEntity() {
+      const apiKey = document.getElementById('apiKey').value.trim();
+      const entityName = document.getElementById('entityName').value.trim();
+      const additionalContext = document.getElementById('additionalContext').value.trim();
 
-            if (!apiKey) {
-                showError('Please enter your Gemini API key');
-                return;
-            }
+      if (!apiKey) {
+        showError('Please enter your Gemini API key');
+        return;
+      }
+      if (!entityName) {
+        showError('Please enter a business name');
+        return;
+      }
 
-            if (!entityName) {
-                showError('Please enter an entity name to search');
-                return;
-            }
+      showLoading(true);
+      document.getElementById('resultsSection').classList.remove('active');
 
-            showLoading(true);
-            updateLoadingStep(1, 'active');
+      try {
+        updateLoadingStep(1, 'active');
 
-            try {
-                // Step 1: Grounding - Search for exact entity name
-                const groundingPrompt = `Search for this business entity: "${entityName}"
-${additionalContext ? `Additional Context: ${additionalContext}` : ''}
-
-SEARCH IN THIS ORDER:
-1. State business registries / Secretary of State databases for "${entityName}"
-2. OpenCorporates.com for "${entityName}"
-3. SEC EDGAR filings for "${entityName}"
-4. General web presence (company website, LinkedIn, news)
-
-Report what you find:
-- Exact legal name as registered
-- State of incorporation (if found)
+        const groundingPrompt = `Search for comprehensive information about "${entityName}" ${additionalContext ? `(${additionalContext})` : ''}.
+Find: 
+- State of incorporation
+- Entity type (LLC, Inc, Corp, LP)
 - Headquarters location
-- Industry/business type
-- Entity type (Corp, LLC, LP)
-- Source of information
+- Industry
+- Business formation/start date (when the entity was registered/incorporated)
+- Current registration status (Active, Inactive, Dissolved, Good Standing, etc.)
+- Owners, members, officers, or registered agent if available
+- Any official registry information
 
-Be thorough. Search multiple sources.`;
+Look for SEC filings, state corporation databases, OpenCorporates, company websites, LinkedIn, and news articles.`;
 
-                const groundingResponse = await callGeminiWithGrounding(apiKey, groundingPrompt);
-                
-                updateLoadingStep(1, 'complete');
-                updateLoadingStep(2, 'active');
+        const groundingResponse = await callGeminiWithGrounding(apiKey, groundingPrompt);
+        
+        updateLoadingStep(1, 'complete');
+        updateLoadingStep(2, 'active');
 
-                // Step 2: Routing Prediction with confidence scoring
-                const routingPrompt = `Predict state of incorporation for "${entityName}".
+        const routingPrompt = `Based on this research about "${entityName}":
 
-Research:
 ${groundingResponse.text}
 
-CONFIDENCE SCORING (out of 100):
-- 90-100: Found exact registration in state database or SEC filing
+TASK: Extract business entity information and predict the U.S. state of incorporation with confidence score (0-100).
+
+CONFIDENCE SCORING:
+- 90-100: Verified in official state registry or SEC filings
 - 70-89: Found on OpenCorporates or official company documents
 - 50-69: Inferred from HQ location, industry patterns, web presence
 - 30-49: Educated guess based on heuristics only
@@ -1171,204 +1721,203 @@ JSON RESPONSE:
     "entity_type": "C-Corp/LLC/LP/Unknown",
     "industry": "Industry",
     "hq_location": "City, State",
+    "formation_date": "YYYY-MM-DD or Month YYYY or Year only if exact date unknown, or Unknown",
+    "registration_status": "Active/Inactive/Dissolved/Good Standing/Unknown",
+    "owners_members": ["Name 1 (Title)", "Name 2 (Title)"] or ["Unknown"] if not found,
+    "registered_agent": "Agent Name and Address if found, or Unknown",
     "reasoning": "Explain what was found and why this state was predicted...",
     "routing_queue": ["XX", "YY", "ZZ"]
 }
 
-Always make a prediction. Use heuristics if no direct information found. Set confidence accordingly.`;
+Always make a prediction. Use heuristics if no direct information found. Set confidence accordingly. For owners/members, include any officers, directors, members, or principals found.`;
 
-                const routingResponse = await callGemini(apiKey, routingPrompt);
-                
-                updateLoadingStep(2, 'complete');
-                updateLoadingStep(3, 'active');
+        const routingResponse = await callGemini(apiKey, routingPrompt);
+        
+        updateLoadingStep(2, 'complete');
+        updateLoadingStep(3, 'active');
 
-                // Parse the response
-                let prediction;
-                try {
-                    // Extract JSON from response
-                    const jsonMatch = routingResponse.match(/\{[\s\S]*\}/);
-                    if (jsonMatch) {
-                        prediction = JSON.parse(jsonMatch[0]);
-                    } else {
-                        throw new Error('No JSON found in response');
-                    }
-                } catch (e) {
-                    console.error('Parse error:', e, routingResponse);
-                    throw new Error('Failed to parse AI response. Please try again.');
-                }
-
-                updateLoadingStep(3, 'complete');
-                
-                // Display results
-                displayResults(prediction, groundingResponse.sources);
-
-            } catch (error) {
-                console.error('Error:', error);
-                showError(error.message || 'An error occurred while analyzing the entity');
-            } finally {
-                showLoading(false);
-            }
+        let prediction;
+        try {
+          const jsonMatch = routingResponse.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            prediction = JSON.parse(jsonMatch[0]);
+          } else {
+            throw new Error('No JSON found in response');
+          }
+        } catch (e) {
+          console.error('Parse error:', e, routingResponse);
+          throw new Error('Failed to parse AI response. Please try again.');
         }
 
-        async function callGeminiWithGrounding(apiKey, prompt) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent?key=${apiKey}`;
-            
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{ text: prompt }]
-                    }],
-                    tools: [{
-                        google_search: {}
-                    }]
-                })
-            });
+        updateLoadingStep(3, 'complete');
+        displayResults(prediction, groundingResponse.sources);
 
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error?.message || 'API request failed');
-            }
+      } catch (error) {
+        console.error('Error:', error);
+        showError(error.message || 'An error occurred while searching');
+      } finally {
+        showLoading(false);
+      }
+    }
 
-            const data = await response.json();
-            
-            // Extract text and grounding sources
-            const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-            const groundingMetadata = data.candidates?.[0]?.groundingMetadata;
-            
-            // Handle different source formats from the API
-            let sources = [];
-            if (groundingMetadata?.groundingChunks) {
-                sources = groundingMetadata.groundingChunks.map(chunk => ({
-                    title: chunk.web?.title || 'Source',
-                    uri: chunk.web?.uri || '#'
-                }));
-            } else if (groundingMetadata?.searchEntryPoint?.renderedContent) {
-                // Alternative format - extract from rendered content if available
-                sources = [{
-                    title: 'Google Search Results',
-                    uri: '#'
-                }];
-            } else if (groundingMetadata?.webSearchQueries) {
-                sources = groundingMetadata.webSearchQueries.map(query => ({
-                    title: `Search: ${query}`,
-                    uri: `https://www.google.com/search?q=${encodeURIComponent(query)}`
-                }));
-            }
+    async function callGeminiWithGrounding(apiKey, prompt) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent?key=${apiKey}`;
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          tools: [{ google_search: {} }]
+        })
+      });
 
-            return { text, sources };
-        }
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || 'API request failed');
+      }
 
-        async function callGemini(apiKey, prompt) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent?key=${apiKey}`;
-            
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{ text: prompt }]
-                    }],
-                    generationConfig: {
-                        temperature: 0.2,
-                        topP: 0.8,
-                        topK: 40
-                    }
-                })
-            });
+      const data = await response.json();
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      const groundingMetadata = data.candidates?.[0]?.groundingMetadata;
+      
+      let sources = [];
+      if (groundingMetadata?.groundingChunks) {
+        sources = groundingMetadata.groundingChunks.map(chunk => ({
+          title: chunk.web?.title || 'Source',
+          uri: chunk.web?.uri || '#'
+        }));
+      } else if (groundingMetadata?.webSearchQueries) {
+        sources = groundingMetadata.webSearchQueries.map(query => ({
+          title: `Search: ${query}`,
+          uri: `https://www.google.com/search?q=${encodeURIComponent(query)}`
+        }));
+      }
 
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error?.message || 'API request failed');
-            }
+      return { text, sources };
+    }
 
-            const data = await response.json();
-            return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-        }
+    async function callGemini(apiKey, prompt) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent?key=${apiKey}`;
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.2, topP: 0.8, topK: 40 }
+        })
+      });
 
-        function displayResults(prediction, sources) {
-            const resultsSection = document.getElementById('resultsSection');
-            resultsSection.classList.add('active');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || 'API request failed');
+      }
 
-            // Update state display
-            document.getElementById('stateCode').textContent = prediction.predicted_state || '--';
-            document.getElementById('stateName').textContent = 
-                prediction.state_name || STATE_NAMES[prediction.predicted_state] || '--';
+      const data = await response.json();
+      return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    }
 
-            // Update confidence (now 0-100 scale)
-            const confidence = Math.round(prediction.confidence || 0);
-            const confidenceEl = document.getElementById('confidenceValue');
-            confidenceEl.textContent = `${confidence}%`;
-            
-            if (confidence >= 70) {
-                confidenceEl.style.color = 'var(--accent-green)';
-            } else if (confidence >= 50) {
-                confidenceEl.style.color = 'var(--accent-yellow)';
-            } else {
-                confidenceEl.style.color = 'var(--accent-red)';
-            }
+    function displayResults(prediction, sources) {
+      const resultsSection = document.getElementById('resultsSection');
+      resultsSection.classList.add('active');
 
-            // Update entity profile
-            document.getElementById('entityType').textContent = prediction.entity_type || 'Unknown';
-            document.getElementById('industry').textContent = prediction.industry || 'Unknown';
-            document.getElementById('hqLocation').textContent = prediction.hq_location || 'Unknown';
+      document.getElementById('stateCode').textContent = prediction.predicted_state || '--';
+      document.getElementById('stateName').textContent = 
+        prediction.state_name || STATE_NAMES[prediction.predicted_state] || '--';
 
-            // Update reasoning with source quality badge
-            const sourceQuality = prediction.source_quality || 'unknown';
-            const qualityBadge = {
-                'registry': '<span style="color:var(--accent-green);font-weight:600;">[STATE REGISTRY]</span>',
-                'sec': '<span style="color:var(--accent-green);font-weight:600;">[SEC FILING]</span>',
-                'opencorporates': '<span style="color:var(--accent-yellow);font-weight:600;">[OPENCORPORATES]</span>',
-                'web': '<span style="color:var(--accent-yellow);font-weight:600;">[WEB PRESENCE]</span>',
-                'heuristic': '<span style="color:var(--accent-red);font-weight:600;">[HEURISTIC GUESS]</span>'
-            }[sourceQuality] || '';
-            
-            document.getElementById('reasoningText').innerHTML = 
-                (qualityBadge ? qualityBadge + '<br><br>' : '') + (prediction.reasoning || 'No reasoning provided');
+      const confidence = Math.round(prediction.confidence || 0);
+      const confidenceEl = document.getElementById('confidenceValue');
+      confidenceEl.textContent = `${confidence}%`;
+      
+      if (confidence >= 70) {
+        confidenceEl.style.color = 'var(--tier-a)';
+      } else if (confidence >= 50) {
+        confidenceEl.style.color = 'var(--accent)';
+      } else {
+        confidenceEl.style.color = 'var(--tier-e)';
+      }
 
-            // Update routing queue
-            const queueItems = document.getElementById('queueItems');
-            queueItems.innerHTML = '';
-            
-            const queue = prediction.routing_queue || [prediction.predicted_state];
-            queue.forEach((state, index) => {
-                const item = document.createElement('div');
-                item.className = `queue-item ${index === 0 ? 'primary' : ''}`;
-                item.innerHTML = `
-                    <span class="rank">#${index + 1}</span>
-                    <span class="state">${state}</span>
-                `;
-                queueItems.appendChild(item);
-            });
+      document.getElementById('entityType').textContent = prediction.entity_type || 'Unknown';
+      document.getElementById('industry').textContent = prediction.industry || 'Unknown';
+      document.getElementById('hqLocation').textContent = prediction.hq_location || 'Unknown';
+      document.getElementById('formationDate').textContent = prediction.formation_date || 'Unknown';
+      
+      // Registration status with color coding
+      const statusEl = document.getElementById('regStatus');
+      const status = prediction.registration_status || 'Unknown';
+      statusEl.textContent = status;
+      statusEl.className = 'profile-value';
+      if (status.toLowerCase().includes('active') || status.toLowerCase().includes('good')) {
+        statusEl.classList.add('status-active');
+      } else if (status.toLowerCase().includes('inactive') || status.toLowerCase().includes('dissolved')) {
+        statusEl.classList.add('status-inactive');
+      }
+      
+      document.getElementById('regAgent').textContent = prediction.registered_agent || 'Unknown';
+      
+      // Owners/Members section
+      const ownersSection = document.getElementById('ownersSection');
+      const ownersList = document.getElementById('ownersList');
+      const owners = prediction.owners_members || [];
+      
+      if (owners.length > 0 && owners[0] !== 'Unknown' && owners[0] !== '') {
+        ownersSection.style.display = 'block';
+        ownersList.innerHTML = owners.map(owner => {
+          // Parse "Name (Title)" format
+          const match = owner.match(/^(.+?)\s*\((.+)\)$/);
+          if (match) {
+            return `<span class="owner-tag">${match[1]}<span class="owner-title">(${match[2]})</span></span>`;
+          }
+          return `<span class="owner-tag">${owner}</span>`;
+        }).join('');
+      } else {
+        ownersSection.style.display = 'none';
+      }
 
-            // Update sources
-            const sourcesSection = document.getElementById('sourcesSection');
-            const sourcesList = document.getElementById('sourcesList');
-            
-            if (sources && sources.length > 0) {
-                sourcesSection.style.display = 'block';
-                sourcesList.innerHTML = sources.slice(0, 5).map(source => `
-                    <div class="source-item">
-                        <a href="${source.uri}" target="_blank">${source.title}</a>
-                    </div>
-                `).join('');
-            } else {
-                sourcesSection.style.display = 'none';
-            }
+      const sourceQuality = prediction.source_quality || 'unknown';
+      const qualityBadge = {
+        'registry': '<span style="color:var(--tier-a);font-weight:700;">[STATE REGISTRY]</span>',
+        'sec': '<span style="color:var(--tier-a);font-weight:700;">[SEC FILING]</span>',
+        'opencorporates': '<span style="color:var(--accent);font-weight:700;">[OPENCORPORATES]</span>',
+        'web': '<span style="color:var(--accent);font-weight:700;">[WEB PRESENCE]</span>',
+        'heuristic': '<span style="color:var(--tier-e);font-weight:700;">[HEURISTIC GUESS]</span>'
+      }[sourceQuality] || '';
+      
+      document.getElementById('reasoningText').innerHTML = 
+        (qualityBadge ? qualityBadge + '<br><br>' : '') + (prediction.reasoning || 'No reasoning provided');
 
-            // Scroll to results
-            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+      const queueItems = document.getElementById('queueItems');
+      queueItems.innerHTML = '';
+      
+      const queue = prediction.routing_queue || [prediction.predicted_state];
+      queue.forEach((state, index) => {
+        const item = document.createElement('div');
+        item.className = `queue-item ${index === 0 ? 'primary' : ''}`;
+        item.innerHTML = `<span class="rank">#${index + 1}</span><span class="state">${state}</span>`;
+        queueItems.appendChild(item);
+      });
 
-        // Allow Enter key to trigger search
-        document.getElementById('entityName').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') analyzeEntity();
-        });
-    </script>
+      const sourcesSection = document.getElementById('sourcesSection');
+      const sourcesList = document.getElementById('sourcesList');
+      
+      if (sources && sources.length > 0) {
+        sourcesSection.style.display = 'block';
+        sourcesList.innerHTML = sources.slice(0, 5).map(source => `
+          <div class="source-item">
+            <a href="${source.uri}" target="_blank">${source.title}</a>
+          </div>
+        `).join('');
+      } else {
+        sourcesSection.style.display = 'none';
+      }
+
+      resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    document.getElementById('entityName').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') analyzeEntity();
+    });
+  </script>
 </body>
 </html>
