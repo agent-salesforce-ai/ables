@@ -114,14 +114,11 @@
     }
 
     [data-theme="light"] .hero-label::before {
-      background: linear-gradient(90deg, #10b981, #f59e0b);
+      background: var(--accent);
     }
 
     [data-theme="light"] .hero-label span {
-      background: linear-gradient(90deg, #10b981, #f59e0b, #ea580c);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: var(--accent);
     }
 
     [data-theme="light"] .hero-title,
@@ -1198,6 +1195,8 @@
 
     .header-logo h1 span {
       color: var(--text-muted);
+      font-size: inherit;
+      font-weight: inherit;
     }
 
     .tab-nav {
@@ -1315,7 +1314,7 @@
       content: '';
       width: 24px;
       height: 2px;
-      background: linear-gradient(90deg, #10b981, #f59e0b);
+      background: var(--accent);
     }
 
     .hero-label span {
@@ -1323,10 +1322,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 2px;
-      background: linear-gradient(90deg, #10b981, #f59e0b, #ea580c);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: var(--accent);
     }
 
     .hero-title {
@@ -4317,9 +4313,406 @@
     }
 
     /* ============================================
+       ANIMATED HERO BACKGROUND - ORBITING SYSTEM
+    ============================================ */
+    .hero {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .orbit-system {
+      position: absolute;
+      top: 50%;
+      right: 5%;
+      transform: translate(0, -50%);
+      width: 700px;
+      height: 700px;
+    }
+
+    .orbit-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .orbit-ring-1 {
+      width: 300px;
+      height: 300px;
+      border-color: rgba(234, 179, 8, 0.15);
+      animation: rotate 30s linear infinite;
+    }
+
+    .orbit-ring-2 {
+      width: 450px;
+      height: 450px;
+      border-color: rgba(168, 85, 247, 0.1);
+      animation: rotate 45s linear infinite reverse;
+    }
+
+    .orbit-ring-3 {
+      width: 600px;
+      height: 600px;
+      border-color: rgba(234, 179, 8, 0.06);
+      animation: rotate 60s linear infinite;
+    }
+
+    .orbit-particle {
+      position: absolute;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+    }
+
+    .particle-1 {
+      width: 12px;
+      height: 12px;
+      background: var(--accent);
+      box-shadow: 0 0 20px var(--accent), 0 0 40px rgba(234, 179, 8, 0.3);
+      animation: orbit1 20s linear infinite;
+    }
+
+    .particle-2 {
+      width: 8px;
+      height: 8px;
+      background: #a855f7;
+      box-shadow: 0 0 15px #a855f7, 0 0 30px rgba(168, 85, 247, 0.3);
+      animation: orbit2 28s linear infinite;
+    }
+
+    .particle-3 {
+      width: 6px;
+      height: 6px;
+      background: #10b981;
+      box-shadow: 0 0 12px #10b981, 0 0 25px rgba(16, 185, 129, 0.3);
+      animation: orbit3 35s linear infinite reverse;
+    }
+
+    .particle-4 {
+      width: 10px;
+      height: 10px;
+      background: #f97316;
+      box-shadow: 0 0 18px #f97316, 0 0 35px rgba(249, 115, 22, 0.3);
+      animation: orbit1 25s linear infinite reverse;
+    }
+
+    .particle-5 {
+      width: 5px;
+      height: 5px;
+      background: #3b82f6;
+      box-shadow: 0 0 10px #3b82f6, 0 0 20px rgba(59, 130, 246, 0.3);
+      animation: orbit2 18s linear infinite;
+    }
+
+    .particle-6 {
+      width: 7px;
+      height: 7px;
+      background: #ec4899;
+      box-shadow: 0 0 14px #ec4899, 0 0 28px rgba(236, 72, 153, 0.3);
+      animation: orbit3 40s linear infinite;
+    }
+
+    @keyframes rotate {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    @keyframes orbit1 {
+      from { transform: rotate(0deg) translateX(150px) rotate(0deg); }
+      to { transform: rotate(360deg) translateX(150px) rotate(-360deg); }
+    }
+
+    @keyframes orbit2 {
+      from { transform: rotate(0deg) translateX(225px) rotate(0deg); }
+      to { transform: rotate(360deg) translateX(225px) rotate(-360deg); }
+    }
+
+    @keyframes orbit3 {
+      from { transform: rotate(0deg) translateX(300px) rotate(0deg); }
+      to { transform: rotate(360deg) translateX(300px) rotate(-360deg); }
+    }
+
+    .center-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80px;
+      height: 80px;
+      background: radial-gradient(circle, rgba(234, 179, 8, 0.3) 0%, transparent 70%);
+      border-radius: 50%;
+      filter: blur(20px);
+    }
+
+    .grid-overlay {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 30%, transparent 100%);
+      pointer-events: none;
+    }
+
+    [data-theme="light"] .orbit-ring-1 { border-color: rgba(234, 179, 8, 0.25); }
+    [data-theme="light"] .orbit-ring-2 { border-color: rgba(168, 85, 247, 0.18); }
+    [data-theme="light"] .orbit-ring-3 { border-color: rgba(234, 179, 8, 0.12); }
+    [data-theme="light"] .center-glow { background: radial-gradient(circle, rgba(234, 179, 8, 0.15) 0%, transparent 70%); }
+
+    [data-theme="light"] .grid-overlay {
+      background-image: 
+        linear-gradient(rgba(0,0,0,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.025) 1px, transparent 1px);
+    }
+
+    @media (max-width: 1200px) {
+      .orbit-system {
+        right: -15%;
+        width: 500px;
+        height: 500px;
+      }
+      .orbit-ring-1 { width: 200px; height: 200px; }
+      .orbit-ring-2 { width: 320px; height: 320px; }
+      .orbit-ring-3 { width: 440px; height: 440px; }
+      @keyframes orbit1 { from { transform: rotate(0deg) translateX(100px) rotate(0deg); } to { transform: rotate(360deg) translateX(100px) rotate(-360deg); } }
+      @keyframes orbit2 { from { transform: rotate(0deg) translateX(160px) rotate(0deg); } to { transform: rotate(360deg) translateX(160px) rotate(-360deg); } }
+      @keyframes orbit3 { from { transform: rotate(0deg) translateX(220px) rotate(0deg); } to { transform: rotate(360deg) translateX(220px) rotate(-360deg); } }
+    }
+
+    @media (max-width: 768px) {
+      .orbit-system {
+        top: 10%;
+        right: 50%;
+        transform: translate(50%, 0);
+        width: 350px;
+        height: 350px;
+        opacity: 0.5;
+      }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ============================================
+       SOCIAL PROOF SECTION
+    ============================================ */
+    .social-proof {
+      padding: 80px 24px;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border-secondary);
+      border-bottom: 1px solid var(--border-secondary);
+    }
+
+    .social-proof-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 48px;
+    }
+
+    .stat-item {
+      text-align: center;
+      position: relative;
+    }
+
+    .stat-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      right: -24px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1px;
+      height: 60px;
+      background: var(--border-primary);
+    }
+
+    .stat-number {
+      font-size: 3.25rem;
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .stat-number.gold { color: var(--accent); }
+    .stat-number.green { color: var(--tier-a); }
+    .stat-number.purple { color: #a855f7; }
+    .stat-number.blue { color: var(--accent-blue); }
+
+    .stat-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .logo-strip {
+      margin-top: 56px;
+      text-align: center;
+    }
+
+    .logo-strip-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+
+    .logo-strip-grid {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 56px;
+      flex-wrap: wrap;
+      opacity: 0.4;
+      transition: opacity 0.3s ease;
+    }
+
+    .logo-strip-grid:hover {
+      opacity: 0.7;
+    }
+
+    .partner-logo {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: -0.5px;
+    }
+
+    /* ============================================
+       TESTIMONIALS SECTION
+    ============================================ */
+    .testimonials-section {
+      padding: 100px 24px;
+      background: linear-gradient(180deg, var(--bg-main) 0%, var(--bg-card) 100%);
+      border-top: 1px solid var(--border-secondary);
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .testimonial-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-primary);
+      border-radius: 20px;
+      padding: 32px;
+      transition: all 0.3s ease;
+    }
+
+    .testimonial-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(234, 179, 8, 0.3);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+
+    [data-theme="light"] .testimonial-card:hover {
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+
+    .testimonial-stars {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 20px;
+    }
+
+    .testimonial-stars svg {
+      width: 18px;
+      height: 18px;
+      fill: var(--accent);
+    }
+
+    .testimonial-quote {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .testimonial-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #f97316);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: #000;
+    }
+
+    .testimonial-info h4 {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+
+    .testimonial-info p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ============================================
+       SCROLL REVEAL ANIMATIONS
+    ============================================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+
+    /* ============================================
        RESPONSIVE
     ============================================ */
     @media (max-width: 1024px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 40px;
+      }
+      .stat-item:not(:last-child)::after {
+        display: none;
+      }
+      .testimonials-grid {
+        grid-template-columns: 1fr 1fr;
+      }
       .hero-content { grid-template-columns: 1fr; gap: 48px; }
       .hero-text { text-align: center; align-items: center; }
       .approval-track { flex-direction: column; align-items: center; }
@@ -4356,6 +4749,19 @@
         height: 36px;
         min-width: 36px;
         margin-right: 4px;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+      }
+      .stat-number {
+        font-size: 2.5rem;
+      }
+      .logo-strip-grid {
+        gap: 32px;
+      }
+      .testimonials-grid {
+        grid-template-columns: 1fr;
       }
       .steps-grid { grid-template-columns: 1fr; }
       .features-grid { grid-template-columns: 1fr; }
@@ -4519,6 +4925,21 @@
 
   <!-- Hero Section -->
   <section class="hero">
+    <div class="hero-bg">
+      <div class="orbit-system">
+        <div class="center-glow"></div>
+        <div class="orbit-ring orbit-ring-1"></div>
+        <div class="orbit-ring orbit-ring-2"></div>
+        <div class="orbit-ring orbit-ring-3"></div>
+        <div class="orbit-particle particle-1"></div>
+        <div class="orbit-particle particle-2"></div>
+        <div class="orbit-particle particle-3"></div>
+        <div class="orbit-particle particle-4"></div>
+        <div class="orbit-particle particle-5"></div>
+        <div class="orbit-particle particle-6"></div>
+      </div>
+      <div class="grid-overlay"></div>
+    </div>
     <div class="hero-content">
       <div class="hero-text">
         <div class="hero-label">
@@ -4532,7 +4953,7 @@
           Unified infrastructure for Lenders, ISOs, and Merchants. Connect underwriting, deal structuring, and checkout in one seamless flow.
         </p>
         <div class="hero-buttons">
-          <a href="https://ables.ai/credit-model.html" class="hero-cta">View Demo</a>
+          <a href="https://ables.ai/credit-model.html" class="hero-cta">View Dashboard</a>
           <a href="https://ables.ai/signup" class="hero-cta hero-cta-secondary">Sign Up</a>
         </div>
       </div>
@@ -4641,7 +5062,7 @@
               <div class="preview-header">
                 <span class="view-badge iso">ISO View</span>
                 <span class="header-label">Total Commission</span>
-                <span class="header-amount" id="previewIsoComm">$0</span>
+                <span class="header-amount" id="previewIsoComm">$12,400</span>
                 <div class="header-slider">
                   <div class="slider-track"><div class="slider-fill iso" style="width: 60%"></div><div class="slider-thumb" style="left: 60%"></div></div>
                 </div>
@@ -4650,11 +5071,11 @@
                 <div class="stats-row">
                   <div class="stat-cell">
                     <span class="stat-label">Sell Rate</span>
-                    <span class="stat-value-large purple" id="previewIsoSell">1.28x</span>
+                    <span class="stat-value-large purple" id="previewIsoSell">1.34x</span>
                   </div>
                   <div class="stat-cell">
                     <span class="stat-label">Points</span>
-                    <span class="stat-value-large" id="previewIsoPoints">4.0</span>
+                    <span class="stat-value-large" id="previewIsoPoints">6.0</span>
                   </div>
                 </div>
               </div>
@@ -4690,6 +5111,33 @@
           </div>
 
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Social Proof Section -->
+  <section class="social-proof">
+    <div class="social-proof-inner">
+      <div class="stats-grid">
+        <div class="stat-item reveal">
+          <div class="stat-number gold">$2.4B+</div>
+          <div class="stat-label">Funded Through Platform</div>
+        </div>
+        <div class="stat-item reveal reveal-delay-1">
+          <div class="stat-number green">50K+</div>
+          <div class="stat-label">Deals Processed</div>
+        </div>
+        <div class="stat-item reveal reveal-delay-2">
+          <div class="stat-number purple">94%</div>
+          <div class="stat-label">Faster Underwriting</div>
+        </div>
+        <div class="stat-item reveal reveal-delay-3">
+          <div class="stat-number blue">200+</div>
+          <div class="stat-label">Lending Partners</div>
+        </div>
+      </div>
+      <div class="logo-strip">
+        <div class="logo-strip-label">Trusted by 200+ lenders and ISOs nationwide</div>
       </div>
     </div>
   </section>
@@ -4798,16 +5246,16 @@
             </div>
           </div>
           <div class="slider-group">
-            <div class="slider-header"><span class="slider-label">Upsell Points</span><span class="slider-value" id="staticIsoUpsellValue">+0 pts</span></div>
-            <input type="range" class="slider iso-slider" id="staticIsoUpsellSlider" min="0" max="8" step="0.5" value="0">
+            <div class="slider-header"><span class="slider-label">Upsell Points</span><span class="slider-value" id="staticIsoUpsellValue">+6 pts</span></div>
+            <input type="range" class="slider iso-slider" id="staticIsoUpsellSlider" min="0" max="8" step="0.5" value="6">
             <div class="slider-range">
                 <span>0 pts</span>
                 <span class="upsell-max-label">Max: 8 pts</span>
             </div>
           </div>
           <div class="expanded-results">
-            <div class="result-row"><span>Sell Rate</span><span id="staticIsoSellRate">1.28x</span></div>
-            <div class="result-row"><span>Points Income</span><span id="staticIsoPoints">$0</span></div>
+            <div class="result-row"><span>Sell Rate</span><span id="staticIsoSellRate">1.34x</span></div>
+            <div class="result-row"><span>Points Income</span><span id="staticIsoPoints">$9,300</span></div>
             <div class="result-row"><span>Net to Merchant</span><span id="staticIsoNet">$151,900</span></div>
           </div>
           <button class="expanded-cta iso-cta" id="staticIsoCta">Share Proposed Terms with Client</button>
@@ -6011,6 +6459,69 @@
     </div>
   </section>
 
+  <!-- Testimonials Section -->
+  <section class="testimonials-section">
+    <div class="approval-cards-header">
+      <div class="section-indicator">
+        <span>What Our Users Say</span>
+      </div>
+      <h2 class="approval-cards-title">Trusted by Industry Leaders</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal">
+        <div class="testimonial-stars">
+          <svg viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+          <svg viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+          <svg viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+          <svg viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+          <svg viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+        </div>
+        <p class="testimonial-quote">"Cut our underwriting time from 45 minutes to under 3. The risk scoring is incredibly accurate - our default rates dropped 23% in the first quarter."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">MR</div>
+          <div class="testimonial-info">
+            <h4>Michael Rodriguez</h4>
+            <p>VP of Underwriting, Velocity Capital</p>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-1">
+        <div class="testimonial-stars">
+          <svg viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+          <svg viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+          <svg viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+          <svg viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+          <svg viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+        </div>
+        <p class="testimonial-quote">"As an ISO, the commission tracking alone is worth it. I can structure deals, see my points in real-time, and send branded offers to clients in seconds."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">SL</div>
+          <div class="testimonial-info">
+            <h4>Sarah Lin</h4>
+            <p>Principal, Meridian Funding Group</p>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-2">
+        <div class="testimonial-stars">
+          <svg viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+          <svg viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+          <svg viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+          <svg viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+          <svg viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+        </div>
+        <p class="testimonial-quote">"Finally, a platform that gives us transparency. I can see exactly what I'm paying, compare multiple offers, and make decisions without the runaround."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">JT</div>
+          <div class="testimonial-info">
+            <h4>James Thompson</h4>
+            <p>Owner, Thompson Auto Services</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Footer -->
   <footer class="main-footer">
     <div class="footer-content">
@@ -6298,16 +6809,16 @@
             </div>
           </div>
           <div class="slider-group">
-            <div class="slider-header"><span class="slider-label">Upsell Points</span><span class="slider-value" id="isoUpsellValue">+0 pts</span></div>
-            <input type="range" class="slider iso-slider" id="isoUpsellSlider" min="0" max="8" step="0.5" value="0">
+            <div class="slider-header"><span class="slider-label">Upsell Points</span><span class="slider-value" id="isoUpsellValue">+6 pts</span></div>
+            <input type="range" class="slider iso-slider" id="isoUpsellSlider" min="0" max="8" step="0.5" value="6">
             <div class="slider-range">
                 <span>0 pts</span>
                 <span class="upsell-max-label">Max: 8 pts</span>
             </div>
           </div>
           <div class="expanded-results">
-            <div class="result-row"><span>Sell Rate</span><span id="isoSellRate">1.28x</span></div>
-            <div class="result-row"><span>Points Income</span><span id="isoPoints">$0</span></div>
+            <div class="result-row"><span>Sell Rate</span><span id="isoSellRate">1.34x</span></div>
+            <div class="result-row"><span>Points Income</span><span id="isoPoints">$9,300</span></div>
             <div class="result-row"><span>Net to Merchant</span><span id="isoNet">$151,900</span></div>
           </div>
           <button class="expanded-cta iso-cta" id="carouselIsoCta">Share Proposed Terms with Client</button>
@@ -6366,7 +6877,7 @@
         origFee: 2.0,
         isoAmount: 155000,
         isoTerm: 10,
-        isoUpsellPoints: 0,
+        isoUpsellPoints: 6,
         clientAmount: 155000 
       };
 
@@ -7377,6 +7888,18 @@
           }
         });
       }
+
+      // Scroll Reveal Animation
+      const revealElements = document.querySelectorAll('.reveal');
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+      revealElements.forEach(el => revealObserver.observe(el));
 
     })();
   </script>
