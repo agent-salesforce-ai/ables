@@ -6293,9 +6293,9 @@ Government Issued ID</textarea>
     }
     
     function openAccountProfile() {
-        // Open Outseta profile modal
+        // Open Outseta profile modal using auth widget
         if (window.Outseta) {
-            Outseta.showProfile();
+            Outseta.setWidgetMode('profile');
         }
     }
     
