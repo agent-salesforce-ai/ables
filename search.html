@@ -92,12 +92,6 @@
       z-index: 0;
     }
 
-    [data-theme="light"] .bg-grid {
-      background-image: 
-        linear-gradient(rgba(234, 179, 8, 0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(234, 179, 8, 0.06) 1px, transparent 1px);
-    }
-
     /* Orbital Animation System */
     .orbit-system {
       position: fixed;
@@ -108,7 +102,7 @@
       height: 800px;
       pointer-events: none;
       z-index: 0;
-      opacity: 0.7;
+      opacity: 0.5;
     }
 
     .orbit-center {
@@ -127,28 +121,14 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      border: 1px solid rgba(234, 179, 8, 0.15);
+      border: 1px solid rgba(234, 179, 8, 0.12);
       border-radius: 50%;
       transform: translate(-50%, -50%);
     }
 
-    .orbit-ring-1 {
-      width: 300px;
-      height: 300px;
-      animation: orbit-rotate 30s linear infinite;
-    }
-
-    .orbit-ring-2 {
-      width: 450px;
-      height: 450px;
-      animation: orbit-rotate 45s linear infinite reverse;
-    }
-
-    .orbit-ring-3 {
-      width: 600px;
-      height: 600px;
-      animation: orbit-rotate 60s linear infinite;
-    }
+    .orbit-ring-1 { width: 300px; height: 300px; animation: orbit-rotate 30s linear infinite; }
+    .orbit-ring-2 { width: 450px; height: 450px; animation: orbit-rotate 45s linear infinite reverse; }
+    .orbit-ring-3 { width: 600px; height: 600px; animation: orbit-rotate 60s linear infinite; }
 
     @keyframes orbit-rotate {
       from { transform: translate(-50%, -50%) rotate(0deg); }
@@ -158,142 +138,31 @@
     .orbit-particle {
       position: absolute;
       border-radius: 50%;
-      filter: blur(0.5px);
-    }
-
-    .particle-1 {
-      width: 10px;
-      height: 10px;
-      background: #eab308;
-      box-shadow: 0 0 15px 5px rgba(234, 179, 8, 0.5);
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
-      animation: orbit-1 20s linear infinite;
     }
 
-    .particle-2 {
-      width: 8px;
-      height: 8px;
-      background: #a855f7;
-      box-shadow: 0 0 12px 4px rgba(168, 85, 247, 0.5);
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      animation: orbit-2 25s linear infinite;
-    }
+    .particle-1 { width: 10px; height: 10px; background: #eab308; box-shadow: 0 0 15px 5px rgba(234, 179, 8, 0.5); animation: orb1 20s linear infinite; }
+    .particle-2 { width: 8px; height: 8px; background: #a855f7; box-shadow: 0 0 12px 4px rgba(168, 85, 247, 0.5); animation: orb2 25s linear infinite; }
+    .particle-3 { width: 6px; height: 6px; background: #22c55e; box-shadow: 0 0 10px 3px rgba(34, 197, 94, 0.5); animation: orb3 18s linear infinite reverse; }
+    .particle-4 { width: 8px; height: 8px; background: #f97316; box-shadow: 0 0 12px 4px rgba(249, 115, 22, 0.5); animation: orb4 30s linear infinite; }
+    .particle-5 { width: 5px; height: 5px; background: #3b82f6; box-shadow: 0 0 10px 3px rgba(59, 130, 246, 0.5); animation: orb5 22s linear infinite reverse; }
+    .particle-6 { width: 7px; height: 7px; background: #ec4899; box-shadow: 0 0 12px 4px rgba(236, 72, 153, 0.5); animation: orb6 35s linear infinite; }
 
-    .particle-3 {
-      width: 6px;
-      height: 6px;
-      background: #22c55e;
-      box-shadow: 0 0 10px 3px rgba(34, 197, 94, 0.5);
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      animation: orbit-3 18s linear infinite reverse;
-    }
+    @keyframes orb1 { from { transform: translate(-50%, -50%) rotate(0deg) translateX(150px); } to { transform: translate(-50%, -50%) rotate(360deg) translateX(150px); } }
+    @keyframes orb2 { from { transform: translate(-50%, -50%) rotate(60deg) translateX(225px); } to { transform: translate(-50%, -50%) rotate(420deg) translateX(225px); } }
+    @keyframes orb3 { from { transform: translate(-50%, -50%) rotate(120deg) translateX(300px); } to { transform: translate(-50%, -50%) rotate(480deg) translateX(300px); } }
+    @keyframes orb4 { from { transform: translate(-50%, -50%) rotate(180deg) translateX(175px); } to { transform: translate(-50%, -50%) rotate(540deg) translateX(175px); } }
+    @keyframes orb5 { from { transform: translate(-50%, -50%) rotate(240deg) translateX(275px); } to { transform: translate(-50%, -50%) rotate(600deg) translateX(275px); } }
+    @keyframes orb6 { from { transform: translate(-50%, -50%) rotate(300deg) translateX(250px); } to { transform: translate(-50%, -50%) rotate(660deg) translateX(250px); } }
 
-    .particle-4 {
-      width: 8px;
-      height: 8px;
-      background: #f97316;
-      box-shadow: 0 0 12px 4px rgba(249, 115, 22, 0.5);
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      animation: orbit-4 30s linear infinite;
-    }
-
-    .particle-5 {
-      width: 5px;
-      height: 5px;
-      background: #3b82f6;
-      box-shadow: 0 0 10px 3px rgba(59, 130, 246, 0.5);
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      animation: orbit-5 22s linear infinite reverse;
-    }
-
-    .particle-6 {
-      width: 7px;
-      height: 7px;
-      background: #ec4899;
-      box-shadow: 0 0 12px 4px rgba(236, 72, 153, 0.5);
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      animation: orbit-6 35s linear infinite;
-    }
-
-    @keyframes orbit-1 {
-      from { transform: translate(-50%, -50%) rotate(0deg) translateX(150px) rotate(0deg); }
-      to { transform: translate(-50%, -50%) rotate(360deg) translateX(150px) rotate(-360deg); }
-    }
-
-    @keyframes orbit-2 {
-      from { transform: translate(-50%, -50%) rotate(60deg) translateX(225px) rotate(-60deg); }
-      to { transform: translate(-50%, -50%) rotate(420deg) translateX(225px) rotate(-420deg); }
-    }
-
-    @keyframes orbit-3 {
-      from { transform: translate(-50%, -50%) rotate(120deg) translateX(300px) rotate(-120deg); }
-      to { transform: translate(-50%, -50%) rotate(480deg) translateX(300px) rotate(-480deg); }
-    }
-
-    @keyframes orbit-4 {
-      from { transform: translate(-50%, -50%) rotate(180deg) translateX(175px) rotate(-180deg); }
-      to { transform: translate(-50%, -50%) rotate(540deg) translateX(175px) rotate(-540deg); }
-    }
-
-    @keyframes orbit-5 {
-      from { transform: translate(-50%, -50%) rotate(240deg) translateX(275px) rotate(-240deg); }
-      to { transform: translate(-50%, -50%) rotate(600deg) translateX(275px) rotate(-600deg); }
-    }
-
-    @keyframes orbit-6 {
-      from { transform: translate(-50%, -50%) rotate(300deg) translateX(250px) rotate(-300deg); }
-      to { transform: translate(-50%, -50%) rotate(660deg) translateX(250px) rotate(-660deg); }
-    }
-
-    @media (max-width: 768px) {
-      .orbit-system {
-        width: 500px;
-        height: 500px;
-        opacity: 0.5;
-      }
-      .orbit-ring-1 { width: 180px; height: 180px; }
-      .orbit-ring-2 { width: 280px; height: 280px; }
-      .orbit-ring-3 { width: 380px; height: 380px; }
-      @keyframes orbit-1 {
-        from { transform: translate(-50%, -50%) rotate(0deg) translateX(90px) rotate(0deg); }
-        to { transform: translate(-50%, -50%) rotate(360deg) translateX(90px) rotate(-360deg); }
-      }
-      @keyframes orbit-2 {
-        from { transform: translate(-50%, -50%) rotate(60deg) translateX(140px) rotate(-60deg); }
-        to { transform: translate(-50%, -50%) rotate(420deg) translateX(140px) rotate(-420deg); }
-      }
-      @keyframes orbit-3 {
-        from { transform: translate(-50%, -50%) rotate(120deg) translateX(190px) rotate(-120deg); }
-        to { transform: translate(-50%, -50%) rotate(480deg) translateX(190px) rotate(-480deg); }
-      }
-      @keyframes orbit-4 {
-        from { transform: translate(-50%, -50%) rotate(180deg) translateX(110px) rotate(-180deg); }
-        to { transform: translate(-50%, -50%) rotate(540deg) translateX(110px) rotate(-540deg); }
-      }
-      @keyframes orbit-5 {
-        from { transform: translate(-50%, -50%) rotate(240deg) translateX(170px) rotate(-240deg); }
-        to { transform: translate(-50%, -50%) rotate(600deg) translateX(170px) rotate(-600deg); }
-      }
-      @keyframes orbit-6 {
-        from { transform: translate(-50%, -50%) rotate(300deg) translateX(155px) rotate(-300deg); }
-        to { transform: translate(-50%, -50%) rotate(660deg) translateX(155px) rotate(-660deg); }
-      }
-    }
-
-    /* Header - Matches Index */
+    /* Header */
     .main-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 65px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -301,28 +170,32 @@
       background: rgba(10, 10, 10, 0.8);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border-primary);
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
       z-index: 100;
     }
 
     [data-theme="light"] .main-header {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    /* Light mode moon color cycle */
+    [data-theme="light"] .moon-base {
+      animation-name: orbit, moonColorLight, moonBackOpacity !important;
+    }
+    [data-theme="light"] .moon-front {
+      animation-name: orbit, moonColorLight, moonFrontOpacity !important;
+    }
+    @keyframes moonColorLight {
+      0%, 100% { fill: #10b981; }
+      20% { fill: #3b82f6; }
+      40% { fill: #ec4899; }
+      60% { fill: #a855f7; }
+      80% { fill: #eab308; }
     }
 
     .header-logo {
       display: flex;
       align-items: center;
       gap: 12px;
-    }
-
-    .header-logo a {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
     }
 
     .header-logo svg {
@@ -333,14 +206,12 @@
     .header-logo h1 {
       font-size: 1.25rem;
       font-weight: 800;
-      letter-spacing: -0.5px;
       color: var(--text-primary);
+      letter-spacing: -0.5px;
     }
 
     .header-logo h1 span {
       color: var(--text-muted);
-      font-size: inherit;
-      font-weight: inherit;
     }
 
     [data-theme="light"] .header-logo h1 {
@@ -352,36 +223,37 @@
     }
 
     .theme-toggle {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
       background: transparent;
-      color: var(--text-muted);
+      border: none;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
+      color: var(--text-muted);
       transition: all 0.2s;
-      margin-left: 8px;
     }
 
     .theme-toggle:hover {
-      background: rgba(255,255,255,0.05);
       color: var(--text-primary);
     }
 
+    [data-theme="light"] .theme-toggle {
+      color: #4b5563;
+    }
+
     [data-theme="light"] .theme-toggle:hover {
-      background: rgba(0,0,0,0.05);
+      color: #111827;
     }
 
     .theme-toggle svg {
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
     }
 
     .sun-icon { display: none; }
-    .moon-icon { display: block; }
     [data-theme="light"] .sun-icon { display: block; }
     [data-theme="light"] .moon-icon { display: none; }
 
@@ -392,315 +264,429 @@
 
     .tab-btn {
       padding: 8px 16px;
-      background: transparent;
-      border: 1px solid transparent;
-      border-radius: 8px;
-      color: var(--text-muted);
       font-size: 13px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      white-space: nowrap;
-      transition: all 0.3s ease;
-      text-decoration: none;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      border-radius: 8px;
       cursor: pointer;
-      font-family: inherit;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     .tab-btn:hover {
-      background: rgba(255,255,255,0.05);
       color: var(--text-primary);
+      background: var(--bg-secondary);
+    }
+
+    .tab-btn.active {
+      color: var(--accent);
+      background: var(--bg-secondary);
+    }
+
+    .lite-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      background: #a855f7;
+      color: #fff;
+      border-radius: 4px;
+      text-transform: uppercase;
+      margin-left: 6px;
+    }
+
+    .free-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      background: #22c55e;
+      color: #000;
+      border-radius: 4px;
+      text-transform: uppercase;
+      margin-left: 6px;
+    }
+
+    [data-theme="light"] .tab-btn {
+      color: #374151;
     }
 
     [data-theme="light"] .tab-btn:hover {
       background: rgba(0,0,0,0.05);
+      color: #111827;
     }
 
-    .tab-btn.active {
-      background: rgba(234, 179, 8, 0.1);
-      border-color: rgba(234, 179, 8, 0.2);
-      color: var(--accent);
-    }
-
-    .tab-btn .free-badge {
-      font-size: 9px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      background: var(--tier-a);
-      color: #000;
-      padding: 2px 5px;
-      border-radius: 4px;
-      margin-left: 6px;
-      vertical-align: middle;
-    }
-
-    .tab-btn .lite-badge {
-      font-size: 9px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      background: #a855f7;
-      color: #fff;
-      padding: 2px 5px;
-      border-radius: 4px;
-      margin-left: 6px;
-      vertical-align: middle;
+    [data-theme="light"] .tab-btn.active {
+      background: rgba(234, 179, 8, 0.15);
+      color: #b45309;
     }
 
     /* Container */
     .container {
-      position: relative;
-      z-index: 1;
-      max-width: 1400px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 2rem;
+      position: relative;
+      z-index: 1;
     }
 
-    /* Page Header */
-    .page-header {
-      text-align: center;
-      padding: 2rem 0 3rem;
-    }
-
-    .page-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border-primary);
-      padding: 0.5rem 1rem;
-      border-radius: 100px;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent);
-      margin-bottom: 1.5rem;
-    }
-
-    .page-badge::before {
-      content: '';
-      width: 8px;
-      height: 8px;
-      background: var(--accent);
-      border-radius: 50%;
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(1.2); }
-    }
-
-    .page-title {
-      font-size: clamp(2.5rem, 5vw, 4rem);
-      font-weight: 800;
-      line-height: 1.1;
-      margin-bottom: 1rem;
-      letter-spacing: -2px;
-      background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .page-subtitle {
-      font-size: 1.1rem;
-      color: var(--text-secondary);
-      max-width: 700px;
-      margin: 0 auto;
-      line-height: 1.6;
-    }
-
-    /* Main Grid */
-    .main-grid {
-      display: grid;
-      grid-template-columns: 1fr 400px;
-      gap: 2rem;
-    }
-
-    @media (max-width: 1100px) {
-      .main-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* Card Styles */
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-primary);
-      border-radius: 16px;
-      overflow: hidden;
-    }
-
-    .card-header {
-      padding: 1rem 1.5rem;
-      border-bottom: 1px solid var(--border-secondary);
+    /* Search Section - Centered Hero */
+    .search-section {
+      min-height: calc(100vh - 200px);
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
+      padding: 2rem 0;
     }
 
-    .card-title {
-      font-size: 0.75rem;
+    .search-section.has-results {
+      min-height: auto;
+      padding: 1rem 0 2rem;
+    }
+
+    /* Large Logo */
+    .search-logo-large {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 2rem;
+    }
+
+    .search-logo-large svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Title */
+    .search-title {
+      font-size: clamp(2.5rem, 6vw, 4rem);
       font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .card-title svg {
-      width: 14px;
-      height: 14px;
-      opacity: 0.6;
-    }
-
-    .card-body {
-      padding: 1.5rem;
-    }
-
-    /* Input Styles */
-    .input-group {
-      margin-bottom: 1.25rem;
-    }
-
-    .input-group label {
-      display: block;
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: var(--text-secondary);
+      letter-spacing: -2px;
       margin-bottom: 0.5rem;
     }
 
-    .input-wrapper input {
-      width: 100%;
-      padding: 0.875rem 1rem;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-primary);
-      border-radius: 10px;
-      color: var(--text-primary);
-      font-size: 0.95rem;
-      font-family: inherit;
-      transition: all 0.2s;
+    .search-title .accent {
+      color: var(--accent);
     }
 
-    .input-wrapper input:focus {
-      outline: none;
+    .search-title .white {
+      color: var(--text-primary);
+    }
+
+    .search-title .muted {
+      color: var(--text-muted);
+    }
+
+    .search-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+      font-weight: 400;
+    }
+
+    /* Search Box */
+    .search-box {
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .search-input-container {
+      display: flex;
+      align-items: center;
+      background: var(--bg-card);
+      border: 1px solid var(--border-primary);
+      border-radius: 50px;
+      padding: 8px 8px 8px 24px;
+      gap: 12px;
+      margin-bottom: 1.5rem;
+    }
+
+    .search-input-container:focus-within {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px var(--glow-gold);
     }
 
-    .input-wrapper input::placeholder {
-      color: var(--text-muted);
-    }
-
-    /* API Key */
-    .api-key-wrapper {
-      display: flex;
-      gap: 0;
-    }
-
-    .api-key-wrapper input {
-      border-radius: 10px 0 0 10px;
+    .search-input-container input[type="text"] {
       flex: 1;
-    }
-
-    .api-key-buttons {
-      display: flex;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-primary);
-      border-left: none;
-      border-radius: 0 10px 10px 0;
-    }
-
-    .key-btn {
-      width: 42px;
-      height: 46px;
+      min-width: 0;
+      padding: 0.75rem 0;
       background: transparent;
       border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-muted);
-      transition: all 0.2s;
-      border-left: 1px solid var(--border-primary);
+      color: var(--text-primary);
+      font-size: 1.1rem;
+      font-family: inherit;
     }
 
-    .key-btn:hover {
-      background: rgba(255, 255, 255, 0.05);
+    .search-input-container input[type="text"]:focus {
+      outline: none;
+    }
+
+    .search-input-container input[type="text"]::placeholder {
+      color: var(--text-muted);
+    }
+
+    .api-key-inline {
+      display: flex;
+      align-items: center;
+    }
+
+    .api-key-inline input {
+      width: 140px;
+      padding: 0.5rem 0;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1rem;
+      font-family: inherit;
+      letter-spacing: 2px;
+      text-align: center;
+    }
+
+    .api-key-inline input:focus {
+      outline: none;
       color: var(--text-primary);
     }
 
-    .key-btn svg {
-      width: 16px;
-      height: 16px;
+    .api-key-inline input::placeholder {
+      color: var(--text-muted);
+      letter-spacing: 0;
     }
 
-    .key-status {
-      font-size: 0.75rem;
-      margin-top: 0.5rem;
-      min-height: 1rem;
-    }
-
-    .key-status.saved { color: var(--tier-a); }
-    .key-status.cleared { color: var(--text-muted); }
-    .key-status.loaded { color: var(--accent); }
-
-    /* Button */
-    .btn-primary {
-      width: 100%;
-      padding: 1rem 1.5rem;
-      background: linear-gradient(135deg, var(--accent) 0%, #f59e0b 100%);
+    .search-btn-round {
+      width: 56px;
+      height: 56px;
+      min-width: 56px;
+      background: var(--accent);
       border: none;
-      border-radius: 10px;
+      border-radius: 50%;
       color: #000;
-      font-size: 0.95rem;
-      font-weight: 700;
-      font-family: inherit;
       cursor: pointer;
-      transition: all 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.75rem;
+      transition: all 0.2s;
     }
 
-    .btn-primary:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(234, 179, 8, 0.3);
+    .search-btn-round:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 30px rgba(234, 179, 8, 0.4);
     }
 
-    .btn-primary:disabled {
+    .search-btn-round:disabled {
       opacity: 0.6;
       cursor: not-allowed;
+      transform: none;
     }
 
-    .btn-primary svg {
-      width: 18px;
-      height: 18px;
+    .search-btn-round svg {
+      width: 28px;
+      height: 28px;
     }
 
-    /* Results */
+    /* Model Toggle */
+    .model-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .model-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.75rem 1.5rem;
+      background: transparent;
+      border: 2px solid var(--border-primary);
+      border-radius: 50px;
+      color: var(--text-muted);
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .model-btn:hover {
+      border-color: var(--text-muted);
+      color: var(--text-primary);
+    }
+
+    .model-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .model-badge {
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .model-badge.flash {
+      background: #22c55e;
+      color: #000;
+    }
+
+    .model-badge.pro {
+      background: #8b5cf6;
+      color: #fff;
+    }
+
+    /* API Key Settings - Minimal */
+    .api-settings {
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .api-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: transparent;
+      border: 1px solid var(--border-secondary);
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .api-toggle-btn:hover {
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+    }
+
+    .api-toggle-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .api-toggle-btn .chevron {
+      transition: transform 0.2s;
+    }
+
+    .api-toggle-btn.open .chevron {
+      transform: rotate(180deg);
+    }
+
+    .api-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .api-content.open {
+      max-height: 200px;
+    }
+
+    .api-inner {
+      padding-top: 1rem;
+    }
+
+    .api-row {
+      display: flex;
+      gap: 0.5rem;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .api-row input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-secondary);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      font-family: inherit;
+    }
+
+    .api-row input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .api-btn {
+      width: 38px;
+      height: 42px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-secondary);
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .api-btn:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .api-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .api-status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .api-status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--tier-e);
+    }
+
+    .api-status-dot.connected {
+      background: var(--tier-a);
+    }
+
+    .error-message {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      color: var(--tier-e);
+      font-size: 0.85rem;
+      display: none;
+      text-align: left;
+    }
+
+    .error-message.active {
+      display: block;
+    }
+
+    /* Results Section */
     .results-section {
       display: none;
-      margin-top: 1.5rem;
+      max-width: 900px;
+      margin: 2rem auto 0;
     }
 
     .results-section.active {
       display: block;
-      animation: fadeIn 0.4s ease;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Prediction Card */
     .prediction-card {
       background: var(--bg-card);
       border: 1px solid var(--border-primary);
@@ -903,41 +889,35 @@
       font-weight: 600;
     }
 
-    .queue-items {
+    .queue-states {
       display: flex;
       gap: 0.5rem;
       flex-wrap: wrap;
     }
 
-    .queue-item {
+    .queue-state {
+      padding: 0.4rem 0.75rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-secondary);
-      padding: 0.5rem 0.75rem;
-      border-radius: 8px;
+      gap: 0.35rem;
     }
 
-    .queue-item.primary {
-      background: rgba(234, 179, 8, 0.1);
-      border-color: rgba(234, 179, 8, 0.3);
-    }
-
-    .queue-item .rank {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-
-    .queue-item.primary .rank {
+    .queue-state:first-child {
+      background: var(--glow-gold);
+      border-color: var(--accent);
       color: var(--accent);
     }
 
-    .queue-item .state {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--text-primary);
+    .queue-state .priority {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      font-weight: 400;
     }
 
     /* Sources */
@@ -953,109 +933,26 @@
       letter-spacing: 0.08em;
       color: var(--text-muted);
       margin-bottom: 0.75rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
       font-weight: 600;
     }
 
-    .sources-title svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    .source-item {
-      padding: 0.5rem 0;
-      border-bottom: 1px solid var(--border-secondary);
-      font-size: 0.85rem;
-    }
-
-    .source-item:last-child {
-      border-bottom: none;
-    }
-
-    .source-item a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
-    .source-item a:hover {
-      text-decoration: underline;
-    }
-
-    /* Sidebar */
-    .sidebar .card {
-      margin-bottom: 1.5rem;
-    }
-
-    .sidebar .card:last-child {
-      margin-bottom: 0;
-    }
-
-    .heuristics-list {
-      list-style: none;
-    }
-
-    .heuristic-item {
-      display: grid;
-      grid-template-columns: 80px 1fr auto;
-      gap: 0.75rem;
+    .source-badge {
+      display: inline-flex;
       align-items: center;
-      padding: 0.6rem 0;
-      border-bottom: 1px solid var(--border-secondary);
-      font-size: 0.8rem;
+      gap: 0.25rem;
+      padding: 0.25rem 0.6rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 4px;
+      font-size: 0.7rem;
+      color: var(--text-secondary);
     }
 
-    .heuristic-item:last-child {
-      border-bottom: none;
-    }
-
-    .heuristic-signal {
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    .heuristic-desc {
-      color: var(--text-muted);
-    }
-
-    .heuristic-route {
-      font-weight: 700;
-      color: var(--accent);
-    }
-
-    /* Stats Card */
-    .stat-display {
-      text-align: center;
-      padding: 1.25rem 0;
-    }
-
-    .stat-display:first-child {
-      border-bottom: 1px solid var(--border-secondary);
-    }
-
-    .stat-number {
-      font-size: 2.5rem;
-      font-weight: 800;
-      line-height: 1;
-      letter-spacing: -1px;
-    }
-
-    .stat-number.gold { color: var(--accent); }
-    .stat-number.green { color: var(--tier-a); }
-
-    .stat-label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-top: 0.25rem;
-    }
-
-    /* Loading */
+    /* ==================== IMMERSIVE LOADING OVERLAY ==================== */
     .loading-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(10, 10, 10, 0.9);
-      backdrop-filter: blur(8px);
+      background: var(--bg-primary);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -1071,77 +968,323 @@
       visibility: visible;
     }
 
-    .loader {
-      width: 48px;
-      height: 48px;
-      border: 3px solid var(--border-primary);
-      border-top-color: var(--accent);
+    .loading-container {
+      text-align: center;
+      max-width: 550px;
+      padding: 2rem;
+      width: 100%;
+    }
+
+    /* Loading Animation */
+    .loading-visual {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      margin: 0 auto 2rem;
+    }
+
+    .loading-planet {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 70px;
+      height: 70px;
+      background: radial-gradient(circle at 30% 30%, #fcd34d, #eab308, #ca8a04);
       border-radius: 50%;
-      animation: spin 1s linear infinite;
+      box-shadow: 0 0 50px rgba(234, 179, 8, 0.4), inset -10px -10px 25px rgba(0,0,0,0.3);
+      animation: planet-pulse 3s ease-in-out infinite;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    @keyframes planet-pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 50px rgba(234, 179, 8, 0.4); }
+      50% { transform: translate(-50%, -50%) scale(1.05); box-shadow: 0 0 70px rgba(234, 179, 8, 0.5); }
     }
 
-    .loading-text {
-      margin-top: 1.25rem;
+    .loading-ring {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      border: 2px solid rgba(234, 179, 8, 0.15);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .loading-ring-1 { width: 110px; height: 110px; animation: ring-pulse 2s ease-in-out infinite; }
+    .loading-ring-2 { width: 150px; height: 150px; animation: ring-pulse 2s ease-in-out infinite 0.4s; }
+    .loading-ring-3 { width: 190px; height: 190px; animation: ring-pulse 2s ease-in-out infinite 0.8s; }
+
+    @keyframes ring-pulse {
+      0%, 100% { opacity: 0.15; transform: translate(-50%, -50%) scale(1); border-color: rgba(234, 179, 8, 0.15); }
+      50% { opacity: 0.4; transform: translate(-50%, -50%) scale(1.02); border-color: rgba(234, 179, 8, 0.3); }
+    }
+
+    .loading-moon {
+      position: absolute;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+    }
+
+    .loading-moon-1 { width: 14px; height: 14px; background: #a855f7; box-shadow: 0 0 12px #a855f7; animation: lmoon1 2.5s linear infinite; }
+    .loading-moon-2 { width: 10px; height: 10px; background: #22c55e; box-shadow: 0 0 10px #22c55e; animation: lmoon2 3.5s linear infinite; }
+    .loading-moon-3 { width: 12px; height: 12px; background: #3b82f6; box-shadow: 0 0 10px #3b82f6; animation: lmoon3 4s linear infinite; }
+
+    @keyframes lmoon1 { from { transform: translate(-50%, -50%) rotate(0deg) translateX(90px); } to { transform: translate(-50%, -50%) rotate(360deg) translateX(90px); } }
+    @keyframes lmoon2 { from { transform: translate(-50%, -50%) rotate(120deg) translateX(75px); } to { transform: translate(-50%, -50%) rotate(480deg) translateX(75px); } }
+    @keyframes lmoon3 { from { transform: translate(-50%, -50%) rotate(240deg) translateX(105px); } to { transform: translate(-50%, -50%) rotate(600deg) translateX(105px); } }
+
+    /* Search Query Display */
+    .loading-query {
       font-size: 1rem;
-      font-weight: 600;
-      color: var(--text-primary);
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
     }
 
-    .loading-steps {
-      margin-top: 1.5rem;
+    .loading-query span {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .loading-model {
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
       display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      font-weight: 600;
+    }
+
+    .loading-model.flash {
+      color: #60a5fa;
+    }
+
+    .loading-model.pro {
+      color: #c084fc;
+    }
+
+    /* Status */
+    .loading-status {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      min-height: 2.5rem;
+    }
+
+    .loading-substatus {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      min-height: 1.5rem;
+    }
+
+    /* Progress Bar */
+    .loading-progress {
+      width: 100%;
+      height: 6px;
+      background: var(--border-primary);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .loading-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--tier-a), var(--accent-light));
+      background-size: 200% 100%;
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.5s ease;
+      animation: progress-shimmer 2s linear infinite;
+    }
+
+    @keyframes progress-shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Steps */
+    .loading-steps {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      margin-bottom: 2rem;
     }
 
     .loading-step {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 0.75rem;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      transition: color 0.3s;
-    }
-
-    .loading-step .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--border-primary);
+      gap: 0.5rem;
+      opacity: 0.4;
       transition: all 0.3s;
     }
 
     .loading-step.active {
+      opacity: 1;
+    }
+
+    .loading-step.complete {
+      opacity: 1;
+    }
+
+    .loading-step .step-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--bg-secondary);
+      border: 2px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .loading-step.active .step-icon {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(234, 179, 8, 0.3);
+    }
+
+    .loading-step.active .step-icon::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      opacity: 0.3;
+      animation: step-ping 1.5s ease-out infinite;
+    }
+
+    @keyframes step-ping {
+      0% { transform: scale(1); opacity: 0.3; }
+      100% { transform: scale(1.3); opacity: 0; }
+    }
+
+    .loading-step.complete .step-icon {
+      background: var(--tier-a);
+      border-color: var(--tier-a);
+    }
+
+    .loading-step .step-icon svg {
+      width: 20px;
+      height: 20px;
+      color: var(--text-muted);
+    }
+
+    .loading-step.active .step-icon svg {
+      color: var(--accent);
+    }
+
+    .loading-step.complete .step-icon svg {
+      color: #fff;
+    }
+
+    .loading-step.complete .step-icon svg.check-icon {
+      display: block;
+    }
+
+    .loading-step .step-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .loading-step.active .step-label {
+      color: var(--accent);
+    }
+
+    .loading-step.complete .step-label {
+      color: var(--tier-a);
+    }
+
+    /* Fact/Tip Card */
+    .loading-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      min-height: 140px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      transition: all 0.5s ease;
+    }
+
+    .loading-card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .loading-card-header svg {
+      width: 16px;
+      height: 16px;
+      color: var(--accent);
+    }
+
+    .loading-card-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .loading-card-text {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      animation: fade-in 0.5s ease;
+    }
+
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .loading-card-text strong {
       color: var(--text-primary);
     }
 
-    .loading-step.active .dot {
-      background: var(--accent);
-      box-shadow: 0 0 10px var(--accent);
+    .loading-card-text .highlight {
+      color: var(--accent);
+      font-weight: 600;
     }
 
-    .loading-step.complete .dot {
-      background: var(--tier-a);
+    /* Stats Counter */
+    .loading-stats {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      padding: 1rem;
+      background: rgba(234, 179, 8, 0.05);
+      border: 1px solid rgba(234, 179, 8, 0.1);
+      border-radius: 12px;
     }
 
-    /* Error */
-    .error-message {
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      border-radius: 10px;
-      padding: 0.75rem 1rem;
-      margin-bottom: 1rem;
-      color: var(--tier-e);
-      font-size: 0.85rem;
-      display: none;
+    .loading-stat {
+      text-align: center;
     }
 
-    .error-message.active {
-      display: block;
+    .loading-stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .loading-stat-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
     /* Footer */
@@ -1157,43 +1300,26 @@
       text-decoration: none;
     }
 
-    footer a:hover {
-      text-decoration: underline;
-    }
-
     /* Responsive */
     @media (max-width: 768px) {
-      .tab-nav {
-        display: none;
-      }
-
-      .entity-profile {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .prediction-header {
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      .confidence-meter {
-        text-align: left;
-      }
-
-      .state-code {
-        font-size: 2.5rem;
-      }
-
-      .heuristic-item {
-        grid-template-columns: 70px 1fr auto;
-        font-size: 0.75rem;
-      }
+      .tab-nav { display: none; }
+      .entity-profile { grid-template-columns: repeat(2, 1fr); }
+      .loading-steps { gap: 1.5rem; }
+      .loading-stats { gap: 1rem; }
+      .loading-stat-value { font-size: 1.25rem; }
+      .search-hero h1 { font-size: 1.25rem; }
+      .search-actions { flex-direction: column; }
+      .model-toggle { width: 100%; justify-content: center; }
+      .search-btn { width: 100%; }
     }
 
     @media (max-width: 480px) {
-      .entity-profile {
-        grid-template-columns: 1fr;
-      }
+      .entity-profile { grid-template-columns: 1fr; }
+      .loading-visual { width: 180px; height: 180px; }
+      .loading-planet { width: 50px; height: 50px; }
+      .loading-ring-1 { width: 80px; height: 80px; }
+      .loading-ring-2 { width: 110px; height: 110px; }
+      .loading-ring-3 { width: 140px; height: 140px; }
     }
   </style>
 </head>
@@ -1215,86 +1341,101 @@
     <div class="orbit-particle particle-6"></div>
   </div>
 
-  <div class="loading-overlay" id="loadingOverlay">
-    <div class="loader"></div>
-    <div class="loading-text">Searching Entity...</div>
-    <div class="loading-steps">
-      <div class="loading-step" id="step1">
-        <span class="dot"></span>
-        <span>Grounding: Searching web for entity context</span>
-      </div>
-      <div class="loading-step" id="step2">
-        <span class="dot"></span>
-        <span>Profiling: Identifying industry & structure</span>
-      </div>
-      <div class="loading-step" id="step3">
-        <span class="dot"></span>
-        <span>Routing: Calculating domicile probability</span>
-      </div>
-    </div>
-  </div>
-
+  <!-- Header -->
   <header class="main-header">
     <div class="header-logo">
-      <a href="https://ables.ai">
-        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <radialGradient id="planetGrad" cx="35%" cy="35%" r="60%">
-              <stop offset="0%" stop-color="#fcd34d"/>
-              <stop offset="50%" stop-color="#eab308"/>
-              <stop offset="100%" stop-color="#ca8a04"/>
-            </radialGradient>
-            <filter id="planetGlow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="2" result="glow"/>
-              <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-            <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#ffab40"/>
-              <stop offset="50%" stop-color="#ff8c00"/>
-              <stop offset="100%" stop-color="#ff6d00"/>
-            </linearGradient>
-            <filter id="moonGlow" x="-100%" y="-100%" width="300%" height="300%">
-              <feGaussianBlur stdDeviation="1.5" result="glow"/>
-              <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-          </defs>
-          <style>
-            .moon-base {
-              transform-origin: 32px 32px;
-              animation: orbit 3s linear infinite, moonColor 2s ease-in-out infinite;
-              filter: url(#moonGlow);
-            }
-            .moon-back { animation: orbit 3s linear infinite, moonColor 2s ease-in-out infinite, moonBackOpacity 3s linear infinite; }
-            .moon-front { animation: orbit 3s linear infinite, moonColor 2s ease-in-out infinite, moonFrontOpacity 3s linear infinite; }
-            @keyframes orbit {
-              0% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
-              12.5% { transform: rotate(-20deg) translate(18px, 5px) scale(0.85); }
-              25% { transform: rotate(-20deg) translate(0, 7px) scale(0.7); }
-              37.5% { transform: rotate(-20deg) translate(-18px, 5px) scale(0.55); }
-              50% { transform: rotate(-20deg) translate(-26px, 0) scale(0.5); }
-              62.5% { transform: rotate(-20deg) translate(-18px, -5px) scale(0.55); }
-              75% { transform: rotate(-20deg) translate(0, -7px) scale(0.7); }
-              87.5% { transform: rotate(-20deg) translate(18px, -5px) scale(0.85); }
-              100% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
-            }
-            @keyframes moonBackOpacity { 0%, 15% { opacity: 0; } 25% { opacity: 1; } 75% { opacity: 1; } 85%, 100% { opacity: 0; } }
-            @keyframes moonFrontOpacity { 0%, 15% { opacity: 1; } 25% { opacity: 0; } 75% { opacity: 0; } 85%, 100% { opacity: 1; } }
-            @keyframes moonColor { 0%, 100% { fill: #a855f7; } 25% { fill: #3b82f6; } 50% { fill: #ec4899; } 75% { fill: #10b981; } }
-          </style>
-          <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#ringGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" opacity="0.6"/>
-          <circle class="moon-base moon-back" cx="32" cy="32" r="4" fill="#a855f7"/>
-          <circle cx="32" cy="32" r="14" fill="#eab308" opacity="0.2" filter="url(#planetGlow)"/>
-          <circle cx="32" cy="32" r="12" fill="url(#planetGrad)" filter="url(#planetGlow)"/>
-          <ellipse cx="28" cy="28" rx="4" ry="3" fill="#fef3c7" opacity="0.4"/>
-          <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#ringGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
-          <circle class="moon-base moon-front" cx="32" cy="32" r="4" fill="#a855f7"/>
-        </svg>
-        <h1>Ables<span>AI</span></h1>
-      </a>
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Planet gradient -->
+          <radialGradient id="planetGrad" cx="35%" cy="35%" r="60%">
+            <stop offset="0%" stop-color="#fcd34d"/>
+            <stop offset="50%" stop-color="#eab308"/>
+            <stop offset="100%" stop-color="#ca8a04"/>
+          </radialGradient>
+          <!-- Planet glow -->
+          <filter id="planetGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2" result="glow"/>
+            <feMerge>
+              <feMergeNode in="glow"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          <!-- Ring gradient -->
+          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ffab40"/>
+            <stop offset="50%" stop-color="#ff8c00"/>
+            <stop offset="100%" stop-color="#ff6d00"/>
+          </linearGradient>
+          <!-- Moon glow -->
+          <filter id="moonGlow" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="1.5" result="glow"/>
+            <feMerge>
+              <feMergeNode in="glow"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        <style>
+          .moon-base {
+            transform-origin: 32px 32px;
+            animation: orbit 3s linear infinite, moonColor 2s ease-in-out infinite;
+            filter: url(#moonGlow);
+          }
+          .moon-back {
+            animation: orbit 3s linear infinite, moonColor 2s ease-in-out infinite, moonBackOpacity 3s linear infinite;
+          }
+          .moon-front {
+            animation: orbit 3s linear infinite, moonColor 2s ease-in-out infinite, moonFrontOpacity 3s linear infinite;
+          }
+          @keyframes orbit {
+            0% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
+            12.5% { transform: rotate(-20deg) translate(18px, 5px) scale(0.85); }
+            25% { transform: rotate(-20deg) translate(0, 7px) scale(0.7); }
+            37.5% { transform: rotate(-20deg) translate(-18px, 5px) scale(0.55); }
+            50% { transform: rotate(-20deg) translate(-26px, 0) scale(0.5); }
+            62.5% { transform: rotate(-20deg) translate(-18px, -5px) scale(0.55); }
+            75% { transform: rotate(-20deg) translate(0, -7px) scale(0.7); }
+            87.5% { transform: rotate(-20deg) translate(18px, -5px) scale(0.85); }
+            100% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
+          }
+          @keyframes moonBackOpacity {
+            0%, 15% { opacity: 0; }
+            25% { opacity: 1; }
+            75% { opacity: 1; }
+            85%, 100% { opacity: 0; }
+          }
+          @keyframes moonFrontOpacity {
+            0%, 15% { opacity: 1; }
+            25% { opacity: 0; }
+            75% { opacity: 0; }
+            85%, 100% { opacity: 1; }
+          }
+          @keyframes moonColor {
+            0%, 100% { fill: #a855f7; }
+            25% { fill: #3b82f6; }
+            50% { fill: #ec4899; }
+            75% { fill: #10b981; }
+          }
+        </style>
+        <!-- Back half of ring (behind planet) -->
+        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#ringGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" opacity="0.6"/>
+        <!-- Moon behind planet (rendered before planet) -->
+        <circle class="moon-base moon-back" cx="32" cy="32" r="4" fill="#a855f7"/>
+        <!-- Planet shadow/atmosphere -->
+        <circle cx="32" cy="32" r="14" fill="#eab308" opacity="0.2" filter="url(#planetGlow)"/>
+        <!-- Planet -->
+        <circle cx="32" cy="32" r="12" fill="url(#planetGrad)" filter="url(#planetGlow)"/>
+        <!-- Planet highlight -->
+        <ellipse cx="28" cy="28" rx="4" ry="3" fill="#fef3c7" opacity="0.4"/>
+        <!-- Front half of ring (in front of planet) -->
+        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#ringGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
+        <!-- Moon in front of planet (rendered after planet) -->
+        <circle class="moon-base moon-front" cx="32" cy="32" r="4" fill="#a855f7"/>
+      </svg>
+      <h1>Ables<span>AI</span></h1>
       <button class="theme-toggle" id="themeToggle" title="Toggle light/dark mode">
         <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="5"/>
-          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
         </svg>
         <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
@@ -1303,379 +1444,487 @@
     </div>
     <nav class="tab-nav">
       <a href="https://ables.ai" class="tab-btn">Home</a>
-      <a href="https://ables.ai/calculator.html" class="tab-btn">Calculator<span class="lite-badge">Lite</span></a>
-      <a href="https://ables.ai/toolbox.html" class="tab-btn">Toolbox<span class="free-badge">Free</span></a>
+      <a href="https://ables.ai/calculator.html" class="tab-btn">Calculator<span class="lite-badge">LITE</span></a>
+      <a href="https://ables.ai/toolbox.html" class="tab-btn">Toolbox<span class="free-badge">FREE</span></a>
       <a href="#" class="tab-btn active">Business Search</a>
     </nav>
   </header>
 
-  <div class="container">
-    <div class="page-header">
-      <div class="page-badge">
-        <span>Entity Intelligence</span>
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-container">
+      <!-- Visual Animation -->
+      <div class="loading-visual">
+        <div class="loading-ring loading-ring-1"></div>
+        <div class="loading-ring loading-ring-2"></div>
+        <div class="loading-ring loading-ring-3"></div>
+        <div class="loading-planet"></div>
+        <div class="loading-moon loading-moon-1"></div>
+        <div class="loading-moon loading-moon-2"></div>
+        <div class="loading-moon loading-moon-3"></div>
       </div>
-      <h1 class="page-title">AI Business Search</h1>
-      <p class="page-subtitle">
-        AI-powered business entity search. Find incorporation state, entity type, and company details instantly with intelligent routing.
-      </p>
-    </div>
-
-    <div class="main-grid">
-      <main>
-        <section class="card">
-          <div class="card-header">
-            <span class="card-title">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-              Entity Search
-            </span>
+      
+      <!-- Search Query -->
+      <div class="loading-query">Searching for <span id="loadingQueryName">...</span></div>
+      <div class="loading-model" id="loadingModel">Using Gemini Flash</div>
+      
+      <!-- Status -->
+      <div class="loading-status" id="loadingStatus">Initializing Search...</div>
+      <div class="loading-substatus" id="loadingSubstatus">Connecting to AI engine</div>
+      
+      <!-- Progress Bar -->
+      <div class="loading-progress">
+        <div class="loading-progress-bar" id="loadingProgressBar"></div>
+      </div>
+      
+      <!-- Steps -->
+      <div class="loading-steps">
+        <div class="loading-step" id="step1">
+          <div class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M2 12h20"></path>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
           </div>
-          <div class="card-body">
-            <div class="error-message" id="errorMessage"></div>
-            
-            <div class="input-group">
-              <label>Gemini API Key</label>
-              <div class="input-wrapper api-key-wrapper">
-                <input type="password" id="apiKey" placeholder="Enter your Gemini API key">
-                <div class="api-key-buttons">
-                  <button type="button" id="toggleKey" class="key-btn" title="Show/Hide">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                      <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                  </button>
-                  <button type="button" id="saveKey" class="key-btn" title="Save to Browser">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"></path>
-                      <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                      <polyline points="7 3 7 8 15 8"></polyline>
-                    </svg>
-                  </button>
-                  <button type="button" id="clearKey" class="key-btn" title="Clear Saved">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <polyline points="3 6 5 6 21 6"></polyline>
-                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <div id="keyStatus" class="key-status"></div>
-            </div>
-
-            <div class="input-group">
-              <label>Business Name</label>
-              <div class="input-wrapper">
-                <input type="text" id="entityName" placeholder="e.g., Stripe, Inc. or Blue Bottle Coffee LLC">
-              </div>
-            </div>
-
-            <div class="input-group">
-              <label>Additional Context (Optional)</label>
-              <div class="input-wrapper">
-                <input type="text" id="additionalContext" placeholder="e.g., headquartered in Austin, TX or fintech company">
-              </div>
-            </div>
-
-            <button class="btn-primary" id="searchBtn" onclick="analyzeEntity()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-              Search Business
-            </button>
-          </div>
-        </section>
-
-        <section class="results-section" id="resultsSection">
-          <div class="prediction-card">
-            <div class="prediction-header">
-              <div class="state-badge">
-                <div class="state-code" id="stateCode">--</div>
-                <div>
-                  <div class="state-name" id="stateName">--</div>
-                  <div class="state-label">Primary Jurisdiction</div>
-                </div>
-              </div>
-              <div class="confidence-meter">
-                <div class="confidence-value" id="confidenceValue">--%</div>
-                <div class="confidence-label">Confidence</div>
-              </div>
-            </div>
-
-            <div class="entity-profile">
-              <div class="profile-item">
-                <div class="profile-label">Entity Type</div>
-                <div class="profile-value" id="entityType">--</div>
-              </div>
-              <div class="profile-item">
-                <div class="profile-label">Industry</div>
-                <div class="profile-value" id="industry">--</div>
-              </div>
-              <div class="profile-item">
-                <div class="profile-label">HQ Location</div>
-                <div class="profile-value" id="hqLocation">--</div>
-              </div>
-              <div class="profile-item">
-                <div class="profile-label">Formation Date</div>
-                <div class="profile-value" id="formationDate">--</div>
-              </div>
-              <div class="profile-item">
-                <div class="profile-label">Status</div>
-                <div class="profile-value" id="regStatus">--</div>
-              </div>
-              <div class="profile-item">
-                <div class="profile-label">Registered Agent</div>
-                <div class="profile-value" id="regAgent">--</div>
-              </div>
-            </div>
-
-            <div class="owners-section" id="ownersSection" style="display: none;">
-              <div class="owners-title">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="9" cy="7" r="4"></circle>
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
-                Owners / Officers / Members
-              </div>
-              <div class="owners-list" id="ownersList"></div>
-            </div>
-
-            <div class="reasoning-box">
-              <div class="reasoning-title">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <path d="M12 16v-4"></path>
-                  <path d="M12 8h.01"></path>
-                </svg>
-                Chain of Thought Reasoning
-              </div>
-              <div class="reasoning-text" id="reasoningText">--</div>
-            </div>
-
-            <div class="routing-queue">
-              <div class="queue-title">Priority Search Queue</div>
-              <div class="queue-items" id="queueItems"></div>
-            </div>
-
-            <div class="sources-section" id="sourcesSection" style="display: none;">
-              <div class="sources-title">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"></path>
-                  <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"></path>
-                </svg>
-                Grounding Sources
-              </div>
-              <div id="sourcesList"></div>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <aside class="sidebar">
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path>
-              </svg>
-              Routing Heuristics
-            </span>
-          </div>
-          <div class="card-body">
-            <ul class="heuristics-list">
-              <li class="heuristic-item">
-                <span class="heuristic-signal">Inc. + Tech</span>
-                <span class="heuristic-desc">VC-backed startups</span>
-                <span class="heuristic-route">→ DE</span>
-              </li>
-              <li class="heuristic-item">
-                <span class="heuristic-signal">LLC + RE</span>
-                <span class="heuristic-desc">Real estate holding</span>
-                <span class="heuristic-route">→ Situs</span>
-              </li>
-              <li class="heuristic-item">
-                <span class="heuristic-signal">Crypto/DAO</span>
-                <span class="heuristic-desc">Digital assets</span>
-                <span class="heuristic-route">→ WY</span>
-              </li>
-              <li class="heuristic-item">
-                <span class="heuristic-signal">Local Biz</span>
-                <span class="heuristic-desc">Single-state ops</span>
-                <span class="heuristic-route">→ HQ State</span>
-              </li>
-              <li class="heuristic-item">
-                <span class="heuristic-signal">DExit</span>
-                <span class="heuristic-desc">Reincorporation</span>
-                <span class="heuristic-route">→ TX/NV</span>
-              </li>
-              <li class="heuristic-item">
-                <span class="heuristic-signal">Privacy</span>
-                <span class="heuristic-desc">Anonymous LLCs</span>
-                <span class="heuristic-route">→ WY/NV</span>
-              </li>
-              <li class="heuristic-item">
-                <span class="heuristic-signal">Fortune 500</span>
-                <span class="heuristic-desc">Large public corps</span>
-                <span class="heuristic-route">→ DE (99%)</span>
-              </li>
-            </ul>
-          </div>
+          <span class="step-label">Search</span>
         </div>
-
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
-              The Delaware Singularity
-            </span>
+        <div class="loading-step" id="step2">
+          <div class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
           </div>
-          <div class="card-body" style="padding: 0;">
-            <div class="stat-display">
-              <div class="stat-number gold">68%</div>
-              <div class="stat-label">of Fortune 500</div>
-            </div>
-            <div class="stat-display">
-              <div class="stat-number green">81.4%</div>
-              <div class="stat-label">of 2024 IPOs</div>
-            </div>
-          </div>
+          <span class="step-label">Analyze</span>
         </div>
-      </aside>
+        <div class="loading-step" id="step3">
+          <div class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+          </div>
+          <span class="step-label">Predict</span>
+        </div>
+      </div>
+      
+      <!-- Rotating Facts/Tips Card -->
+      <div class="loading-card" id="loadingCard">
+        <div class="loading-card-header">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 16v-4"></path>
+            <path d="M12 8h.01"></path>
+          </svg>
+          <span class="loading-card-label" id="loadingCardLabel">Did You Know?</span>
+        </div>
+        <div class="loading-card-text" id="loadingCardText">Delaware is home to over <strong>1.8 million</strong> business entities — more than the state's population.</div>
+      </div>
+      
+      <!-- Live Stats -->
+      <div class="loading-stats">
+        <div class="loading-stat">
+          <div class="loading-stat-value" id="statSources">0</div>
+          <div class="loading-stat-label">Sources Checked</div>
+        </div>
+        <div class="loading-stat">
+          <div class="loading-stat-value" id="statRecords">0</div>
+          <div class="loading-stat-label">Records Scanned</div>
+        </div>
+        <div class="loading-stat">
+          <div class="loading-stat-value" id="statTime">0s</div>
+          <div class="loading-stat-label">Elapsed</div>
+        </div>
+      </div>
     </div>
-
-    <footer>
-      Powered by <a href="https://ai.google.dev/" target="_blank">Gemini API</a> with Search Grounding
-    </footer>
   </div>
 
+  <!-- Main Content -->
+  <div class="container">
+    <!-- Search Section -->
+    <section class="search-section" id="searchSection">
+      <!-- Large Logo -->
+      <div class="search-logo-large">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="heroGrad" cx="35%" cy="35%" r="60%">
+              <stop offset="0%" stop-color="#fcd34d"/>
+              <stop offset="50%" stop-color="#eab308"/>
+              <stop offset="100%" stop-color="#ca8a04"/>
+            </radialGradient>
+            <linearGradient id="heroRingGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#ffab40"/>
+              <stop offset="50%" stop-color="#ff8c00"/>
+              <stop offset="100%" stop-color="#ff6d00"/>
+            </linearGradient>
+            <filter id="heroGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="2" result="glow"/>
+              <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="heroMoonGlow" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur stdDeviation="1.5" result="glow"/>
+              <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <style>
+            .hero-moon {
+              transform-origin: 32px 32px;
+              animation: heroOrbit 3s linear infinite, heroMoonColor 2s ease-in-out infinite;
+              filter: url(#heroMoonGlow);
+            }
+            @keyframes heroOrbit {
+              0% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
+              50% { transform: rotate(-20deg) translate(-26px, 0) scale(0.5); }
+              100% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
+            }
+            @keyframes heroMoonColor {
+              0%, 100% { fill: #3b82f6; }
+              33% { fill: #a855f7; }
+              66% { fill: #22c55e; }
+            }
+          </style>
+          <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#heroRingGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" opacity="0.6"/>
+          <circle class="hero-moon" cx="32" cy="32" r="4" fill="#3b82f6"/>
+          <circle cx="32" cy="32" r="14" fill="#eab308" opacity="0.2" filter="url(#heroGlow)"/>
+          <circle cx="32" cy="32" r="12" fill="url(#heroGrad)" filter="url(#heroGlow)"/>
+          <ellipse cx="28" cy="28" rx="4" ry="3" fill="#fef3c7" opacity="0.4"/>
+          <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#heroRingGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
+        </svg>
+      </div>
+
+      <!-- Title -->
+      <h1 class="search-title"><span class="accent">search</span><span class="white">Ables</span><span class="muted">AI</span></h1>
+      <p class="search-subtitle">Corporate Domicile Router</p>
+
+      <!-- Search Box -->
+      <div class="search-box">
+        <div class="error-message" id="errorMessage"></div>
+        
+        <div class="search-input-container">
+          <input type="text" id="entityName" placeholder="Company name...">
+          <div class="api-key-inline">
+            <input type="password" id="apiKey" placeholder="API Key">
+          </div>
+          <button class="search-btn-round" id="searchBtn" onclick="analyzeEntity()">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="32" cy="32" rx="20" ry="6" stroke="currentColor" stroke-width="3" fill="none" transform="rotate(-20 32 32)"/>
+              <circle cx="32" cy="32" r="8" fill="currentColor"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Model Toggle -->
+        <div class="model-toggle">
+          <button class="model-btn" id="modelFlash" data-model="gemini-2.5-flash">
+            Flash <span class="model-badge flash">2.5</span>
+          </button>
+          <button class="model-btn active" id="modelPro" data-model="gemini-3-pro-preview">
+            Pro <span class="model-badge pro">3</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="results-section" id="resultsSection">
+      <div class="prediction-card">
+        <div class="prediction-header">
+          <div class="state-badge">
+            <div class="state-code" id="stateCode">--</div>
+            <div>
+              <div class="state-name" id="stateName">--</div>
+              <div class="state-label">Primary Jurisdiction</div>
+            </div>
+          </div>
+          <div class="confidence-meter">
+            <div class="confidence-value" id="confidenceValue">--%</div>
+            <div class="confidence-label">Confidence</div>
+          </div>
+        </div>
+
+        <div class="entity-profile">
+          <div class="profile-item">
+            <div class="profile-label">Entity Type</div>
+            <div class="profile-value" id="entityType">--</div>
+          </div>
+          <div class="profile-item">
+            <div class="profile-label">Industry</div>
+            <div class="profile-value" id="industry">--</div>
+          </div>
+          <div class="profile-item">
+            <div class="profile-label">HQ Location</div>
+            <div class="profile-value" id="hqLocation">--</div>
+          </div>
+          <div class="profile-item">
+            <div class="profile-label">Formation Date</div>
+            <div class="profile-value" id="formationDate">--</div>
+          </div>
+          <div class="profile-item">
+            <div class="profile-label">Status</div>
+            <div class="profile-value" id="regStatus">--</div>
+          </div>
+          <div class="profile-item">
+            <div class="profile-label">Registered Agent</div>
+            <div class="profile-value" id="regAgent">--</div>
+          </div>
+        </div>
+
+        <div class="owners-section" id="ownersSection" style="display: none;">
+          <div class="owners-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            Owners / Officers / Members
+          </div>
+          <div class="owners-list" id="ownersList"></div>
+        </div>
+
+        <div class="reasoning-box">
+          <div class="reasoning-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M12 16v-4"></path>
+              <path d="M12 8h.01"></path>
+            </svg>
+            Analysis
+          </div>
+          <div class="reasoning-text" id="reasoning">--</div>
+        </div>
+
+        <div class="routing-queue">
+          <div class="queue-title">Priority Search Queue</div>
+          <div class="queue-states" id="queueStates">--</div>
+        </div>
+
+        <div class="sources-section">
+          <div class="sources-title">Data Quality</div>
+          <span class="source-badge" id="sourceQuality">--</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <p>Powered by <a href="https://ables.ai">AblesAI</a> • Entity Intelligence Platform</p>
+  </footer>
+
   <script>
-    // Theme Toggle
-    const themeToggle = document.getElementById('themeToggle');
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-
-    themeToggle.addEventListener('click', () => {
-      const current = document.documentElement.getAttribute('data-theme');
-      const next = current === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
-    });
-
-    // State names
-    const STATE_NAMES = {
-      'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas',
-      'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut', 'DE': 'Delaware',
-      'FL': 'Florida', 'GA': 'Georgia', 'HI': 'Hawaii', 'ID': 'Idaho',
-      'IL': 'Illinois', 'IN': 'Indiana', 'IA': 'Iowa', 'KS': 'Kansas',
-      'KY': 'Kentucky', 'LA': 'Louisiana', 'ME': 'Maine', 'MD': 'Maryland',
-      'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota', 'MS': 'Mississippi',
-      'MO': 'Missouri', 'MT': 'Montana', 'NE': 'Nebraska', 'NV': 'Nevada',
-      'NH': 'New Hampshire', 'NJ': 'New Jersey', 'NM': 'New Mexico', 'NY': 'New York',
-      'NC': 'North Carolina', 'ND': 'North Dakota', 'OH': 'Ohio', 'OK': 'Oklahoma',
-      'OR': 'Oregon', 'PA': 'Pennsylvania', 'RI': 'Rhode Island', 'SC': 'South Carolina',
-      'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah',
-      'VT': 'Vermont', 'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia',
-      'WI': 'Wisconsin', 'WY': 'Wyoming', 'DC': 'District of Columbia'
+    // ==================== LOADING CONTENT ====================
+    const loadingContent = {
+      facts: [
+        { label: "Did You Know?", text: "Delaware is home to over <strong>1.8 million</strong> business entities — more than the state's entire population." },
+        { label: "Fun Fact", text: "<strong>67%</strong> of Fortune 500 companies are incorporated in Delaware, including Apple, Google, and Coca-Cola." },
+        { label: "State Trivia", text: "Wyoming was the first state to allow LLCs in <strong>1977</strong>. Today it's a top choice for privacy-focused businesses." },
+        { label: "Did You Know?", text: "Nevada has <strong>no state corporate income tax</strong>, making it popular for holding companies and asset protection." },
+        { label: "Fun Fact", text: "The Delaware Court of Chancery has been handling business disputes since <strong>1792</strong> — over 230 years of corporate law expertise." },
+        { label: "State Trivia", text: "Texas is the <strong>2nd largest</strong> state for business formations, with over 3 million active entities." },
+        { label: "Did You Know?", text: "A <strong>registered agent</strong> is required in every state where a business operates — they receive legal documents on behalf of the company." },
+        { label: "Fun Fact", text: "The first American corporation was the <strong>Virginia Company</strong>, chartered in 1606 to colonize North America." },
+        { label: "State Trivia", text: "California requires <strong>annual franchise taxes</strong> of $800 minimum, even for dormant LLCs." },
+        { label: "Did You Know?", text: "Benefit corporations (B-Corps) are legally required to consider <strong>social and environmental impact</strong>, not just profits." },
+        { label: "Fun Fact", text: "The term <strong>'Inc.'</strong> stands for 'Incorporated' and typically indicates a C-Corporation structure." },
+        { label: "State Trivia", text: "New York charges one of the <strong>highest filing fees</strong> for LLCs — over $200 for formation plus biennial statements." },
+        { label: "Did You Know?", text: "Series LLCs allow you to create <strong>separate liability shields</strong> within a single LLC — popular in Delaware and Texas." },
+        { label: "Fun Fact", text: "The average startup takes <strong>3-5 business days</strong> to incorporate, but expedited filing can happen in 24 hours." },
+        { label: "State Trivia", text: "Florida has <strong>no state income tax</strong> and is the 4th most popular state for business formations." },
+      ],
+      tips: [
+        { label: "Pro Tip", text: "Add context like <span class='highlight'>\"fintech company\"</span> or <span class='highlight'>\"based in Austin\"</span> to improve search accuracy." },
+        { label: "Search Tip", text: "Include the business suffix like <span class='highlight'>\"Inc.\"</span> or <span class='highlight'>\"LLC\"</span> if you know it — this helps narrow results." },
+        { label: "Pro Tip", text: "For common names, add the <span class='highlight'>industry</span> or <span class='highlight'>city</span> to distinguish from similar businesses." },
+        { label: "Did You Know?", text: "Public companies file with the SEC. Their state of incorporation is in their <span class='highlight'>10-K annual report</span>." },
+        { label: "Search Tip", text: "Try the <span class='highlight'>exact legal name</span> from contracts or invoices for best results." },
+        { label: "Pro Tip", text: "Most VC-backed startups incorporate in <span class='highlight'>Delaware</span> for its business-friendly court system." },
+      ],
+      statuses: [
+        { main: "Searching Web...", sub: "Scanning SEC filings, state registries, and business databases" },
+        { main: "Gathering Intel...", sub: "Checking OpenCorporates, LinkedIn, and company websites" },
+        { main: "Cross-Referencing...", sub: "Matching data across multiple sources" },
+        { main: "Analyzing Data...", sub: "Processing entity structure and corporate history" },
+        { main: "Identifying Patterns...", sub: "Applying industry heuristics and state patterns" },
+        { main: "Verifying Sources...", sub: "Confirming information from official registries" },
+        { main: "Building Profile...", sub: "Compiling entity information and ownership data" },
+        { main: "Calculating Confidence...", sub: "Scoring prediction reliability" },
+        { main: "Finalizing Results...", sub: "Preparing comprehensive entity report" },
+      ]
     };
 
-    // API Key Storage
-    const API_KEY_STORAGE_KEY = 'gemini_api_key_ai_business_search';
+    let loadingInterval = null;
+    let statsInterval = null;
+    let contentIndex = 0;
+    let statusIndex = 0;
+    let elapsedSeconds = 0;
+    let sourcesChecked = 0;
+    let recordsScanned = 0;
 
-    function loadSavedApiKey() {
-      const savedKey = localStorage.getItem(API_KEY_STORAGE_KEY);
-      if (savedKey) {
-        document.getElementById('apiKey').value = savedKey;
-        showKeyStatus('Key loaded from browser storage', 'loaded');
+    function startLoadingAnimation(entityName) {
+      const overlay = document.getElementById('loadingOverlay');
+      overlay.classList.add('active');
+      
+      // Set query name
+      document.getElementById('loadingQueryName').textContent = entityName;
+      
+      // Set model name
+      const isFlash = selectedModel.includes('flash');
+      const modelName = isFlash ? 'Gemini 2.5 Flash' : 'Gemini 3 Pro';
+      const modelEl = document.getElementById('loadingModel');
+      modelEl.textContent = modelName;
+      modelEl.className = 'loading-model ' + (isFlash ? 'flash' : 'pro');
+      
+      // Reset
+      contentIndex = 0;
+      statusIndex = 0;
+      elapsedSeconds = 0;
+      sourcesChecked = 0;
+      recordsScanned = 0;
+      document.getElementById('loadingProgressBar').style.width = '0%';
+      document.getElementById('step1').className = 'loading-step active';
+      document.getElementById('step2').className = 'loading-step';
+      document.getElementById('step3').className = 'loading-step';
+      
+      // Start content rotation (every 4 seconds)
+      loadingInterval = setInterval(() => {
+        rotateContent();
+      }, 4000);
+      
+      // Start stats counter
+      statsInterval = setInterval(() => {
+        elapsedSeconds++;
+        sourcesChecked += Math.floor(Math.random() * 3) + 1;
+        recordsScanned += Math.floor(Math.random() * 50) + 20;
+        
+        document.getElementById('statTime').textContent = elapsedSeconds + 's';
+        document.getElementById('statSources').textContent = Math.min(sourcesChecked, 25);
+        document.getElementById('statRecords').textContent = recordsScanned.toLocaleString();
+        
+        // Rotate status every 3 seconds
+        if (elapsedSeconds % 3 === 0) {
+          rotateStatus();
+        }
+      }, 1000);
+      
+      // Initial content
+      rotateContent();
+    }
+
+    function rotateContent() {
+      const allContent = [...loadingContent.facts, ...loadingContent.tips];
+      const item = allContent[contentIndex % allContent.length];
+      
+      document.getElementById('loadingCardLabel').textContent = item.label;
+      document.getElementById('loadingCardText').innerHTML = item.text;
+      
+      // Re-trigger animation
+      const textEl = document.getElementById('loadingCardText');
+      textEl.style.animation = 'none';
+      textEl.offsetHeight; // Trigger reflow
+      textEl.style.animation = 'fade-in 0.5s ease';
+      
+      contentIndex++;
+    }
+
+    function rotateStatus() {
+      const status = loadingContent.statuses[statusIndex % loadingContent.statuses.length];
+      document.getElementById('loadingStatus').textContent = status.main;
+      document.getElementById('loadingSubstatus').textContent = status.sub;
+      statusIndex++;
+    }
+
+    function updateLoadingStep(step, progress) {
+      document.getElementById('loadingProgressBar').style.width = progress + '%';
+      
+      if (step >= 1) {
+        document.getElementById('step1').className = step === 1 ? 'loading-step active' : 'loading-step complete';
+      }
+      if (step >= 2) {
+        document.getElementById('step2').className = step === 2 ? 'loading-step active' : 'loading-step complete';
+      }
+      if (step >= 3) {
+        document.getElementById('step3').className = step === 3 ? 'loading-step active' : 'loading-step complete';
       }
     }
 
-    function saveApiKey() {
-      const apiKey = document.getElementById('apiKey').value.trim();
-      if (apiKey) {
-        localStorage.setItem(API_KEY_STORAGE_KEY, apiKey);
-        showKeyStatus('Key saved to browser storage', 'saved');
-      } else {
-        showKeyStatus('Enter a key first', 'cleared');
-      }
+    function stopLoadingAnimation() {
+      clearInterval(loadingInterval);
+      clearInterval(statsInterval);
+      document.getElementById('loadingOverlay').classList.remove('active');
     }
 
-    function clearApiKey() {
-      localStorage.removeItem(API_KEY_STORAGE_KEY);
-      document.getElementById('apiKey').value = '';
-      showKeyStatus('Saved key cleared', 'cleared');
-    }
+    // ==================== MODEL SELECTION ====================
+    let selectedModel = 'gemini-3-pro-preview';
 
-    function toggleKeyVisibility() {
-      const input = document.getElementById('apiKey');
-      input.type = input.type === 'password' ? 'text' : 'password';
-    }
-
-    function showKeyStatus(message, type) {
-      const status = document.getElementById('keyStatus');
-      status.textContent = message;
-      status.className = 'key-status ' + type;
-      setTimeout(() => {
-        status.textContent = '';
-        status.className = 'key-status';
-      }, 3000);
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      loadSavedApiKey();
-      document.getElementById('toggleKey').addEventListener('click', toggleKeyVisibility);
-      document.getElementById('saveKey').addEventListener('click', saveApiKey);
-      document.getElementById('clearKey').addEventListener('click', clearApiKey);
+    document.getElementById('modelFlash').addEventListener('click', function() {
+      selectedModel = this.dataset.model;
+      document.getElementById('modelFlash').classList.add('active');
+      document.getElementById('modelPro').classList.remove('active');
     });
 
-    function showLoading(show) {
-      const overlay = document.getElementById('loadingOverlay');
-      overlay.classList.toggle('active', show);
-      ['step1', 'step2', 'step3'].forEach(id => {
-        document.getElementById(id).classList.remove('active', 'complete');
-      });
+    document.getElementById('modelPro').addEventListener('click', function() {
+      selectedModel = this.dataset.model;
+      document.getElementById('modelPro').classList.add('active');
+      document.getElementById('modelFlash').classList.remove('active');
+    });
+
+    // ==================== API KEY MANAGEMENT ====================
+    function toggleApiSettings() {
+      const btn = document.getElementById('apiToggle');
+      const content = document.getElementById('apiContent');
+      btn.classList.toggle('open');
+      content.classList.toggle('open');
     }
 
-    function updateLoadingStep(step, status) {
-      const el = document.getElementById('step' + step);
-      el.classList.remove('active', 'complete');
-      el.classList.add(status);
+    function updateApiStatus() {
+      const savedKey = localStorage.getItem('gemini_api_key_ai_business_search');
+      const dot = document.getElementById('apiStatusDot');
+      const text = document.getElementById('apiStatusText');
+      
+      if (savedKey) {
+        dot.classList.add('connected');
+        text.textContent = 'API key saved';
+        document.getElementById('apiKey').value = savedKey;
+      } else {
+        dot.classList.remove('connected');
+        text.textContent = 'No API key saved';
+      }
     }
 
-    function showError(message) {
-      const errorEl = document.getElementById('errorMessage');
-      errorEl.textContent = message;
-      errorEl.classList.add('active');
-      setTimeout(() => errorEl.classList.remove('active'), 5000);
-    }
-
+    // ==================== MAIN SEARCH FUNCTION ====================
     async function analyzeEntity() {
       const apiKey = document.getElementById('apiKey').value.trim();
       const entityName = document.getElementById('entityName').value.trim();
-      const additionalContext = document.getElementById('additionalContext').value.trim();
-
+      const errorEl = document.getElementById('errorMessage');
+      
+      errorEl.classList.remove('active');
+      
       if (!apiKey) {
-        showError('Please enter your Gemini API key');
+        errorEl.textContent = 'Please enter your Gemini API key';
+        errorEl.classList.add('active');
+        document.getElementById('apiToggle').click(); // Open API settings
         return;
       }
+      
       if (!entityName) {
-        showError('Please enter a business name');
+        errorEl.textContent = 'Please enter a business name to search';
+        errorEl.classList.add('active');
         return;
       }
-
-      showLoading(true);
-      document.getElementById('resultsSection').classList.remove('active');
-
+      
+      // Start loading
+      startLoadingAnimation(entityName);
+      document.getElementById('searchSection').classList.add('has-results');
+      
       try {
-        updateLoadingStep(1, 'active');
-
-        const groundingPrompt = `Search for comprehensive information about "${entityName}" ${additionalContext ? `(${additionalContext})` : ''}.
+        // Step 1: Grounding search
+        updateLoadingStep(1, 15);
+        document.getElementById('loadingStatus').textContent = 'Searching Web...';
+        document.getElementById('loadingSubstatus').textContent = 'Finding information about ' + entityName;
+        
+        const groundingPrompt = `Search for comprehensive information about "${entityName}".
 Find: 
 - State of incorporation
 - Entity type (LLC, Inc, Corp, LP)
@@ -1690,9 +1939,11 @@ Look for SEC filings, state corporation databases, OpenCorporates, company websi
 
         const groundingResponse = await callGeminiWithGrounding(apiKey, groundingPrompt);
         
-        updateLoadingStep(1, 'complete');
-        updateLoadingStep(2, 'active');
-
+        // Step 2: Analysis
+        updateLoadingStep(2, 50);
+        document.getElementById('loadingStatus').textContent = 'Analyzing Data...';
+        document.getElementById('loadingSubstatus').textContent = 'Processing entity information';
+        
         const routingPrompt = `Based on this research about "${entityName}":
 
 ${groundingResponse.text}
@@ -1731,37 +1982,33 @@ JSON RESPONSE:
 
 Always make a prediction. Use heuristics if no direct information found. Set confidence accordingly. For owners/members, include any officers, directors, members, or principals found.`;
 
+        // Step 3: Prediction
+        updateLoadingStep(3, 85);
+        document.getElementById('loadingStatus').textContent = 'Generating Report...';
+        document.getElementById('loadingSubstatus').textContent = 'Compiling final results';
+        
         const routingResponse = await callGemini(apiKey, routingPrompt);
         
-        updateLoadingStep(2, 'complete');
-        updateLoadingStep(3, 'active');
-
-        let prediction;
-        try {
-          const jsonMatch = routingResponse.match(/\{[\s\S]*\}/);
-          if (jsonMatch) {
-            prediction = JSON.parse(jsonMatch[0]);
-          } else {
-            throw new Error('No JSON found in response');
-          }
-        } catch (e) {
-          console.error('Parse error:', e, routingResponse);
-          throw new Error('Failed to parse AI response. Please try again.');
-        }
-
-        updateLoadingStep(3, 'complete');
+        // Complete
+        updateLoadingStep(3, 100);
+        
+        // Parse and display
+        const prediction = parseJsonResponse(routingResponse.text);
         displayResults(prediction, groundingResponse.sources);
-
+        
+        setTimeout(() => {
+          stopLoadingAnimation();
+        }, 500);
+        
       } catch (error) {
-        console.error('Error:', error);
-        showError(error.message || 'An error occurred while searching');
-      } finally {
-        showLoading(false);
+        stopLoadingAnimation();
+        errorEl.textContent = 'Error: ' + error.message;
+        errorEl.classList.add('active');
       }
     }
 
     async function callGeminiWithGrounding(apiKey, prompt) {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent?key=${apiKey}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`;
       
       const response = await fetch(url, {
         method: 'POST',
@@ -1771,79 +2018,80 @@ Always make a prediction. Use heuristics if no direct information found. Set con
           tools: [{ google_search: {} }]
         })
       });
-
+      
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.error?.message || 'API request failed');
       }
-
+      
       const data = await response.json();
       const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-      const groundingMetadata = data.candidates?.[0]?.groundingMetadata;
+      const sources = data.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
       
-      let sources = [];
-      if (groundingMetadata?.groundingChunks) {
-        sources = groundingMetadata.groundingChunks.map(chunk => ({
-          title: chunk.web?.title || 'Source',
-          uri: chunk.web?.uri || '#'
-        }));
-      } else if (groundingMetadata?.webSearchQueries) {
-        sources = groundingMetadata.webSearchQueries.map(query => ({
-          title: `Search: ${query}`,
-          uri: `https://www.google.com/search?q=${encodeURIComponent(query)}`
-        }));
-      }
-
       return { text, sources };
     }
 
     async function callGemini(apiKey, prompt) {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent?key=${apiKey}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`;
       
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.2, topP: 0.8, topK: 40 }
+          generationConfig: {
+            temperature: 0.2,
+            topP: 0.8,
+            maxOutputTokens: 2048
+          }
         })
       });
-
+      
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.error?.message || 'API request failed');
       }
-
+      
       const data = await response.json();
-      return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      
+      return { text };
+    }
+
+    function parseJsonResponse(text) {
+      try {
+        const jsonMatch = text.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          return JSON.parse(jsonMatch[0]);
+        }
+      } catch (e) {
+        console.error('JSON parse error:', e);
+      }
+      return {
+        predicted_state: "??",
+        state_name: "Unknown",
+        confidence: 0,
+        reasoning: text,
+        routing_queue: []
+      };
     }
 
     function displayResults(prediction, sources) {
-      const resultsSection = document.getElementById('resultsSection');
-      resultsSection.classList.add('active');
-
-      document.getElementById('stateCode').textContent = prediction.predicted_state || '--';
-      document.getElementById('stateName').textContent = 
-        prediction.state_name || STATE_NAMES[prediction.predicted_state] || '--';
-
-      const confidence = Math.round(prediction.confidence || 0);
-      const confidenceEl = document.getElementById('confidenceValue');
-      confidenceEl.textContent = `${confidence}%`;
+      document.getElementById('resultsSection').classList.add('active');
       
-      if (confidence >= 70) {
-        confidenceEl.style.color = 'var(--tier-a)';
-      } else if (confidence >= 50) {
-        confidenceEl.style.color = 'var(--accent)';
-      } else {
-        confidenceEl.style.color = 'var(--tier-e)';
-      }
-
+      document.getElementById('stateCode').textContent = prediction.predicted_state || '--';
+      document.getElementById('stateName').textContent = prediction.state_name || 'Unknown';
+      
+      const confidence = prediction.confidence || 0;
+      const confEl = document.getElementById('confidenceValue');
+      confEl.textContent = confidence + '%';
+      confEl.style.color = confidence >= 70 ? 'var(--tier-a)' : confidence >= 50 ? 'var(--tier-c)' : 'var(--tier-e)';
+      
       document.getElementById('entityType').textContent = prediction.entity_type || 'Unknown';
       document.getElementById('industry').textContent = prediction.industry || 'Unknown';
       document.getElementById('hqLocation').textContent = prediction.hq_location || 'Unknown';
       document.getElementById('formationDate').textContent = prediction.formation_date || 'Unknown';
       
-      // Registration status with color coding
       const statusEl = document.getElementById('regStatus');
       const status = prediction.registration_status || 'Unknown';
       statusEl.textContent = status;
@@ -1856,7 +2104,7 @@ Always make a prediction. Use heuristics if no direct information found. Set con
       
       document.getElementById('regAgent').textContent = prediction.registered_agent || 'Unknown';
       
-      // Owners/Members section
+      // Owners section
       const ownersSection = document.getElementById('ownersSection');
       const ownersList = document.getElementById('ownersList');
       const owners = prediction.owners_members || [];
@@ -1864,7 +2112,6 @@ Always make a prediction. Use heuristics if no direct information found. Set con
       if (owners.length > 0 && owners[0] !== 'Unknown' && owners[0] !== '') {
         ownersSection.style.display = 'block';
         ownersList.innerHTML = owners.map(owner => {
-          // Parse "Name (Title)" format
           const match = owner.match(/^(.+?)\s*\((.+)\)$/);
           if (match) {
             return `<span class="owner-tag">${match[1]}<span class="owner-title">(${match[2]})</span></span>`;
@@ -1874,49 +2121,45 @@ Always make a prediction. Use heuristics if no direct information found. Set con
       } else {
         ownersSection.style.display = 'none';
       }
-
-      const sourceQuality = prediction.source_quality || 'unknown';
-      const qualityBadge = {
-        'registry': '<span style="color:var(--tier-a);font-weight:700;">[STATE REGISTRY]</span>',
-        'sec': '<span style="color:var(--tier-a);font-weight:700;">[SEC FILING]</span>',
-        'opencorporates': '<span style="color:var(--accent);font-weight:700;">[OPENCORPORATES]</span>',
-        'web': '<span style="color:var(--accent);font-weight:700;">[WEB PRESENCE]</span>',
-        'heuristic': '<span style="color:var(--tier-e);font-weight:700;">[HEURISTIC GUESS]</span>'
-      }[sourceQuality] || '';
       
-      document.getElementById('reasoningText').innerHTML = 
-        (qualityBadge ? qualityBadge + '<br><br>' : '') + (prediction.reasoning || 'No reasoning provided');
-
-      const queueItems = document.getElementById('queueItems');
-      queueItems.innerHTML = '';
+      document.getElementById('reasoning').textContent = prediction.reasoning || 'No analysis available';
       
-      const queue = prediction.routing_queue || [prediction.predicted_state];
-      queue.forEach((state, index) => {
-        const item = document.createElement('div');
-        item.className = `queue-item ${index === 0 ? 'primary' : ''}`;
-        item.innerHTML = `<span class="rank">#${index + 1}</span><span class="state">${state}</span>`;
-        queueItems.appendChild(item);
-      });
-
-      const sourcesSection = document.getElementById('sourcesSection');
-      const sourcesList = document.getElementById('sourcesList');
+      const queue = prediction.routing_queue || [];
+      document.getElementById('queueStates').innerHTML = queue.map((state, i) => 
+        `<span class="queue-state">${state}<span class="priority">#${i+1}</span></span>`
+      ).join('');
       
-      if (sources && sources.length > 0) {
-        sourcesSection.style.display = 'block';
-        sourcesList.innerHTML = sources.slice(0, 5).map(source => `
-          <div class="source-item">
-            <a href="${source.uri}" target="_blank">${source.title}</a>
-          </div>
-        `).join('');
-      } else {
-        sourcesSection.style.display = 'none';
-      }
-
-      resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('sourceQuality').textContent = prediction.source_quality || 'web';
+      
+      // Scroll to results
+      document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    document.getElementById('entityName').addEventListener('keypress', (e) => {
+    // ==================== EVENT LISTENERS ====================
+    document.getElementById('apiKey').addEventListener('input', function() {
+      const key = this.value.trim();
+      if (key) {
+        localStorage.setItem('gemini_api_key_ai_business_search', key);
+      }
+      updateApiStatus();
+    });
+
+    document.getElementById('entityName').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') analyzeEntity();
+    });
+
+    document.getElementById('themeToggle').addEventListener('click', function() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    });
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      updateApiStatus();
     });
   </script>
 </body>
