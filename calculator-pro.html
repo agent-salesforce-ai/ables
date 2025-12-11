@@ -6,6 +6,119 @@
   <title>Approval Toolbox | AblesAI</title>
   
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><ellipse cx=%2232%22 cy=%2232%22 rx=%2228%22 ry=%228%22 stroke=%22%23ea580c%22 stroke-width=%222.5%22 fill=%22none%22 transform=%22rotate(-20 32 32)%22 stroke-dasharray=%2270 140%22/><circle cx=%2232%22 cy=%2232%22 r=%2212%22 fill=%22%23eab308%22/><ellipse cx=%2232%22 cy=%2232%22 rx=%2228%22 ry=%228%22 stroke=%22%23ea580c%22 stroke-width=%222.5%22 fill=%22none%22 transform=%22rotate(-20 32 32)%22 stroke-dasharray=%2270 140%22 stroke-dashoffset=%22-70%22/><circle cx=%2254%22 cy=%2228%22 r=%224%22 fill=%22%23a855f7%22/></svg>">
+  
+  <!-- Outseta Quickstart script -->
+  <script>
+    var o_options = {
+      domain: 'trustbureauai.outseta.com',
+      load: 'nocode,auth'
+    };
+  </script>
+  <script src="https://cdn.outseta.com/outseta.min.js" data-options="o_options"></script>
+
+  <!-- Auth Protection -->
+  <script>
+    // Check if this is a client share link (public link with data parameter)
+    var urlParams = new URLSearchParams(window.location.search);
+    var isClientShareLink = urlParams.has('d');
+    
+    // For broker/lender view, require authentication
+    if (!isClientShareLink) {
+      const accessToken = urlParams.get('access_token');
+      
+      // If no access token, lock the page immediately
+      if (!accessToken) {
+        document.addEventListener('DOMContentLoaded', function() {
+          lockPage();
+        });
+      } else {
+        // If access token exists, proceed with normal auth check
+        (async function() {
+          if (window.Outseta && typeof Outseta.getUser === 'function') {
+            await checkAuth();
+          } else {
+            setTimeout(async () => {
+              if (window.Outseta && typeof Outseta.getUser === 'function') {
+                await checkAuth();
+              }
+            }, 500);
+          }
+
+          async function checkAuth() {
+            try {
+              const user = await Outseta.getUser();
+              
+              if (!user) {
+                lockPage();
+                return;
+              }
+
+              let planName = 'Free Trial';
+              let subscriptionStartDate = null;
+
+              if (user.Account && user.Account.CurrentSubscription) {
+                const currentSubscription = user.Account.CurrentSubscription;
+                if (currentSubscription.Plan && currentSubscription.Plan.Name) {
+                  planName = currentSubscription.Plan.Name;
+                }
+                if (currentSubscription.StartDate) {
+                  subscriptionStartDate = currentSubscription.StartDate;
+                }
+              }
+
+              if (planName === 'Broker Box') {
+                return;
+              }
+
+              if (planName === 'Free Trial' && subscriptionStartDate) {
+                const startDate = new Date(subscriptionStartDate);
+                const trialEndDate = new Date(startDate);
+                trialEndDate.setDate(trialEndDate.getDate() + 3);
+                const today = new Date();
+
+                if (today > trialEndDate) {
+                  lockPage();
+                  return;
+                }
+              }
+
+            } catch (error) {
+              console.error('Error checking subscription:', error);
+              lockPage();
+            }
+          }
+        })();
+      }
+    }
+    
+    function lockPage() {
+      // Hide the entire page content
+      document.body.innerHTML = `
+        <style>
+          body {
+            margin: 0;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+          }
+        </style>
+        <div style="text-align: center; max-width: 500px; padding: 40px 20px;">
+          <div style="width: 80px; height: 80px; background: rgba(234, 88, 12, 0.1); border: 2px solid rgba(234, 88, 12, 0.3); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
+            <svg xmlns="http://www.w3.org/2000/svg" style="width: 40px; height: 40px; color: #ea580c;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
+          <h1 style="font-size: 28px; font-weight: 700; margin: 0 0 12px; color: #f5f5f5;">Access Required</h1>
+          <p style="font-size: 16px; color: #a3a3a3; margin: 0 0 32px; line-height: 1.6;">This tool requires an active Pro Plan subscription. Please log in through your dashboard to access the calculator.</p>
+          <a href="https://trustbureauai.outseta.com/auth" style="display: inline-block; padding: 12px 32px; background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%); color: white; text-decoration: none; border-radius: 999px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(234, 88, 12, 0.4);">Sign In</a>
+        </div>
+      `;
+    }
+  </script>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
