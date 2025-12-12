@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Business Search | AblesAI</title>
-  <!-- Google tag (gtag.js) -->
+  <title>AI Business Intelligence | AblesAI</title>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-NLL9GDQY8S"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -12,7 +11,6 @@
     gtag('js', new Date());
     gtag('config', 'G-NLL9GDQY8S');
   </script>
-  <!-- Cookiebot Consent -->
   <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="f4131404-42af-4d2e-9472-473077a790bb" type="text/javascript" async></script>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 64 64' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3CradialGradient id='pg' cx='35%25' cy='35%25' r='60%25'%3E%3Cstop offset='0%25' stop-color='%23fcd34d'/%3E%3Cstop offset='50%25' stop-color='%23eab308'/%3E%3Cstop offset='100%25' stop-color='%23ca8a04'/%3E%3C/radialGradient%3E%3ClinearGradient id='rg' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23f97316'/%3E%3Cstop offset='100%25' stop-color='%23dc2626'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cellipse cx='32' cy='32' rx='28' ry='8' stroke='url(%23rg)' stroke-width='2.5' fill='none' transform='rotate(-20 32 32)' stroke-dasharray='70 140' opacity='0.6'/%3E%3Ccircle cx='32' cy='32' r='12' fill='url(%23pg)'/%3E%3Cellipse cx='28' cy='28' rx='4' ry='3' fill='%23fef3c7' opacity='0.4'/%3E%3Cellipse cx='32' cy='32' rx='28' ry='8' stroke='url(%23rg)' stroke-width='2.5' fill='none' transform='rotate(-20 32 32)' stroke-dasharray='70 140' stroke-dashoffset='-70'/%3E%3Ccircle cx='58' cy='28' r='4' fill='%23a855f7'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -53,56 +51,7 @@
       --border-secondary: #e5e7eb;
     }
 
-    [data-theme="light"] .bg-grid {
-      background-image: 
-        linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
-    }
-
-    [data-theme="light"] .bg-gradient {
-      background: radial-gradient(ellipse at 50% 0%, rgba(234, 179, 8, 0.08) 0%, transparent 60%);
-    }
-
-    [data-theme="light"] .result-card {
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.05);
-    }
-
-    [data-theme="light"] .profile-item {
-      background: #f8f9fa;
-      border-color: #e5e7eb;
-    }
-
-    [data-theme="light"] .reasoning-box,
-    [data-theme="light"] .owners-section {
-      background: #f8f9fa;
-      border-color: #e5e7eb;
-    }
-
-    [data-theme="light"] .routing-queue {
-      background: linear-gradient(135deg, rgba(234, 179, 8, 0.08), rgba(234, 179, 8, 0.03));
-      border-color: rgba(234, 179, 8, 0.3);
-    }
-
-    [data-theme="light"] .search-input-container {
-      background: #ffffff;
-      border-color: #d1d5db;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-
-    [data-theme="light"] .model-btn {
-      background: #ffffff;
-      border-color: #d1d5db;
-    }
-
-    [data-theme="light"] .search-logo-large svg {
-      filter: drop-shadow(0 0 20px rgba(234, 179, 8, 0.4));
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'DM Sans', system-ui, sans-serif;
@@ -113,7 +62,6 @@
       padding-top: 65px;
     }
 
-    /* Background Effects */
     .bg-grid {
       position: fixed;
       inset: 0;
@@ -137,70 +85,6 @@
       z-index: 0;
     }
 
-    /* Orbital Animation System */
-    .orbit-system {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 800px;
-      height: 800px;
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.5;
-    }
-
-    .orbit-center {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 120px;
-      height: 120px;
-      background: radial-gradient(circle, rgba(234, 179, 8, 0.4) 0%, rgba(234, 179, 8, 0.1) 40%, transparent 70%);
-      border-radius: 50%;
-      filter: blur(20px);
-    }
-
-    .orbit-ring {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      border: 1px solid rgba(234, 179, 8, 0.12);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    .orbit-ring-1 { width: 300px; height: 300px; animation: orbit-rotate 30s linear infinite; }
-    .orbit-ring-2 { width: 450px; height: 450px; animation: orbit-rotate 45s linear infinite reverse; }
-    .orbit-ring-3 { width: 600px; height: 600px; animation: orbit-rotate 60s linear infinite; }
-
-    @keyframes orbit-rotate {
-      from { transform: translate(-50%, -50%) rotate(0deg); }
-      to { transform: translate(-50%, -50%) rotate(360deg); }
-    }
-
-    .orbit-particle {
-      position: absolute;
-      border-radius: 50%;
-      top: 50%;
-      left: 50%;
-    }
-
-    .particle-1 { width: 10px; height: 10px; background: #eab308; box-shadow: 0 0 15px 5px rgba(234, 179, 8, 0.5); animation: orb1 20s linear infinite; }
-    .particle-2 { width: 8px; height: 8px; background: #a855f7; box-shadow: 0 0 12px 4px rgba(168, 85, 247, 0.5); animation: orb2 25s linear infinite; }
-    .particle-3 { width: 6px; height: 6px; background: #22c55e; box-shadow: 0 0 10px 3px rgba(34, 197, 94, 0.5); animation: orb3 18s linear infinite reverse; }
-    .particle-4 { width: 8px; height: 8px; background: #f97316; box-shadow: 0 0 12px 4px rgba(249, 115, 22, 0.5); animation: orb4 30s linear infinite; }
-    .particle-5 { width: 5px; height: 5px; background: #3b82f6; box-shadow: 0 0 10px 3px rgba(59, 130, 246, 0.5); animation: orb5 22s linear infinite reverse; }
-    .particle-6 { width: 7px; height: 7px; background: #ec4899; box-shadow: 0 0 12px 4px rgba(236, 72, 153, 0.5); animation: orb6 35s linear infinite; }
-
-    @keyframes orb1 { from { transform: translate(-50%, -50%) rotate(0deg) translateX(150px); } to { transform: translate(-50%, -50%) rotate(360deg) translateX(150px); } }
-    @keyframes orb2 { from { transform: translate(-50%, -50%) rotate(60deg) translateX(225px); } to { transform: translate(-50%, -50%) rotate(420deg) translateX(225px); } }
-    @keyframes orb3 { from { transform: translate(-50%, -50%) rotate(120deg) translateX(300px); } to { transform: translate(-50%, -50%) rotate(480deg) translateX(300px); } }
-    @keyframes orb4 { from { transform: translate(-50%, -50%) rotate(180deg) translateX(175px); } to { transform: translate(-50%, -50%) rotate(540deg) translateX(175px); } }
-    @keyframes orb5 { from { transform: translate(-50%, -50%) rotate(240deg) translateX(275px); } to { transform: translate(-50%, -50%) rotate(600deg) translateX(275px); } }
-    @keyframes orb6 { from { transform: translate(-50%, -50%) rotate(300deg) translateX(250px); } to { transform: translate(-50%, -50%) rotate(660deg) translateX(250px); } }
-
     /* Header */
     .main-header {
       position: fixed;
@@ -211,30 +95,11 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 16px 24px;
-      background: transparent;
-      backdrop-filter: none;
-      border-bottom: none;
+      padding: 0 24px;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-secondary);
       z-index: 100;
-    }
-
-    [data-theme="light"] .main-header {
-      background: transparent;
-    }
-
-    /* Light mode moon color cycle */
-    [data-theme="light"] .moon-base {
-      animation-name: orbit, moonColorLight, moonBackOpacity !important;
-    }
-    [data-theme="light"] .moon-front {
-      animation-name: orbit, moonColorLight, moonFrontOpacity !important;
-    }
-    @keyframes moonColorLight {
-      0%, 100% { fill: #10b981; }
-      20% { fill: #3b82f6; }
-      40% { fill: #ec4899; }
-      60% { fill: #a855f7; }
-      80% { fill: #eab308; }
     }
 
     .header-logo {
@@ -244,201 +109,110 @@
     }
 
     .header-logo svg {
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
     }
 
     .header-logo h1 {
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       font-weight: 800;
-      color: var(--text-primary);
       letter-spacing: -0.5px;
     }
 
-    .header-logo h1 span {
-      color: var(--text-muted);
+    .header-logo h1 span { color: var(--text-muted); font-weight: 500; }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
-    [data-theme="light"] .header-logo h1 {
-      color: #111827;
+    .api-input-wrap {
+      display: flex;
+      align-items: center;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      padding: 0 12px;
+      gap: 8px;
+      height: 38px;
     }
 
-    [data-theme="light"] .header-logo h1 span {
-      color: var(--accent);
-    }
+    .api-input-wrap svg { width: 14px; height: 14px; color: var(--text-muted); flex-shrink: 0; }
 
-    .theme-toggle {
-      width: 32px;
-      height: 32px;
-      border-radius: 6px;
+    .api-input-wrap input {
+      width: 140px;
       background: transparent;
       border: none;
-      cursor: pointer;
+      color: var(--text-primary);
+      font-size: 0.8rem;
+      font-family: inherit;
+      -webkit-text-security: disc;
+    }
+
+    .api-input-wrap input:focus { outline: none; }
+
+    .theme-toggle {
+      width: 38px;
+      height: 38px;
       display: flex;
       align-items: center;
       justify-content: center;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
       color: var(--text-muted);
+      cursor: pointer;
       transition: all 0.2s;
     }
 
     .theme-toggle:hover {
-      color: var(--text-primary);
-    }
-
-    [data-theme="light"] .theme-toggle {
-      color: #4b5563;
-    }
-
-    [data-theme="light"] .theme-toggle:hover {
-      color: #111827;
-    }
-
-    .theme-toggle svg {
-      width: 16px;
-      height: 16px;
-    }
-
-    .sun-icon { display: none; }
-    [data-theme="light"] .sun-icon { display: block; }
-    [data-theme="light"] .moon-icon { display: none; }
-
-    .tab-nav {
-      display: flex;
-      gap: 4px;
-    }
-
-    .tab-btn {
-      padding: 8px 16px;
-      font-size: 13px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-muted);
-      background: transparent;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .tab-btn:hover {
-      color: var(--text-primary);
-      background: var(--bg-secondary);
-    }
-
-    .tab-btn.active {
+      border-color: var(--accent);
       color: var(--accent);
-      background: transparent;
     }
 
-    .lite-badge {
-      font-size: 10px;
-      font-weight: 700;
-      padding: 3px 8px;
-      background: #a855f7;
-      color: #fff;
-      border-radius: 4px;
-      margin-left: 6px;
-      text-transform: none;
-    }
+    .theme-toggle svg { width: 18px; height: 18px; }
 
-    .free-badge {
-      font-size: 10px;
-      font-weight: 700;
-      padding: 3px 8px;
-      background: #22c55e;
-      color: #000;
-      border-radius: 4px;
-      margin-left: 6px;
-      text-transform: none;
-    }
-
-    [data-theme="light"] .tab-btn {
-      color: #374151;
-    }
-
-    [data-theme="light"] .tab-btn:hover {
-      background: rgba(0,0,0,0.05);
-      color: #111827;
-    }
-
-    [data-theme="light"] .tab-btn.active {
-      background: transparent;
-      color: #b45309;
-    }
-
-    /* Container */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem;
+    /* Main Content */
+    .main-content {
       position: relative;
       z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
     }
 
-    /* Search Section - Centered Hero */
+    /* Search Section */
     .search-section {
-      min-height: calc(100vh - 200px);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 0;
+      text-align: center;
+      padding: 3rem 0 2rem;
+      transition: padding 0.4s ease;
     }
 
     .search-section.has-results {
-      min-height: auto;
-      padding: 1rem 0 2rem;
+      padding: 1.5rem 0 1rem;
     }
 
-    /* Large Logo */
-    .search-logo-large {
-      width: 120px;
-      height: 120px;
-      margin-bottom: 2rem;
+    .search-logo {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
     }
 
-    .search-logo-large svg {
-      width: 100%;
-      height: 100%;
-    }
-
-    /* Title */
     .search-title {
-      font-size: clamp(2.5rem, 6vw, 4rem);
-      font-weight: 700;
-      letter-spacing: -2px;
+      font-size: 2rem;
+      font-weight: 800;
       margin-bottom: 0.5rem;
-    }
-
-    .search-title .accent {
-      color: var(--accent);
-    }
-
-    .search-title .white {
-      color: var(--text-primary);
-    }
-
-    .search-title .muted {
-      color: var(--text-muted);
+      background: linear-gradient(135deg, var(--text-primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .search-subtitle {
-      font-size: 1.1rem;
       color: var(--text-muted);
-      margin-bottom: 2.5rem;
-      font-weight: 400;
-    }
-
-    /* Search Box */
-    .search-box {
-      width: 100%;
-      max-width: 700px;
-      margin: 0 auto;
+      font-size: 1rem;
+      margin-bottom: 2rem;
     }
 
     .search-input-container {
@@ -447,506 +221,418 @@
       background: var(--bg-card);
       border: 1px solid var(--border-primary);
       border-radius: 50px;
-      padding: 8px 8px 8px 24px;
+      padding: 6px 6px 6px 20px;
+      max-width: 700px;
+      margin: 0 auto;
       gap: 12px;
-      margin-bottom: 1.5rem;
+      transition: all 0.3s;
     }
 
     .search-input-container:focus-within {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--glow-gold);
+      box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.1);
     }
 
-    .search-input-container input[type="text"],
-    .search-input-container input[type="search"] {
+    .search-input {
       flex: 1;
-      min-width: 0;
-      padding: 0.75rem 0;
       background: transparent;
       border: none;
-      color: var(--text-primary);
-      font-size: 1.1rem;
-      font-family: inherit;
-    }
-
-    .search-input-container input[type="text"]:focus,
-    .search-input-container input[type="search"]:focus {
-      outline: none;
-    }
-
-    .search-input-container input[type="text"]::placeholder,
-    .search-input-container input[type="search"]::placeholder {
-      color: var(--text-muted);
-    }
-
-    /* Hide search cancel button in webkit */
-    .search-input-container input[type="search"]::-webkit-search-cancel-button {
-      -webkit-appearance: none;
-      appearance: none;
-    }
-
-    .api-key-inline {
-      display: flex;
-      align-items: center;
-    }
-
-    .api-key-inline input {
-      width: 140px;
-      padding: 0.5rem 0;
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
       font-size: 1rem;
-      font-family: inherit;
-      letter-spacing: 2px;
-      text-align: center;
-      -webkit-text-security: disc;
-    }
-
-    .api-key-inline input:-webkit-autofill,
-    .api-key-inline input:-webkit-autofill:hover,
-    .api-key-inline input:-webkit-autofill:focus,
-    .search-input-container input:-webkit-autofill,
-    .search-input-container input:-webkit-autofill:hover,
-    .search-input-container input:-webkit-autofill:focus,
-    .search-input-container input[type="search"]:-webkit-autofill,
-    .search-input-container input[type="search"]:-webkit-autofill:hover,
-    .search-input-container input[type="search"]:-webkit-autofill:focus {
-      -webkit-box-shadow: 0 0 0 1000px var(--bg-card) inset !important;
-      -webkit-text-fill-color: var(--text-primary) !important;
-      background-color: var(--bg-card) !important;
-      background: var(--bg-card) !important;
-      caret-color: var(--text-primary) !important;
-      transition: background-color 5000s ease-in-out 0s !important;
-    }
-
-    .api-key-inline input:focus {
-      outline: none;
       color: var(--text-primary);
+      font-family: inherit;
     }
 
-    .api-key-inline input::placeholder {
-      color: var(--text-muted);
-      letter-spacing: 0;
-    }
+    .search-input:focus { outline: none; }
+    .search-input::placeholder { color: var(--text-muted); }
 
-    .search-btn-round {
-      width: 56px;
-      height: 56px;
-      min-width: 56px;
-      background: var(--accent);
-      border: none;
-      border-radius: 50%;
-      color: #000;
-      cursor: pointer;
+    .search-btn {
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, var(--accent), #d97706);
+      border: none;
+      border-radius: 50px;
+      color: #000;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
       transition: all 0.2s;
     }
 
-    .search-btn-round:hover {
-      transform: scale(1.05);
-      box-shadow: 0 10px 30px rgba(234, 179, 8, 0.4);
+    .search-btn:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 20px rgba(234, 179, 8, 0.4);
     }
 
-    .search-btn-round:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
+    .search-btn svg { width: 18px; height: 18px; }
 
-    .search-btn-round svg {
-      width: 28px;
-      height: 28px;
-    }
-
-    /* Model Toggle */
-    .model-toggle {
+    /* Model Selector */
+    .model-selector {
       display: flex;
       justify-content: center;
-      gap: 1rem;
+      gap: 8px;
+      margin-top: 1rem;
     }
 
     .model-btn {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      padding: 0.75rem 1.5rem;
-      background: transparent;
-      border: 2px solid var(--border-primary);
-      border-radius: 50px;
+      padding: 8px 16px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
       color: var(--text-muted);
-      font-size: 1rem;
+      font-size: 0.8rem;
       font-weight: 600;
-      font-family: inherit;
       cursor: pointer;
       transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .model-btn:hover {
-      border-color: var(--text-muted);
-      color: var(--text-primary);
-    }
+    .model-btn:hover { border-color: var(--accent); color: var(--text-secondary); }
 
     .model-btn.active {
+      background: var(--glow-gold);
       border-color: var(--accent);
       color: var(--accent);
     }
 
     .model-badge {
-      padding: 0.2rem 0.5rem;
+      padding: 2px 6px;
       border-radius: 4px;
-      font-size: 0.75rem;
+      font-size: 0.65rem;
       font-weight: 700;
     }
 
-    .model-badge.flash {
-      background: #22c55e;
-      color: #000;
-    }
-
-    .model-badge.pro {
-      background: #8b5cf6;
-      color: #fff;
-    }
+    .model-badge.flash { background: #22c55e; color: #000; }
+    .model-badge.pro { background: #8b5cf6; color: #fff; }
 
     .error-message {
       background: rgba(239, 68, 68, 0.1);
       border: 1px solid rgba(239, 68, 68, 0.3);
       border-radius: 10px;
       padding: 0.75rem 1rem;
-      margin-bottom: 1rem;
+      margin: 1rem auto;
+      max-width: 700px;
       color: var(--tier-e);
       font-size: 0.85rem;
       display: none;
-      text-align: left;
     }
 
-    .error-message.active {
-      display: block;
+    .error-message.active { display: block; }
+
+    /* Loading Overlay */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(10px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .loading-overlay.active { display: flex; }
+
+    .loading-spinner {
+      width: 60px;
+      height: 60px;
+      border: 3px solid var(--border-primary);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1.5rem;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .loading-status {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .loading-progress {
+      width: 300px;
+      height: 4px;
+      background: var(--border-primary);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .loading-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-light));
+      width: 0%;
+      transition: width 0.3s;
     }
 
     /* Results Section */
     .results-section {
       display: none;
-      max-width: 900px;
-      margin: 2rem auto 0;
+      margin-top: 2rem;
     }
 
-    .results-section.active {
-      display: block;
-    }
+    .results-section.active { display: block; }
 
-    .prediction-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-primary);
-      border-radius: 16px;
-      padding: 1.5rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .prediction-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--accent), var(--accent-light), var(--tier-d));
-    }
-
-    .prediction-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 1.5rem;
-    }
-
-    .state-badge {
+    /* Risk Banner */
+    .risk-banner {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      justify-content: space-between;
+      padding: 1.25rem 1.5rem;
+      border-radius: 16px;
+      margin-bottom: 1.5rem;
+      border: 1px solid;
     }
 
-    .state-code {
-      font-size: 3rem;
+    .risk-banner.low {
+      background: rgba(34, 197, 94, 0.1);
+      border-color: rgba(34, 197, 94, 0.3);
+    }
+
+    .risk-banner.medium {
+      background: rgba(234, 179, 8, 0.1);
+      border-color: rgba(234, 179, 8, 0.3);
+    }
+
+    .risk-banner.high {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .risk-badge {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .risk-letter {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
       font-weight: 800;
-      color: var(--accent);
-      line-height: 1;
-      letter-spacing: -2px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.1);
     }
 
-    .state-name {
+    .risk-info h3 {
       font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--text-primary);
+      font-weight: 700;
     }
 
-    .state-label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
+    .risk-info p {
+      font-size: 0.8rem;
       color: var(--text-muted);
-      margin-top: 2px;
     }
 
-    .confidence-meter {
+    .risk-confidence {
       text-align: right;
     }
 
-    .confidence-value {
+    .risk-confidence .value {
       font-size: 2rem;
-      font-weight: 700;
-      color: var(--tier-a);
-      line-height: 1;
+      font-weight: 800;
     }
 
-    .confidence-label {
+    .risk-confidence .label {
       font-size: 0.7rem;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.08em;
       color: var(--text-muted);
-      margin-top: 4px;
     }
 
-    /* Entity Profile */
-    .entity-profile {
+    /* Report Grid */
+    .report-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.75rem;
-      margin-bottom: 1.25rem;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
     }
 
-    .profile-item {
+    .report-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-primary);
+      border-radius: 16px;
+      padding: 1.25rem;
+    }
+
+    .report-card.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .report-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-secondary);
+    }
+
+    .report-card-header svg {
+      width: 18px;
+      height: 18px;
+      color: var(--accent);
+    }
+
+    .report-card-header h3 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .data-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .data-item {
       background: var(--bg-secondary);
-      padding: 1rem;
+      padding: 12px;
       border-radius: 10px;
       border: 1px solid var(--border-secondary);
     }
 
-    .profile-label {
+    .data-item.full { grid-column: 1 / -1; }
+
+    .data-label {
       font-size: 0.65rem;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: var(--text-muted);
-      margin-bottom: 0.25rem;
+      margin-bottom: 4px;
     }
 
-    .profile-value {
+    .data-value {
       font-size: 0.9rem;
       font-weight: 600;
       color: var(--text-primary);
-      flex: 1;
     }
 
-    .profile-value-row {
+    .data-value.positive { color: var(--tier-a); }
+    .data-value.warning { color: var(--tier-c); }
+    .data-value.negative { color: var(--tier-e); }
+
+    /* Red Flags */
+    .red-flags-section {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+
+    .red-flags-header {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 8px;
+      color: var(--tier-e);
+      font-weight: 700;
+      margin-bottom: 0.75rem;
     }
 
-    .copy-btn {
-      background: transparent;
-      border: none;
-      padding: 4px;
-      cursor: pointer;
-      opacity: 0;
-      transition: opacity 0.2s, color 0.2s;
-      color: var(--text-muted);
-      border-radius: 4px;
-      flex-shrink: 0;
+    .red-flags-header svg { width: 16px; height: 16px; }
+
+    .red-flags-list {
+      list-style: none;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
     }
 
-    .copy-btn svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    .profile-item:hover .copy-btn {
-      opacity: 0.6;
-    }
-
-    .copy-btn:hover {
-      opacity: 1 !important;
-      color: var(--accent);
-    }
-
-    .copy-btn.copied {
-      color: var(--tier-a);
-      opacity: 1;
-    }
-
-    .copy-btn-header {
-      position: absolute;
-      right: 8px;
-      top: 8px;
-      opacity: 0;
-    }
-
-    .state-badge,
-    .confidence-meter {
+    .red-flags-list li {
+      padding: 6px 0;
+      padding-left: 20px;
       position: relative;
     }
 
-    .state-badge:hover .copy-btn-header,
-    .confidence-meter:hover .copy-btn-header {
-      opacity: 0.6;
+    .red-flags-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 8px;
+      background: var(--tier-e);
+      border-radius: 50%;
     }
 
-    .copy-btn-header:hover {
-      opacity: 1 !important;
-    }
-
-    .copy-btn-owners {
-      margin-left: auto;
-      opacity: 0.4;
-    }
-
-    .owners-title:hover .copy-btn-owners {
-      opacity: 0.7;
-    }
-
-    .copy-btn-owners:hover {
-      opacity: 1 !important;
-    }
-
-    .profile-value.status-active {
-      color: var(--tier-a);
-    }
-
-    .profile-value.status-inactive {
-      color: var(--tier-e);
-    }
-
-    /* Owners Section */
-    .owners-section {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-secondary);
-      border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: 1.25rem;
-    }
-
-    .owners-title {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--accent);
-      margin-bottom: 0.75rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-weight: 700;
-    }
-
-    .owners-title svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    .owners-list {
+    /* Officers List */
+    .officers-list {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem;
+      gap: 8px;
     }
 
-    .owner-tag {
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border-primary);
-      padding: 0.4rem 0.75rem;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      color: var(--text-primary);
-    }
-
-    .owner-tag .owner-title {
-      color: var(--text-muted);
-      font-size: 0.7rem;
-      margin-left: 0.25rem;
-    }
-
-    /* Reasoning */
-    .reasoning-box {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-secondary);
-      border-radius: 12px;
-      padding: 1rem;
-    }
-
-    .reasoning-title {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--accent);
-      margin-bottom: 0.75rem;
-      display: flex;
+    .officer-tag {
+      display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      font-weight: 700;
-    }
-
-    .reasoning-title svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    .reasoning-text {
+      gap: 6px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      padding: 8px 12px;
+      border-radius: 8px;
       font-size: 0.85rem;
-      line-height: 1.7;
-      color: var(--text-secondary);
     }
 
-    /* Routing Queue */
-    .routing-queue {
-      margin-top: 1.25rem;
+    .officer-tag .title {
+      color: var(--text-muted);
+      font-size: 0.75rem;
     }
 
-    .queue-title {
+    /* Stat Row */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 12px;
+      background: var(--bg-secondary);
+      border-radius: 10px;
+      border: 1px solid var(--border-secondary);
+    }
+
+    .stat-item .value {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .stat-item .label {
       font-size: 0.7rem;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.05em;
       color: var(--text-muted);
-      margin-bottom: 0.75rem;
-      font-weight: 600;
+      margin-top: 4px;
     }
 
-    .queue-states {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .queue-state {
-      padding: 0.4rem 0.75rem;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-primary);
-      border-radius: 6px;
-      font-size: 0.8rem;
-      font-weight: 600;
+    /* Summary */
+    .summary-text {
+      font-size: 0.9rem;
+      line-height: 1.8;
       color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .queue-state:first-child {
-      background: var(--glow-gold);
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .queue-state .priority {
-      font-size: 0.65rem;
-      color: var(--text-muted);
-      font-weight: 400;
     }
 
     /* Sources */
     .sources-section {
-      margin-top: 1.25rem;
-      padding-top: 1.25rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
       border-top: 1px solid var(--border-secondary);
     }
 
@@ -959,1809 +645,655 @@
       font-weight: 600;
     }
 
-    .source-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      padding: 0.25rem 0.6rem;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-primary);
-      border-radius: 4px;
-      font-size: 0.7rem;
-      color: var(--text-secondary);
+    .sources-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
-    .copy-all-btn {
+    .source-link {
+      font-size: 0.8rem;
+      color: var(--accent);
+      text-decoration: none;
+      padding: 4px 10px;
+      background: var(--bg-secondary);
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .source-link:hover {
+      background: var(--glow-gold);
+    }
+
+    /* Actions */
+    .actions-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 1.5rem;
+    }
+
+    .action-btn {
+      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
-      width: 100%;
-      margin-top: 1.5rem;
-      padding: 0.75rem 1rem;
-      background: transparent;
-      border: 1px dashed var(--border-primary);
-      border-radius: 8px;
-      color: var(--text-muted);
-      font-size: 0.8rem;
+      gap: 8px;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
     }
 
-    .copy-all-btn svg {
-      width: 16px;
-      height: 16px;
+    .action-btn svg { width: 18px; height: 18px; }
+
+    .action-btn.primary {
+      background: linear-gradient(135deg, var(--accent), #d97706);
+      border: none;
+      color: #000;
     }
 
-    .copy-all-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: rgba(234, 179, 8, 0.05);
-    }
-
-    .copy-all-btn.copied {
-      border-color: var(--tier-a);
-      color: var(--tier-a);
-      background: rgba(34, 197, 94, 0.05);
-    }
-
-    /* ==================== PONG GAME LOADING OVERLAY ==================== */
-    .loading-overlay {
-      position: fixed;
-      inset: 0;
-      background: var(--bg-primary);
-      z-index: 1000;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s;
-    }
-
-    .loading-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    #pongCanvas {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    .pong-ui {
-      position: absolute;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      z-index: 10;
-      pointer-events: none;
-    }
-
-    .pong-header {
-      margin-bottom: 1rem;
-    }
-
-    .pong-query {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-    }
-
-    .pong-query span {
-      color: var(--accent);
-      font-weight: 600;
-    }
-
-    .pong-model {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      opacity: 0.7;
-    }
-
-    .pong-status {
-      margin-bottom: 1rem;
-    }
-
-    .pong-status span {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      display: block;
-      margin-bottom: 0.5rem;
-    }
-
-    .pong-progress {
-      width: 200px;
-      height: 4px;
-      background: var(--border-primary);
-      border-radius: 2px;
-      overflow: hidden;
-      margin: 0 auto;
-    }
-
-    .pong-progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent), var(--tier-a));
-      border-radius: 2px;
-      width: 0%;
-      transition: width 0.5s ease;
-    }
-
-    .pong-instructions {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      opacity: 0.6;
-    }
-
-    .pong-key {
-      display: inline-block;
-      padding: 2px 6px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-primary);
-      border-radius: 4px;
-      font-family: monospace;
-      margin: 0 2px;
-    }
-
-    .pong-score {
-      position: absolute;
-      top: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 3rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      opacity: 0.15;
-      z-index: 5;
-      pointer-events: none;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .pong-divider {
-      margin: 0 0.5rem;
-      color: var(--text-muted);
-    }
-
-    /* Pong Trigger Button - Inline Centered */
-    .pong-trigger-inline {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 44px;
-      height: 44px;
-      margin: 1.5rem auto 0;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-primary);
-      border-radius: 50%;
-      cursor: pointer;
-      transition: all 0.3s;
-      opacity: 0.7;
-    }
-
-    .pong-trigger-inline svg {
-      width: 20px;
-      height: 20px;
-      color: var(--text-secondary);
-      transition: color 0.3s;
-    }
-
-    .pong-trigger-inline:hover {
-      opacity: 1;
-      border-color: var(--accent);
-      transform: scale(1.15);
+    .action-btn.primary:hover {
+      transform: scale(1.02);
       box-shadow: 0 4px 20px rgba(234, 179, 8, 0.4);
     }
 
-    .pong-trigger-inline:hover svg {
-      color: var(--accent);
-    }
-
-    /* Standalone Pong Overlay */
-    .pong-overlay {
-      position: fixed;
-      inset: 0;
-      background: var(--bg-primary);
-      z-index: 2000;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s;
-    }
-
-    .pong-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .pong-overlay canvas {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    .pong-ui-standalone {
-      position: absolute;
-      top: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      z-index: 10;
-      pointer-events: none;
-    }
-
-    .pong-title {
-      font-size: 0.8rem;
-      letter-spacing: 0.3em;
+    .action-btn.secondary {
+      background: transparent;
+      border: 1px dashed var(--border-primary);
       color: var(--text-muted);
-      opacity: 0.5;
-      margin-bottom: 0.5rem;
     }
 
-    .pong-score-large {
-      font-size: 4rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      font-variant-numeric: tabular-nums;
-      line-height: 1;
-    }
-
-    .pong-score-large span:first-child {
-      color: var(--accent);
-    }
-
-    .pong-score-large span:last-child {
-      color: #a855f7;
-    }
-
-    .pong-vs {
-      font-size: 1.5rem;
-      margin: 0 1rem;
-      color: var(--text-muted);
-      opacity: 0.5;
-    }
-
-    .pong-labels {
-      display: flex;
-      justify-content: center;
-      gap: 6rem;
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-muted);
-      margin-top: 0.5rem;
-    }
-
-    .pong-controls {
-      position: absolute;
-      bottom: 100px;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      z-index: 10;
-    }
-
-    .pong-instructions-standalone {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      opacity: 0.6;
-      margin-bottom: 0.5rem;
-    }
-
-    .pong-game-info {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      opacity: 0.4;
-    }
-
-    /* Difficulty Modes */
-    .pong-difficulty {
-      position: absolute;
-      bottom: 30px;
-      left: 30px;
-      display: flex;
-      flex-direction: row;
-      gap: 0.5rem;
-      z-index: 15;
-    }
-
-    .difficulty-label {
-      display: none;
-    }
-
-    .difficulty-btn {
-      padding: 0.5rem 1rem;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-primary);
-      border-radius: 8px;
-      color: var(--text-muted);
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      cursor: pointer;
-      transition: all 0.2s;
-      min-width: 90px;
-      text-align: center;
-    }
-
-    .difficulty-btn:hover {
-      border-color: var(--text-secondary);
-      color: var(--text-primary);
-    }
-
-    .difficulty-btn.active {
+    .action-btn.secondary:hover {
       border-color: var(--accent);
       color: var(--accent);
-      background: rgba(234, 179, 8, 0.1);
-    }
-
-    .difficulty-btn.easy { --diff-color: #22c55e; }
-    .difficulty-btn.pro { --diff-color: #eab308; }
-    .difficulty-btn.expert { --diff-color: #ef4444; }
-
-    .difficulty-btn.easy.active { border-color: #22c55e; color: #22c55e; background: rgba(34, 197, 94, 0.1); }
-    .difficulty-btn.pro.active { border-color: #eab308; color: #eab308; background: rgba(234, 179, 8, 0.1); }
-    .difficulty-btn.expert.active { border-color: #ef4444; color: #ef4444; background: rgba(239, 68, 68, 0.1); }
-
-    .difficulty-label {
-      font-size: 0.6rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-muted);
-      margin-bottom: 0.25rem;
-      text-align: center;
-    }
-
-    .pong-close {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      width: 44px;
-      height: 44px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-primary);
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 20;
-      transition: all 0.2s;
-    }
-
-    .pong-close svg {
-      width: 20px;
-      height: 20px;
-      color: var(--text-muted);
-    }
-
-    .pong-close:hover {
-      border-color: var(--tier-e);
-      background: rgba(239, 68, 68, 0.1);
-    }
-
-    .pong-close:hover svg {
-      color: var(--tier-e);
-    }
-
-    /* Leaderboard */
-    .pong-leaderboard {
-      position: absolute;
-      bottom: 30px;
-      right: 30px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-primary);
-      border-radius: 12px;
-      padding: 1rem;
-      min-width: 180px;
-      z-index: 15;
-    }
-
-    .leaderboard-title {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent);
-      margin-bottom: 0.75rem;
-      font-weight: 700;
-    }
-
-    .leaderboard-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .leaderboard-item {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.8rem;
-    }
-
-    .leaderboard-rank {
-      width: 20px;
-      height: 20px;
-      background: var(--bg-tertiary);
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.65rem;
-      font-weight: 700;
-      color: var(--text-muted);
-    }
-
-    .leaderboard-rank.gold {
-      background: linear-gradient(135deg, #fcd34d, #eab308);
-      color: #000;
-    }
-
-    .leaderboard-rank.silver {
-      background: linear-gradient(135deg, #e5e7eb, #9ca3af);
-      color: #000;
-    }
-
-    .leaderboard-rank.bronze {
-      background: linear-gradient(135deg, #fdba74, #ea580c);
-      color: #000;
-    }
-
-    .leaderboard-score {
-      color: var(--text-primary);
-      font-weight: 600;
-    }
-
-    .leaderboard-date {
-      color: var(--text-muted);
-      font-size: 0.65rem;
-      margin-left: auto;
-    }
-
-    .leaderboard-empty {
-      color: var(--text-muted);
-      font-size: 0.75rem;
-      font-style: italic;
-    }
-
-    /* Game Over */
-    .pong-game-over {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      z-index: 30;
-      background: var(--bg-secondary);
-      border: 2px solid var(--border-primary);
-      border-radius: 20px;
-      padding: 2rem 3rem;
-      display: none;
-    }
-
-    .pong-game-over.active {
-      display: block;
-      animation: popIn 0.3s ease;
-    }
-
-    @keyframes popIn {
-      from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
-      to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-    }
-
-    .game-over-text {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-
-    .game-over-text.win {
-      color: var(--tier-a);
-    }
-
-    .game-over-text.lose {
-      color: var(--tier-e);
-    }
-
-    .game-over-score {
-      font-size: 1.5rem;
-      color: var(--text-muted);
-      margin-bottom: 1.5rem;
-    }
-
-    .play-again-btn {
-      background: var(--accent);
-      color: #000;
-      border: none;
-      padding: 0.75rem 2rem;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .play-again-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 4px 15px rgba(234, 179, 8, 0.4);
-    }
-
-    @media (max-width: 768px) {
-      .pong-leaderboard {
-        display: none;
-      }
-      .pong-score-large {
-        font-size: 3rem;
-      }
-      .pong-difficulty {
-        left: 50%;
-        transform: translateX(-50%);
-      }
-      .difficulty-btn {
-        min-width: 60px;
-        padding: 0.4rem 0.6rem;
-        font-size: 0.65rem;
-      }
-      .pong-controls {
-        bottom: 90px;
-      }
-    }
-
-    /* Footer */
-    footer {
-      text-align: center;
-      padding: 3rem 0 2rem;
-      color: var(--text-muted);
-      font-size: 0.8rem;
-    }
-
-    footer a {
-      color: var(--accent);
-      text-decoration: none;
     }
 
     /* Responsive */
     @media (max-width: 768px) {
-      .tab-nav { display: none; }
-      .entity-profile { grid-template-columns: repeat(2, 1fr); }
-      .search-title { font-size: 2rem; }
-      .search-input-container {
-        flex-wrap: wrap;
-        border-radius: 24px;
-        padding: 12px;
+      .report-grid {
+        grid-template-columns: 1fr;
       }
-      .search-input-container input[type="text"],
-      .search-input-container input[type="search"] {
-        width: 100%;
-        padding: 0.5rem;
+      .data-grid {
+        grid-template-columns: 1fr;
       }
-      .api-key-inline {
-        flex: 1;
+      .stat-row {
+        grid-template-columns: 1fr;
       }
-      .api-key-inline input {
-        width: 100%;
-      }
-      .model-toggle {
+      .risk-banner {
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 1rem;
+        text-align: center;
       }
-      .model-btn {
-        justify-content: center;
+      .risk-confidence {
+        text-align: center;
       }
-      .pong-score {
-        font-size: 2rem;
-        top: 70px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .entity-profile { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
   <div class="bg-grid"></div>
   <div class="bg-gradient"></div>
-  
-  <!-- Orbital Animation -->
-  <div class="orbit-system">
-    <div class="orbit-center"></div>
-    <div class="orbit-ring orbit-ring-1"></div>
-    <div class="orbit-ring orbit-ring-2"></div>
-    <div class="orbit-ring orbit-ring-3"></div>
-    <div class="orbit-particle particle-1"></div>
-    <div class="orbit-particle particle-2"></div>
-    <div class="orbit-particle particle-3"></div>
-    <div class="orbit-particle particle-4"></div>
-    <div class="orbit-particle particle-5"></div>
-    <div class="orbit-particle particle-6"></div>
-  </div>
 
   <!-- Header -->
   <header class="main-header">
     <div class="header-logo">
-      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 64 64" fill="none">
         <defs>
-          <!-- Planet gradient -->
-          <radialGradient id="planetGrad" cx="35%" cy="35%" r="60%">
+          <radialGradient id="pg" cx="35%" cy="35%" r="60%">
             <stop offset="0%" stop-color="#fcd34d"/>
             <stop offset="50%" stop-color="#eab308"/>
             <stop offset="100%" stop-color="#ca8a04"/>
           </radialGradient>
-          <!-- Planet glow -->
-          <filter id="planetGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="2" result="glow"/>
-            <feMerge>
-              <feMergeNode in="glow"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-          <!-- Ring gradient -->
-          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#ffab40"/>
-            <stop offset="50%" stop-color="#ff8c00"/>
-            <stop offset="100%" stop-color="#ff6d00"/>
+          <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#f97316"/>
+            <stop offset="100%" stop-color="#dc2626"/>
           </linearGradient>
-          <!-- Moon glow -->
-          <filter id="moonGlow" x="-100%" y="-100%" width="300%" height="300%">
-            <feGaussianBlur stdDeviation="1.5" result="glow"/>
-            <feMerge>
-              <feMergeNode in="glow"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
         </defs>
-        <style>
-          .moon-base {
-            transform-origin: 32px 32px;
-            animation: orbit 3s linear infinite, moonColor 2s ease-in-out infinite;
-            filter: url(#moonGlow);
-          }
-          .moon-back {
-            animation: orbit 3s linear infinite, moonColor 2s ease-in-out infinite, moonBackOpacity 3s linear infinite;
-          }
-          .moon-front {
-            animation: orbit 3s linear infinite, moonColor 2s ease-in-out infinite, moonFrontOpacity 3s linear infinite;
-          }
-          @keyframes orbit {
-            0% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
-            12.5% { transform: rotate(-20deg) translate(18px, 5px) scale(0.85); }
-            25% { transform: rotate(-20deg) translate(0, 7px) scale(0.7); }
-            37.5% { transform: rotate(-20deg) translate(-18px, 5px) scale(0.55); }
-            50% { transform: rotate(-20deg) translate(-26px, 0) scale(0.5); }
-            62.5% { transform: rotate(-20deg) translate(-18px, -5px) scale(0.55); }
-            75% { transform: rotate(-20deg) translate(0, -7px) scale(0.7); }
-            87.5% { transform: rotate(-20deg) translate(18px, -5px) scale(0.85); }
-            100% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
-          }
-          @keyframes moonBackOpacity {
-            0%, 15% { opacity: 0; }
-            25% { opacity: 1; }
-            75% { opacity: 1; }
-            85%, 100% { opacity: 0; }
-          }
-          @keyframes moonFrontOpacity {
-            0%, 15% { opacity: 1; }
-            25% { opacity: 0; }
-            75% { opacity: 0; }
-            85%, 100% { opacity: 1; }
-          }
-          @keyframes moonColor {
-            0%, 100% { fill: #a855f7; }
-            25% { fill: #3b82f6; }
-            50% { fill: #ec4899; }
-            75% { fill: #10b981; }
-          }
-        </style>
-        <!-- Back half of ring (behind planet) -->
-        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#ringGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" opacity="0.6"/>
-        <!-- Moon behind planet (rendered before planet) -->
-        <circle class="moon-base moon-back" cx="32" cy="32" r="4" fill="#a855f7"/>
-        <!-- Planet shadow/atmosphere -->
-        <circle cx="32" cy="32" r="14" fill="#eab308" opacity="0.2" filter="url(#planetGlow)"/>
-        <!-- Planet -->
-        <circle cx="32" cy="32" r="12" fill="url(#planetGrad)" filter="url(#planetGlow)"/>
-        <!-- Planet highlight -->
+        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#rg)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" opacity="0.6"/>
+        <circle cx="32" cy="32" r="12" fill="url(#pg)"/>
         <ellipse cx="28" cy="28" rx="4" ry="3" fill="#fef3c7" opacity="0.4"/>
-        <!-- Front half of ring (in front of planet) -->
-        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#ringGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
-        <!-- Moon in front of planet (rendered after planet) -->
-        <circle class="moon-base moon-front" cx="32" cy="32" r="4" fill="#a855f7"/>
+        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#rg)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
+        <circle cx="58" cy="28" r="4" fill="#a855f7"/>
       </svg>
-      <h1>Ables<span>AI</span></h1>
-      <button class="theme-toggle" id="themeToggle" title="Toggle light/dark mode">
-        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-        </svg>
-        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-        </svg>
+      <h1>AblesAI <span>Business Intelligence</span></h1>
+    </div>
+    <div class="header-actions">
+      <div class="api-input-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <input type="password" id="apiKey" placeholder="Gemini API Key">
+      </div>
+      <button class="theme-toggle" id="themeToggle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
     </div>
-    <nav class="tab-nav">
-      <a href="https://ables.ai" class="tab-btn">Home</a>
-      <a href="https://ables.ai/calculator.html" class="tab-btn">Calculator<span class="lite-badge">LITE</span></a>
-      <a href="https://ables.ai/toolbox.html" class="tab-btn">Toolbox<span class="free-badge">FREE</span></a>
-      <a href="#" class="tab-btn active">Business Search</a>
-    </nav>
   </header>
 
-  <!-- Loading Overlay - Pong Game -->
-  <div class="loading-overlay" id="loadingOverlay">
-    <canvas id="pongCanvas"></canvas>
-    
-    <div class="pong-ui">
-      <div class="pong-header">
-        <div class="pong-query">Searching for <span id="loadingQueryName">...</span></div>
-        <div class="pong-model" id="loadingModel">Gemini 3 Pro</div>
-      </div>
-      
-      <div class="pong-status">
-        <span id="loadingStatus">Initializing...</span>
-        <div class="pong-progress">
-          <div class="pong-progress-bar" id="loadingProgressBar"></div>
-        </div>
-      </div>
-      
-      <div class="pong-instructions">
-        <span class="pong-key">W</span><span class="pong-key">S</span> or <span class="pong-key">Mouse</span> to play
-      </div>
-    </div>
-    
-    <div class="pong-score">
-      <span id="pongPlayerScore">0</span>
-      <span class="pong-divider">:</span>
-      <span id="pongAiScore">0</span>
-    </div>
-  </div>
-
   <!-- Main Content -->
-  <div class="container">
+  <main class="main-content">
     <!-- Search Section -->
     <section class="search-section" id="searchSection">
-      <!-- Large Logo -->
-      <div class="search-logo-large">
-        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <radialGradient id="heroGrad" cx="35%" cy="35%" r="60%">
-              <stop offset="0%" stop-color="#fcd34d"/>
-              <stop offset="50%" stop-color="#eab308"/>
-              <stop offset="100%" stop-color="#ca8a04"/>
-            </radialGradient>
-            <linearGradient id="heroRingGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#ffab40"/>
-              <stop offset="50%" stop-color="#ff8c00"/>
-              <stop offset="100%" stop-color="#ff6d00"/>
-            </linearGradient>
-            <filter id="heroGlow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="2" result="glow"/>
-              <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-            <filter id="heroMoonGlow" x="-100%" y="-100%" width="300%" height="300%">
-              <feGaussianBlur stdDeviation="1.5" result="glow"/>
-              <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-          </defs>
-          <style>
-            .hero-moon {
-              transform-origin: 32px 32px;
-              animation: heroOrbit 3s linear infinite, heroMoonColor 2s ease-in-out infinite;
-              filter: url(#heroMoonGlow);
-            }
-            @keyframes heroOrbit {
-              0% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
-              50% { transform: rotate(-20deg) translate(-26px, 0) scale(0.5); }
-              100% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
-            }
-            @keyframes heroMoonColor {
-              0%, 100% { fill: #3b82f6; }
-              33% { fill: #a855f7; }
-              66% { fill: #22c55e; }
-            }
-          </style>
-          <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#heroRingGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" opacity="0.6"/>
-          <circle class="hero-moon" cx="32" cy="32" r="4" fill="#3b82f6"/>
-          <circle cx="32" cy="32" r="14" fill="#eab308" opacity="0.2" filter="url(#heroGlow)"/>
-          <circle cx="32" cy="32" r="12" fill="url(#heroGrad)" filter="url(#heroGlow)"/>
-          <ellipse cx="28" cy="28" rx="4" ry="3" fill="#fef3c7" opacity="0.4"/>
-          <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#heroRingGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
-        </svg>
-      </div>
-
-      <!-- Title -->
-      <h1 class="search-title"><span class="accent">Search</span><span class="white">Ables</span><span class="muted">AI</span></h1>
-
-      <!-- Search Box -->
-      <div class="search-box">
-        <div class="error-message" id="errorMessage"></div>
-        
-        <div class="search-input-container">
-          <input type="search" id="entityName" placeholder="Company name..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other" data-1p-ignore="true" readonly>
-          <div class="api-key-inline">
-            <input type="text" id="apiKey" placeholder="API Key" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other" data-1p-ignore="true" readonly>
-          </div>
-          <button class="search-btn-round" id="searchBtn" onclick="analyzeEntity()">
-            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <ellipse cx="32" cy="32" rx="20" ry="6" stroke="currentColor" stroke-width="3" fill="none" transform="rotate(-20 32 32)"/>
-              <circle cx="32" cy="32" r="8" fill="currentColor"/>
-            </svg>
-          </button>
-        </div>
-
-        <!-- Model Toggle -->
-        <div class="model-toggle">
-          <button class="model-btn" id="modelFlash" data-model="gemini-2.5-flash">
-            Flash <span class="model-badge flash">2.5</span>
-          </button>
-          <button class="model-btn active" id="modelPro" data-model="gemini-3-pro-preview">
-            Pro <span class="model-badge pro">3</span>
-          </button>
-        </div>
-        
-        <!-- Pong Game Button -->
-        <button class="pong-trigger-inline" id="pongTrigger" title="Play Pong">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="6" width="4" height="12" rx="1"/>
-            <circle cx="16" cy="12" r="2"/>
-            <rect x="20" y="8" width="2" height="8" rx="0.5"/>
-          </svg>
+      <svg class="search-logo" viewBox="0 0 64 64" fill="none">
+        <defs>
+          <radialGradient id="pg2" cx="35%" cy="35%" r="60%">
+            <stop offset="0%" stop-color="#fcd34d"/>
+            <stop offset="50%" stop-color="#eab308"/>
+            <stop offset="100%" stop-color="#ca8a04"/>
+          </radialGradient>
+        </defs>
+        <circle cx="32" cy="32" r="28" fill="url(#pg2)" opacity="0.15"/>
+        <circle cx="32" cy="32" r="20" fill="url(#pg2)" opacity="0.3"/>
+        <circle cx="32" cy="32" r="12" fill="url(#pg2)"/>
+        <ellipse cx="28" cy="28" rx="3" ry="2" fill="#fef3c7" opacity="0.5"/>
+      </svg>
+      <h1 class="search-title">Deep Business Intelligence</h1>
+      <p class="search-subtitle">Comprehensive research, risk assessment, and compliance analysis powered by AI</p>
+      
+      <div class="search-input-container">
+        <input type="text" class="search-input" id="entityName" placeholder="Enter business name (e.g., Acme Corporation)">
+        <button class="search-btn" onclick="runDeepResearch()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Deep Research
         </button>
       </div>
+
+      <div class="model-selector">
+        <button class="model-btn active" id="modelPro" data-model="gemini-3-pro-preview">
+          <span class="model-badge pro">PRO</span>
+          Gemini Pro
+        </button>
+        <button class="model-btn" id="modelFlash" data-model="gemini-2.5-flash">
+          <span class="model-badge flash">FLASH</span>
+          Gemini Flash
+        </button>
+      </div>
+
+      <div class="error-message" id="errorMessage"></div>
     </section>
 
     <!-- Results Section -->
     <section class="results-section" id="resultsSection">
-      <div class="prediction-card">
-        <div class="prediction-header">
-          <div class="state-badge">
-            <div class="state-code" id="stateCode">--</div>
-            <div>
-              <div class="state-name" id="stateName">--</div>
-              <div class="state-label">Primary Jurisdiction</div>
-            </div>
-            <button class="copy-btn copy-btn-header" data-copy-type="jurisdiction" title="Copy jurisdiction">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-            </button>
-          </div>
-          <div class="confidence-meter">
-            <div class="confidence-value" id="confidenceValue">--%</div>
-            <div class="confidence-label">Confidence</div>
-            <button class="copy-btn copy-btn-header" data-copy-type="confidence" title="Copy confidence">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-            </button>
+      <!-- Risk Banner -->
+      <div class="risk-banner" id="riskBanner">
+        <div class="risk-badge">
+          <div class="risk-letter" id="riskLetter">?</div>
+          <div class="risk-info">
+            <h3 id="riskLabel">Risk Assessment</h3>
+            <p id="businessNameDisplay">Loading...</p>
           </div>
         </div>
+        <div class="risk-confidence">
+          <div class="value" id="confidenceValue">0%</div>
+          <div class="label">Research Confidence</div>
+        </div>
+      </div>
 
-        <div class="entity-profile">
-          <div class="profile-item">
-            <div class="profile-label">Entity Type</div>
-            <div class="profile-value-row">
-              <div class="profile-value" id="entityType">--</div>
-              <button class="copy-btn" data-target="entityType" title="Copy to clipboard">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-              </button>
-            </div>
+      <!-- Report Grid -->
+      <div class="report-grid">
+        <!-- Company Overview -->
+        <div class="report-card">
+          <div class="report-card-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <h3>Company Overview</h3>
           </div>
-          <div class="profile-item">
-            <div class="profile-label">Industry</div>
-            <div class="profile-value-row">
-              <div class="profile-value" id="industry">--</div>
-              <button class="copy-btn" data-target="industry" title="Copy to clipboard">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-              </button>
+          <div class="data-grid">
+            <div class="data-item full">
+              <div class="data-label">Legal Name</div>
+              <div class="data-value" id="legalName">--</div>
             </div>
-          </div>
-          <div class="profile-item">
-            <div class="profile-label">HQ Location</div>
-            <div class="profile-value-row">
-              <div class="profile-value" id="hqLocation">--</div>
-              <button class="copy-btn" data-target="hqLocation" title="Copy to clipboard">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-              </button>
+            <div class="data-item">
+              <div class="data-label">DBA</div>
+              <div class="data-value" id="dbaName">--</div>
             </div>
-          </div>
-          <div class="profile-item">
-            <div class="profile-label">Formation Date</div>
-            <div class="profile-value-row">
-              <div class="profile-value" id="formationDate">--</div>
-              <button class="copy-btn" data-target="formationDate" title="Copy to clipboard">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-              </button>
+            <div class="data-item">
+              <div class="data-label">Entity Type</div>
+              <div class="data-value" id="entityType">--</div>
             </div>
-          </div>
-          <div class="profile-item">
-            <div class="profile-label">Status</div>
-            <div class="profile-value-row">
-              <div class="profile-value" id="regStatus">--</div>
-              <button class="copy-btn" data-target="regStatus" title="Copy to clipboard">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-              </button>
+            <div class="data-item">
+              <div class="data-label">State</div>
+              <div class="data-value" id="stateName">--</div>
             </div>
-          </div>
-          <div class="profile-item">
-            <div class="profile-label">Registered Agent</div>
-            <div class="profile-value-row">
-              <div class="profile-value" id="regAgent">--</div>
-              <button class="copy-btn" data-target="regAgent" title="Copy to clipboard">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-              </button>
+            <div class="data-item">
+              <div class="data-label">Formation Date</div>
+              <div class="data-value" id="formationDate">--</div>
+            </div>
+            <div class="data-item">
+              <div class="data-label">Status</div>
+              <div class="data-value" id="entityStatus">--</div>
+            </div>
+            <div class="data-item">
+              <div class="data-label">Registered Agent</div>
+              <div class="data-value" id="regAgent">--</div>
+            </div>
+            <div class="data-item full">
+              <div class="data-label">Address</div>
+              <div class="data-value" id="address">--</div>
             </div>
           </div>
         </div>
 
-        <div class="owners-section" id="ownersSection" style="display: none;">
-          <div class="owners-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-              <circle cx="9" cy="7" r="4"></circle>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-            </svg>
-            Owners / Officers / Members
-            <button class="copy-btn copy-btn-owners" data-copy-type="owners" title="Copy all owners">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-            </button>
+        <!-- Operations -->
+        <div class="report-card">
+          <div class="report-card-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            <h3>Business Operations</h3>
           </div>
-          <div class="owners-list" id="ownersList"></div>
-        </div>
-
-        <div class="reasoning-box">
-          <div class="reasoning-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <path d="M12 16v-4"></path>
-              <path d="M12 8h.01"></path>
-            </svg>
-            Analysis
+          <div class="data-grid">
+            <div class="data-item full">
+              <div class="data-label">Industry</div>
+              <div class="data-value" id="industry">--</div>
+            </div>
+            <div class="data-item">
+              <div class="data-label">NAICS Code</div>
+              <div class="data-value" id="naicsCode">--</div>
+            </div>
+            <div class="data-item">
+              <div class="data-label">Locations</div>
+              <div class="data-value" id="locations">--</div>
+            </div>
+            <div class="data-item full">
+              <div class="data-label">Business Description</div>
+              <div class="data-value" id="description" style="font-weight: 400; font-size: 0.85rem;">--</div>
+            </div>
           </div>
-          <div class="reasoning-text" id="reasoning">--</div>
         </div>
 
-        <div class="routing-queue">
-          <div class="queue-title">Priority Search Queue</div>
-          <div class="queue-states" id="queueStates">--</div>
+        <!-- Financial Indicators -->
+        <div class="report-card">
+          <div class="report-card-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <h3>Financial Indicators</h3>
+          </div>
+          <div class="stat-row">
+            <div class="stat-item">
+              <div class="value" id="revenueEst">--</div>
+              <div class="label">Revenue Est.</div>
+            </div>
+            <div class="stat-item">
+              <div class="value" id="employeeCount">--</div>
+              <div class="label">Employees</div>
+            </div>
+            <div class="stat-item">
+              <div class="value" id="yearsInBusiness">--</div>
+              <div class="label">Years</div>
+            </div>
+          </div>
+          <div class="data-item full" style="margin-top: 12px;">
+            <div class="data-label">Growth Trend</div>
+            <div class="data-value" id="growthTrend">--</div>
+          </div>
         </div>
 
-        <div class="sources-section">
-          <div class="sources-title">Data Quality</div>
-          <span class="source-badge" id="sourceQuality">--</span>
+        <!-- Ownership & Management -->
+        <div class="report-card">
+          <div class="report-card-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <h3>Ownership & Management</h3>
+          </div>
+          <div class="data-item full" style="margin-bottom: 12px;">
+            <div class="data-label">Ownership Structure</div>
+            <div class="data-value" id="ownershipStructure">--</div>
+          </div>
+          <div class="officers-list" id="officersList">
+            <span style="color: var(--text-muted); font-size: 0.85rem;">No officers found</span>
+          </div>
         </div>
 
-        <button class="copy-all-btn" id="copyAllBtn">
+        <!-- Compliance & Legal -->
+        <div class="report-card">
+          <div class="report-card-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <h3>Compliance & Legal</h3>
+          </div>
+          <div class="stat-row">
+            <div class="stat-item">
+              <div class="value" id="lawsuitsCount">0</div>
+              <div class="label">Lawsuits</div>
+            </div>
+            <div class="stat-item">
+              <div class="value" id="liensCount">0</div>
+              <div class="label">Liens</div>
+            </div>
+            <div class="stat-item">
+              <div class="value" id="uccCount">0</div>
+              <div class="label">UCC Filings</div>
+            </div>
+          </div>
+          <div class="data-item full" style="margin-top: 12px;">
+            <div class="data-label">Licenses</div>
+            <div class="data-value" id="licenses" style="font-weight: 400; font-size: 0.85rem;">--</div>
+          </div>
+        </div>
+
+        <!-- Reputation -->
+        <div class="report-card">
+          <div class="report-card-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <h3>Reputation</h3>
+          </div>
+          <div class="stat-row">
+            <div class="stat-item">
+              <div class="value" id="bbbRating">--</div>
+              <div class="label">BBB Rating</div>
+            </div>
+            <div class="stat-item">
+              <div class="value" id="reviewScore">--</div>
+              <div class="label">Review Score</div>
+            </div>
+            <div class="stat-item">
+              <div class="value" id="reviewCount">0</div>
+              <div class="label">Reviews</div>
+            </div>
+          </div>
+          <div class="data-item full" style="margin-top: 12px;">
+            <div class="data-label">News Mentions</div>
+            <div class="data-value" id="newsMentions" style="font-weight: 400; font-size: 0.85rem;">--</div>
+          </div>
+        </div>
+
+        <!-- Risk Assessment (Full Width) -->
+        <div class="report-card full-width">
+          <div class="report-card-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <h3>Risk Assessment</h3>
+          </div>
+          
+          <div class="stat-row" style="margin-bottom: 1rem;">
+            <div class="stat-item">
+              <div class="value" id="industryRisks">0</div>
+              <div class="label">Industry Risks</div>
+            </div>
+            <div class="stat-item">
+              <div class="value" id="concernsCount">0</div>
+              <div class="label">Concerns</div>
+            </div>
+            <div class="stat-item">
+              <div class="value" id="redFlagsCount">0</div>
+              <div class="label">Red Flags</div>
+            </div>
+          </div>
+
+          <div class="red-flags-section" id="redFlagsSection" style="display: none;">
+            <div class="red-flags-header">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+              Red Flags Identified
+            </div>
+            <ul class="red-flags-list" id="redFlagsList"></ul>
+          </div>
+
+          <div class="data-item full" id="concernsSection" style="display: none; margin-top: 1rem;">
+            <div class="data-label">Operational Concerns</div>
+            <div class="data-value" id="concerns" style="font-weight: 400; font-size: 0.85rem;"></div>
+          </div>
+        </div>
+
+        <!-- Summary (Full Width) -->
+        <div class="report-card full-width">
+          <div class="report-card-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <h3>Executive Summary</h3>
+          </div>
+          <p class="summary-text" id="summaryText">No summary available.</p>
+          
+          <div class="sources-section" id="sourcesSection">
+            <div class="sources-title">Sources</div>
+            <div class="sources-list" id="sourcesList"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="actions-row">
+        <button class="action-btn primary" onclick="copyFullReport()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-          Copy All Results
+          Copy Full Report
+        </button>
+        <button class="action-btn secondary" onclick="runDeepResearch()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Re-run Research
         </button>
       </div>
     </section>
-  </div>
+  </main>
 
-  <footer>
-    <p>Powered by <a href="https://ables.ai">AblesAI</a> • Entity Intelligence Platform</p>
-  </footer>
-
-  <!-- Standalone Pong Overlay -->
-  <div class="pong-overlay" id="pongOverlay">
-    <canvas id="pongCanvasStandalone"></canvas>
-    
-    <div class="pong-ui-standalone">
-      <div class="pong-title">PONG</div>
-      <div class="pong-score-large">
-        <span id="pongPlayerScoreStandalone">0</span>
-        <span class="pong-vs">vs</span>
-        <span id="pongAiScoreStandalone">0</span>
-      </div>
-      <div class="pong-labels">
-        <span>YOU</span>
-        <span>AI</span>
-      </div>
-    </div>
-    
-    <!-- Difficulty Selector -->
-    <div class="pong-difficulty">
-      <div class="difficulty-label">Difficulty</div>
-      <button class="difficulty-btn easy" data-difficulty="easy">Easy</button>
-      <button class="difficulty-btn pro active" data-difficulty="pro">Pro</button>
-      <button class="difficulty-btn expert" data-difficulty="expert">Expert</button>
-    </div>
-    
-    <div class="pong-controls">
-      <div class="pong-instructions-standalone">
-        <span class="pong-key">W</span><span class="pong-key">S</span> or <span class="pong-key">Mouse</span> to play
-      </div>
-      <div class="pong-game-info">First to <strong>5</strong> wins</div>
-    </div>
-    
-    <div class="pong-leaderboard" id="pongLeaderboard">
-      <div class="leaderboard-title">Leaderboard</div>
-      <div class="leaderboard-list" id="leaderboardList"></div>
-    </div>
-    
-    <button class="pong-close" id="pongClose">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M18 6L6 18M6 6l12 12"/>
-      </svg>
-    </button>
-    
-    <div class="pong-game-over" id="pongGameOver">
-      <div class="game-over-text" id="gameOverText">You Win!</div>
-      <div class="game-over-score" id="gameOverScore">5 - 3</div>
-      <button class="play-again-btn" id="playAgainBtn">Play Again</button>
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-title" id="loadingTitle">Deep Research in Progress</div>
+    <div class="loading-status" id="loadingStatus">Initializing...</div>
+    <div class="loading-progress">
+      <div class="loading-progress-bar" id="loadingProgressBar"></div>
     </div>
   </div>
 
   <script>
-    // ==================== PONG GAME ====================
-    let pongCanvas, pongCtx;
-    let pongAnimationId = null;
-    let pongRunning = false;
-    let standaloneMode = false;
-    let standaloneCanvas, standaloneCtx;
-    let currentDifficulty = 'pro';
-    
-    // Difficulty settings
-    const difficultySettings = {
-      easy: {
-        ballSpeed: 7,
-        ballSpeedMax: 16,
-        ballAccel: 1.06,
-        aiSpeed: 4,
-        aiTracking: 0.06,
-        paddleHeight: 100,
-        spinFactor: 10
-      },
-      pro: {
-        ballSpeed: 10,
-        ballSpeedMax: 24,
-        ballAccel: 1.08,
-        aiSpeed: 6,
-        aiTracking: 0.12,
-        paddleHeight: 80,
-        spinFactor: 14
-      },
-      expert: {
-        ballSpeed: 12,
-        ballSpeedMax: 30,
-        ballAccel: 1.10,
-        aiSpeed: 8,
-        aiTracking: 0.16,
-        paddleHeight: 65,
-        spinFactor: 18
-      }
-    };
-    
-    // Game state
-    const pong = {
-      player: { y: 0, height: 80, width: 10, score: 0 },
-      ai: { y: 0, height: 80, width: 10, score: 0, speed: 6 },
-      ball: { x: 0, y: 0, vx: 10, vy: 6, radius: 8 },
-      keys: { w: false, s: false },
-      mouse: { y: null },
-      paddleOffset: 40,
-      winScore: 5
-    };
-    
-    // Orbiting particles for pong
-    const pongParticles = [
-      { color: 'rgba(234, 179, 8, 0.15)', glow: 'rgba(234, 179, 8, 0.05)', size: 8, orbitRadius: 280, speed: 0.008, angle: 0 },
-      { color: 'rgba(168, 85, 247, 0.15)', glow: 'rgba(168, 85, 247, 0.05)', size: 6, orbitRadius: 380, speed: -0.006, angle: Math.PI * 0.5 },
-      { color: 'rgba(34, 197, 94, 0.15)', glow: 'rgba(34, 197, 94, 0.05)', size: 5, orbitRadius: 220, speed: 0.01, angle: Math.PI },
-      { color: 'rgba(249, 115, 22, 0.15)', glow: 'rgba(249, 115, 22, 0.05)', size: 6, orbitRadius: 320, speed: -0.007, angle: Math.PI * 1.5 },
-      { color: 'rgba(59, 130, 246, 0.15)', glow: 'rgba(59, 130, 246, 0.05)', size: 4, orbitRadius: 450, speed: 0.005, angle: Math.PI * 0.25 },
-      { color: 'rgba(236, 72, 153, 0.15)', glow: 'rgba(236, 72, 153, 0.05)', size: 5, orbitRadius: 400, speed: -0.006, angle: Math.PI * 1.25 }
-    ];
-    
-    // Orbiting planet SVG
-    const orbitingPlanet = {
-      angle: Math.PI * 0.75,
-      orbitRadius: 350,
-      speed: 0.004,
-      size: 40
-    };
-    
-    const planetSvgString = `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <radialGradient id="pGrad" cx="35%" cy="35%" r="60%">
-          <stop offset="0%" stop-color="#fcd34d"/>
-          <stop offset="50%" stop-color="#eab308"/>
-          <stop offset="100%" stop-color="#ca8a04"/>
-        </radialGradient>
-        <linearGradient id="rGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#ffab40"/>
-          <stop offset="50%" stop-color="#ff8c00"/>
-          <stop offset="100%" stop-color="#ff6d00"/>
-        </linearGradient>
-      </defs>
-      <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#rGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" opacity="0.6"/>
-      <circle cx="32" cy="32" r="14" fill="#eab308" opacity="0.2"/>
-      <circle cx="32" cy="32" r="12" fill="url(#pGrad)"/>
-      <ellipse cx="28" cy="28" rx="4" ry="3" fill="#fef3c7" opacity="0.4"/>
-      <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#rGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
-    </svg>`;
-    
-    const planetImg = new Image();
-    planetImg.src = 'data:image/svg+xml;base64,' + btoa(planetSvgString);
-    
-    function applyDifficulty(difficulty) {
-      const settings = difficultySettings[difficulty];
-      if (!settings) return;
+    // ==================== GLOBALS ====================
+    let selectedModel = 'gemini-3-pro-preview';
+    let loadingInterval;
+    let currentResearch = null;
+
+    // ==================== INIT ====================
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
       
-      currentDifficulty = difficulty;
-      pong.player.height = settings.paddleHeight;
-      pong.ai.height = settings.paddleHeight;
-      pong.ai.speed = settings.aiSpeed;
-      
-      // Update active button
-      document.querySelectorAll('.difficulty-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.difficulty === difficulty);
-      });
-      
-      // Save preference
-      localStorage.setItem('pong_difficulty', difficulty);
-    }
-    
-    // Leaderboard
-    function getLeaderboard() {
-      const stored = localStorage.getItem('pong_leaderboard');
-      return stored ? JSON.parse(stored) : [];
-    }
-    
-    function saveToLeaderboard(playerScore, aiScore) {
-      if (playerScore <= aiScore) return; // Only save wins
-      const leaderboard = getLeaderboard();
-      const entry = {
-        score: `${playerScore}-${aiScore}`,
-        margin: playerScore - aiScore,
-        difficulty: currentDifficulty,
-        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-      };
-      leaderboard.push(entry);
-      // Sort by difficulty weight then margin
-      const diffWeight = { expert: 3, pro: 2, easy: 1 };
-      leaderboard.sort((a, b) => {
-        const weightA = diffWeight[a.difficulty] || 1;
-        const weightB = diffWeight[b.difficulty] || 1;
-        if (weightA !== weightB) return weightB - weightA;
-        return b.margin - a.margin;
-      });
-      localStorage.setItem('pong_leaderboard', JSON.stringify(leaderboard.slice(0, 10)));
-    }
-    
-    function renderLeaderboard() {
-      const list = document.getElementById('leaderboardList');
-      if (!list) return;
-      const leaderboard = getLeaderboard();
-      
-      if (leaderboard.length === 0) {
-        list.innerHTML = '<div class="leaderboard-empty">No wins yet. Be the first!</div>';
-        return;
+      const savedKey = localStorage.getItem('gemini_api_key_deep_research');
+      if (savedKey) {
+        document.getElementById('apiKey').value = savedKey;
       }
       
-      const diffColors = { easy: '#22c55e', pro: '#eab308', expert: '#ef4444' };
-      list.innerHTML = leaderboard.slice(0, 5).map((entry, i) => {
-        const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
-        const diffColor = diffColors[entry.difficulty] || '#888';
-        const diffLabel = entry.difficulty ? entry.difficulty.charAt(0).toUpperCase() : '';
-        return `
-          <div class="leaderboard-item">
-            <div class="leaderboard-rank ${rankClass}">${i + 1}</div>
-            <div class="leaderboard-score">${entry.score}</div>
-            <span style="color:${diffColor};font-size:0.6rem;font-weight:700;">${diffLabel}</span>
-            <div class="leaderboard-date">${entry.date}</div>
-          </div>
-        `;
-      }).join('');
-    }
-    
-    function initPong(canvas) {
-      pongCanvas = canvas || document.getElementById('pongCanvas');
-      if (!pongCanvas) return;
-      pongCtx = pongCanvas.getContext('2d');
-      resizePong();
-      
-      // Keyboard controls
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'w' || e.key === 'W') pong.keys.w = true;
-        if (e.key === 's' || e.key === 'S') pong.keys.s = true;
-        if (e.key === 'ArrowUp') pong.keys.w = true;
-        if (e.key === 'ArrowDown') pong.keys.s = true;
-      });
-      
-      document.addEventListener('keyup', (e) => {
-        if (e.key === 'w' || e.key === 'W') pong.keys.w = false;
-        if (e.key === 's' || e.key === 'S') pong.keys.s = false;
-        if (e.key === 'ArrowUp') pong.keys.w = false;
-        if (e.key === 'ArrowDown') pong.keys.s = false;
-      });
-      
-      // Mouse/touch controls for loading canvas
-      const loadingCanvas = document.getElementById('pongCanvas');
-      if (loadingCanvas) {
-        loadingCanvas.addEventListener('mousemove', (e) => {
-          if (!standaloneMode) pong.mouse.y = e.clientY;
-        });
-        loadingCanvas.addEventListener('touchmove', (e) => {
-          e.preventDefault();
-          if (!standaloneMode) pong.mouse.y = e.touches[0].clientY;
-        }, { passive: false });
+      const savedModel = localStorage.getItem('deep_research_model');
+      if (savedModel) {
+        selectedModel = savedModel;
+        updateModelButtons();
       }
-      
-      // Mouse/touch controls for standalone canvas
-      const standaloneCanvasEl = document.getElementById('pongCanvasStandalone');
-      if (standaloneCanvasEl) {
-        standaloneCanvasEl.addEventListener('mousemove', (e) => {
-          if (standaloneMode) pong.mouse.y = e.clientY;
-        });
-        standaloneCanvasEl.addEventListener('touchmove', (e) => {
-          e.preventDefault();
-          if (standaloneMode) pong.mouse.y = e.touches[0].clientY;
-        }, { passive: false });
-      }
-      
-      window.addEventListener('resize', resizePong);
-    }
-    
-    function resizePong() {
-      if (!pongCanvas) return;
-      pongCanvas.width = window.innerWidth;
-      pongCanvas.height = window.innerHeight;
-      resetBall();
-      pong.player.y = pongCanvas.height / 2 - pong.player.height / 2;
-      pong.ai.y = pongCanvas.height / 2 - pong.ai.height / 2;
-    }
-    
-    function resetBall() {
-      const settings = difficultySettings[currentDifficulty];
-      pong.ball.x = pongCanvas.width / 2;
-      pong.ball.y = pongCanvas.height / 2;
-      pong.ball.vx = (Math.random() > 0.5 ? 1 : -1) * settings.ballSpeed;
-      pong.ball.vy = (Math.random() - 0.5) * (settings.ballSpeed * 1.2);
-    }
-    
-    function updatePong() {
-      if (!pongRunning) return;
-      
-      const settings = difficultySettings[currentDifficulty];
-      const w = pongCanvas.width;
-      const h = pongCanvas.height;
-      const paddleSpeed = 12;
-      
-      // Update orbiting particles
-      pongParticles.forEach(p => {
-        p.angle += p.speed;
-      });
-      
-      // Update orbiting planet
-      orbitingPlanet.angle += orbitingPlanet.speed;
-      
-      // Player movement
-      if (pong.mouse.y !== null) {
-        const targetY = pong.mouse.y - pong.player.height / 2;
-        pong.player.y += (targetY - pong.player.y) * 0.2;
-      } else {
-        if (pong.keys.w) pong.player.y -= paddleSpeed;
-        if (pong.keys.s) pong.player.y += paddleSpeed;
-      }
-      
-      // Clamp player paddle
-      pong.player.y = Math.max(0, Math.min(h - pong.player.height, pong.player.y));
-      
-      // AI movement - smarter prediction based on difficulty
-      const aiCenter = pong.ai.y + pong.ai.height / 2;
-      let targetY = pong.ball.y;
-      
-      // Predict where ball will be
-      if (pong.ball.vx > 0) {
-        const timeToReach = (w - pong.paddleOffset - pong.ai.width - pong.ball.x) / pong.ball.vx;
-        targetY = pong.ball.y + pong.ball.vy * timeToReach * 0.7;
-      }
-      
-      const diff = targetY - aiCenter;
-      if (Math.abs(diff) > 8) {
-        pong.ai.y += Math.sign(diff) * Math.min(pong.ai.speed, Math.abs(diff) * settings.aiTracking);
-      }
-      pong.ai.y = Math.max(0, Math.min(h - pong.ai.height, pong.ai.y));
-      
-      // Ball movement
-      pong.ball.x += pong.ball.vx;
-      pong.ball.y += pong.ball.vy;
-      
-      // Top/bottom collision
-      if (pong.ball.y - pong.ball.radius <= 0 || pong.ball.y + pong.ball.radius >= h) {
-        pong.ball.vy *= -1;
-        pong.ball.y = Math.max(pong.ball.radius, Math.min(h - pong.ball.radius, pong.ball.y));
-      }
-      
-      // Player paddle collision (left side)
-      if (pong.ball.x - pong.ball.radius <= pong.paddleOffset + pong.player.width &&
-          pong.ball.y >= pong.player.y && pong.ball.y <= pong.player.y + pong.player.height &&
-          pong.ball.vx < 0) {
-        pong.ball.vx *= -settings.ballAccel;
-        pong.ball.x = pong.paddleOffset + pong.player.width + pong.ball.radius;
-        const hitPos = (pong.ball.y - pong.player.y) / pong.player.height;
-        pong.ball.vy = (hitPos - 0.5) * settings.spinFactor;
-      }
-      
-      // AI paddle collision (right side)
-      if (pong.ball.x + pong.ball.radius >= w - pong.paddleOffset - pong.ai.width &&
-          pong.ball.y >= pong.ai.y && pong.ball.y <= pong.ai.y + pong.ai.height &&
-          pong.ball.vx > 0) {
-        pong.ball.vx *= -settings.ballAccel;
-        pong.ball.x = w - pong.paddleOffset - pong.ai.width - pong.ball.radius;
-        const hitPos = (pong.ball.y - pong.ai.y) / pong.ai.height;
-        pong.ball.vy = (hitPos - 0.5) * settings.spinFactor;
-      }
-      
-      // Limit ball speed
-      const maxSpeed = settings.ballSpeedMax;
-      pong.ball.vx = Math.sign(pong.ball.vx) * Math.min(Math.abs(pong.ball.vx), maxSpeed);
-      pong.ball.vy = Math.sign(pong.ball.vy) * Math.min(Math.abs(pong.ball.vy), maxSpeed);
-      
-      // Score
-      if (pong.ball.x < 0) {
-        pong.ai.score++;
-        updatePongScore();
-        checkGameOver();
-        if (pongRunning) resetBall();
-      } else if (pong.ball.x > w) {
-        pong.player.score++;
-        updatePongScore();
-        checkGameOver();
-        if (pongRunning) resetBall();
-      }
-    }
-    
-    function checkGameOver() {
-      if (!standaloneMode) return;
-      
-      if (pong.player.score >= pong.winScore || pong.ai.score >= pong.winScore) {
-        pongRunning = false;
-        const playerWon = pong.player.score >= pong.winScore;
-        
-        // Save to leaderboard if player won
-        if (playerWon) {
-          saveToLeaderboard(pong.player.score, pong.ai.score);
-          renderLeaderboard();
-        }
-        
-        // Show game over
-        const gameOver = document.getElementById('pongGameOver');
-        const gameOverText = document.getElementById('gameOverText');
-        const gameOverScore = document.getElementById('gameOverScore');
-        
-        gameOverText.textContent = playerWon ? 'You Win!' : 'You Lose!';
-        gameOverText.className = 'game-over-text ' + (playerWon ? 'win' : 'lose');
-        gameOverScore.textContent = `${pong.player.score} - ${pong.ai.score}`;
-        gameOver.classList.add('active');
-      }
-    }
-    
-    function updatePongScore() {
-      // Loading screen score
-      const playerScore = document.getElementById('pongPlayerScore');
-      const aiScore = document.getElementById('pongAiScore');
-      if (playerScore) playerScore.textContent = pong.player.score;
-      if (aiScore) aiScore.textContent = pong.ai.score;
-      
-      // Standalone score
-      const playerScoreStandalone = document.getElementById('pongPlayerScoreStandalone');
-      const aiScoreStandalone = document.getElementById('pongAiScoreStandalone');
-      if (playerScoreStandalone) playerScoreStandalone.textContent = pong.player.score;
-      if (aiScoreStandalone) aiScoreStandalone.textContent = pong.ai.score;
-    }
-    
-    function roundRect(ctx, x, y, w, h, r) {
-      ctx.beginPath();
-      ctx.moveTo(x + r, y);
-      ctx.lineTo(x + w - r, y);
-      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-      ctx.lineTo(x + w, y + h - r);
-      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-      ctx.lineTo(x + r, y + h);
-      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-      ctx.lineTo(x, y + r);
-      ctx.quadraticCurveTo(x, y, x + r, y);
-      ctx.closePath();
-      ctx.fill();
-    }
-    
-    function drawPong() {
-      if (!pongCtx || !pongRunning) return;
-      
-      const w = pongCanvas.width;
-      const h = pongCanvas.height;
-      const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
-      
-      // Clear
-      pongCtx.fillStyle = isDark ? '#0a0a0f' : '#f5f5f5';
-      pongCtx.fillRect(0, 0, w, h);
-      
-      // Draw orbiting particles (background layer)
-      const centerX = w / 2;
-      const centerY = h / 2;
-      
-      pongParticles.forEach(p => {
-        const x = centerX + Math.cos(p.angle) * p.orbitRadius;
-        const y = centerY + Math.sin(p.angle) * p.orbitRadius;
-        
-        // Glow
-        pongCtx.shadowColor = p.glow;
-        pongCtx.shadowBlur = 10;
-        pongCtx.fillStyle = p.color;
-        pongCtx.beginPath();
-        pongCtx.arc(x, y, p.size, 0, Math.PI * 2);
-        pongCtx.fill();
-      });
-      
-      pongCtx.shadowBlur = 0;
-      
-      // Draw orbiting planet SVG
-      if (planetImg.complete) {
-        const planetX = centerX + Math.cos(orbitingPlanet.angle) * orbitingPlanet.orbitRadius;
-        const planetY = centerY + Math.sin(orbitingPlanet.angle) * orbitingPlanet.orbitRadius;
-        pongCtx.globalAlpha = 0.2;
-        pongCtx.drawImage(planetImg, planetX - orbitingPlanet.size / 2, planetY - orbitingPlanet.size / 2, orbitingPlanet.size, orbitingPlanet.size);
-        pongCtx.globalAlpha = 1;
-      }
-      
-      // Center line
-      pongCtx.setLineDash([20, 15]);
-      pongCtx.strokeStyle = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
-      pongCtx.lineWidth = 4;
-      pongCtx.beginPath();
-      pongCtx.moveTo(w / 2, 0);
-      pongCtx.lineTo(w / 2, h);
-      pongCtx.stroke();
-      pongCtx.setLineDash([]);
-      
-      // Paddles
-      const paddleColor = '#eab308';
-      const paddleRadius = 6;
-      
-      // Player paddle (left) with glow and rounded corners
-      pongCtx.shadowColor = paddleColor;
-      pongCtx.shadowBlur = 20;
-      pongCtx.fillStyle = paddleColor;
-      roundRect(pongCtx, pong.paddleOffset, pong.player.y, pong.player.width, pong.player.height, paddleRadius);
-      
-      // AI paddle (right)
-      pongCtx.shadowColor = isDark ? '#a855f7' : '#8b5cf6';
-      pongCtx.fillStyle = isDark ? '#a855f7' : '#8b5cf6';
-      roundRect(pongCtx, w - pong.paddleOffset - pong.ai.width, pong.ai.y, pong.ai.width, pong.ai.height, paddleRadius);
-      
-      // Ball with glow
-      pongCtx.shadowColor = paddleColor;
-      pongCtx.shadowBlur = 25;
-      pongCtx.fillStyle = '#fff';
-      pongCtx.beginPath();
-      pongCtx.arc(pong.ball.x, pong.ball.y, pong.ball.radius, 0, Math.PI * 2);
-      pongCtx.fill();
-      
-      // Reset shadow
-      pongCtx.shadowBlur = 0;
-    }
-    
-    function pongLoop() {
-      updatePong();
-      drawPong();
-      if (pongRunning) {
-        pongAnimationId = requestAnimationFrame(pongLoop);
-      }
-    }
-    
-    function startPong() {
-      if (!pongCanvas) initPong();
-      pong.player.score = 0;
-      pong.ai.score = 0;
-      updatePongScore();
-      resizePong();
-      pongRunning = true;
-      pongLoop();
-    }
-    
-    function stopPong() {
-      pongRunning = false;
-      if (pongAnimationId) {
-        cancelAnimationFrame(pongAnimationId);
-        pongAnimationId = null;
-      }
-    }
-    
-    // Standalone Pong Mode
-    function openStandalonePong() {
-      standaloneMode = true;
-      const overlay = document.getElementById('pongOverlay');
-      const canvas = document.getElementById('pongCanvasStandalone');
-      
-      pongCanvas = canvas;
-      pongCtx = canvas.getContext('2d');
-      
-      overlay.classList.add('active');
-      
-      // Load saved difficulty or default to pro
-      const savedDifficulty = localStorage.getItem('pong_difficulty') || 'pro';
-      applyDifficulty(savedDifficulty);
-      
-      // Reset game
-      pong.player.score = 0;
-      pong.ai.score = 0;
-      pong.mouse.y = null;
-      document.getElementById('pongGameOver').classList.remove('active');
-      
-      resizePong();
-      updatePongScore();
-      renderLeaderboard();
-      
-      pongRunning = true;
-      pongLoop();
-    }
-    
-    function closeStandalonePong() {
-      standaloneMode = false;
-      pongRunning = false;
-      
-      const overlay = document.getElementById('pongOverlay');
-      overlay.classList.remove('active');
-      
-      // Switch back to loading canvas if it exists
-      const loadingCanvas = document.getElementById('pongCanvas');
-      if (loadingCanvas) {
-        pongCanvas = loadingCanvas;
-        pongCtx = loadingCanvas.getContext('2d');
-      }
-    }
-    
-    function resetStandaloneGame() {
-      // Reapply current difficulty settings
-      applyDifficulty(currentDifficulty);
-      
-      pong.player.score = 0;
-      pong.ai.score = 0;
-      pong.mouse.y = null;
-      document.getElementById('pongGameOver').classList.remove('active');
-      updatePongScore();
-      resizePong();
-      pongRunning = true;
-      pongLoop();
-    }
-    
-    // Init pong on load
-    document.addEventListener('DOMContentLoaded', () => {
-      // Prevent browser autofill by making inputs readonly briefly
-      const entityInput = document.getElementById('entityName');
-      const apiInput = document.getElementById('apiKey');
-      
-      // Remove readonly after a short delay to bypass autofill
-      setTimeout(() => {
-        if (entityInput) entityInput.removeAttribute('readonly');
-        if (apiInput) apiInput.removeAttribute('readonly');
-      }, 150);
-      
-      initPong();
-      
-      // Standalone pong triggers
-      const pongTrigger = document.getElementById('pongTrigger');
-      const pongClose = document.getElementById('pongClose');
-      const playAgainBtn = document.getElementById('playAgainBtn');
-      
-      if (pongTrigger) pongTrigger.addEventListener('click', openStandalonePong);
-      if (pongClose) pongClose.addEventListener('click', closeStandalonePong);
-      if (playAgainBtn) playAgainBtn.addEventListener('click', resetStandaloneGame);
-      
-      // Difficulty buttons
-      document.querySelectorAll('.difficulty-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          applyDifficulty(btn.dataset.difficulty);
-          resetStandaloneGame();
-        });
-      });
-      
-      // ESC to close
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && standaloneMode) {
-          closeStandalonePong();
-        }
-      });
     });
 
-    // ==================== LOADING ANIMATION ====================
-    let loadingInterval = null;
-    let selectedModel = 'gemini-3-pro-preview';
-    
-    const statusMessages = [
-      "Searching Web...",
-      "Gathering Intel...",
-      "Cross-Referencing...",
-      "Analyzing Data...",
-      "Identifying Patterns...",
-      "Verifying Sources...",
-      "Building Profile...",
-      "Calculating Confidence...",
-      "Finalizing Results..."
-    ];
-    let statusIndex = 0;
-
-    function startLoadingAnimation(entityName) {
-      const overlay = document.getElementById('loadingOverlay');
-      overlay.classList.add('active');
-      
-      // Set query name
-      document.getElementById('loadingQueryName').textContent = entityName;
-      
-      // Set model name
-      const isFlash = selectedModel.includes('flash');
-      const modelName = isFlash ? 'Gemini 2.5 Flash' : 'Gemini 3 Pro';
-      document.getElementById('loadingModel').textContent = modelName;
-      
-      // Reset progress
-      document.getElementById('loadingProgressBar').style.width = '0%';
-      statusIndex = 0;
-      
-      // Start Pong
-      startPong();
-      
-      // Rotate status messages
-      loadingInterval = setInterval(() => {
-        statusIndex = (statusIndex + 1) % statusMessages.length;
-        document.getElementById('loadingStatus').textContent = statusMessages[statusIndex];
-      }, 2500);
-    }
-
-    function updateLoadingStep(step, progress) {
-      document.getElementById('loadingProgressBar').style.width = progress + '%';
-    }
-
-    function stopLoadingAnimation() {
-      clearInterval(loadingInterval);
-      stopPong();
-      document.getElementById('loadingOverlay').classList.remove('active');
-    }
-
-    // ==================== MODEL SELECTION ====================
-    // Load saved model preference
-    const savedModel = localStorage.getItem('ai_business_search_model');
-    if (savedModel) {
-      selectedModel = savedModel;
-      if (savedModel.includes('flash')) {
-        document.getElementById('modelFlash').classList.add('active');
-        document.getElementById('modelPro').classList.remove('active');
-      } else {
-        document.getElementById('modelPro').classList.add('active');
-        document.getElementById('modelFlash').classList.remove('active');
+    // ==================== EVENT LISTENERS ====================
+    document.getElementById('apiKey').addEventListener('input', function() {
+      const key = this.value.trim();
+      if (key) {
+        localStorage.setItem('gemini_api_key_deep_research', key);
       }
-    }
+    });
 
-    document.getElementById('modelFlash').addEventListener('click', function() {
-      selectedModel = this.dataset.model;
-      localStorage.setItem('ai_business_search_model', selectedModel);
-      document.getElementById('modelFlash').classList.add('active');
-      document.getElementById('modelPro').classList.remove('active');
+    document.getElementById('entityName').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') runDeepResearch();
+    });
+
+    document.getElementById('themeToggle').addEventListener('click', function() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
     });
 
     document.getElementById('modelPro').addEventListener('click', function() {
       selectedModel = this.dataset.model;
-      localStorage.setItem('ai_business_search_model', selectedModel);
-      document.getElementById('modelPro').classList.add('active');
-      document.getElementById('modelFlash').classList.remove('active');
+      localStorage.setItem('deep_research_model', selectedModel);
+      updateModelButtons();
     });
 
-    // ==================== API KEY MANAGEMENT ====================
-    function updateApiStatus() {
-      const savedKey = localStorage.getItem('gemini_api_key_ai_business_search');
-      if (savedKey) {
-        document.getElementById('apiKey').value = savedKey;
-      }
+    document.getElementById('modelFlash').addEventListener('click', function() {
+      selectedModel = this.dataset.model;
+      localStorage.setItem('deep_research_model', selectedModel);
+      updateModelButtons();
+    });
+
+    function updateModelButtons() {
+      document.getElementById('modelPro').classList.toggle('active', selectedModel.includes('pro'));
+      document.getElementById('modelFlash').classList.toggle('active', selectedModel.includes('flash'));
     }
 
-    // ==================== MAIN SEARCH FUNCTION ====================
-    async function analyzeEntity() {
-      const apiKey = document.getElementById('apiKey').value.trim();
-      const entityName = document.getElementById('entityName').value.trim();
-      const errorEl = document.getElementById('errorMessage');
+    // ==================== LOADING ====================
+    function startLoading(businessName) {
+      document.getElementById('loadingOverlay').classList.add('active');
+      document.getElementById('loadingTitle').textContent = `Researching: ${businessName}`;
       
-      errorEl.classList.remove('active');
+      const phases = [
+        { msg: 'Searching official registries...', pct: 15 },
+        { msg: 'Analyzing SEC and corporate filings...', pct: 30 },
+        { msg: 'Checking compliance databases...', pct: 45 },
+        { msg: 'Gathering reputation data...', pct: 60 },
+        { msg: 'Assessing financial indicators...', pct: 75 },
+        { msg: 'Compiling risk assessment...', pct: 90 },
+        { msg: 'Generating report...', pct: 100 }
+      ];
       
-      if (!apiKey) {
-        errorEl.textContent = 'Please enter your Gemini API key';
-        errorEl.classList.add('active');
-        return;
-      }
-      
-      if (!entityName) {
-        errorEl.textContent = 'Please enter a business name to search';
-        errorEl.classList.add('active');
-        return;
-      }
-      
-      // Start loading
-      startLoadingAnimation(entityName);
-      document.getElementById('searchSection').classList.add('has-results');
-      
-      try {
-        // Step 1: Grounding search
-        updateLoadingStep(1, 15);
-        document.getElementById('loadingStatus').textContent = 'Searching Web...';
-        
-        const groundingPrompt = `Search for comprehensive information about "${entityName}".
-Find: 
-- State of incorporation
-- Entity type (LLC, Inc, Corp, LP)
-- Headquarters location
-- Industry
-- Business formation/start date (when the entity was registered/incorporated)
-- Current registration status (Active, Inactive, Dissolved, Good Standing, etc.)
-- Owners, members, officers, or registered agent if available
-- Any official registry information
+      let phase = 0;
+      loadingInterval = setInterval(() => {
+        if (phase < phases.length) {
+          document.getElementById('loadingStatus').textContent = phases[phase].msg;
+          document.getElementById('loadingProgressBar').style.width = phases[phase].pct + '%';
+          phase++;
+        }
+      }, 2500);
+    }
 
-Look for SEC filings, state corporation databases, OpenCorporates, company websites, LinkedIn, and news articles.`;
+    function stopLoading() {
+      clearInterval(loadingInterval);
+      document.getElementById('loadingOverlay').classList.remove('active');
+    }
 
-        const groundingResponse = await callGeminiWithGrounding(apiKey, groundingPrompt);
-        
-        // Step 2: Analysis
-        updateLoadingStep(2, 50);
-        document.getElementById('loadingStatus').textContent = 'Analyzing Data...';
-        
-        const routingPrompt = `Based on this research about "${entityName}":
+    // ==================== DEEP RESEARCH PROMPT ====================
+    function buildDeepResearchPrompt(businessName) {
+      return `You are a comprehensive business research and due diligence analyst.
 
-${groundingResponse.text}
+BUSINESS: "${businessName}"
 
-TASK: Extract business entity information and predict the U.S. state of incorporation with confidence score (0-100).
+Conduct thorough deep research using all available web sources and provide a COMPREHENSIVE analysis including:
 
-CONFIDENCE SCORING:
-- 90-100: Verified in official state registry or SEC filings
-- 70-89: Found on OpenCorporates or official company documents
-- 50-69: Inferred from HQ location, industry patterns, web presence
-- 30-49: Educated guess based on heuristics only
-- 0-29: Very low confidence, minimal information found
+1. COMPANY OVERVIEW
+   - Legal name (exact as registered)
+   - DBAs / Trade names
+   - Entity type (LLC, Corp, Inc, LP, etc.)
+   - State of incorporation
+   - Formation/Registration date
+   - Current registration status (Active, Inactive, Dissolved, Good Standing)
+   - Registered agent name and address
+   - Principal business address
 
-HEURISTICS FOR EDUCATED GUESSES:
-- Delaware: VC-backed, public companies, tech startups, "Inc." suffix
-- Home State: Local businesses typically incorporate where HQ is
-- Wyoming/Nevada: Privacy-focused, crypto, anonymous LLCs
-- Texas: Recent DExit trend for some companies
+2. OWNERSHIP & MANAGEMENT
+   - Officers, directors, principals (names and titles)
+   - Ownership structure (private, public, subsidiary)
+   - Key executives
 
-JSON RESPONSE:
+3. BUSINESS OPERATIONS
+   - Industry classification
+   - NAICS/SIC codes
+   - Business description and model
+   - Products/Services offered
+   - Number of locations
+   - Competitors
+
+4. FINANCIAL INDICATORS
+   - Revenue estimates (if available)
+   - Employee count estimates
+   - Years in business
+   - Growth trend indicators
+   - Funding history (if applicable)
+
+5. COMPLIANCE & LEGAL
+   - Business licenses
+   - Regulatory actions or violations
+   - Lawsuits (plaintiff or defendant)
+   - Liens (tax liens, mechanic's liens)
+   - Judgments
+   - UCC filings
+   - Bankruptcies
+
+6. REPUTATION
+   - BBB rating and accreditation
+   - Online review scores (Google, Yelp, etc.)
+   - Review count
+   - News mentions (positive or negative)
+   - Awards or recognitions
+
+7. RISK ASSESSMENT
+   - Overall risk rating: Low, Medium, or High
+   - Red flags identified
+   - Industry-specific risks
+   - Operational concerns
+   - Recommendations
+
+SEARCH STRATEGY:
+- Search state Secretary of State / Corporation databases
+- Check SEC EDGAR for public filings
+- Search OpenCorporates
+- Check BBB directory
+- Search news sources
+- Check court records databases
+- Search LinkedIn for company info
+- Check industry-specific registries
+
+Return ONLY valid JSON in this exact schema:
 {
-    "predicted_state": "XX",
-    "state_name": "Full State Name",
-    "confidence": 0-100,
-    "source_quality": "registry/opencorporates/sec/web/heuristic",
-    "entity_type": "C-Corp/LLC/LP/Unknown",
-    "industry": "Industry",
-    "hq_location": "City, State",
-    "formation_date": "YYYY-MM-DD or Month YYYY or Year only if exact date unknown, or Unknown",
-    "registration_status": "Active/Inactive/Dissolved/Good Standing/Unknown",
-    "owners_members": ["Name 1 (Title)", "Name 2 (Title)"] or ["Unknown"] if not found,
-    "registered_agent": "Agent Name and Address if found, or Unknown",
-    "reasoning": "Explain what was found and why this state was predicted...",
-    "routing_queue": ["XX", "YY", "ZZ"]
+  "overview": {
+    "legal_name": "",
+    "dba": "",
+    "entity_type": "",
+    "state": "",
+    "formation_date": "",
+    "status": "",
+    "registered_agent": "",
+    "address": ""
+  },
+  "ownership": {
+    "officers": [{"name": "", "title": ""}],
+    "ownership_structure": ""
+  },
+  "operations": {
+    "industry": "",
+    "naics": "",
+    "description": "",
+    "services": [],
+    "locations": 0,
+    "competitors": []
+  },
+  "financials": {
+    "revenue_estimate": "",
+    "employee_count": "",
+    "years_in_business": 0,
+    "growth_trend": ""
+  },
+  "compliance": {
+    "licenses": [],
+    "regulatory_actions": [],
+    "lawsuits": [],
+    "liens": [],
+    "judgments": [],
+    "ucc_filings": [],
+    "bankruptcies": []
+  },
+  "reputation": {
+    "bbb_rating": "",
+    "review_score": "",
+    "review_count": 0,
+    "news_mentions": [],
+    "awards": []
+  },
+  "risk": {
+    "rating": "Low|Medium|High",
+    "red_flags": [],
+    "industry_risks": [],
+    "concerns": []
+  },
+  "sources": [{"title": "", "url": ""}],
+  "summary": "",
+  "confidence": 0
 }
 
-Always make a prediction. Use heuristics if no direct information found. Set confidence accordingly. For owners/members, include any officers, directors, members, or principals found.`;
-
-        // Step 3: Prediction
-        updateLoadingStep(3, 85);
-        document.getElementById('loadingStatus').textContent = 'Generating Report...';
-        
-        const routingResponse = await callGemini(apiKey, routingPrompt);
-        
-        // Complete
-        updateLoadingStep(3, 100);
-        
-        // Parse and display
-        const prediction = parseJsonResponse(routingResponse.text);
-        displayResults(prediction, groundingResponse.sources);
-        
-        setTimeout(() => {
-          stopLoadingAnimation();
-        }, 500);
-        
-      } catch (error) {
-        stopLoadingAnimation();
-        errorEl.textContent = 'Error: ' + error.message;
-        errorEl.classList.add('active');
-      }
+IMPORTANT:
+- Be thorough and comprehensive
+- Use actual data from searches, not assumptions
+- If information is not found, use empty strings or empty arrays
+- Confidence should be 0-100 based on quality of sources found
+- Always provide a risk rating even with limited data`;
     }
 
-    async function callGeminiWithGrounding(apiKey, prompt) {
+    // ==================== API CALLS ====================
+    async function callGeminiDeepResearch(apiKey, prompt) {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`;
       
       const response = await fetch(url, {
@@ -2769,34 +1301,11 @@ Always make a prediction. Use heuristics if no direct information found. Set con
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          tools: [{ google_search: {} }]
-        })
-      });
-      
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error?.message || 'API request failed');
-      }
-      
-      const data = await response.json();
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-      const sources = data.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
-      
-      return { text, sources };
-    }
-
-    async function callGemini(apiKey, prompt) {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`;
-      
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
+          tools: [{ google_search: {} }],
           generationConfig: {
             temperature: 0.2,
             topP: 0.8,
-            maxOutputTokens: 2048
+            maxOutputTokens: 8192
           }
         })
       });
@@ -2809,7 +1318,7 @@ Always make a prediction. Use heuristics if no direct information found. Set con
       const data = await response.json();
       const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
       
-      return { text };
+      return text;
     }
 
     function parseJsonResponse(text) {
@@ -2821,184 +1330,282 @@ Always make a prediction. Use heuristics if no direct information found. Set con
       } catch (e) {
         console.error('JSON parse error:', e);
       }
-      return {
-        predicted_state: "??",
-        state_name: "Unknown",
-        confidence: 0,
-        reasoning: text,
-        routing_queue: []
-      };
+      return null;
     }
 
-    function displayResults(prediction, sources) {
+    // ==================== MAIN FUNCTION ====================
+    async function runDeepResearch() {
+      const apiKey = document.getElementById('apiKey').value.trim();
+      const businessName = document.getElementById('entityName').value.trim();
+      const errorEl = document.getElementById('errorMessage');
+      
+      errorEl.classList.remove('active');
+      
+      if (!apiKey) {
+        errorEl.textContent = 'Please enter your Gemini API key';
+        errorEl.classList.add('active');
+        return;
+      }
+      
+      if (!businessName) {
+        errorEl.textContent = 'Please enter a business name to research';
+        errorEl.classList.add('active');
+        return;
+      }
+      
+      startLoading(businessName);
+      document.getElementById('searchSection').classList.add('has-results');
+      
+      try {
+        const prompt = buildDeepResearchPrompt(businessName);
+        const responseText = await callGeminiDeepResearch(apiKey, prompt);
+        const research = parseJsonResponse(responseText);
+        
+        if (!research) {
+          throw new Error('Failed to parse research data. Please try again.');
+        }
+        
+        currentResearch = research;
+        displayResults(research, businessName);
+        
+      } catch (error) {
+        errorEl.textContent = 'Error: ' + error.message;
+        errorEl.classList.add('active');
+      } finally {
+        stopLoading();
+      }
+    }
+
+    // ==================== DISPLAY RESULTS ====================
+    function displayResults(research, businessName) {
       document.getElementById('resultsSection').classList.add('active');
       
-      document.getElementById('stateCode').textContent = prediction.predicted_state || '--';
-      document.getElementById('stateName').textContent = prediction.state_name || 'Unknown';
+      // Risk Banner
+      const riskRating = research.risk?.rating || 'Unknown';
+      const riskBanner = document.getElementById('riskBanner');
+      riskBanner.className = 'risk-banner ' + riskRating.toLowerCase();
       
-      const confidence = prediction.confidence || 0;
-      const confEl = document.getElementById('confidenceValue');
-      confEl.textContent = confidence + '%';
-      confEl.style.color = confidence >= 70 ? 'var(--tier-a)' : confidence >= 50 ? 'var(--tier-c)' : 'var(--tier-e)';
+      const riskColors = {
+        'Low': 'var(--tier-a)',
+        'Medium': 'var(--tier-c)',
+        'High': 'var(--tier-e)'
+      };
+      const riskColor = riskColors[riskRating] || 'var(--text-muted)';
       
-      document.getElementById('entityType').textContent = prediction.entity_type || 'Unknown';
-      document.getElementById('industry').textContent = prediction.industry || 'Unknown';
-      document.getElementById('hqLocation').textContent = prediction.hq_location || 'Unknown';
-      document.getElementById('formationDate').textContent = prediction.formation_date || 'Unknown';
+      document.getElementById('riskLetter').textContent = riskRating[0] || '?';
+      document.getElementById('riskLetter').style.color = riskColor;
+      document.getElementById('riskLabel').textContent = `${riskRating} Risk`;
+      document.getElementById('riskLabel').style.color = riskColor;
+      document.getElementById('businessNameDisplay').textContent = research.overview?.legal_name || businessName;
+      document.getElementById('confidenceValue').textContent = (research.confidence || 0) + '%';
+      document.getElementById('confidenceValue').style.color = 
+        research.confidence >= 70 ? 'var(--tier-a)' : 
+        research.confidence >= 50 ? 'var(--tier-c)' : 'var(--tier-e)';
       
-      const statusEl = document.getElementById('regStatus');
-      const status = prediction.registration_status || 'Unknown';
+      // Company Overview
+      document.getElementById('legalName').textContent = research.overview?.legal_name || '--';
+      document.getElementById('dbaName').textContent = research.overview?.dba || '--';
+      document.getElementById('entityType').textContent = research.overview?.entity_type || '--';
+      document.getElementById('stateName').textContent = research.overview?.state || '--';
+      document.getElementById('formationDate').textContent = research.overview?.formation_date || '--';
+      
+      const statusEl = document.getElementById('entityStatus');
+      const status = research.overview?.status || '--';
       statusEl.textContent = status;
-      statusEl.className = 'profile-value';
+      statusEl.className = 'data-value';
       if (status.toLowerCase().includes('active') || status.toLowerCase().includes('good')) {
-        statusEl.classList.add('status-active');
+        statusEl.classList.add('positive');
       } else if (status.toLowerCase().includes('inactive') || status.toLowerCase().includes('dissolved')) {
-        statusEl.classList.add('status-inactive');
+        statusEl.classList.add('negative');
       }
       
-      document.getElementById('regAgent').textContent = prediction.registered_agent || 'Unknown';
+      document.getElementById('regAgent').textContent = research.overview?.registered_agent || '--';
+      document.getElementById('address').textContent = research.overview?.address || '--';
       
-      // Owners section
-      const ownersSection = document.getElementById('ownersSection');
-      const ownersList = document.getElementById('ownersList');
-      const owners = prediction.owners_members || [];
+      // Operations
+      document.getElementById('industry').textContent = research.operations?.industry || '--';
+      document.getElementById('naicsCode').textContent = research.operations?.naics || '--';
+      document.getElementById('locations').textContent = research.operations?.locations || '--';
+      document.getElementById('description').textContent = research.operations?.description || '--';
       
-      if (owners.length > 0 && owners[0] !== 'Unknown' && owners[0] !== '') {
-        ownersSection.style.display = 'block';
-        ownersList.innerHTML = owners.map(owner => {
-          const match = owner.match(/^(.+?)\s*\((.+)\)$/);
-          if (match) {
-            return `<span class="owner-tag">${match[1]}<span class="owner-title">(${match[2]})</span></span>`;
-          }
-          return `<span class="owner-tag">${owner}</span>`;
-        }).join('');
+      // Financials
+      document.getElementById('revenueEst').textContent = research.financials?.revenue_estimate || '--';
+      document.getElementById('employeeCount').textContent = research.financials?.employee_count || '--';
+      document.getElementById('yearsInBusiness').textContent = research.financials?.years_in_business || '--';
+      document.getElementById('growthTrend').textContent = research.financials?.growth_trend || '--';
+      
+      // Ownership
+      document.getElementById('ownershipStructure').textContent = research.ownership?.ownership_structure || '--';
+      
+      const officers = research.ownership?.officers || [];
+      const officersList = document.getElementById('officersList');
+      if (officers.length > 0) {
+        officersList.innerHTML = officers.map(o => 
+          `<span class="officer-tag">${o.name || 'Unknown'}<span class="title">${o.title ? ' (' + o.title + ')' : ''}</span></span>`
+        ).join('');
       } else {
-        ownersSection.style.display = 'none';
+        officersList.innerHTML = '<span style="color: var(--text-muted); font-size: 0.85rem;">No officers found</span>';
       }
       
-      document.getElementById('reasoning').textContent = prediction.reasoning || 'No analysis available';
+      // Compliance
+      const lawsuits = research.compliance?.lawsuits?.length || 0;
+      const liens = research.compliance?.liens?.length || 0;
+      const ucc = research.compliance?.ucc_filings?.length || 0;
       
-      const queue = prediction.routing_queue || [];
-      document.getElementById('queueStates').innerHTML = queue.map((state, i) => 
-        `<span class="queue-state">${state}<span class="priority">#${i+1}</span></span>`
-      ).join('');
+      const lawsuitsEl = document.getElementById('lawsuitsCount');
+      lawsuitsEl.textContent = lawsuits;
+      lawsuitsEl.style.color = lawsuits > 0 ? 'var(--tier-e)' : 'var(--tier-a)';
       
-      document.getElementById('sourceQuality').textContent = prediction.source_quality || 'web';
+      const liensEl = document.getElementById('liensCount');
+      liensEl.textContent = liens;
+      liensEl.style.color = liens > 0 ? 'var(--tier-e)' : 'var(--tier-a)';
+      
+      document.getElementById('uccCount').textContent = ucc;
+      
+      const licenses = research.compliance?.licenses || [];
+      document.getElementById('licenses').textContent = licenses.length > 0 ? licenses.join(', ') : 'None found';
+      
+      // Reputation
+      document.getElementById('bbbRating').textContent = research.reputation?.bbb_rating || '--';
+      document.getElementById('reviewScore').textContent = research.reputation?.review_score || '--';
+      document.getElementById('reviewCount').textContent = research.reputation?.review_count || 0;
+      
+      const news = research.reputation?.news_mentions || [];
+      document.getElementById('newsMentions').textContent = news.length > 0 ? news.slice(0, 3).join('; ') : 'None found';
+      
+      // Risk Assessment
+      const industryRisks = research.risk?.industry_risks?.length || 0;
+      const concerns = research.risk?.concerns || [];
+      const redFlags = research.risk?.red_flags || [];
+      
+      document.getElementById('industryRisks').textContent = industryRisks;
+      document.getElementById('concernsCount').textContent = concerns.length;
+      document.getElementById('redFlagsCount').textContent = redFlags.length;
+      document.getElementById('redFlagsCount').style.color = redFlags.length > 0 ? 'var(--tier-e)' : 'var(--tier-a)';
+      
+      const redFlagsSection = document.getElementById('redFlagsSection');
+      if (redFlags.length > 0) {
+        redFlagsSection.style.display = 'block';
+        document.getElementById('redFlagsList').innerHTML = redFlags.map(f => `<li>${f}</li>`).join('');
+      } else {
+        redFlagsSection.style.display = 'none';
+      }
+      
+      const concernsSection = document.getElementById('concernsSection');
+      if (concerns.length > 0) {
+        concernsSection.style.display = 'block';
+        document.getElementById('concerns').textContent = concerns.join('; ');
+      } else {
+        concernsSection.style.display = 'none';
+      }
+      
+      // Summary
+      document.getElementById('summaryText').textContent = research.summary || 'No summary available.';
+      
+      // Sources
+      const sources = research.sources || [];
+      const sourcesList = document.getElementById('sourcesList');
+      if (sources.length > 0) {
+        sourcesList.innerHTML = sources.slice(0, 8).map(s => 
+          `<a href="${s.url}" target="_blank" rel="noopener noreferrer" class="source-link">${s.title || 'Source'}</a>`
+        ).join('');
+        document.getElementById('sourcesSection').style.display = 'block';
+      } else {
+        document.getElementById('sourcesSection').style.display = 'none';
+      }
       
       // Scroll to results
       document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // ==================== EVENT LISTENERS ====================
-    document.getElementById('apiKey').addEventListener('input', function() {
-      const key = this.value.trim();
-      if (key) {
-        localStorage.setItem('gemini_api_key_ai_business_search', key);
-      }
-      updateApiStatus();
-    });
+    // ==================== COPY REPORT ====================
+    function copyFullReport() {
+      if (!currentResearch) return;
+      
+      const r = currentResearch;
+      const report = `
+========================================
+BUSINESS INTELLIGENCE REPORT
+========================================
 
-    document.getElementById('entityName').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') analyzeEntity();
-    });
+RISK RATING: ${r.risk?.rating || 'Unknown'}
+CONFIDENCE: ${r.confidence || 0}%
 
-    document.getElementById('apiKey').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') analyzeEntity();
-    });
+----------------------------------------
+COMPANY OVERVIEW
+----------------------------------------
+Legal Name: ${r.overview?.legal_name || 'N/A'}
+DBA: ${r.overview?.dba || 'N/A'}
+Entity Type: ${r.overview?.entity_type || 'N/A'}
+State: ${r.overview?.state || 'N/A'}
+Formation Date: ${r.overview?.formation_date || 'N/A'}
+Status: ${r.overview?.status || 'N/A'}
+Registered Agent: ${r.overview?.registered_agent || 'N/A'}
+Address: ${r.overview?.address || 'N/A'}
 
-    document.getElementById('themeToggle').addEventListener('click', function() {
-      const current = document.documentElement.getAttribute('data-theme');
-      const next = current === 'light' ? 'dark' : 'light';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
-    });
+----------------------------------------
+OWNERSHIP & MANAGEMENT
+----------------------------------------
+Structure: ${r.ownership?.ownership_structure || 'N/A'}
+Officers: ${(r.ownership?.officers || []).map(o => `${o.name} (${o.title || 'N/A'})`).join(', ') || 'N/A'}
 
-    // ==================== COPY TO CLIPBOARD ====================
-    const copyIconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>';
-    const checkIconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>';
+----------------------------------------
+BUSINESS OPERATIONS
+----------------------------------------
+Industry: ${r.operations?.industry || 'N/A'}
+NAICS: ${r.operations?.naics || 'N/A'}
+Locations: ${r.operations?.locations || 'N/A'}
+Description: ${r.operations?.description || 'N/A'}
 
-    function copyToClipboard(text, btn) {
-      navigator.clipboard.writeText(text).then(() => {
-        btn.classList.add('copied');
-        if (btn.id === 'copyAllBtn') {
-          btn.innerHTML = checkIconSvg + ' Copied!';
-          setTimeout(() => {
-            btn.classList.remove('copied');
-            btn.innerHTML = copyIconSvg + ' Copy All Results';
-          }, 1500);
-        } else {
-          btn.innerHTML = checkIconSvg;
-          setTimeout(() => {
-            btn.classList.remove('copied');
-            btn.innerHTML = copyIconSvg;
-          }, 1500);
-        }
+----------------------------------------
+FINANCIAL INDICATORS
+----------------------------------------
+Revenue Estimate: ${r.financials?.revenue_estimate || 'N/A'}
+Employees: ${r.financials?.employee_count || 'N/A'}
+Years in Business: ${r.financials?.years_in_business || 'N/A'}
+Growth Trend: ${r.financials?.growth_trend || 'N/A'}
+
+----------------------------------------
+COMPLIANCE & LEGAL
+----------------------------------------
+Lawsuits: ${r.compliance?.lawsuits?.length || 0}
+Liens: ${r.compliance?.liens?.length || 0}
+UCC Filings: ${r.compliance?.ucc_filings?.length || 0}
+Licenses: ${(r.compliance?.licenses || []).join(', ') || 'None found'}
+
+----------------------------------------
+REPUTATION
+----------------------------------------
+BBB Rating: ${r.reputation?.bbb_rating || 'N/A'}
+Review Score: ${r.reputation?.review_score || 'N/A'}
+Review Count: ${r.reputation?.review_count || 0}
+
+----------------------------------------
+RISK ASSESSMENT
+----------------------------------------
+Rating: ${r.risk?.rating || 'N/A'}
+Red Flags: ${(r.risk?.red_flags || []).join(', ') || 'None'}
+Industry Risks: ${(r.risk?.industry_risks || []).join(', ') || 'None'}
+Concerns: ${(r.risk?.concerns || []).join(', ') || 'None'}
+
+----------------------------------------
+SUMMARY
+----------------------------------------
+${r.summary || 'No summary available.'}
+
+========================================
+Generated by AblesAI Business Intelligence
+      `.trim();
+      
+      navigator.clipboard.writeText(report).then(() => {
+        const btn = document.querySelector('.action-btn.primary');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Copied!';
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+        }, 2000);
       });
     }
-
-    // Copy All Results button
-    document.getElementById('copyAllBtn').addEventListener('click', function() {
-      const stateCode = document.getElementById('stateCode').textContent;
-      const stateName = document.getElementById('stateName').textContent;
-      const confidence = document.getElementById('confidenceValue').textContent;
-      const entityType = document.getElementById('entityType').textContent;
-      const industry = document.getElementById('industry').textContent;
-      const hqLocation = document.getElementById('hqLocation').textContent;
-      const formationDate = document.getElementById('formationDate').textContent;
-      const regStatus = document.getElementById('regStatus').textContent;
-      const regAgent = document.getElementById('regAgent').textContent;
-      
-      const ownerBadges = document.querySelectorAll('#ownersList .owner-badge');
-      const owners = ownerBadges.length > 0 
-        ? Array.from(ownerBadges).map(badge => badge.textContent.trim()).join(', ')
-        : 'Unknown';
-      
-      const allResults = `Primary Jurisdiction: ${stateName} (${stateCode})
-Confidence: ${confidence}
-Entity Type: ${entityType}
-Industry: ${industry}
-HQ Location: ${hqLocation}
-Formation Date: ${formationDate}
-Status: ${regStatus}
-Registered Agent: ${regAgent}
-Owners/Officers/Members: ${owners}`;
-      
-      copyToClipboard(allResults, this);
-    });
-
-    document.querySelectorAll('.copy-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const copyType = this.dataset.copyType;
-        
-        if (copyType === 'jurisdiction') {
-          const stateCode = document.getElementById('stateCode').textContent;
-          const stateName = document.getElementById('stateName').textContent;
-          copyToClipboard(`Primary Jurisdiction: ${stateName} (${stateCode})`, this);
-        } else if (copyType === 'confidence') {
-          const confidence = document.getElementById('confidenceValue').textContent;
-          copyToClipboard(`Confidence: ${confidence}`, this);
-        } else if (copyType === 'owners') {
-          const ownerBadges = document.querySelectorAll('#ownersList .owner-badge');
-          const owners = Array.from(ownerBadges).map(badge => badge.textContent.trim()).join(', ');
-          copyToClipboard(`Owners/Officers/Members: ${owners}`, this);
-        } else {
-          const targetId = this.dataset.target;
-          const targetEl = document.getElementById(targetId);
-          if (targetEl) {
-            const label = targetEl.closest('.profile-item').querySelector('.profile-label').textContent;
-            const value = targetEl.textContent;
-            copyToClipboard(`${label}: ${value}`, this);
-          }
-        }
-      });
-    });
-
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function() {
-      const savedTheme = localStorage.getItem('theme') || 'dark';
-      document.documentElement.setAttribute('data-theme', savedTheme);
-      updateApiStatus();
-    });
   </script>
 </body>
 </html>
