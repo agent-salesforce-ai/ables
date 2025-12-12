@@ -96,9 +96,15 @@
       --text-muted: #6b7280;
     }
 
+    /* Background Effects */
     [data-theme="light"] header {
-      background: rgba(255,255,255,0.95);
-      border-color: var(--border-primary);
+      background: transparent;
+      border-bottom-color: transparent;
+    }
+
+    [data-theme="light"] .main-header.scrolled {
+      background: rgba(255, 255, 255, 0.9);
+      border-bottom-color: var(--border-primary);
     }
 
     [data-theme="light"] .header-logo h1 {
@@ -554,12 +560,13 @@
 
     /* Light theme - Score panel */
     [data-theme="light"] .score-panel {
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(8px);
       border-color: #e5e7eb;
     }
 
     [data-theme="light"] .score-header {
-      background: #ffffff;
+      background: transparent;
       border-color: #e5e7eb;
     }
 
@@ -577,7 +584,7 @@
     }
 
     [data-theme="light"] .score-body {
-      background: #ffffff;
+      background: transparent;
     }
 
     [data-theme="light"] .breakdown-label {
@@ -595,6 +602,10 @@
     [data-theme="light"] .result-preview {
       background: #ffffff;
       border-color: #e5e7eb;
+    }
+
+    [data-theme="light"] .result-cell {
+      background: rgba(255, 255, 255, 0.7);
     }
 
     [data-theme="light"] .result-cell-label {
@@ -674,8 +685,8 @@
 
     [data-theme="light"] .view-badge.client,
     [data-theme="light"] .expanded-badge.client {
-      background: rgba(249, 115, 22, 0.15);
-      color: #ea580c !important;
+      background: rgba(16, 185, 129, 0.15);
+      color: #059669 !important;
     }
 
     [data-theme="light"] .view-badge.lender,
@@ -693,12 +704,6 @@
     [data-theme="light"] .expanded-badge.iso {
       background: rgba(139, 92, 246, 0.1);
       color: #7c3aed;
-    }
-
-    [data-theme="light"] .view-badge.client,
-    [data-theme="light"] .expanded-badge.client {
-      background: rgba(249, 115, 22, 0.1);
-      color: #ea580c;
     }
 
     [data-theme="light"] .view-badge.lender,
@@ -809,8 +814,8 @@
     }
 
     [data-theme="light"] .view-tab[data-tab="client"].active {
-      color: #ea580c;
-      background: rgba(249, 115, 22, 0.1);
+      color: #059669;
+      background: rgba(16, 185, 129, 0.1);
     }
 
     /* Light theme - Feature sections with dark backgrounds need to stay dark */
@@ -916,8 +921,8 @@
     }
 
     [data-theme="light"] .feature-card-display .expanded-badge.client {
-      background: rgba(249, 115, 22, 0.15);
-      color: #ea580c !important;
+      background: rgba(16, 185, 129, 0.15);
+      color: #059669 !important;
     }
 
     [data-theme="light"] .feature-card-display .expanded-amount {
@@ -1021,18 +1026,19 @@
     }
 
     [data-theme="light"] .expanded-cta.client-cta {
-      background: linear-gradient(135deg, #ffedd5, #fed7aa);
-      border-color: #f97316;
-      color: #9a3412;
+      background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+      border-color: #10b981;
+      color: #065f46;
     }
 
     [data-theme="light"] .expanded-cta.client-cta:hover {
-      background: linear-gradient(135deg, #fed7aa, #fdba74);
+      background: linear-gradient(135deg, #a7f3d0, #6ee7b7);
     }
 
     /* Light theme - Hero card backgrounds */
     [data-theme="light"] .hero-card {
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
       border-color: #e5e7eb;
     }
 
@@ -1176,7 +1182,10 @@
       color: #111827 !important;
     }
 
-    html { scroll-behavior: smooth; }
+    html { 
+      scroll-behavior: smooth; 
+      overflow-x: hidden;
+    }
 
     body {
       font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
@@ -1184,6 +1193,12 @@
       color: var(--text-primary);
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      max-width: 100%;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
     }
 
     a { color: inherit; text-decoration: none; }
@@ -1197,14 +1212,22 @@
       align-items: center;
       justify-content: space-between;
       padding: 16px 24px;
-      background: rgba(10, 10, 10, 0.8);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border-primary);
+      background: transparent;
+      backdrop-filter: none;
+      border-bottom: 1px solid transparent;
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       z-index: 100;
+      height: 65px;
+      transition: background 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease;
+    }
+
+    .main-header.scrolled {
+      background: rgba(10, 10, 10, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom-color: var(--border-primary);
     }
 
     .header-logo {
@@ -1327,8 +1350,10 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: var(--bg-main);
+      background: transparent;
       overflow-x: hidden;
+      position: relative;
+      z-index: 1;
     }
 
     .hero-content {
@@ -1452,7 +1477,8 @@
     }
 
     .hero-card {
-      background: var(--bg-card);
+      background: rgba(26, 26, 26, 0.7);
+      backdrop-filter: blur(12px);
       border: 1px solid var(--border-secondary);
       border-radius: 24px;
       overflow: hidden;
@@ -1462,7 +1488,8 @@
     .score-panel {
       border-radius: 16px;
       overflow: hidden;
-      background: var(--bg-card-inner);
+      background: rgba(26, 26, 26, 0.5);
+      backdrop-filter: blur(8px);
     }
 
     .score-header {
@@ -1501,7 +1528,7 @@
 
     .score-body {
       padding: 24px;
-      background: var(--bg-card-inner);
+      background: transparent;
     }
 
     .breakdown-list {
@@ -1572,7 +1599,7 @@
     }
 
     .result-cell {
-      background: var(--bg-card);
+      background: rgba(26, 26, 26, 0.6);
       padding: 16px;
       text-align: center;
     }
@@ -1680,7 +1707,7 @@
     }
 
     .view-tab[data-tab="client"].active {
-      color: #f97316;
+      color: #10b981;
       background: rgba(249, 115, 22, 0.1);
     }
 
@@ -1754,7 +1781,7 @@
     }
 
     .preview-card-wrapper.active[data-view="client"] .preview-card {
-      border-color: #f97316;
+      border-color: #10b981;
       box-shadow: 0 0 40px rgba(249, 115, 22, 0.15);
     }
 
@@ -1782,7 +1809,7 @@
     }
 
     .view-badge.lender { background: rgba(234, 179, 8, 0.15); color: var(--accent); }
-    .view-badge.client { background: rgba(249, 115, 22, 0.15); color: #f97316; }
+    .view-badge.client { background: rgba(16, 185, 129, 0.15); color: #10b981; }
     .view-badge.iso { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
 
     .header-label {
@@ -1823,7 +1850,7 @@
     }
 
     .slider-fill.lender { background: var(--accent); }
-    .slider-fill.client { background: #f97316; }
+    .slider-fill.client { background: #10b981; }
     .slider-fill.iso { background: #a855f7; }
 
     .slider-thumb {
@@ -1898,6 +1925,7 @@
         padding: 80px 24px;
         background: linear-gradient(180deg, var(--bg-main) 0%, #0d0d0d 100%);
         border-top: 1px solid var(--border-secondary);
+        overflow-x: hidden;
     }
     
     .feature-section.iso-section {
@@ -2029,12 +2057,12 @@
     }
 
     .client-cta {
-      background: linear-gradient(90deg, #f97316, #ea580c);
+      background: linear-gradient(90deg, #10b981, #059669);
       color: #fff;
     }
 
     .client-cta:hover {
-      box-shadow: 0 10px 30px rgba(249, 115, 22, 0.3);
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
     }
 
     .offer-disclaimer {
@@ -2064,7 +2092,7 @@
     }
 
     .expanded-badge.lender { background: rgba(234, 179, 8, 0.15); color: var(--accent); }
-    .expanded-badge.client { background: rgba(249, 115, 22, 0.15); color: #f97316; }
+    .expanded-badge.client { background: rgba(16, 185, 129, 0.15); color: #10b981; }
     .expanded-badge.iso { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
 
     .chart-overlay {
@@ -2950,7 +2978,7 @@
     }
 
     .expanded-card[data-expand="lender"] { border-top: 4px solid var(--accent); }
-    .expanded-card[data-expand="client"] { border-top: 4px solid #f97316; }
+    .expanded-card[data-expand="client"] { border-top: 4px solid #10b981; }
     .expanded-card[data-expand="iso"] { border-top: 4px solid #a855f7; }
 
     .client-slider::-webkit-slider-thumb {
@@ -3781,7 +3809,7 @@
     .engine-tier-letter.tier-a { color: #10b981; }
     .engine-tier-letter.tier-b { color: #eab308; }
     .engine-tier-letter.tier-c { color: #f59e0b; }
-    .engine-tier-letter.tier-d { color: #f97316; }
+    .engine-tier-letter.tier-d { color: #10b981; }
     .engine-tier-letter.tier-e { color: #ef4444; }
     .engine-tier-letter.tier-x { color: #ef4444; }
 
@@ -3966,7 +3994,7 @@
     .calc-tier-letter.tier-a { color: #10b981; }
     .calc-tier-letter.tier-b { color: #eab308; }
     .calc-tier-letter.tier-c { color: #f59e0b; }
-    .calc-tier-letter.tier-d { color: #f97316; }
+    .calc-tier-letter.tier-d { color: #10b981; }
     .calc-tier-letter.tier-e { color: #ef4444; }
     .calc-tier-letter.tier-x { color: #ef4444; }
 
@@ -4214,22 +4242,11 @@
       .header-logo h1 {
         font-size: 1rem;
       }
-      .tab-nav { 
-        gap: 4px;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        padding: 0 4px;
-      }
-      .tab-btn {
-        padding: 8px 12px;
-        font-size: 11px;
-        white-space: nowrap;
-      }
       .theme-toggle {
         width: 36px;
         height: 36px;
         min-width: 36px;
-        margin-right: 4px;
+        margin-right: 8px;
       }
       .steps-grid { grid-template-columns: 1fr; }
       .features-grid { grid-template-columns: 1fr; }
@@ -4612,57 +4629,6 @@
     }
 
     /* ============================================
-       STICKY HEADER CTA
-    ============================================ */
-    .sticky-cta {
-      position: fixed;
-      top: -60px;
-      left: 0;
-      right: 0;
-      height: 60px;
-      background: var(--bg-card);
-      border-bottom: 1px solid var(--border-secondary);
-      z-index: 999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 24px;
-      transition: top 0.3s ease;
-      backdrop-filter: blur(12px);
-    }
-
-    .sticky-cta.visible {
-      top: 0;
-    }
-
-    .sticky-cta-text {
-      font-size: 14px;
-      color: var(--text-secondary);
-    }
-
-    .sticky-cta-text strong {
-      color: var(--accent);
-    }
-
-    .sticky-cta-btn {
-      padding: 10px 24px;
-      background: var(--accent);
-      color: #000;
-      font-size: 13px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      border-radius: 8px;
-      text-decoration: none;
-      transition: all 0.3s;
-    }
-
-    .sticky-cta-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(234, 179, 8, 0.3);
-    }
-
-    /* ============================================
        BOTTOM BANNER
     ============================================ */
     .bottom-banner {
@@ -4788,10 +4754,6 @@
       background: linear-gradient(135deg, rgba(234, 179, 8, 0.08) 0%, rgba(249, 115, 22, 0.03) 100%);
     }
 
-    [data-theme="light"] .sticky-cta {
-      background: rgba(255, 255, 255, 0.95);
-    }
-
     [data-theme="light"] .bottom-banner {
       background: #ffffff;
     }
@@ -4825,195 +4787,162 @@
       vertical-align: middle;
     }
 
+    /* Background Effects */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(234, 179, 8, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(234, 179, 8, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    [data-theme="light"] .bg-grid {
+      background-image: 
+        linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+    }
+
     /* ============================================
-       ANIMATED HERO BACKGROUND - ORBITING SYSTEM
+       HERO SECTION
     ============================================ */
     .hero {
       position: relative;
       overflow: hidden;
     }
 
-    .hero-bg {
+    /* Hamburger Menu */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 32px;
+      height: 32px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      z-index: 101;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 100%;
+      height: 2px;
+      background: var(--text-primary);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
+
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(10, 10, 10, 0.98);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border-primary);
+      border-radius: 24px 24px 0 0;
+      padding: 24px 20px 32px;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 99;
+      transform: translateY(100%);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    .mobile-nav::before {
+      content: '';
       position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 4px;
+      background: var(--border-primary);
+      border-radius: 2px;
+    }
+
+    .mobile-nav.active {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .mobile-nav .tab-btn {
+      width: 100%;
+      text-align: center;
+      padding: 14px 16px;
+      border-radius: 12px;
+      font-size: 15px;
+      background: var(--bg-tertiary);
+    }
+
+    .mobile-nav .tab-btn:hover {
+      background: var(--bg-card);
+    }
+
+    [data-theme="light"] .mobile-nav {
+      background: rgba(255, 255, 255, 0.98);
+    }
+
+    [data-theme="light"] .mobile-nav .tab-btn {
+      background: #f3f4f6;
+    }
+
+    .mobile-nav-overlay {
+      display: none;
+      position: fixed;
       inset: 0;
-      overflow: hidden;
-      z-index: 0;
-      pointer-events: none;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 98;
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
 
-    .orbit-system {
-      position: absolute;
-      top: 50%;
-      right: 5%;
-      transform: translate(0, -50%);
-      width: 700px;
-      height: 700px;
+    .mobile-nav-overlay.active {
+      opacity: 1;
     }
 
-    .orbit-ring {
-      position: absolute;
-      border-radius: 50%;
-      border: 1px solid;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
+    @media (max-width: 768px) {
+      .hamburger {
+        display: flex;
+      }
 
-    .orbit-ring-1 {
-      width: 300px;
-      height: 300px;
-      border-color: rgba(234, 179, 8, 0.15);
-      animation: rotate 30s linear infinite;
-    }
+      .tab-nav {
+        display: none;
+      }
 
-    .orbit-ring-2 {
-      width: 450px;
-      height: 450px;
-      border-color: rgba(168, 85, 247, 0.1);
-      animation: rotate 45s linear infinite reverse;
-    }
+      .mobile-nav {
+        display: flex;
+      }
 
-    .orbit-ring-3 {
-      width: 600px;
-      height: 600px;
-      border-color: rgba(234, 179, 8, 0.06);
-      animation: rotate 60s linear infinite;
-    }
-
-    .orbit-particle {
-      position: absolute;
-      border-radius: 50%;
-      top: 50%;
-      left: 50%;
-    }
-
-    .particle-1 {
-      width: 12px;
-      height: 12px;
-      background: var(--accent);
-      box-shadow: 0 0 20px var(--accent), 0 0 40px rgba(234, 179, 8, 0.3);
-      animation: orbit1 20s linear infinite;
-    }
-
-    .particle-2 {
-      width: 8px;
-      height: 8px;
-      background: #a855f7;
-      box-shadow: 0 0 15px #a855f7, 0 0 30px rgba(168, 85, 247, 0.3);
-      animation: orbit2 28s linear infinite;
-    }
-
-    .particle-3 {
-      width: 6px;
-      height: 6px;
-      background: #10b981;
-      box-shadow: 0 0 12px #10b981, 0 0 25px rgba(16, 185, 129, 0.3);
-      animation: orbit3 35s linear infinite reverse;
-    }
-
-    .particle-4 {
-      width: 10px;
-      height: 10px;
-      background: #f97316;
-      box-shadow: 0 0 18px #f97316, 0 0 35px rgba(249, 115, 22, 0.3);
-      animation: orbit1 25s linear infinite reverse;
-    }
-
-    .particle-5 {
-      width: 5px;
-      height: 5px;
-      background: #3b82f6;
-      box-shadow: 0 0 10px #3b82f6, 0 0 20px rgba(59, 130, 246, 0.3);
-      animation: orbit2 18s linear infinite;
-    }
-
-    .particle-6 {
-      width: 7px;
-      height: 7px;
-      background: #ec4899;
-      box-shadow: 0 0 14px #ec4899, 0 0 28px rgba(236, 72, 153, 0.3);
-      animation: orbit3 40s linear infinite;
-    }
-
-    @keyframes rotate {
-      from { transform: translate(-50%, -50%) rotate(0deg); }
-      to { transform: translate(-50%, -50%) rotate(360deg); }
-    }
-
-    @keyframes orbit1 {
-      from { transform: rotate(0deg) translateX(150px) rotate(0deg); }
-      to { transform: rotate(360deg) translateX(150px) rotate(-360deg); }
-    }
-
-    @keyframes orbit2 {
-      from { transform: rotate(0deg) translateX(225px) rotate(0deg); }
-      to { transform: rotate(360deg) translateX(225px) rotate(-360deg); }
-    }
-
-    @keyframes orbit3 {
-      from { transform: rotate(0deg) translateX(300px) rotate(0deg); }
-      to { transform: rotate(360deg) translateX(300px) rotate(-360deg); }
-    }
-
-    .center-glow {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 80px;
-      height: 80px;
-      background: radial-gradient(circle, rgba(234, 179, 8, 0.3) 0%, transparent 70%);
-      border-radius: 50%;
-      filter: blur(20px);
-    }
-
-    .grid-overlay {
-      position: absolute;
-      inset: 0;
-      background-image: 
-        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
-      background-size: 80px 80px;
-      mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 30%, transparent 100%);
-      pointer-events: none;
-    }
-
-    [data-theme="light"] .orbit-ring-1 { border-color: rgba(234, 179, 8, 0.25); }
-    [data-theme="light"] .orbit-ring-2 { border-color: rgba(168, 85, 247, 0.18); }
-    [data-theme="light"] .orbit-ring-3 { border-color: rgba(234, 179, 8, 0.12); }
-    [data-theme="light"] .center-glow { background: radial-gradient(circle, rgba(234, 179, 8, 0.15) 0%, transparent 70%); }
-
-    [data-theme="light"] .grid-overlay {
-      background-image: 
-        linear-gradient(rgba(0,0,0,0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,0,0,0.025) 1px, transparent 1px);
+      .mobile-nav-overlay {
+        display: block;
+      }
     }
 
     .hero-content {
       position: relative;
       z-index: 1;
-    }
-
-    @media (max-width: 1200px) {
-      .orbit-system {
-        right: -15%;
-        width: 500px;
-        height: 500px;
-      }
-      .orbit-ring-1 { width: 200px; height: 200px; }
-      .orbit-ring-2 { width: 320px; height: 320px; }
-      .orbit-ring-3 { width: 440px; height: 440px; }
-    }
-
-    @media (max-width: 768px) {
-      .orbit-system {
-        top: 10%;
-        right: 50%;
-        transform: translate(50%, 0);
-        width: 350px;
-        height: 350px;
-        opacity: 0.5;
-      }
     }
   </style>
 </head>
@@ -5129,31 +5058,28 @@
       <a href="#pricing" class="tab-btn">Pricing</a>
       <a href="https://ables.ai/login" class="tab-btn">Login</a>
     </nav>
+    <button class="hamburger" id="hamburgerBtn">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
   </header>
 
-  <!-- Sticky CTA Header -->
-  <div class="sticky-cta" id="stickyCta">
-    <span class="sticky-cta-text">Ready to close deals <strong>3x faster</strong>?</span>
-    <a href="https://ables.ai/signup" class="sticky-cta-btn">Start Free Trial</a>
-  </div>
+  <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+  <nav class="mobile-nav" id="mobileNav">
+    <button class="tab-btn" id="mobileModelBtn">Model</button>
+    <a href="https://ables.ai/search.html" class="tab-btn">AI Search<span class="api-badge">API</span></a>
+    <a href="https://ables.ai/calculator.html" class="tab-btn">Calculator<span class="lite-badge">Lite</span></a>
+    <a href="https://ables.ai/toolbox.html" class="tab-btn">Toolbox<span class="free-badge">Free</span></a>
+    <a href="#pricing" class="tab-btn">Pricing</a>
+    <a href="https://ables.ai/login" class="tab-btn">Login</a>
+  </nav>
+
+  <!-- Background Effects -->
+  <div class="bg-grid"></div>
 
   <!-- Hero Section -->
   <section class="hero">
-    <div class="hero-bg">
-      <div class="orbit-system">
-        <div class="center-glow"></div>
-        <div class="orbit-ring orbit-ring-1"></div>
-        <div class="orbit-ring orbit-ring-2"></div>
-        <div class="orbit-ring orbit-ring-3"></div>
-        <div class="orbit-particle particle-1"></div>
-        <div class="orbit-particle particle-2"></div>
-        <div class="orbit-particle particle-3"></div>
-        <div class="orbit-particle particle-4"></div>
-        <div class="orbit-particle particle-5"></div>
-        <div class="orbit-particle particle-6"></div>
-      </div>
-      <div class="grid-overlay"></div>
-    </div>
     <div class="hero-content">
       <div class="hero-text">
         <div class="hero-label">
@@ -5164,7 +5090,7 @@
           <span class="accent">Operating System</span>
         </h1>
         <p class="hero-desc">
-          Approve in under 45 seconds. AI-powered risk scoring, instant offer building, and seamless merchant checkout — all in one ecosystem.
+          Approve in under 45 seconds. AI-powered risk scoring, instant offer building, and seamless merchant checkout. All in one ecosystem.
         </p>
         <div class="hero-buttons">
           <a href="https://ables.ai/credit-model.html" class="hero-cta">See It In Action</a>
@@ -5290,20 +5216,20 @@
               <div class="preview-header">
                 <span class="view-badge iso">ISO View</span>
                 <span class="header-label">Total Commission</span>
-                <span class="header-amount" id="previewIsoComm">$0</span>
+                <span class="header-amount" id="previewIsoComm">$10,850</span>
                 <div class="header-slider">
-                  <div class="slider-track"><div class="slider-fill iso" style="width: 60%"></div><div class="slider-thumb" style="left: 60%"></div></div>
+                  <div class="slider-track"><div class="slider-fill iso" style="width: 87.5%"></div><div class="slider-thumb" style="left: 87.5%"></div></div>
                 </div>
               </div>
               <div class="preview-stats">
                 <div class="stats-row">
                   <div class="stat-cell">
                     <span class="stat-label">Sell Rate</span>
-                    <span class="stat-value-large purple" id="previewIsoSell">1.28x</span>
+                    <span class="stat-value-large purple" id="previewIsoSell">1.35x</span>
                   </div>
                   <div class="stat-cell">
                     <span class="stat-label">Points</span>
-                    <span class="stat-value-large" id="previewIsoPoints">4.0</span>
+                    <span class="stat-value-large" id="previewIsoPoints">7.0</span>
                   </div>
                 </div>
               </div>
@@ -5374,7 +5300,7 @@
         <div class="expanded-body">
           <div class="slider-group">
             <div class="slider-header"><span class="slider-label">Max Funding Amount</span><span class="slider-value" id="staticFundingValue">$155,000</span></div>
-            <input type="range" class="slider" id="staticFundingSlider" min="25000" max="500000" step="5000" value="155000">
+            <input type="range" class="slider" id="staticFundingSlider" min="25000" max="500000" step="1000" value="155000">
           </div>
           <div class="slider-group">
             <div class="slider-header"><span class="slider-label">Max Term Length</span><span class="slider-value" id="staticTermValue">10 Months</span></div>
@@ -5432,7 +5358,7 @@
         <div class="expanded-body">
           <div class="slider-group">
             <div class="slider-header"><span class="slider-label">Funding Amount</span><span class="slider-value" id="staticIsoAmountValue">$155,000</span></div>
-            <input type="range" class="slider iso-slider" id="staticIsoAmountSlider" min="25000" max="155000" step="5000" value="155000">
+            <input type="range" class="slider iso-slider" id="staticIsoAmountSlider" min="25000" max="155000" step="1000" value="155000">
             <div class="slider-range">
                 <span>$25k</span>
                 <span id="staticIsoMaxAmount">Max: $155k</span>
@@ -5487,7 +5413,7 @@
           <div class="chart-overlay">
              <svg viewBox="0 0 36 36">
                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#222" stroke-width="3" />
-               <path id="staticClientPaybackPath" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#f97316" stroke-width="3" stroke-dasharray="78, 100" />
+               <path id="staticClientPaybackPath" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="78, 100" />
              </svg>
              <div class="chart-text">
                 <div class="chart-sub">Payback</div>
@@ -5500,10 +5426,10 @@
         <div class="expanded-body">
           <div class="slider-group">
             <div class="slider-header"><span class="slider-label">How Much Do You Need?</span><span class="slider-value" id="staticClientFundingValue">$155,000</span></div>
-            <input type="range" class="slider client-slider" id="staticClientFundingSlider" min="25000" max="155000" step="5000" value="155000">
+            <input type="range" class="slider client-slider" id="staticClientFundingSlider" min="25000" max="155000" step="1000" value="155000">
             <div class="slider-range">
                 <span>$25k</span>
-                <span id="staticClientMaxLabel" style="color: #f97316;">Max: $155k</span>
+                <span id="staticClientMaxLabel" style="color: #10b981;">Max: $155k</span>
             </div>
           </div>
           <div class="slider-group">
@@ -6840,7 +6766,7 @@
     <div class="final-cta-container">
       <span class="final-cta-badge">Start Free Today</span>
       <h2 class="final-cta-title">Ready to Transform Your<br>Underwriting Process?</h2>
-      <p class="final-cta-subtitle">Join 500+ funding professionals who close deals 3x faster with AblesAI. Start your free 14-day trial today — no credit card required.</p>
+      <p class="final-cta-subtitle">Join 500+ funding professionals who close deals 3x faster with AblesAI. Start your free 14-day trial today. No credit card required.</p>
       <div class="final-cta-buttons">
         <a href="https://ables.ai/signup" class="final-cta-btn primary">Start Free Trial</a>
         <a href="https://calendly.com/ables-ai/demo" class="final-cta-btn secondary">Book a Demo</a>
@@ -7041,7 +6967,7 @@
         <div class="expanded-body">
           <div class="slider-group">
             <div class="slider-header"><span class="slider-label">Max Funding Amount</span><span class="slider-value" id="fundingValue">$155,000</span></div>
-            <input type="range" class="slider" id="fundingSlider" min="25000" max="500000" step="5000" value="155000">
+            <input type="range" class="slider" id="fundingSlider" min="25000" max="500000" step="1000" value="155000">
           </div>
           <div class="slider-group">
             <div class="slider-header"><span class="slider-label">Max Term Length</span><span class="slider-value" id="termValue">10 Months</span></div>
@@ -7074,7 +7000,7 @@
           <div class="chart-overlay">
              <svg viewBox="0 0 36 36">
                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#222" stroke-width="3" />
-               <path id="clientPaybackPath" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#f97316" stroke-width="3" stroke-dasharray="78, 100" />
+               <path id="clientPaybackPath" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="78, 100" />
              </svg>
              <div class="chart-text">
                 <div class="chart-sub">Payback</div>
@@ -7087,16 +7013,16 @@
         <div class="expanded-body">
           <div class="slider-group">
             <div class="slider-header"><span class="slider-label">Amount</span><span class="slider-value" id="clientFundingValue">$155,000</span></div>
-            <input type="range" class="slider client-slider" id="clientFundingSlider" min="25000" step="5000" value="155000">
+            <input type="range" class="slider client-slider" id="clientFundingSlider" min="25000" step="1000" value="155000">
             <div class="slider-range">
                 <span>$25k</span>
-                <span id="clientMaxLabel" style="color: #f97316;">Max: $155k</span>
+                <span id="clientMaxLabel" style="color: #10b981;">Max: $155k</span>
             </div>
           </div>
           <div class="slider-group">
             <div class="slider-header"><span class="slider-label">Term</span><span class="slider-value" id="clientTermValue">10 Months</span></div>
             <input type="range" class="slider" id="clientTermSlider" min="3" max="24" step="1" value="10" disabled style="opacity: 0.5; cursor: not-allowed;">
-            <div class="slider-range" style="justify-content:center; color: #f97316;">(Set by Partner)</div>
+            <div class="slider-range" style="justify-content:center; color: #10b981;">(Set by Partner)</div>
           </div>
           <div class="expanded-results">
             <div class="result-row"><span>Daily Payment</span><span id="clientDaily">$945</span></div>
@@ -7114,20 +7040,20 @@
           <div class="chart-overlay">
              <svg viewBox="0 0 36 36">
                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#222" stroke-width="2" />
-               <path id="isoCommPath" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#a855f7" stroke-width="2" stroke-dasharray="16, 100" />
+               <path id="isoCommPath" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#a855f7" stroke-width="2" stroke-dasharray="19, 100" />
              </svg>
              <div class="chart-text">
                 <div class="chart-sub">Earnings</div>
-                <div class="chart-main" id="isoTotalDisplay">$0</div>
+                <div class="chart-main" id="isoTotalDisplay">$10.9k</div>
              </div>
           </div>
-          <div class="expanded-amount purple" id="isoCommission">$0</div>
+          <div class="expanded-amount purple" id="isoCommission">$10,850</div>
           <div class="expanded-label">Total Commission</div>
         </div>
         <div class="expanded-body">
           <div class="slider-group">
             <div class="slider-header"><span class="slider-label">Funding Amount</span><span class="slider-value" id="isoAmountValue">$155,000</span></div>
-            <input type="range" class="slider iso-slider" id="isoAmountSlider" min="25000" max="155000" step="5000" value="155000">
+            <input type="range" class="slider iso-slider" id="isoAmountSlider" min="25000" max="155000" step="1000" value="155000">
             <div class="slider-range">
                 <span>$25k</span>
                 <span id="isoMaxAmount">Max: $155k</span>
@@ -7149,16 +7075,16 @@
             </div>
           </div>
           <div class="slider-group">
-            <div class="slider-header"><span class="slider-label">Upsell Points</span><span class="slider-value" id="isoUpsellValue">+0 pts</span></div>
-            <input type="range" class="slider iso-slider" id="isoUpsellSlider" min="0" max="8" step="0.5" value="0">
+            <div class="slider-header"><span class="slider-label">Upsell Points</span><span class="slider-value" id="isoUpsellValue">+7 pts</span></div>
+            <input type="range" class="slider iso-slider" id="isoUpsellSlider" min="0" max="8" step="0.5" value="7">
             <div class="slider-range">
                 <span>0 pts</span>
                 <span class="upsell-max-label">Max: 8 pts</span>
             </div>
           </div>
           <div class="expanded-results">
-            <div class="result-row"><span>Sell Rate</span><span id="isoSellRate">1.28x</span></div>
-            <div class="result-row"><span>Points Income</span><span id="isoPoints">$0</span></div>
+            <div class="result-row"><span>Sell Rate</span><span id="isoSellRate">1.35x</span></div>
+            <div class="result-row"><span>Points Income</span><span id="isoPoints">$10,850</span></div>
             <div class="result-row"><span>Net to Merchant</span><span id="isoNet">$151,900</span></div>
           </div>
           <button class="expanded-cta iso-cta" id="carouselIsoCta">Share Proposed Terms with Client</button>
@@ -7217,7 +7143,7 @@
         origFee: 2.0,
         isoAmount: 155000,
         isoTerm: 10,
-        isoUpsellPoints: 0,
+        isoUpsellPoints: 7,
         clientAmount: 155000 
       };
 
@@ -7767,18 +7693,56 @@
         });
       }
 
-      // Sticky CTA Header
-      const stickyCta = document.getElementById('stickyCta');
-      const heroSection = document.querySelector('.hero');
+      // Header scroll effect
+      const mainHeader = document.querySelector('.main-header');
       
-      if (stickyCta && heroSection) {
+      if (mainHeader) {
         window.addEventListener('scroll', () => {
-          const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
-          if (window.scrollY > heroBottom) {
-            stickyCta.classList.add('visible');
+          if (window.scrollY > 50) {
+            mainHeader.classList.add('scrolled');
           } else {
-            stickyCta.classList.remove('visible');
+            mainHeader.classList.remove('scrolled');
           }
+        });
+      }
+
+      // Hamburger Menu
+      const hamburgerBtn = document.getElementById('hamburgerBtn');
+      const mobileNav = document.getElementById('mobileNav');
+      const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+      const mobileModelBtn = document.getElementById('mobileModelBtn');
+
+      function closeMobileNav() {
+        hamburgerBtn.classList.remove('active');
+        mobileNav.classList.remove('active');
+        mobileNavOverlay.classList.remove('active');
+      }
+
+      function toggleMobileNav() {
+        hamburgerBtn.classList.toggle('active');
+        mobileNav.classList.toggle('active');
+        mobileNavOverlay.classList.toggle('active');
+      }
+
+      if (hamburgerBtn && mobileNav) {
+        hamburgerBtn.addEventListener('click', toggleMobileNav);
+
+        // Close mobile nav when clicking overlay
+        if (mobileNavOverlay) {
+          mobileNavOverlay.addEventListener('click', closeMobileNav);
+        }
+
+        // Close mobile nav when clicking a link
+        mobileNav.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', closeMobileNav);
+        });
+      }
+
+      // Mobile Model Button
+      if (mobileModelBtn && modelModal) {
+        mobileModelBtn.addEventListener('click', () => {
+          closeMobileNav();
+          openModel();
         });
       }
 
