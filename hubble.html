@@ -248,6 +248,7 @@
       align-items: center;
       justify-content: center;
       padding: 2rem;
+      padding-bottom: 12vh;
       position: relative;
       z-index: 1;
       transition: all 0.4s ease;
@@ -255,18 +256,31 @@
     .hero-section.hidden { display: none; }
     .hero-logo { width: 100px; height: 100px; margin-bottom: 1.5rem; }
     .hero-logo svg { width: 100%; height: 100%; }
-    .hero-title { font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 700; letter-spacing: -2px; text-align: center; margin: 0; }
-    .hero-title .hubble { font-style: normal; color: var(--accent); }
+    .hero-title { font-size: clamp(2.75rem, 5.5vw, 4rem); font-weight: 700; letter-spacing: -2px; text-align: center; margin: 0; }
+    .hero-title .hubble { 
+      font-style: normal; 
+      background: linear-gradient(90deg, #ffffff, #facc15, #eab308, #facc15, #ffffff); 
+      background-size: 200% auto;
+      -webkit-background-clip: text; 
+      -webkit-text-fill-color: transparent; 
+      background-clip: text;
+      animation: gradient-shift 3s ease-in-out infinite;
+    }
+    @keyframes gradient-shift {
+      0% { background-position: 0% center; }
+      50% { background-position: 100% center; }
+      100% { background-position: 0% center; }
+    }
     .hero-subtitle { font-size: 1rem; color: var(--text-muted); margin-bottom: 2rem; text-align: center; }
-    .search-box { width: 100%; max-width: 600px; }
+    .search-box { width: 100%; max-width: 650px; }
     .search-input-container {
       display: flex;
       align-items: center;
       background: var(--bg-card);
       border: 1px solid var(--border-primary);
       border-radius: 50px;
-      padding: 6px 6px 6px 20px;
-      gap: 10px;
+      padding: 8px 8px 8px 24px;
+      gap: 12px;
       margin-bottom: 1.25rem;
       transition: all 0.2s;
     }
@@ -277,19 +291,19 @@
     .search-input-container input#businessInput {
       flex: 1;
       min-width: 0;
-      padding: 0.6rem 0;
+      padding: 0.75rem 0;
       background: transparent;
       border: none;
       color: var(--text-primary);
-      font-size: 1rem;
+      font-size: 1.1rem;
       font-family: inherit;
     }
     .search-input-container input#businessInput:focus { outline: none; }
     .search-input-container input#businessInput::placeholder { color: var(--text-muted); }
     .search-btn {
-      width: 48px;
-      height: 48px;
-      min-width: 48px;
+      width: 52px;
+      height: 52px;
+      min-width: 52px;
       background: var(--accent);
       border: none;
       border-radius: 50%;
@@ -302,18 +316,18 @@
     }
     .search-btn:hover { transform: scale(1.05); box-shadow: 0 8px 24px rgba(234, 179, 8, 0.4); }
     .search-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-    .search-btn svg { width: 22px; height: 22px; }
-    .model-toggle { display: flex; justify-content: center; gap: 0.75rem; }
+    .search-btn svg { width: 24px; height: 24px; }
+    .model-toggle { display: flex; justify-content: center; gap: 0.6rem; }
     .model-btn {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.6rem 1.25rem;
+      gap: 0.4rem;
+      padding: 0.55rem 1rem;
       background: transparent;
-      border: 2px solid var(--border-primary);
+      border: 1.5px solid var(--border-primary);
       border-radius: 50px;
       color: var(--text-muted);
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       font-weight: 600;
       font-family: inherit;
       cursor: pointer;
@@ -321,7 +335,7 @@
     }
     .model-btn:hover { border-color: var(--text-muted); color: var(--text-primary); }
     .model-btn.active { border-color: var(--accent); color: var(--accent); }
-    .model-badge { padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; }
+    .model-badge { padding: 0.2rem 0.4rem; border-radius: 3px; font-size: 0.6rem; font-weight: 700; }
     .model-badge.flash { background: #22c55e; color: #000; }
     .model-badge.pro { background: #8b5cf6; color: #fff; }
     
@@ -466,8 +480,8 @@
       gap: 16px;
     }
     .loading-spinner {
-      width: 40px;
-      height: 40px;
+      width: 48px;
+      height: 48px;
       border: 3px solid var(--border-primary);
       border-top-color: var(--accent);
       border-radius: 50%;
@@ -475,30 +489,68 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading-state p { color: var(--text-muted); font-size: 0.9rem; }
+    .loading-status {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .loading-status-text {
+      font-size: 0.8rem;
+      color: var(--accent);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+    .loading-progress {
+      width: 200px;
+      height: 3px;
+      background: var(--border-primary);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .loading-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-light));
+      border-radius: 2px;
+      animation: progress 8s ease-in-out infinite;
+    }
+    @keyframes progress {
+      0% { width: 0%; }
+      20% { width: 25%; }
+      50% { width: 60%; }
+      80% { width: 85%; }
+      100% { width: 95%; }
+    }
     .loading-fact {
-      max-width: 400px;
+      max-width: 450px;
       text-align: center;
-      margin-top: 12px;
-      padding: 16px 20px;
+      margin-top: 20px;
+      padding: 20px 24px;
       background: rgba(234, 179, 8, 0.05);
       border: 1px solid rgba(234, 179, 8, 0.15);
       border-radius: 12px;
+      animation: fadeInFact 0.5s ease;
+    }
+    @keyframes fadeInFact {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     .loading-fact-label {
       font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 0.1em;
       color: var(--accent);
-      margin-bottom: 6px;
+      margin-bottom: 10px;
+      font-weight: 600;
     }
     .loading-fact-text {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: var(--text-secondary);
-      line-height: 1.5;
-    }
-    .loading-fact-icon {
-      font-size: 1.5rem;
-      margin-bottom: 8px;
+      line-height: 1.6;
     }
 
     /* DATA STYLES */
@@ -658,6 +710,318 @@
       .intel-tab { padding: 8px 12px; font-size: 0.75rem; }
       .header-nav { display: none; }
       .api-key-input { width: 80px; font-size: 0.8rem; }
+    }
+
+    /* API KEY MODAL */
+    .api-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: #f8f8f8;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      overflow-y: auto;
+      --modal-bg-primary: #f8f8f8;
+      --modal-bg-secondary: #ffffff;
+      --modal-bg-tertiary: #f0f0f0;
+      --modal-bg-card: #ffffff;
+      --modal-text-primary: #18181b;
+      --modal-text-secondary: #52525b;
+      --modal-text-muted: #71717a;
+      --modal-border-primary: #e4e4e7;
+      --modal-border-secondary: #d4d4d8;
+    }
+    .api-modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .api-explainer {
+      background: linear-gradient(180deg, #ffffff 0%, #f8f8f8 100%);
+      border-bottom: 1px solid var(--modal-border-primary);
+      padding: 32px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .api-explainer-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .api-modal-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .api-modal-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .api-modal-icon svg {
+      width: 28px;
+      height: 28px;
+      color: #000;
+    }
+    .api-modal-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #18181b;
+      margin-bottom: 4px;
+    }
+    .api-modal-subtitle {
+      font-size: 0.9rem;
+      color: #71717a;
+    }
+    .api-explainer-content {
+      display: flex;
+      gap: 32px;
+      align-items: flex-start;
+    }
+    .api-steps {
+      flex: 1;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .api-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f0f0f0;
+      padding: 12px 16px;
+      border-radius: 10px;
+      flex: 1;
+      min-width: 180px;
+    }
+    .api-step-num {
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      background: var(--accent);
+      color: #000;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .api-step-text {
+      font-size: 0.85rem;
+      color: #52525b;
+    }
+    .api-step-text a {
+      color: var(--accent-dark);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .api-step-text a:hover {
+      text-decoration: underline;
+    }
+    .api-cta-buttons {
+      display: flex;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .api-modal-btn {
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+    .api-modal-btn.primary {
+      background: var(--accent);
+      border: none;
+      color: #000;
+    }
+    .api-modal-btn.primary:hover {
+      background: var(--accent-light);
+      transform: translateY(-1px);
+    }
+    .api-modal-btn.secondary {
+      background: transparent;
+      border: 1px solid #e4e4e7;
+      color: #52525b;
+    }
+    .api-modal-btn.secondary:hover {
+      border-color: #a1a1aa;
+      color: #18181b;
+    }
+    .api-modal-close {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      width: 40px;
+      height: 40px;
+      background: #f0f0f0;
+      border: 1px solid #e4e4e7;
+      color: #71717a;
+      cursor: pointer;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      z-index: 20;
+    }
+    .api-modal-close:hover {
+      background: #ffffff;
+      color: #18181b;
+      border-color: #a1a1aa;
+    }
+    .demo-results-container {
+      padding: 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .demo-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    
+    /* Force light mode for all demo content */
+    .demo-results-container .intel-tabs {
+      background: #ffffff;
+      border-color: #e4e4e7;
+    }
+    .demo-results-container .intel-tab {
+      color: #71717a;
+      border-color: transparent;
+    }
+    .demo-results-container .intel-tab:hover {
+      color: #18181b;
+      background: #f0f0f0;
+    }
+    .demo-results-container .intel-tab.active {
+      color: var(--accent-dark);
+      border-color: var(--accent);
+      background: rgba(234, 179, 8, 0.1);
+    }
+    .demo-results-container .tab-badge {
+      background: #f0f0f0;
+      color: #52525b;
+    }
+    .demo-results-container .intel-tab.active .tab-badge {
+      background: var(--accent);
+      color: #000;
+    }
+    .demo-results-container .card {
+      background: #ffffff;
+      border-color: #e4e4e7;
+    }
+    .demo-results-container .card-title {
+      color: #18181b;
+      border-color: #e4e4e7;
+    }
+    .demo-results-container .section-box {
+      background: #f8f8f8;
+      border-color: #e4e4e7;
+    }
+    .demo-results-container .section-title {
+      color: #18181b;
+    }
+    .demo-results-container .label {
+      color: #71717a;
+    }
+    .demo-results-container .value {
+      color: #18181b;
+    }
+    .demo-results-container .record-item {
+      border-color: #e4e4e7;
+    }
+    .demo-results-container .record-title {
+      color: #18181b;
+    }
+    .demo-results-container .record-meta {
+      color: #71717a;
+    }
+    .demo-results-container .summary-box {
+      background: linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(234, 179, 8, 0.05));
+      border-color: rgba(234, 179, 8, 0.3);
+    }
+    .demo-results-container .summary-box h4 {
+      color: var(--accent-dark);
+    }
+    .demo-results-container .summary-box p {
+      color: #52525b;
+    }
+    .demo-results-container .risk-banner {
+      border-color: #e4e4e7;
+    }
+    .demo-results-container .risk-info h3 {
+      color: #18181b;
+    }
+    .demo-results-container .risk-info p {
+      color: #71717a;
+    }
+    .demo-results-container .stat-card {
+      background: #ffffff;
+      border-color: #e4e4e7;
+    }
+    .demo-results-container .stat-value {
+      color: #18181b;
+    }
+    .demo-results-container .stat-label {
+      color: #71717a;
+    }
+    .demo-results-container .review-card {
+      background: #ffffff;
+      border-color: #e4e4e7;
+    }
+    .demo-results-container .review-platform {
+      color: #71717a;
+    }
+    .demo-results-container .social-card {
+      background: #ffffff;
+      border-color: #e4e4e7;
+    }
+    .demo-results-container .social-platform {
+      color: #18181b;
+    }
+    .demo-results-container .social-followers {
+      color: #71717a;
+    }
+    .demo-results-container .data-grid > div {
+      background: #ffffff;
+      border-color: #e4e4e7;
+    }
+    
+    @media (max-width: 900px) {
+      .api-explainer-content {
+        flex-direction: column;
+      }
+      .api-cta-buttons {
+        width: 100%;
+      }
+      .api-modal-btn {
+        flex: 1;
+      }
     }
   </style>
 </head>
@@ -889,6 +1253,162 @@
     </div>
   </section>
 
+  <!-- API KEY MODAL WITH DEMO -->
+  <div class="api-modal-overlay" id="apiModal">
+    <button class="api-modal-close" onclick="closeApiModal()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    
+    <div class="api-explainer">
+      <div class="api-explainer-inner">
+        <div class="api-modal-header">
+          <div class="api-modal-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div>
+            <div class="api-modal-title">Get Your Free API Key</div>
+            <div class="api-modal-subtitle">Unlock real AI-powered business intelligence in 30 seconds</div>
+          </div>
+        </div>
+        <div class="api-explainer-content">
+          <div class="api-steps">
+            <div class="api-step">
+              <div class="api-step-num">1</div>
+              <div class="api-step-text">Go to <a href="https://aistudio.google.com/apikey" target="_blank">Google AI Studio</a></div>
+            </div>
+            <div class="api-step">
+              <div class="api-step-num">2</div>
+              <div class="api-step-text">Sign in with Google</div>
+            </div>
+            <div class="api-step">
+              <div class="api-step-num">3</div>
+              <div class="api-step-text">Click Create API Key</div>
+            </div>
+            <div class="api-step">
+              <div class="api-step-num">4</div>
+              <div class="api-step-text">Paste in search bar above</div>
+            </div>
+          </div>
+          <div class="api-cta-buttons">
+            <a href="https://aistudio.google.com/apikey" target="_blank" class="api-modal-btn primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Get Free API Key
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="demo-results-container">
+      <div class="demo-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Demo Preview — Sample data shown below
+      </div>
+      
+      <!-- Demo Intel Tabs -->
+      <div class="intel-tabs" id="demoTabs">
+        <button class="intel-tab active" onclick="switchDemoTab('research')" id="demoTabResearch">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          RESEARCH
+          <span class="tab-badge" id="demoBadgeResearch">85%</span>
+        </button>
+        <button class="intel-tab" onclick="switchDemoTab('background')" id="demoTabBackground">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          BACKGROUND
+          <span class="tab-badge" id="demoBadgeBackground">Low</span>
+        </button>
+        <button class="intel-tab" onclick="switchDemoTab('reviews')" id="demoTabReviews">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          REVIEWS
+          <span class="tab-badge" id="demoBadgeReviews">4.4★</span>
+        </button>
+        <button class="intel-tab" onclick="switchDemoTab('social')" id="demoTabSocial">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          SOCIAL
+          <span class="tab-badge" id="demoBadgeSocial">4 profiles</span>
+        </button>
+        <button class="intel-tab" onclick="switchDemoTab('footprint')" id="demoTabFootprint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          FOOTPRINT
+          <span class="tab-badge" id="demoBadgeFootprint">78/100</span>
+        </button>
+        <button class="intel-tab" onclick="switchDemoTab('debt')" id="demoTabDebt">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          DEBT
+          <span class="tab-badge" id="demoBadgeDebt">2 positions</span>
+        </button>
+      </div>
+      
+      <!-- Demo Panels -->
+      <div class="intel-panel active" id="demoPanelResearch">
+        <div class="card card-accent">
+          <div class="card-title">
+            <span class="card-title-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              Deep Research
+            </span>
+          </div>
+          <div id="demoResearchContent"></div>
+        </div>
+      </div>
+      <div class="intel-panel" id="demoPanelBackground">
+        <div class="card card-accent">
+          <div class="card-title">
+            <span class="card-title-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Background Check
+            </span>
+          </div>
+          <div id="demoBackgroundContent"></div>
+        </div>
+      </div>
+      <div class="intel-panel" id="demoPanelReviews">
+        <div class="card card-accent">
+          <div class="card-title">
+            <span class="card-title-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              Reviews & Ratings
+            </span>
+          </div>
+          <div id="demoReviewsContent"></div>
+        </div>
+      </div>
+      <div class="intel-panel" id="demoPanelSocial">
+        <div class="card card-accent">
+          <div class="card-title">
+            <span class="card-title-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+              Social Presence
+            </span>
+          </div>
+          <div id="demoSocialContent"></div>
+        </div>
+      </div>
+      <div class="intel-panel" id="demoPanelFootprint">
+        <div class="card card-accent">
+          <div class="card-title">
+            <span class="card-title-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              Digital Footprint
+            </span>
+          </div>
+          <div id="demoFootprintContent"></div>
+        </div>
+      </div>
+      <div class="intel-panel" id="demoPanelDebt">
+        <div class="card card-accent">
+          <div class="card-title">
+            <span class="card-title-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              Debt Analysis
+            </span>
+          </div>
+          <div id="demoDebtContent"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <script>
 let currentBusiness = '';
 let selectedModel = 'gemini-3-pro-preview';
@@ -919,9 +1439,21 @@ async function runSearch() {
   if (!input) return;
   currentBusiness = input;
   document.getElementById('businessDisplay').textContent = currentBusiness;
+  
+  const apiKey = getApiKey();
+  
+  // If no API key, show demo mode
+  if (!apiKey) {
+    showDemoMode();
+    return;
+  }
+  
   document.getElementById('heroSection').classList.add('hidden');
   document.getElementById('resultsSection').classList.add('active');
   document.getElementById('orbitSystem').classList.add('dimmed');
+  
+  // Force light mode for results
+  document.body.classList.add('light-mode');
   
   // Reset all panels
   ['Research', 'Background', 'Reviews', 'Social', 'Footprint', 'Debt'].forEach(t => {
@@ -942,6 +1474,7 @@ function newSearch() {
   document.getElementById('heroSection').classList.remove('hidden');
   document.getElementById('resultsSection').classList.remove('active');
   document.getElementById('orbitSystem').classList.remove('dimmed');
+  document.body.classList.remove('light-mode');
   document.getElementById('businessInput').value = '';
   currentBusiness = '';
   researchData = backgroundData = footprintData = debtData = reviewsData = socialData = null;
@@ -988,43 +1521,151 @@ function safeJson(text) {
 }
 
 const loadingFacts = [
-  { icon: "🔍", text: "The average business has 3-5 active UCC filings at any given time." },
-  { icon: "📊", text: "87% of consumers read online reviews before visiting a local business." },
-  { icon: "⚖️", text: "Over 40 million lawsuits are filed in the US each year." },
-  { icon: "🏛️", text: "UCC filings remain on record for 5 years unless terminated." },
-  { icon: "💳", text: "The MCA industry has grown to over $20 billion annually." },
-  { icon: "🌐", text: "A business's digital footprint affects 93% of buying decisions." },
-  { icon: "📈", text: "Companies with strong social presence see 32% more revenue growth." },
-  { icon: "🔒", text: "SSL certificates became a Google ranking factor in 2014." },
-  { icon: "⭐", text: "A one-star increase in Yelp rating leads to 5-9% revenue increase." },
-  { icon: "🏢", text: "The average small business has $195,000 in debt." },
-  { icon: "📱", text: "78% of local searches on mobile result in an offline purchase." },
-  { icon: "💼", text: "LinkedIn has over 900 million members across 200 countries." },
-  { icon: "🔎", text: "Google processes over 8.5 billion searches per day." },
-  { icon: "📝", text: "Tax liens can remain on credit reports for up to 7 years." },
-  { icon: "🤝", text: "B2B buyers consume 13 pieces of content before making a decision." }
+  "UCC filings remain public record for 5 years and reveal a company's secured creditors and collateral.",
+  "Secretary of State databases contain entity formation dates, registered agents, and good standing status.",
+  "A single negative review can cost a business up to 30 customers, making reputation monitoring critical.",
+  "The average B2B buyer consumes 13 pieces of content before making a purchasing decision.",
+  "Companies with consistent NAP (Name, Address, Phone) data rank 50% higher in local search results.",
+  "Federal tax liens filed after 2018 no longer appear on credit reports but remain in public court records.",
+  "Judgment liens can attach to all real property owned by a debtor in the county where filed.",
+  "Domain age is a minor ranking factor—sites over 3 years old tend to have more search authority.",
+  "PACER (Public Access to Court Electronic Records) contains over 1 billion federal court documents.",
+  "The MCA (Merchant Cash Advance) industry processes over $20 billion annually, often without traditional credit checks.",
+  "Businesses with complete Google Business Profiles receive 7x more clicks than those with incomplete listings.",
+  "SSL certificates became a Google ranking signal in 2014, making HTTPS essential for SEO.",
+  "Corporate subsidiaries and DBAs (Doing Business As) often reveal hidden ownership structures.",
+  "A one-star increase on Yelp correlates with a 5-9% increase in revenue for restaurants.",
+  "LinkedIn Sales Navigator data shows decision-makers change roles every 2.8 years on average.",
+  "Stacked debt positions—multiple MCAs or loans—are a leading indicator of business financial distress.",
+  "The BBB maintains complaint records for 3 years and business reviews for the life of the accreditation.",
+  "Cross-referencing social media employee counts with LinkedIn data reveals hiring or layoff trends.",
+  "Court records often contain financial details like revenue figures disclosed during litigation.",
+  "Trademark filings in USPTO can reveal upcoming product launches and brand expansion plans."
 ];
+
+const loadingStatuses = {
+  research: [
+    "Searching corporate databases...",
+    "Analyzing company structure...",
+    "Finding key personnel...",
+    "Gathering competitor intel...",
+    "Compiling financial indicators..."
+  ],
+  background: [
+    "Searching state filings...",
+    "Checking UCC records...",
+    "Scanning court databases...",
+    "Reviewing lien filings...",
+    "Analyzing compliance history..."
+  ],
+  reviews: [
+    "Scanning review platforms...",
+    "Analyzing sentiment patterns...",
+    "Aggregating ratings data...",
+    "Identifying review trends...",
+    "Calculating reputation score..."
+  ],
+  social: [
+    "Finding social profiles...",
+    "Analyzing engagement metrics...",
+    "Tracking follower growth...",
+    "Evaluating content strategy...",
+    "Measuring social authority..."
+  ],
+  footprint: [
+    "Analyzing web presence...",
+    "Checking domain authority...",
+    "Scanning technology stack...",
+    "Reviewing SEO signals...",
+    "Mapping digital assets..."
+  ],
+  debt: [
+    "Searching financing records...",
+    "Analyzing debt structure...",
+    "Checking MCA positions...",
+    "Reviewing payment history...",
+    "Calculating exposure levels..."
+  ]
+};
+
+let currentFactIndex = 0;
+let factInterval = null;
 
 function getRandomFact() {
   return loadingFacts[Math.floor(Math.random() * loadingFacts.length)];
 }
 
+function cycleFacts(containerId) {
+  const factText = document.querySelector(`#${containerId} .loading-fact-text`);
+  if (factText) {
+    currentFactIndex = (currentFactIndex + 1) % loadingFacts.length;
+    factText.style.opacity = '0';
+    setTimeout(() => {
+      factText.textContent = loadingFacts[currentFactIndex];
+      factText.style.opacity = '1';
+    }, 300);
+  }
+}
+
 function setLoading(section, msg) {
   const fact = getRandomFact();
-  document.getElementById(section + 'Content').innerHTML = `
+  const statuses = loadingStatuses[section] || loadingStatuses.research;
+  const containerId = section + 'Content';
+  
+  document.getElementById(containerId).innerHTML = `
     <div class="loading-state">
       <div class="loading-spinner"></div>
       <p>${msg}</p>
+      <div class="loading-status">
+        <div class="loading-status-text" id="${section}Status">${statuses[0]}</div>
+        <div class="loading-progress"><div class="loading-progress-bar"></div></div>
+      </div>
       <div class="loading-fact">
-        <div class="loading-fact-icon">${fact.icon}</div>
-        <div class="loading-fact-label">Did you know?</div>
-        <div class="loading-fact-text">${fact.text}</div>
+        <div class="loading-fact-label">While you wait</div>
+        <div class="loading-fact-text" style="transition: opacity 0.3s ease;">${fact}</div>
       </div>
     </div>`;
+  
+  // Cycle through status messages
+  let statusIndex = 0;
+  const statusInterval = setInterval(() => {
+    statusIndex = (statusIndex + 1) % statuses.length;
+    const statusEl = document.getElementById(section + 'Status');
+    if (statusEl) {
+      statusEl.textContent = statuses[statusIndex];
+    } else {
+      clearInterval(statusInterval);
+    }
+  }, 3000);
+  
+  // Cycle through facts every 8 seconds
+  const factCycleInterval = setInterval(() => {
+    cycleFacts(containerId);
+  }, 8000);
+  
+  // Store interval IDs to clear them later
+  if (!window.loadingIntervals) window.loadingIntervals = {};
+  if (window.loadingIntervals[section]) {
+    clearInterval(window.loadingIntervals[section].status);
+    clearInterval(window.loadingIntervals[section].fact);
+  }
+  window.loadingIntervals[section] = { status: statusInterval, fact: factCycleInterval };
 }
 
 function setEmpty(section, msg) {
+  // Clear any running intervals
+  if (window.loadingIntervals && window.loadingIntervals[section]) {
+    clearInterval(window.loadingIntervals[section].status);
+    clearInterval(window.loadingIntervals[section].fact);
+  }
   document.getElementById(section + 'Content').innerHTML = `<div class="empty-state"><p>${msg}</p></div>`;
+}
+
+function clearLoadingInterval(section) {
+  if (window.loadingIntervals && window.loadingIntervals[section]) {
+    clearInterval(window.loadingIntervals[section].status);
+    clearInterval(window.loadingIntervals[section].fact);
+  }
 }
 
 // ==================== RESEARCH ====================
@@ -1072,6 +1713,7 @@ async function runResearchAuto() {
 }
 
 function renderResearchSection(d) {
+  clearLoadingInterval('research');
   let h = `<div class="risk-banner low"><div class="risk-badge"><span>${d.confidence_score || 0}</span></div><div class="risk-info"><h3>Confidence Score: ${d.confidence_score || 0}%</h3><p>Data reliability assessment</p></div></div>`;
   
   h += `<div class="section-box"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Company Overview</div><div class="data-grid">`;
@@ -1161,6 +1803,7 @@ async function runBackgroundAuto() {
 }
 
 function renderBackgroundSection(d) {
+  clearLoadingInterval('background');
   const score = d.risk_score || 0;
   const cls = score <= 30 ? 'low' : score <= 60 ? 'medium' : 'high';
   let h = `<div class="risk-banner ${cls}"><div class="risk-badge"><span>${score}</span></div><div class="risk-info"><h3>Risk Score: ${score}/100</h3><p>${cls.charAt(0).toUpperCase() + cls.slice(1)} risk assessment</p></div></div>`;
@@ -1246,6 +1889,7 @@ async function runReviewsAuto() {
 }
 
 function renderReviewsSection(d) {
+  clearLoadingInterval('reviews');
   const avg = d.average_rating || 0;
   const cls = avg >= 4 ? 'low' : avg >= 3 ? 'medium' : 'high';
   let h = `<div class="risk-banner ${cls}"><div class="risk-badge"><span>${avg.toFixed(1)}</span></div><div class="risk-info"><h3>Average Rating: ${avg.toFixed(1)}/5</h3><p>${d.total_reviews || 0} total reviews - ${d.overall_sentiment || 'Mixed'} sentiment</p></div></div>`;
@@ -1354,6 +1998,7 @@ async function runSocialAuto() {
 }
 
 function renderSocialSection(d) {
+  clearLoadingInterval('social');
   const score = d.social_score || 0;
   const cls = score >= 70 ? 'low' : score >= 40 ? 'medium' : 'high';
   let h = `<div class="risk-banner ${cls}"><div class="risk-badge"><span>${score}</span></div><div class="risk-info"><h3>Social Score: ${score}/100</h3><p>Social media presence strength</p></div></div>`;
@@ -1423,6 +2068,7 @@ async function runFootprintAuto() {
 }
 
 function renderFootprintSection(d) {
+  clearLoadingInterval('footprint');
   const score = d.digital_score || 0;
   const cls = score >= 70 ? 'low' : score >= 40 ? 'medium' : 'high';
   let h = `<div class="risk-banner ${cls}"><div class="risk-badge"><span>${score}</span></div><div class="risk-info"><h3>Digital Score: ${score}/100</h3><p>Online presence strength</p></div></div>`;
@@ -1494,6 +2140,7 @@ async function runDebtAuto() {
 }
 
 function renderDebtSection(d) {
+  clearLoadingInterval('debt');
   const risk = (d.risk_level || 'medium').toLowerCase();
   const letter = risk === 'low' ? 'L' : risk === 'high' ? 'H' : 'M';
   let h = `<div class="risk-banner ${risk}"><div class="risk-badge"><span>${letter}</span></div><div class="risk-info"><h3>${d.risk_level || 'Medium'} Debt Risk</h3><p>${d.active_positions || 0} active positions</p></div></div>`;
@@ -1539,6 +2186,257 @@ function showToast(title, msg) {
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 3000);
 }
+
+// ==================== API KEY MODAL & DEMO MODE ====================
+function showApiModal() {
+  document.getElementById('apiModal').classList.add('active');
+  loadDemoData();
+}
+
+function closeApiModal() {
+  document.getElementById('apiModal').classList.remove('active');
+}
+
+function switchDemoTab(tab) {
+  document.querySelectorAll('#demoTabs .intel-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.demo-results-container .intel-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('demoTab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+  document.getElementById('demoPanel' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+}
+
+function showDemoMode() {
+  showApiModal();
+}
+
+function renderDemoResearch(d) {
+  let h = `<div class="risk-banner low"><div class="risk-badge"><span>${d.confidence_score || 0}</span></div><div class="risk-info"><h3>Confidence Score: ${d.confidence_score || 0}%</h3><p>Data reliability assessment</p></div></div>`;
+  
+  h += `<div class="section-box"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Company Overview</div><div class="data-grid">`;
+  if (d.company_name) h += `<div><div class="label">Company Name</div><div class="value">${d.company_name}</div></div>`;
+  if (d.industry) h += `<div><div class="label">Industry</div><div class="value">${d.industry}</div></div>`;
+  if (d.founded) h += `<div><div class="label">Founded</div><div class="value">${d.founded}</div></div>`;
+  if (d.headquarters) h += `<div><div class="label">Headquarters</div><div class="value">${d.headquarters}</div></div>`;
+  if (d.website) h += `<div><div class="label">Website</div><div class="value" style="color:var(--accent-blue)">${d.website}</div></div>`;
+  if (d.employees) h += `<div><div class="label">Employees</div><div class="value">${d.employees}</div></div>`;
+  if (d.annual_revenue) h += `<div><div class="label">Annual Revenue</div><div class="value">${d.annual_revenue}</div></div>`;
+  h += `</div></div>`;
+  
+  if (d.key_people?.length) {
+    h += `<div class="section-box"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Key People</div>`;
+    d.key_people.forEach(p => {
+      h += `<div class="record-item"><div class="record-header"><span class="record-title">${p.name}</span><span class="status-badge good">${p.title}</span></div></div>`;
+    });
+    h += `</div>`;
+  }
+  
+  if (d.summary) h += `<div class="summary-box"><h4>Summary</h4><p>${d.summary}</p></div>`;
+  document.getElementById('demoResearchContent').innerHTML = h;
+}
+
+function renderDemoBackground(d) {
+  const risk = (d.risk_score || 'low').toLowerCase();
+  let h = `<div class="risk-banner ${risk}"><div class="risk-badge"><span>${risk.charAt(0).toUpperCase()}</span></div><div class="risk-info"><h3>${d.risk_score || 'Low'} Risk</h3><p>Legal & compliance assessment</p></div></div>`;
+  
+  if (d.state_registration) {
+    h += `<div class="section-box"><div class="section-title">State Registration</div><div class="data-grid">`;
+    h += `<div><div class="label">State</div><div class="value">${d.state_registration.state}</div></div>`;
+    h += `<div><div class="label">Status</div><div class="value">${d.state_registration.status}</div></div>`;
+    h += `<div><div class="label">Filed Date</div><div class="value">${d.state_registration.filed_date}</div></div>`;
+    h += `<div><div class="label">Entity Type</div><div class="value">${d.state_registration.entity_type}</div></div>`;
+    h += `</div></div>`;
+  }
+  
+  if (d.ucc_filings?.length) {
+    h += `<div class="section-box"><div class="section-title">UCC Filings (${d.ucc_filings.length})</div>`;
+    d.ucc_filings.forEach(f => {
+      h += `<div class="record-item"><div class="record-header"><span class="record-title">${f.secured_party}</span><span class="status-badge ${f.status === 'Active' ? 'active' : 'good'}">${f.status}</span></div><div class="record-meta">Filing: ${f.filing_number} | Filed: ${f.filed_date}</div></div>`;
+    });
+    h += `</div>`;
+  }
+  
+  if (d.summary) h += `<div class="summary-box"><h4>Assessment</h4><p>${d.summary}</p></div>`;
+  document.getElementById('demoBackgroundContent').innerHTML = h;
+}
+
+function renderDemoReviews(d) {
+  const rating = d.overall_rating || 0;
+  const cls = rating >= 4 ? 'good' : rating >= 3 ? 'ok' : 'bad';
+  let h = `<div class="review-grid">`;
+  d.platforms?.forEach(p => {
+    h += `<div class="review-card"><div class="review-platform">${p.name}</div><div class="review-rating ${cls}">${p.rating}</div><div class="review-count">${p.count} reviews</div></div>`;
+  });
+  h += `</div>`;
+  
+  h += `<div class="stats-row"><div class="stat-card"><div class="stat-value">${d.overall_rating}</div><div class="stat-label">Overall Rating</div></div><div class="stat-card"><div class="stat-value">${d.total_reviews}</div><div class="stat-label">Total Reviews</div></div><div class="stat-card"><div class="stat-value">${d.sentiment}</div><div class="stat-label">Sentiment</div></div></div>`;
+  
+  if (d.summary) h += `<div class="summary-box"><h4>Summary</h4><p>${d.summary}</p></div>`;
+  document.getElementById('demoReviewsContent').innerHTML = h;
+}
+
+function renderDemoSocial(d) {
+  const score = d.social_score || 0;
+  const cls = score >= 70 ? 'low' : score >= 40 ? 'medium' : 'high';
+  let h = `<div class="risk-banner ${cls}"><div class="risk-badge"><span>${score}</span></div><div class="risk-info"><h3>Social Score: ${score}/100</h3><p>Social media presence strength</p></div></div>`;
+  
+  h += `<div class="stats-row"><div class="stat-card"><div class="stat-value">${d.profiles?.length || 0}</div><div class="stat-label">Active Profiles</div></div><div class="stat-card"><div class="stat-value">${d.total_followers || 'N/A'}</div><div class="stat-label">Total Followers</div></div><div class="stat-card"><div class="stat-value">${d.most_active_platform || 'N/A'}</div><div class="stat-label">Most Active</div></div></div>`;
+  
+  if (d.profiles?.length) {
+    h += `<div class="section-box"><div class="section-title">Social Profiles</div><div class="social-grid">`;
+    d.profiles.forEach(p => {
+      h += `<div class="social-card"><div class="social-platform">${p.platform} ${p.verified ? '<span style="color:var(--accent-blue);">✓</span>' : ''}</div><div class="social-followers">${p.followers || p.subscribers || 'N/A'} followers</div></div>`;
+    });
+    h += `</div></div>`;
+  }
+  
+  if (d.summary) h += `<div class="summary-box"><h4>Summary</h4><p>${d.summary}</p></div>`;
+  document.getElementById('demoSocialContent').innerHTML = h;
+}
+
+function renderDemoFootprint(d) {
+  const score = d.digital_score || 0;
+  const cls = score >= 70 ? 'low' : score >= 40 ? 'medium' : 'high';
+  let h = `<div class="risk-banner ${cls}"><div class="risk-badge"><span>${score}</span></div><div class="risk-info"><h3>Digital Score: ${score}/100</h3><p>Online presence strength</p></div></div>`;
+  
+  if (d.web_presence) {
+    h += `<div class="section-box"><div class="section-title">Web Presence</div><div class="data-grid" style="grid-template-columns:1fr 1fr;">`;
+    if (d.web_presence.website) h += `<div><div class="label">Website</div><div class="value" style="color:var(--accent-blue)">${d.web_presence.website}</div></div>`;
+    if (d.web_presence.domain_age) h += `<div><div class="label">Domain Age</div><div class="value">${d.web_presence.domain_age}</div></div>`;
+    if (d.web_presence.ssl_status) h += `<div><div class="label">SSL</div><div class="value">${d.web_presence.ssl_status}</div></div>`;
+    if (d.web_presence.seo_visibility) h += `<div><div class="label">SEO</div><div class="value">${d.web_presence.seo_visibility}</div></div>`;
+    if (d.web_presence.traffic_estimate) h += `<div><div class="label">Traffic</div><div class="value">${d.web_presence.traffic_estimate}</div></div>`;
+    if (d.web_presence.technologies?.length) h += `<div style="grid-column:span 2;"><div class="label">Technologies</div><div class="value">${d.web_presence.technologies.join(', ')}</div></div>`;
+    h += `</div></div>`;
+  }
+  
+  if (d.summary) h += `<div class="summary-box"><h4>Assessment</h4><p>${d.summary}</p></div>`;
+  document.getElementById('demoFootprintContent').innerHTML = h;
+}
+
+function renderDemoDebt(d) {
+  const risk = (d.risk_level || 'low').toLowerCase();
+  const letter = risk === 'low' ? 'L' : risk === 'high' ? 'H' : 'M';
+  let h = `<div class="risk-banner ${risk}"><div class="risk-badge"><span>${letter}</span></div><div class="risk-info"><h3>${d.risk_level || 'Low'} Debt Risk</h3><p>${d.active_positions || 0} active positions</p></div></div>`;
+  
+  h += `<div class="stats-row"><div class="stat-card"><div class="stat-value">${d.active_positions || 0}</div><div class="stat-label">Positions</div></div><div class="stat-card"><div class="stat-value">${d.estimated_total_debt || '$0'}</div><div class="stat-label">Est. Total Debt</div></div><div class="stat-card"><div class="stat-value">${d.estimated_monthly_obligations || '$0'}</div><div class="stat-label">Monthly Obligations</div></div></div>`;
+  
+  if (d.term_loans?.length) {
+    h += `<div class="section-box"><div class="section-title">Term Loans (${d.term_loans.length})</div>`;
+    d.term_loans.forEach(i => {
+      h += `<div class="record-item"><div class="record-header"><span class="record-title">${i.lender}</span><span class="status-badge active">${i.status}</span></div><div class="record-meta">Original: ${i.original_amount} | Payment: ${i.monthly_payment}</div></div>`;
+    });
+    h += `</div>`;
+  }
+  
+  if (d.lines_of_credit?.length) {
+    h += `<div class="section-box"><div class="section-title">Lines of Credit (${d.lines_of_credit.length})</div>`;
+    d.lines_of_credit.forEach(i => {
+      h += `<div class="record-item"><div class="record-header"><span class="record-title">${i.lender}</span><span class="status-badge active">${i.status}</span></div><div class="record-meta">Limit: ${i.limit} | Utilization: ${i.utilization}</div></div>`;
+    });
+    h += `</div>`;
+  }
+  
+  if (d.summary) h += `<div class="summary-box"><h4>Assessment</h4><p>${d.summary}</p></div>`;
+  document.getElementById('demoDebtContent').innerHTML = h;
+}
+
+function loadDemoData() {
+  const businessName = currentBusiness || 'Acme Corporation';
+  
+  // Demo Research Data
+  const demoResearch = {
+    company_name: businessName,
+    industry: "Technology / Business Services",
+    founded: "2018",
+    headquarters: "San Francisco, CA",
+    website: "www.example.com",
+    employees: "50-200",
+    annual_revenue: "$5M - $10M (estimated)",
+    key_people: [
+      { name: "John Smith", title: "CEO & Founder" },
+      { name: "Sarah Johnson", title: "COO" },
+      { name: "Mike Chen", title: "CTO" }
+    ],
+    confidence_score: 85,
+    summary: "This is a demo preview showing sample data. To get real AI-powered research on " + businessName + ", please add your free Gemini API key in the search bar."
+  };
+  
+  const demoBackground = {
+    state_registration: { state: "California", status: "Active", filed_date: "2018-03-15", entity_type: "LLC" },
+    ucc_filings: [
+      { filing_number: "DEMO-12345", secured_party: "Sample Bank", filed_date: "2023-06-01", status: "Active" }
+    ],
+    risk_score: "Low",
+    summary: "This is demo data. Real background checks will show actual UCC filings, liens, judgments, and legal records."
+  };
+  
+  const demoReviews = {
+    platforms: [
+      { name: "Google", rating: 4.5, count: 127 },
+      { name: "Yelp", rating: 4.2, count: 45 },
+      { name: "BBB", rating: "A+", count: 8 },
+      { name: "Trustpilot", rating: 4.3, count: 89 }
+    ],
+    overall_rating: 4.4,
+    total_reviews: 269,
+    sentiment: "Positive",
+    summary: "Demo preview showing sample review data. Connect your Gemini API key for real reviews and sentiment analysis."
+  };
+  
+  const demoSocial = {
+    profiles: [
+      { platform: "LinkedIn", followers: "5.2K", verified: true },
+      { platform: "Twitter/X", followers: "12.8K", verified: false },
+      { platform: "Facebook", followers: "8.4K", verified: false },
+      { platform: "Instagram", followers: "3.1K", verified: false }
+    ],
+    total_followers: "29.5K",
+    most_active_platform: "Twitter/X",
+    social_score: 72,
+    summary: "Demo data showing sample social media presence. Add your API key for real social intelligence."
+  };
+  
+  const demoFootprint = {
+    web_presence: {
+      website: "www.example.com",
+      domain_age: "6 years",
+      ssl_status: "Valid",
+      seo_visibility: "Good",
+      traffic_estimate: "10K-50K/month",
+      technologies: ["React", "Node.js", "AWS", "Cloudflare"]
+    },
+    digital_score: 78,
+    summary: "Demo digital footprint data. Connect your API key for real web presence analysis."
+  };
+  
+  const demoDebt = {
+    term_loans: [
+      { lender: "Sample Bank", original_amount: "$250,000", monthly_payment: "$5,200", status: "Active" }
+    ],
+    lines_of_credit: [
+      { lender: "Credit Union", limit: "$100,000", utilization: "45%", status: "Active" }
+    ],
+    active_positions: 2,
+    estimated_total_debt: "$350,000",
+    estimated_monthly_obligations: "$8,500",
+    risk_level: "Low",
+    summary: "Demo debt analysis showing sample financing positions. Add your API key for real debt intelligence."
+  };
+  
+  // Render all demo sections
+  renderDemoResearch(demoResearch);
+  renderDemoBackground(demoBackground);
+  renderDemoReviews(demoReviews);
+  renderDemoSocial(demoSocial);
+  renderDemoFootprint(demoFootprint);
+  renderDemoDebt(demoDebt);
+}
+
+// Close modal when clicking outside
+document.getElementById('apiModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeApiModal();
+  }
+});
 </script>
 </body>
 </html>
