@@ -212,14 +212,14 @@
       align-items: center;
       justify-content: space-between;
       padding: 16px 24px;
-      background: rgba(10, 10, 10, 0.8);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border-primary);
+      background: transparent;
+      backdrop-filter: none;
+      border-bottom: none;
       z-index: 100;
     }
 
     [data-theme="light"] .main-header {
-      background: rgba(255, 255, 255, 0.8);
+      background: transparent;
     }
 
     /* Light mode moon color cycle */
@@ -332,7 +332,7 @@
 
     .tab-btn.active {
       color: var(--accent);
-      background: var(--bg-secondary);
+      background: transparent;
     }
 
     .lite-badge {
@@ -367,7 +367,7 @@
     }
 
     [data-theme="light"] .tab-btn.active {
-      background: rgba(234, 179, 8, 0.15);
+      background: transparent;
       color: #b45309;
     }
 
@@ -457,7 +457,8 @@
       box-shadow: 0 0 0 3px var(--glow-gold);
     }
 
-    .search-input-container input[type="text"] {
+    .search-input-container input[type="text"],
+    .search-input-container input[type="search"] {
       flex: 1;
       min-width: 0;
       padding: 0.75rem 0;
@@ -468,12 +469,20 @@
       font-family: inherit;
     }
 
-    .search-input-container input[type="text"]:focus {
+    .search-input-container input[type="text"]:focus,
+    .search-input-container input[type="search"]:focus {
       outline: none;
     }
 
-    .search-input-container input[type="text"]::placeholder {
+    .search-input-container input[type="text"]::placeholder,
+    .search-input-container input[type="search"]::placeholder {
       color: var(--text-muted);
+    }
+
+    /* Hide search cancel button in webkit */
+    .search-input-container input[type="search"]::-webkit-search-cancel-button {
+      -webkit-appearance: none;
+      appearance: none;
     }
 
     .api-key-inline {
@@ -499,10 +508,16 @@
     .api-key-inline input:-webkit-autofill:focus,
     .search-input-container input:-webkit-autofill,
     .search-input-container input:-webkit-autofill:hover,
-    .search-input-container input:-webkit-autofill:focus {
+    .search-input-container input:-webkit-autofill:focus,
+    .search-input-container input[type="search"]:-webkit-autofill,
+    .search-input-container input[type="search"]:-webkit-autofill:hover,
+    .search-input-container input[type="search"]:-webkit-autofill:focus {
       -webkit-box-shadow: 0 0 0 1000px var(--bg-card) inset !important;
       -webkit-text-fill-color: var(--text-primary) !important;
-      background-color: transparent !important;
+      background-color: var(--bg-card) !important;
+      background: var(--bg-card) !important;
+      caret-color: var(--text-primary) !important;
+      transition: background-color 5000s ease-in-out 0s !important;
     }
 
     .api-key-inline input:focus {
@@ -1106,6 +1121,391 @@
       color: var(--text-muted);
     }
 
+    /* Pong Trigger Button - Inline Centered */
+    .pong-trigger-inline {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      margin: 1.5rem auto 0;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s;
+      opacity: 0.7;
+    }
+
+    .pong-trigger-inline svg {
+      width: 20px;
+      height: 20px;
+      color: var(--text-secondary);
+      transition: color 0.3s;
+    }
+
+    .pong-trigger-inline:hover {
+      opacity: 1;
+      border-color: var(--accent);
+      transform: scale(1.15);
+      box-shadow: 0 4px 20px rgba(234, 179, 8, 0.4);
+    }
+
+    .pong-trigger-inline:hover svg {
+      color: var(--accent);
+    }
+
+    /* Standalone Pong Overlay */
+    .pong-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-primary);
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+
+    .pong-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .pong-overlay canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .pong-ui-standalone {
+      position: absolute;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .pong-title {
+      font-size: 0.8rem;
+      letter-spacing: 0.3em;
+      color: var(--text-muted);
+      opacity: 0.5;
+      margin-bottom: 0.5rem;
+    }
+
+    .pong-score-large {
+      font-size: 4rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+
+    .pong-score-large span:first-child {
+      color: var(--accent);
+    }
+
+    .pong-score-large span:last-child {
+      color: #a855f7;
+    }
+
+    .pong-vs {
+      font-size: 1.5rem;
+      margin: 0 1rem;
+      color: var(--text-muted);
+      opacity: 0.5;
+    }
+
+    .pong-labels {
+      display: flex;
+      justify-content: center;
+      gap: 6rem;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+
+    .pong-controls {
+      position: absolute;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      z-index: 10;
+    }
+
+    .pong-instructions-standalone {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      opacity: 0.6;
+      margin-bottom: 0.5rem;
+    }
+
+    .pong-game-info {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      opacity: 0.4;
+    }
+
+    /* Difficulty Modes */
+    .pong-difficulty {
+      position: absolute;
+      bottom: 30px;
+      left: 30px;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5rem;
+      z-index: 15;
+    }
+
+    .difficulty-label {
+      display: none;
+    }
+
+    .difficulty-btn {
+      padding: 0.5rem 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-width: 90px;
+      text-align: center;
+    }
+
+    .difficulty-btn:hover {
+      border-color: var(--text-secondary);
+      color: var(--text-primary);
+    }
+
+    .difficulty-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(234, 179, 8, 0.1);
+    }
+
+    .difficulty-btn.easy { --diff-color: #22c55e; }
+    .difficulty-btn.pro { --diff-color: #eab308; }
+    .difficulty-btn.expert { --diff-color: #ef4444; }
+
+    .difficulty-btn.easy.active { border-color: #22c55e; color: #22c55e; background: rgba(34, 197, 94, 0.1); }
+    .difficulty-btn.pro.active { border-color: #eab308; color: #eab308; background: rgba(234, 179, 8, 0.1); }
+    .difficulty-btn.expert.active { border-color: #ef4444; color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+
+    .difficulty-label {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+      text-align: center;
+    }
+
+    .pong-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      transition: all 0.2s;
+    }
+
+    .pong-close svg {
+      width: 20px;
+      height: 20px;
+      color: var(--text-muted);
+    }
+
+    .pong-close:hover {
+      border-color: var(--tier-e);
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .pong-close:hover svg {
+      color: var(--tier-e);
+    }
+
+    /* Leaderboard */
+    .pong-leaderboard {
+      position: absolute;
+      bottom: 30px;
+      right: 30px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 12px;
+      padding: 1rem;
+      min-width: 180px;
+      z-index: 15;
+    }
+
+    .leaderboard-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+      font-weight: 700;
+    }
+
+    .leaderboard-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .leaderboard-rank {
+      width: 20px;
+      height: 20px;
+      background: var(--bg-tertiary);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .leaderboard-rank.gold {
+      background: linear-gradient(135deg, #fcd34d, #eab308);
+      color: #000;
+    }
+
+    .leaderboard-rank.silver {
+      background: linear-gradient(135deg, #e5e7eb, #9ca3af);
+      color: #000;
+    }
+
+    .leaderboard-rank.bronze {
+      background: linear-gradient(135deg, #fdba74, #ea580c);
+      color: #000;
+    }
+
+    .leaderboard-score {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .leaderboard-date {
+      color: var(--text-muted);
+      font-size: 0.65rem;
+      margin-left: auto;
+    }
+
+    .leaderboard-empty {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-style: italic;
+    }
+
+    /* Game Over */
+    .pong-game-over {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 30;
+      background: var(--bg-secondary);
+      border: 2px solid var(--border-primary);
+      border-radius: 20px;
+      padding: 2rem 3rem;
+      display: none;
+    }
+
+    .pong-game-over.active {
+      display: block;
+      animation: popIn 0.3s ease;
+    }
+
+    @keyframes popIn {
+      from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+      to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+
+    .game-over-text {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .game-over-text.win {
+      color: var(--tier-a);
+    }
+
+    .game-over-text.lose {
+      color: var(--tier-e);
+    }
+
+    .game-over-score {
+      font-size: 1.5rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .play-again-btn {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .play-again-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(234, 179, 8, 0.4);
+    }
+
+    @media (max-width: 768px) {
+      .pong-leaderboard {
+        display: none;
+      }
+      .pong-score-large {
+        font-size: 3rem;
+      }
+      .pong-difficulty {
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .difficulty-btn {
+        min-width: 60px;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.65rem;
+      }
+      .pong-controls {
+        bottom: 90px;
+      }
+    }
+
     /* Footer */
     footer {
       text-align: center;
@@ -1129,7 +1529,8 @@
         border-radius: 24px;
         padding: 12px;
       }
-      .search-input-container input[type="text"] {
+      .search-input-container input[type="text"],
+      .search-input-container input[type="search"] {
         width: 100%;
         padding: 0.5rem;
       }
@@ -1368,16 +1769,15 @@
 
       <!-- Title -->
       <h1 class="search-title"><span class="accent">Search</span><span class="white">Ables</span><span class="muted">AI</span></h1>
-      <p class="search-subtitle">Corporate Domicile Router</p>
 
       <!-- Search Box -->
       <div class="search-box">
         <div class="error-message" id="errorMessage"></div>
         
         <div class="search-input-container">
-          <input type="text" id="entityName" placeholder="Company name..." autocomplete="off" spellcheck="false">
+          <input type="search" id="entityName" placeholder="Company name..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other" data-1p-ignore="true" readonly>
           <div class="api-key-inline">
-            <input type="text" id="apiKey" placeholder="API Key" autocomplete="off" spellcheck="false">
+            <input type="text" id="apiKey" placeholder="API Key" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other" data-1p-ignore="true" readonly>
           </div>
           <button class="search-btn-round" id="searchBtn" onclick="analyzeEntity()">
             <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1396,6 +1796,15 @@
             Pro <span class="model-badge pro">3</span>
           </button>
         </div>
+        
+        <!-- Pong Game Button -->
+        <button class="pong-trigger-inline" id="pongTrigger" title="Play Pong">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="6" width="4" height="12" rx="1"/>
+            <circle cx="16" cy="12" r="2"/>
+            <rect x="20" y="8" width="2" height="8" rx="0.5"/>
+          </svg>
+        </button>
       </div>
     </section>
 
@@ -1529,24 +1938,191 @@
     <p>Powered by <a href="https://ables.ai">AblesAI</a> • Entity Intelligence Platform</p>
   </footer>
 
+  <!-- Standalone Pong Overlay -->
+  <div class="pong-overlay" id="pongOverlay">
+    <canvas id="pongCanvasStandalone"></canvas>
+    
+    <div class="pong-ui-standalone">
+      <div class="pong-title">PONG</div>
+      <div class="pong-score-large">
+        <span id="pongPlayerScoreStandalone">0</span>
+        <span class="pong-vs">vs</span>
+        <span id="pongAiScoreStandalone">0</span>
+      </div>
+      <div class="pong-labels">
+        <span>YOU</span>
+        <span>AI</span>
+      </div>
+    </div>
+    
+    <!-- Difficulty Selector -->
+    <div class="pong-difficulty">
+      <div class="difficulty-label">Difficulty</div>
+      <button class="difficulty-btn easy" data-difficulty="easy">Easy</button>
+      <button class="difficulty-btn pro active" data-difficulty="pro">Pro</button>
+      <button class="difficulty-btn expert" data-difficulty="expert">Expert</button>
+    </div>
+    
+    <div class="pong-controls">
+      <div class="pong-instructions-standalone">
+        <span class="pong-key">W</span><span class="pong-key">S</span> or <span class="pong-key">Mouse</span> to play
+      </div>
+      <div class="pong-game-info">First to <strong>5</strong> wins</div>
+    </div>
+    
+    <div class="pong-leaderboard" id="pongLeaderboard">
+      <div class="leaderboard-title">Leaderboard</div>
+      <div class="leaderboard-list" id="leaderboardList"></div>
+    </div>
+    
+    <button class="pong-close" id="pongClose">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 6L6 18M6 6l12 12"/>
+      </svg>
+    </button>
+    
+    <div class="pong-game-over" id="pongGameOver">
+      <div class="game-over-text" id="gameOverText">You Win!</div>
+      <div class="game-over-score" id="gameOverScore">5 - 3</div>
+      <button class="play-again-btn" id="playAgainBtn">Play Again</button>
+    </div>
+  </div>
+
   <script>
     // ==================== PONG GAME ====================
     let pongCanvas, pongCtx;
     let pongAnimationId = null;
     let pongRunning = false;
+    let standaloneMode = false;
+    let standaloneCanvas, standaloneCtx;
+    let currentDifficulty = 'pro';
+    
+    // Difficulty settings
+    const difficultySettings = {
+      easy: {
+        ballSpeed: 8,
+        ballSpeedMax: 18,
+        ballAccel: 1.03,
+        aiSpeed: 5,
+        aiTracking: 0.08,
+        paddleHeight: 90,
+        spinFactor: 12
+      },
+      pro: {
+        ballSpeed: 12,
+        ballSpeedMax: 28,
+        ballAccel: 1.08,
+        aiSpeed: 9,
+        aiTracking: 0.18,
+        paddleHeight: 70,
+        spinFactor: 18
+      },
+      expert: {
+        ballSpeed: 16,
+        ballSpeedMax: 35,
+        ballAccel: 1.12,
+        aiSpeed: 14,
+        aiTracking: 0.25,
+        paddleHeight: 55,
+        spinFactor: 22
+      }
+    };
     
     // Game state
     const pong = {
-      player: { y: 0, height: 80, width: 12, score: 0 },
-      ai: { y: 0, height: 80, width: 12, score: 0, speed: 6 },
-      ball: { x: 0, y: 0, vx: 8, vy: 5, radius: 10 },
+      player: { y: 0, height: 70, width: 10, score: 0 },
+      ai: { y: 0, height: 70, width: 10, score: 0, speed: 9 },
+      ball: { x: 0, y: 0, vx: 12, vy: 7, radius: 8 },
       keys: { w: false, s: false },
       mouse: { y: null },
-      paddleOffset: 40
+      paddleOffset: 40,
+      winScore: 5
     };
     
-    function initPong() {
-      pongCanvas = document.getElementById('pongCanvas');
+    // Orbiting particles for pong
+    const pongParticles = [
+      { color: 'rgba(234, 179, 8, 0.6)', glow: 'rgba(234, 179, 8, 0.2)', size: 6, orbitRadius: 150, speed: 0.02, angle: 0 },
+      { color: 'rgba(168, 85, 247, 0.6)', glow: 'rgba(168, 85, 247, 0.2)', size: 5, orbitRadius: 200, speed: -0.015, angle: Math.PI * 0.5 },
+      { color: 'rgba(34, 197, 94, 0.6)', glow: 'rgba(34, 197, 94, 0.2)', size: 4, orbitRadius: 120, speed: 0.025, angle: Math.PI },
+      { color: 'rgba(249, 115, 22, 0.6)', glow: 'rgba(249, 115, 22, 0.2)', size: 5, orbitRadius: 180, speed: -0.018, angle: Math.PI * 1.5 },
+      { color: 'rgba(59, 130, 246, 0.6)', glow: 'rgba(59, 130, 246, 0.2)', size: 3, orbitRadius: 250, speed: 0.012, angle: Math.PI * 0.25 },
+      { color: 'rgba(236, 72, 153, 0.6)', glow: 'rgba(236, 72, 153, 0.2)', size: 4, orbitRadius: 220, speed: -0.02, angle: Math.PI * 1.25 }
+    ];
+    
+    function applyDifficulty(difficulty) {
+      const settings = difficultySettings[difficulty];
+      if (!settings) return;
+      
+      currentDifficulty = difficulty;
+      pong.player.height = settings.paddleHeight;
+      pong.ai.height = settings.paddleHeight;
+      pong.ai.speed = settings.aiSpeed;
+      
+      // Update active button
+      document.querySelectorAll('.difficulty-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.difficulty === difficulty);
+      });
+      
+      // Save preference
+      localStorage.setItem('pong_difficulty', difficulty);
+    }
+    
+    // Leaderboard
+    function getLeaderboard() {
+      const stored = localStorage.getItem('pong_leaderboard');
+      return stored ? JSON.parse(stored) : [];
+    }
+    
+    function saveToLeaderboard(playerScore, aiScore) {
+      if (playerScore <= aiScore) return; // Only save wins
+      const leaderboard = getLeaderboard();
+      const entry = {
+        score: `${playerScore}-${aiScore}`,
+        margin: playerScore - aiScore,
+        difficulty: currentDifficulty,
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+      };
+      leaderboard.push(entry);
+      // Sort by difficulty weight then margin
+      const diffWeight = { expert: 3, pro: 2, easy: 1 };
+      leaderboard.sort((a, b) => {
+        const weightA = diffWeight[a.difficulty] || 1;
+        const weightB = diffWeight[b.difficulty] || 1;
+        if (weightA !== weightB) return weightB - weightA;
+        return b.margin - a.margin;
+      });
+      localStorage.setItem('pong_leaderboard', JSON.stringify(leaderboard.slice(0, 10)));
+    }
+    
+    function renderLeaderboard() {
+      const list = document.getElementById('leaderboardList');
+      if (!list) return;
+      const leaderboard = getLeaderboard();
+      
+      if (leaderboard.length === 0) {
+        list.innerHTML = '<div class="leaderboard-empty">No wins yet. Be the first!</div>';
+        return;
+      }
+      
+      const diffColors = { easy: '#22c55e', pro: '#eab308', expert: '#ef4444' };
+      list.innerHTML = leaderboard.slice(0, 5).map((entry, i) => {
+        const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+        const diffColor = diffColors[entry.difficulty] || '#888';
+        const diffLabel = entry.difficulty ? entry.difficulty.charAt(0).toUpperCase() : '';
+        return `
+          <div class="leaderboard-item">
+            <div class="leaderboard-rank ${rankClass}">${i + 1}</div>
+            <div class="leaderboard-score">${entry.score}</div>
+            <span style="color:${diffColor};font-size:0.6rem;font-weight:700;">${diffLabel}</span>
+            <div class="leaderboard-date">${entry.date}</div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    function initPong(canvas) {
+      pongCanvas = canvas || document.getElementById('pongCanvas');
+      if (!pongCanvas) return;
       pongCtx = pongCanvas.getContext('2d');
       resizePong();
       
@@ -1565,15 +2141,29 @@
         if (e.key === 'ArrowDown') pong.keys.s = false;
       });
       
-      // Mouse/touch controls
-      pongCanvas.addEventListener('mousemove', (e) => {
-        pong.mouse.y = e.clientY;
-      });
+      // Mouse/touch controls for loading canvas
+      const loadingCanvas = document.getElementById('pongCanvas');
+      if (loadingCanvas) {
+        loadingCanvas.addEventListener('mousemove', (e) => {
+          if (!standaloneMode) pong.mouse.y = e.clientY;
+        });
+        loadingCanvas.addEventListener('touchmove', (e) => {
+          e.preventDefault();
+          if (!standaloneMode) pong.mouse.y = e.touches[0].clientY;
+        }, { passive: false });
+      }
       
-      pongCanvas.addEventListener('touchmove', (e) => {
-        e.preventDefault();
-        pong.mouse.y = e.touches[0].clientY;
-      }, { passive: false });
+      // Mouse/touch controls for standalone canvas
+      const standaloneCanvasEl = document.getElementById('pongCanvasStandalone');
+      if (standaloneCanvasEl) {
+        standaloneCanvasEl.addEventListener('mousemove', (e) => {
+          if (standaloneMode) pong.mouse.y = e.clientY;
+        });
+        standaloneCanvasEl.addEventListener('touchmove', (e) => {
+          e.preventDefault();
+          if (standaloneMode) pong.mouse.y = e.touches[0].clientY;
+        }, { passive: false });
+      }
       
       window.addEventListener('resize', resizePong);
     }
@@ -1588,23 +2178,30 @@
     }
     
     function resetBall() {
+      const settings = difficultySettings[currentDifficulty];
       pong.ball.x = pongCanvas.width / 2;
       pong.ball.y = pongCanvas.height / 2;
-      pong.ball.vx = (Math.random() > 0.5 ? 1 : -1) * 8;
-      pong.ball.vy = (Math.random() - 0.5) * 10;
+      pong.ball.vx = (Math.random() > 0.5 ? 1 : -1) * settings.ballSpeed;
+      pong.ball.vy = (Math.random() - 0.5) * (settings.ballSpeed * 1.2);
     }
     
     function updatePong() {
       if (!pongRunning) return;
       
+      const settings = difficultySettings[currentDifficulty];
       const w = pongCanvas.width;
       const h = pongCanvas.height;
-      const paddleSpeed = 8;
+      const paddleSpeed = 12;
+      
+      // Update orbiting particles
+      pongParticles.forEach(p => {
+        p.angle += p.speed;
+      });
       
       // Player movement
       if (pong.mouse.y !== null) {
         const targetY = pong.mouse.y - pong.player.height / 2;
-        pong.player.y += (targetY - pong.player.y) * 0.15;
+        pong.player.y += (targetY - pong.player.y) * 0.2;
       } else {
         if (pong.keys.w) pong.player.y -= paddleSpeed;
         if (pong.keys.s) pong.player.y += paddleSpeed;
@@ -1613,13 +2210,19 @@
       // Clamp player paddle
       pong.player.y = Math.max(0, Math.min(h - pong.player.height, pong.player.y));
       
-      // AI movement - follows ball with some delay
+      // AI movement - smarter prediction based on difficulty
       const aiCenter = pong.ai.y + pong.ai.height / 2;
-      const ballCenter = pong.ball.y;
-      const diff = ballCenter - aiCenter;
+      let targetY = pong.ball.y;
       
-      if (Math.abs(diff) > 10) {
-        pong.ai.y += Math.sign(diff) * Math.min(pong.ai.speed, Math.abs(diff) * 0.12);
+      // Predict where ball will be
+      if (pong.ball.vx > 0) {
+        const timeToReach = (w - pong.paddleOffset - pong.ai.width - pong.ball.x) / pong.ball.vx;
+        targetY = pong.ball.y + pong.ball.vy * timeToReach * 0.7;
+      }
+      
+      const diff = targetY - aiCenter;
+      if (Math.abs(diff) > 8) {
+        pong.ai.y += Math.sign(diff) * Math.min(pong.ai.speed, Math.abs(diff) * settings.aiTracking);
       }
       pong.ai.y = Math.max(0, Math.min(h - pong.ai.height, pong.ai.y));
       
@@ -1637,25 +2240,24 @@
       if (pong.ball.x - pong.ball.radius <= pong.paddleOffset + pong.player.width &&
           pong.ball.y >= pong.player.y && pong.ball.y <= pong.player.y + pong.player.height &&
           pong.ball.vx < 0) {
-        pong.ball.vx *= -1.05;
+        pong.ball.vx *= -settings.ballAccel;
         pong.ball.x = pong.paddleOffset + pong.player.width + pong.ball.radius;
-        // Add spin based on where ball hits paddle
         const hitPos = (pong.ball.y - pong.player.y) / pong.player.height;
-        pong.ball.vy = (hitPos - 0.5) * 14;
+        pong.ball.vy = (hitPos - 0.5) * settings.spinFactor;
       }
       
       // AI paddle collision (right side)
       if (pong.ball.x + pong.ball.radius >= w - pong.paddleOffset - pong.ai.width &&
           pong.ball.y >= pong.ai.y && pong.ball.y <= pong.ai.y + pong.ai.height &&
           pong.ball.vx > 0) {
-        pong.ball.vx *= -1.05;
+        pong.ball.vx *= -settings.ballAccel;
         pong.ball.x = w - pong.paddleOffset - pong.ai.width - pong.ball.radius;
         const hitPos = (pong.ball.y - pong.ai.y) / pong.ai.height;
-        pong.ball.vy = (hitPos - 0.5) * 14;
+        pong.ball.vy = (hitPos - 0.5) * settings.spinFactor;
       }
       
       // Limit ball speed
-      const maxSpeed = 22;
+      const maxSpeed = settings.ballSpeedMax;
       pong.ball.vx = Math.sign(pong.ball.vx) * Math.min(Math.abs(pong.ball.vx), maxSpeed);
       pong.ball.vy = Math.sign(pong.ball.vy) * Math.min(Math.abs(pong.ball.vy), maxSpeed);
       
@@ -1663,17 +2265,53 @@
       if (pong.ball.x < 0) {
         pong.ai.score++;
         updatePongScore();
-        resetBall();
+        checkGameOver();
+        if (pongRunning) resetBall();
       } else if (pong.ball.x > w) {
         pong.player.score++;
         updatePongScore();
-        resetBall();
+        checkGameOver();
+        if (pongRunning) resetBall();
+      }
+    }
+    
+    function checkGameOver() {
+      if (!standaloneMode) return;
+      
+      if (pong.player.score >= pong.winScore || pong.ai.score >= pong.winScore) {
+        pongRunning = false;
+        const playerWon = pong.player.score >= pong.winScore;
+        
+        // Save to leaderboard if player won
+        if (playerWon) {
+          saveToLeaderboard(pong.player.score, pong.ai.score);
+          renderLeaderboard();
+        }
+        
+        // Show game over
+        const gameOver = document.getElementById('pongGameOver');
+        const gameOverText = document.getElementById('gameOverText');
+        const gameOverScore = document.getElementById('gameOverScore');
+        
+        gameOverText.textContent = playerWon ? 'You Win!' : 'You Lose!';
+        gameOverText.className = 'game-over-text ' + (playerWon ? 'win' : 'lose');
+        gameOverScore.textContent = `${pong.player.score} - ${pong.ai.score}`;
+        gameOver.classList.add('active');
       }
     }
     
     function updatePongScore() {
-      document.getElementById('pongPlayerScore').textContent = pong.player.score;
-      document.getElementById('pongAiScore').textContent = pong.ai.score;
+      // Loading screen score
+      const playerScore = document.getElementById('pongPlayerScore');
+      const aiScore = document.getElementById('pongAiScore');
+      if (playerScore) playerScore.textContent = pong.player.score;
+      if (aiScore) aiScore.textContent = pong.ai.score;
+      
+      // Standalone score
+      const playerScoreStandalone = document.getElementById('pongPlayerScoreStandalone');
+      const aiScoreStandalone = document.getElementById('pongAiScoreStandalone');
+      if (playerScoreStandalone) playerScoreStandalone.textContent = pong.player.score;
+      if (aiScoreStandalone) aiScoreStandalone.textContent = pong.ai.score;
     }
     
     function roundRect(ctx, x, y, w, h, r) {
@@ -1701,6 +2339,25 @@
       // Clear
       pongCtx.fillStyle = isDark ? '#0a0a0f' : '#f5f5f5';
       pongCtx.fillRect(0, 0, w, h);
+      
+      // Draw orbiting particles (background layer)
+      const centerX = w / 2;
+      const centerY = h / 2;
+      
+      pongParticles.forEach(p => {
+        const x = centerX + Math.cos(p.angle) * p.orbitRadius;
+        const y = centerY + Math.sin(p.angle) * p.orbitRadius;
+        
+        // Glow
+        pongCtx.shadowColor = p.glow;
+        pongCtx.shadowBlur = 8;
+        pongCtx.fillStyle = p.color;
+        pongCtx.beginPath();
+        pongCtx.arc(x, y, p.size, 0, Math.PI * 2);
+        pongCtx.fill();
+      });
+      
+      pongCtx.shadowBlur = 0;
       
       // Center line
       pongCtx.setLineDash([20, 15]);
@@ -1765,8 +2422,102 @@
       }
     }
     
+    // Standalone Pong Mode
+    function openStandalonePong() {
+      standaloneMode = true;
+      const overlay = document.getElementById('pongOverlay');
+      const canvas = document.getElementById('pongCanvasStandalone');
+      
+      pongCanvas = canvas;
+      pongCtx = canvas.getContext('2d');
+      
+      overlay.classList.add('active');
+      
+      // Load saved difficulty or default to pro
+      const savedDifficulty = localStorage.getItem('pong_difficulty') || 'pro';
+      applyDifficulty(savedDifficulty);
+      
+      // Reset game
+      pong.player.score = 0;
+      pong.ai.score = 0;
+      pong.mouse.y = null;
+      document.getElementById('pongGameOver').classList.remove('active');
+      
+      resizePong();
+      updatePongScore();
+      renderLeaderboard();
+      
+      pongRunning = true;
+      pongLoop();
+    }
+    
+    function closeStandalonePong() {
+      standaloneMode = false;
+      pongRunning = false;
+      
+      const overlay = document.getElementById('pongOverlay');
+      overlay.classList.remove('active');
+      
+      // Switch back to loading canvas if it exists
+      const loadingCanvas = document.getElementById('pongCanvas');
+      if (loadingCanvas) {
+        pongCanvas = loadingCanvas;
+        pongCtx = loadingCanvas.getContext('2d');
+      }
+    }
+    
+    function resetStandaloneGame() {
+      // Reapply current difficulty settings
+      applyDifficulty(currentDifficulty);
+      
+      pong.player.score = 0;
+      pong.ai.score = 0;
+      pong.mouse.y = null;
+      document.getElementById('pongGameOver').classList.remove('active');
+      updatePongScore();
+      resizePong();
+      pongRunning = true;
+      pongLoop();
+    }
+    
     // Init pong on load
-    document.addEventListener('DOMContentLoaded', initPong);
+    document.addEventListener('DOMContentLoaded', () => {
+      // Prevent browser autofill by making inputs readonly briefly
+      const entityInput = document.getElementById('entityName');
+      const apiInput = document.getElementById('apiKey');
+      
+      // Remove readonly after a short delay to bypass autofill
+      setTimeout(() => {
+        if (entityInput) entityInput.removeAttribute('readonly');
+        if (apiInput) apiInput.removeAttribute('readonly');
+      }, 150);
+      
+      initPong();
+      
+      // Standalone pong triggers
+      const pongTrigger = document.getElementById('pongTrigger');
+      const pongClose = document.getElementById('pongClose');
+      const playAgainBtn = document.getElementById('playAgainBtn');
+      
+      if (pongTrigger) pongTrigger.addEventListener('click', openStandalonePong);
+      if (pongClose) pongClose.addEventListener('click', closeStandalonePong);
+      if (playAgainBtn) playAgainBtn.addEventListener('click', resetStandaloneGame);
+      
+      // Difficulty buttons
+      document.querySelectorAll('.difficulty-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          applyDifficulty(btn.dataset.difficulty);
+          resetStandaloneGame();
+        });
+      });
+      
+      // ESC to close
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && standaloneMode) {
+          closeStandalonePong();
+        }
+      });
+    });
 
     // ==================== LOADING ANIMATION ====================
     let loadingInterval = null;
