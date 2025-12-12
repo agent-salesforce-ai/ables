@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
   <style>
     :root {
       --bg-primary: #0a0a0a;
@@ -127,9 +128,9 @@
       left: 0;
       right: 0;
       height: 64px;
-      display: flex;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
       align-items: center;
-      justify-content: space-between;
       padding: 0 24px;
       background: rgba(10, 10, 10, 0.9);
       backdrop-filter: blur(12px);
@@ -153,10 +154,35 @@
       letter-spacing: -0.5px;
     }
     .header-logo h1 span { color: var(--text-muted); }
+    .header-center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
     .header-actions {
       display: flex;
       align-items: center;
       gap: 12px;
+    }
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: var(--bg-tertiary);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+    .header-user svg {
+      width: 16px;
+      height: 16px;
+      color: var(--accent);
+    }
+    .header-user span {
+      font-weight: 500;
+      color: var(--text-primary);
     }
     .search-input-wrap {
       display: flex;
@@ -339,7 +365,7 @@
 
     /* SIDEBAR */
     .sidebar {
-      width: 280px;
+      width: 240px;
       flex-shrink: 0;
       background: var(--bg-secondary);
       border-right: 1px solid var(--border-secondary);
@@ -348,14 +374,91 @@
       height: calc(100vh - 64px);
       position: sticky;
       top: 64px;
+      transition: width 0.3s ease, min-width 0.3s ease;
+      position: relative;
     }
     .sidebar.collapsed {
       width: 0;
+      min-width: 0;
       overflow: hidden;
       border-right: none;
     }
+    .sidebar-collapse-btn {
+      position: absolute;
+      top: 50%;
+      right: -12px;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 48px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 0 8px 8px 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      transition: all 0.2s;
+    }
+    .sidebar-collapse-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #000;
+    }
+    .sidebar-collapse-btn svg {
+      width: 14px;
+      height: 14px;
+      transition: transform 0.3s;
+    }
+    .sidebar.collapsed .sidebar-collapse-btn {
+      right: -24px;
+    }
+    .sidebar.collapsed .sidebar-collapse-btn svg {
+      transform: rotate(180deg);
+    }
+    @media (max-width: 900px) {
+      .sidebar {
+        position: fixed;
+        left: 0;
+        top: 64px;
+        z-index: 90;
+        width: 260px;
+        box-shadow: 4px 0 20px rgba(0,0,0,0.3);
+      }
+      .sidebar.collapsed {
+        width: 0;
+        box-shadow: none;
+      }
+      .sidebar-collapse-btn {
+        display: none;
+      }
+      .sidebar-mobile-toggle {
+        display: flex !important;
+      }
+    }
+    .sidebar-mobile-toggle {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      width: 48px;
+      height: 48px;
+      background: var(--accent);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4);
+    }
+    .sidebar-mobile-toggle svg {
+      width: 24px;
+      height: 24px;
+      color: #000;
+    }
     .sidebar-header {
-      padding: 20px;
+      padding: 24px 16px 16px 16px;
       border-bottom: 1px solid var(--border-secondary);
     }
     .sidebar-title {
@@ -412,11 +515,11 @@
     .deal-list {
       flex: 1;
       overflow-y: auto;
-      padding: 8px;
+      padding: 6px;
     }
     .deal-item {
-      padding: 14px;
-      border-radius: 10px;
+      padding: 12px;
+      border-radius: 8px;
       cursor: pointer;
       transition: all 0.2s;
       border-left: 3px solid transparent;
@@ -434,10 +537,10 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     .deal-item-name {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 600;
       color: var(--text-primary);
       white-space: nowrap;
@@ -471,7 +574,7 @@
       text-overflow: ellipsis;
     }
     .sidebar-footer {
-      padding: 16px 20px;
+      padding: 12px 16px;
       border-top: 1px solid var(--border-secondary);
       display: flex;
       justify-content: space-between;
@@ -482,10 +585,10 @@
     .sidebar-footer strong { color: var(--accent); }
     .empty-state {
       text-align: center;
-      padding: 40px 20px;
+      padding: 30px 16px;
       color: var(--text-muted);
     }
-    .empty-state svg { width: 40px; height: 40px; margin-bottom: 12px; opacity: 0.4; }
+    .empty-state svg { width: 36px; height: 36px; margin-bottom: 10px; opacity: 0.4; }
     .empty-state p { font-size: 0.8rem; }
 
     /* MAIN CONTENT */
@@ -505,23 +608,28 @@
       display: none;
     }
     .detail-view.active { display: block; }
-    .metrics-grid {
+    .dashboard-view .metrics-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
+      grid-auto-rows: 1fr;
       gap: 16px;
       margin-bottom: 24px;
     }
-    .metric-card {
+    .dashboard-view .metric-card {
       background: var(--bg-secondary);
       border: 1px solid var(--border-secondary);
       border-radius: 12px;
-      padding: 20px;
+      padding: 24px 20px;
       position: relative;
       overflow: hidden;
       cursor: pointer;
       transition: all 0.3s;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100px;
     }
-    .metric-card::before {
+    .dashboard-view .metric-card::before {
       content: '';
       position: absolute;
       top: 0;
@@ -532,13 +640,13 @@
       opacity: 0;
       transition: opacity 0.3s;
     }
-    .metric-card:hover {
+    .dashboard-view .metric-card:hover {
       transform: translateY(-4px);
       border-color: var(--accent);
       box-shadow: 0 12px 32px rgba(234, 179, 8, 0.12);
     }
-    .metric-card:hover::before { opacity: 1; }
-    .metric-label {
+    .dashboard-view .metric-card:hover::before { opacity: 1; }
+    .dashboard-view .metric-label {
       font-size: 0.65rem;
       font-weight: 700;
       text-transform: uppercase;
@@ -546,8 +654,8 @@
       color: var(--text-muted);
       margin-bottom: 8px;
     }
-    .metric-value { font-size: 1.75rem; font-weight: 700; }
-    .metric-hint { font-size: 0.7rem; color: var(--text-muted); margin-top: 8px; }
+    .dashboard-view .metric-value { font-size: 1.75rem; font-weight: 700; }
+    .dashboard-view .metric-hint { font-size: 0.7rem; color: var(--text-muted); margin-top: 8px; }
     .charts-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -584,6 +692,25 @@
     .chart-title svg { width: 16px; height: 16px; }
     .chart-container { height: 240px; }
 
+    /* AI Suggestion Buttons */
+    .ai-suggestion-btn {
+      padding: 8px 14px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-primary);
+      border-radius: 20px;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .ai-suggestion-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #000;
+      transform: translateY(-2px);
+    }
+
     .back-btn {
       display: inline-flex;
       align-items: center;
@@ -601,41 +728,64 @@
     .back-btn:hover { color: var(--text-primary); }
     .back-btn svg { width: 16px; height: 16px; }
     
-    /* Top Panels Row - Equal Height */
-    .top-panels-row {
+    /* Main Layout with Right Sidebar */
+    .detail-with-sidebar {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 280px;
       gap: 16px;
       align-items: start;
-      margin-bottom: 20px;
     }
     @media (max-width: 1200px) {
-      .top-panels-row { grid-template-columns: 1fr 1fr; }
-      .top-panels-row > *:nth-child(3) { grid-column: span 2; }
+      .detail-with-sidebar { grid-template-columns: 1fr 260px; }
     }
-    @media (max-width: 800px) {
-      .top-panels-row { grid-template-columns: 1fr; }
-      .top-panels-row > * { grid-column: span 1 !important; }
+    @media (max-width: 900px) {
+      .detail-with-sidebar { 
+        grid-template-columns: 1fr;
+      }
+      .right-panels { order: -1; }
+    }
+    
+    /* Right Panels Stack */
+    .right-panels {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: sticky;
+      top: 84px;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+      padding-bottom: 20px;
+      align-self: start;
+    }
+    .right-panels::-webkit-scrollbar {
+      width: 4px;
+    }
+    .right-panels::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .right-panels::-webkit-scrollbar-thumb {
+      background: var(--border-primary);
+      border-radius: 4px;
     }
     
     /* Collapsible Panel */
     .collapsible-panel {
       background: var(--bg-card);
       border: 1px solid var(--border-primary);
-      border-radius: 16px;
+      border-radius: 12px;
       overflow: hidden;
       transition: all 0.3s ease;
     }
     .collapsible-panel.collapsed .panel-body {
       max-height: 0;
-      padding: 0 20px;
+      padding: 0 14px;
       opacity: 0;
       overflow: hidden;
     }
     .collapsible-panel .panel-body {
-      max-height: 2000px;
-      padding: 20px;
-      padding-top: 0;
+      max-height: 1500px;
+      padding: 14px;
+      padding-top: 4px;
       opacity: 1;
       transition: all 0.3s ease;
     }
@@ -643,7 +793,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 20px;
+      padding: 12px 14px;
       cursor: pointer;
       user-select: none;
       border-bottom: 1px solid transparent;
@@ -658,20 +808,20 @@
     .panel-title {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       font-weight: 600;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: var(--accent);
     }
     .panel-title svg {
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
     }
     .panel-toggle {
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
       background: var(--bg-tertiary);
       border: none;
@@ -686,49 +836,60 @@
       color: #000;
     }
     .panel-toggle svg {
-      width: 14px;
-      height: 14px;
+      width: 12px;
+      height: 12px;
       transition: transform 0.3s ease;
     }
     .collapsible-panel.collapsed .panel-toggle svg {
       transform: rotate(-90deg);
     }
     
-    /* Metrics Grid */
-    .metrics-grid {
+    /* Metrics Grid - Compact for sidebar */
+    .right-panels .metrics-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-bottom: 16px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
     }
-    .metric-card {
+    .right-panels .metric-card {
       background: var(--bg-secondary);
-      border-radius: 10px;
-      padding: 14px;
-      text-align: center;
       border: 1px solid var(--border-secondary);
+      border-radius: 8px;
+      padding: 12px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
     }
-    .metric-card.highlight {
-      background: linear-gradient(135deg, rgba(234,179,8,0.15), rgba(234,179,8,0.05));
+    .right-panels .metric-card:hover {
+      border-color: var(--accent);
+      background: var(--bg-tertiary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(234, 179, 8, 0.15);
+    }
+    .right-panels .metric-card.highlight {
+      background: linear-gradient(135deg, var(--accent) 0%, #e6a800 100%);
       border-color: var(--accent);
     }
-    .metric-value {
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: var(--text-primary);
-      line-height: 1;
+    .right-panels .metric-card.highlight .metric-value,
+    .right-panels .metric-card.highlight .metric-label {
+      color: #000;
     }
-    .metric-value.positive { color: var(--tier-a); }
-    .metric-value.negative { color: var(--tier-e); }
-    .metric-value.warning { color: var(--accent); }
-    .metric-label {
-      font-size: 0.65rem;
+    .right-panels .metric-value {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .right-panels .metric-value.positive { color: var(--tier-a); }
+    .right-panels .metric-value.warning { color: var(--accent); }
+    .right-panels .metric-value.negative { color: var(--tier-d); }
+    .right-panels .metric-label {
+      font-size: 0.7rem;
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-top: 6px;
+      letter-spacing: 0.03em;
+      margin-top: 4px;
     }
-    .metric-change {
+    .right-panels .metric-change {
       font-size: 0.7rem;
       margin-top: 4px;
       display: flex;
@@ -736,15 +897,15 @@
       justify-content: center;
       gap: 3px;
     }
-    .metric-change.up { color: var(--tier-a); }
-    .metric-change.down { color: var(--tier-e); }
+    .right-panels .metric-change.up { color: var(--tier-a); }
+    .right-panels .metric-change.down { color: var(--tier-e); }
     
     /* AI Chat Panel */
     .ai-chat-container {
       display: flex;
       flex-direction: column;
       height: 100%;
-      min-height: 300px;
+      min-height: 220px;
     }
     .ai-chat-messages {
       flex: 1;
@@ -752,9 +913,9 @@
       padding: 12px;
       background: var(--bg-secondary);
       border-radius: 10px;
-      margin-bottom: 12px;
-      max-height: 280px;
-      min-height: 200px;
+      margin-bottom: 10px;
+      max-height: 180px;
+      min-height: 120px;
     }
     .ai-message {
       margin-bottom: 12px;
@@ -784,24 +945,24 @@
     }
     .ai-chat-input-row {
       display: flex;
-      gap: 8px;
+      gap: 6px;
     }
     .ai-chat-input {
       flex: 1;
-      padding: 12px 16px;
-      border-radius: 24px;
+      padding: 10px 14px;
+      border-radius: 20px;
       border: 1px solid var(--border-primary);
       background: var(--bg-secondary);
       color: var(--text-primary);
-      font-size: 0.85rem;
+      font-size: 0.8rem;
     }
     .ai-chat-input:focus {
       outline: none;
       border-color: var(--accent);
     }
     .ai-chat-send {
-      width: 44px;
-      height: 44px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       background: var(--accent);
       border: none;
@@ -810,6 +971,7 @@
       align-items: center;
       justify-content: center;
       transition: transform 0.2s, background 0.2s;
+      flex-shrink: 0;
     }
     .ai-chat-send:hover {
       transform: scale(1.05);
@@ -821,8 +983,8 @@
       transform: none;
     }
     .ai-chat-send svg {
-      width: 20px;
-      height: 20px;
+      width: 16px;
+      height: 16px;
       color: #000;
     }
     
@@ -1676,17 +1838,18 @@
       .main-content {
         padding: 12px;
       }
-      .metrics-grid {
+      .dashboard-view .metrics-grid {
         grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 1fr;
         gap: 12px;
       }
       .charts-grid {
         grid-template-columns: 1fr;
       }
-      .metric-card {
+      .dashboard-view .metric-card {
         padding: 14px;
       }
-      .metric-value {
+      .dashboard-view .metric-value {
         font-size: 1.25rem;
       }
       .card {
@@ -1714,7 +1877,7 @@
     }
 
     @media (max-width: 480px) {
-      .metrics-grid {
+      .dashboard-view .metrics-grid {
         grid-template-columns: 1fr;
       }
       .sidebar {
@@ -1803,8 +1966,8 @@
       <img src="https://cdn.brandfetch.io/idnEMoYR3R/w/400/h/400/theme/dark/icon.png?c=1bxid64Mup7aczewSAYMX&t=1757490773610" alt="GREATDANE" style="width: 36px; height: 36px; filter: sepia(1) saturate(5) hue-rotate(10deg) brightness(1.1);">
       <h1>GREAT<span>DANE</span></h1>
     </div>
-    <div class="header-actions">
-      <div class="search-input-wrap" style="width: 280px;">
+    <div class="header-center">
+      <div class="search-input-wrap" style="width: 320px;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" id="entitySearchInput" placeholder="Business name..." autocomplete="off" style="width: 100%;">
         <button class="search-btn" onclick="createDealAndSearch()" title="Create Deal & Search">
@@ -1816,6 +1979,12 @@
         Quick Scrub
       </button>
       <input type="file" id="headerFileUpload" style="display: none;" accept=".pdf,image/*" multiple onchange="handleHeaderQuickScrub(event)">
+    </div>
+    <div class="header-actions">
+      <div class="header-user">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span id="headerUsername">User</span>
+      </div>
       <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Light/Dark Mode">
         <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
@@ -1830,6 +1999,9 @@
   <div class="app-container">
     <!-- SIDEBAR -->
     <aside class="sidebar" id="dealsSidebar">
+      <button class="sidebar-collapse-btn" onclick="toggleSidebar()" title="Collapse Sidebar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
       <div class="sidebar-header">
         <div class="sidebar-title">
           <h2>Deal Pipeline</h2>
@@ -1853,11 +2025,85 @@
         <strong id="pipelineTotal">0</strong>
       </div>
     </aside>
+    
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-mobile-toggle" onclick="toggleSidebar()" title="Toggle Deal Pipeline">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    </button>
 
     <!-- MAIN -->
     <main class="main-content">
       <!-- DASHBOARD -->
       <div class="dashboard-view" id="dashboardView">
+        
+        <!-- AI Command Center -->
+        <div class="ai-command-center" style="margin-bottom: 24px;">
+          <div style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%); border: 1px solid var(--border-primary); border-radius: 16px; padding: 24px; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-light), var(--tier-a), var(--accent));"></div>
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+              <svg viewBox="0 0 100 100" style="width: 36px; height: 36px;">
+                <defs>
+                  <linearGradient id="aiPlanetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#eab308"/>
+                    <stop offset="100%" style="stop-color:#ca8a04"/>
+                  </linearGradient>
+                </defs>
+                <ellipse cx="50" cy="50" rx="40" ry="10" fill="none" stroke="rgba(234,179,8,0.5)" stroke-width="2" transform="rotate(-15 50 50)"/>
+                <circle cx="50" cy="50" r="22" fill="url(#aiPlanetGrad)"/>
+              </svg>
+              <div>
+                <div style="font-size: 1rem; font-weight: 700; color: var(--text-primary);">AblesAI Command Center</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Ask anything about your deals, metrics, or generate custom charts</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <div style="flex: 1; position: relative;">
+                <input type="text" id="aiCommandInput" class="form-input" placeholder="e.g., 'Show me a chart of deals by score tier' or 'What's my average revenue?'" style="width: 100%; padding: 14px 20px; font-size: 0.95rem; border-radius: 12px; border-color: var(--accent); background: var(--bg-primary);" onkeydown="if(event.key==='Enter') runAICommand()">
+              </div>
+              <button class="btn-primary" id="aiCommandBtn" onclick="runAICommand()" style="padding: 14px 24px; border-radius: 12px; font-size: 0.9rem;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                Ask AI
+              </button>
+            </div>
+            <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px;">
+              <button class="ai-suggestion-btn" onclick="runAICommandWith('Show deals by score tier as a pie chart')">Score Distribution</button>
+              <button class="ai-suggestion-btn" onclick="runAICommandWith('What is my total revenue and how does it break down?')">Revenue Breakdown</button>
+              <button class="ai-suggestion-btn" onclick="runAICommandWith('Show me a bar chart of monthly deal volume')">Deal Trends</button>
+              <button class="ai-suggestion-btn" onclick="runAICommandWith('Which deals are highest risk and why?')">Risk Analysis</button>
+              <button class="ai-suggestion-btn" onclick="runAICommandWith('Summarize my portfolio health')">Portfolio Health</button>
+            </div>
+          </div>
+          
+          <!-- AI Response Area -->
+          <div id="aiResponseArea" style="display: none; margin-top: 16px; background: var(--bg-card); border: 1px solid var(--border-primary); border-radius: 16px; padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent), var(--accent-dark)); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" style="width: 18px; height: 18px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </div>
+                <div>
+                  <div style="font-weight: 600; font-size: 0.9rem;">AI Response</div>
+                  <div id="aiResponseQuery" style="font-size: 0.75rem; color: var(--text-muted);"></div>
+                </div>
+              </div>
+              <button onclick="closeAIResponse()" style="background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 4px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+            <div id="aiResponseLoading" style="display: none; text-align: center; padding: 40px;">
+              <div style="width: 48px; height: 48px; border: 4px solid var(--border-primary); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
+              <p style="color: var(--text-muted);">Analyzing your data...</p>
+            </div>
+            <div id="aiResponseContent" style="display: none;">
+              <div id="aiResponseText" style="font-size: 0.95rem; line-height: 1.7; color: var(--text-secondary); margin-bottom: 20px;"></div>
+              <div id="aiResponseChart" style="display: none; height: 300px; margin-bottom: 20px;">
+                <canvas id="aiGeneratedChart"></canvas>
+              </div>
+              <div id="aiResponseInsights" style="display: none;"></div>
+            </div>
+          </div>
+        </div>
+        
         <div class="metrics-grid">
           <div class="metric-card" onclick="openMetricModal('revenue')">
             <div class="metric-label">Total Revenue</div>
@@ -1881,23 +2127,120 @@
           </div>
         </div>
 
-        <div class="metrics-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 24px;">
+        <div class="metrics-grid" style="grid-template-columns: repeat(6, 1fr); margin-bottom: 24px;">
           <div class="metric-card" onclick="openMetricModal('deals')">
             <div class="metric-label">Total Deals</div>
             <div class="metric-value" id="dashDeals">0</div>
-            <div class="metric-hint">Click for activity</div>
+            <div class="metric-hint">Pipeline count</div>
           </div>
           <div class="metric-card" onclick="openMetricModal('avg_monthly_revenue')">
-            <div class="metric-label">Avg Monthly Revenue</div>
+            <div class="metric-label">Avg Monthly Rev</div>
             <div class="metric-value text-positive" id="dashAvgMonthlyRev">$0</div>
-            <div class="metric-hint">Across all deals</div>
+            <div class="metric-hint">Per deal</div>
+          </div>
+          <div class="metric-card" onclick="openMetricModal('fico')">
+            <div class="metric-label">Avg FICO</div>
+            <div class="metric-value" id="dashAvgFico" style="color: var(--tier-b);">0</div>
+            <div class="metric-hint">Owner credit</div>
+          </div>
+          <div class="metric-card" onclick="openMetricModal('deposits')">
+            <div class="metric-label">Total Deposits</div>
+            <div class="metric-value text-positive" id="dashTotalDeposits">$0</div>
+            <div class="metric-hint">All deals</div>
+          </div>
+          <div class="metric-card" onclick="openMetricModal('nsf')">
+            <div class="metric-label">Total NSFs</div>
+            <div class="metric-value" id="dashTotalNsf" style="color: var(--tier-d);">0</div>
+            <div class="metric-hint">Red flags</div>
           </div>
           <div class="metric-card" onclick="openMetricModal('completion')">
-            <div class="metric-label">Avg Profile Completion</div>
+            <div class="metric-label">Avg Completion</div>
             <div class="metric-value text-accent" id="dashCompletion">0%</div>
-            <div class="metric-hint">Data quality signal</div>
+            <div class="metric-hint">Data quality</div>
           </div>
         </div>
+        
+        <!-- Analytics Summary Cards -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
+          <div class="chart-card" style="padding: 20px;">
+            <div class="chart-title" style="margin-bottom: 12px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              Score Tiers
+            </div>
+            <div id="tierBreakdown" style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="width: 50px; font-size: 0.75rem; font-weight: 600; color: var(--tier-a);">Tier A</span>
+                <div style="flex: 1; height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden;"><div id="tierABar" style="height: 100%; background: var(--tier-a); width: 0%;"></div></div>
+                <span id="tierACount" style="width: 30px; text-align: right; font-size: 0.8rem; font-weight: 600;">0</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="width: 50px; font-size: 0.75rem; font-weight: 600; color: var(--tier-b);">Tier B</span>
+                <div style="flex: 1; height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden;"><div id="tierBBar" style="height: 100%; background: var(--tier-b); width: 0%;"></div></div>
+                <span id="tierBCount" style="width: 30px; text-align: right; font-size: 0.8rem; font-weight: 600;">0</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="width: 50px; font-size: 0.75rem; font-weight: 600; color: var(--tier-c);">Tier C</span>
+                <div style="flex: 1; height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden;"><div id="tierCBar" style="height: 100%; background: var(--tier-c); width: 0%;"></div></div>
+                <span id="tierCCount" style="width: 30px; text-align: right; font-size: 0.8rem; font-weight: 600;">0</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="width: 50px; font-size: 0.75rem; font-weight: 600; color: var(--tier-d);">Tier D</span>
+                <div style="flex: 1; height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden;"><div id="tierDBar" style="height: 100%; background: var(--tier-d); width: 0%;"></div></div>
+                <span id="tierDCount" style="width: 30px; text-align: right; font-size: 0.8rem; font-weight: 600;">0</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="width: 50px; font-size: 0.75rem; font-weight: 600; color: var(--tier-e);">Tier E</span>
+                <div style="flex: 1; height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden;"><div id="tierEBar" style="height: 100%; background: var(--tier-e); width: 0%;"></div></div>
+                <span id="tierECount" style="width: 30px; text-align: right; font-size: 0.8rem; font-weight: 600;">0</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="chart-card" style="padding: 20px;">
+            <div class="chart-title" style="margin-bottom: 12px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              FICO Distribution
+            </div>
+            <div id="ficoBreakdown" style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="width: 60px; font-size: 0.75rem; color: var(--text-muted);">750+</span>
+                <div style="flex: 1; height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden;"><div id="fico750Bar" style="height: 100%; background: var(--tier-a); width: 0%;"></div></div>
+                <span id="fico750Count" style="width: 30px; text-align: right; font-size: 0.8rem;">0</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="width: 60px; font-size: 0.75rem; color: var(--text-muted);">700-749</span>
+                <div style="flex: 1; height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden;"><div id="fico700Bar" style="height: 100%; background: var(--tier-b); width: 0%;"></div></div>
+                <span id="fico700Count" style="width: 30px; text-align: right; font-size: 0.8rem;">0</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="width: 60px; font-size: 0.75rem; color: var(--text-muted);">650-699</span>
+                <div style="flex: 1; height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden;"><div id="fico650Bar" style="height: 100%; background: var(--tier-c); width: 0%;"></div></div>
+                <span id="fico650Count" style="width: 30px; text-align: right; font-size: 0.8rem;">0</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="width: 60px; font-size: 0.75rem; color: var(--text-muted);">600-649</span>
+                <div style="flex: 1; height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden;"><div id="fico600Bar" style="height: 100%; background: var(--tier-d); width: 0%;"></div></div>
+                <span id="fico600Count" style="width: 30px; text-align: right; font-size: 0.8rem;">0</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="width: 60px; font-size: 0.75rem; color: var(--text-muted);">&lt;600</span>
+                <div style="flex: 1; height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden;"><div id="fico599Bar" style="height: 100%; background: var(--tier-e); width: 0%;"></div></div>
+                <span id="fico599Count" style="width: 30px; text-align: right; font-size: 0.8rem;">0</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="chart-card" style="padding: 20px;">
+            <div class="chart-title" style="margin-bottom: 12px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              Top Industries
+            </div>
+            <div id="industryBreakdown" style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.85rem;">No industry data yet</div>
+            </div>
+          </div>
+        </div>
+        
         <div class="charts-grid">
           <div class="chart-card">
             <div class="chart-title">
@@ -1931,6 +2274,94 @@
             <div class="chart-container"><canvas id="completionChart"></canvas></div>
           </div>
         </div>
+        
+        <!-- Additional Analytics Row -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px;">
+          <!-- Portfolio Health Score -->
+          <div class="chart-card" style="padding: 20px;">
+            <div class="chart-title" style="margin-bottom: 16px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              Portfolio Health
+            </div>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
+              <div style="position: relative; width: 100px; height: 100px;">
+                <svg viewBox="0 0 36 36" style="width: 100%; height: 100%; transform: rotate(-90deg);">
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--bg-tertiary)" stroke-width="3"/>
+                  <circle id="portfolioHealthRing" cx="18" cy="18" r="15.9" fill="none" stroke="var(--tier-c)" stroke-width="3" stroke-dasharray="0 100" stroke-linecap="round"/>
+                </svg>
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                  <div id="portfolioHealthScore" style="font-size: 1.5rem; font-weight: 700;">--</div>
+                  <div style="font-size: 0.6rem; color: var(--text-muted);">HEALTH</div>
+                </div>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--tier-a);"></div>
+                  <span style="font-size: 0.75rem; color: var(--text-muted);">Strong: <span id="healthStrong">0</span></span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--tier-c);"></div>
+                  <span style="font-size: 0.75rem; color: var(--text-muted);">Moderate: <span id="healthModerate">0</span></span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--tier-e);"></div>
+                  <span style="font-size: 0.75rem; color: var(--text-muted);">At Risk: <span id="healthAtRisk">0</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Risk Heatmap -->
+          <div class="chart-card" style="padding: 20px;">
+            <div class="chart-title" style="margin-bottom: 16px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Risk Matrix
+            </div>
+            <div id="riskMatrix" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;">
+              <!-- Will be populated by JS -->
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 12px; font-size: 0.65rem; color: var(--text-muted);">
+              <span>Low Score</span>
+              <span>→</span>
+              <span>High Score</span>
+            </div>
+          </div>
+          
+          <!-- Recent Activity -->
+          <div class="chart-card" style="padding: 20px;">
+            <div class="chart-title" style="margin-bottom: 12px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Recent Activity
+            </div>
+            <div id="recentActivity" style="display: flex; flex-direction: column; gap: 10px; max-height: 180px; overflow-y: auto;">
+              <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.85rem;">No recent activity</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Performance Metrics Row -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 24px;">
+          <div class="chart-card" style="padding: 16px; text-align: center;">
+            <div style="font-size: 2rem; font-weight: 700; color: var(--tier-a);" id="dealsThisMonth">0</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Deals This Month</div>
+            <div style="font-size: 0.8rem; color: var(--tier-b); margin-top: 4px;" id="dealsMonthTrend">--</div>
+          </div>
+          <div class="chart-card" style="padding: 16px; text-align: center;">
+            <div style="font-size: 2rem; font-weight: 700; color: var(--accent);" id="avgProcessTime">--</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Avg Process Time</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">days to decision</div>
+          </div>
+          <div class="chart-card" style="padding: 16px; text-align: center;">
+            <div style="font-size: 2rem; font-weight: 700;" id="conversionRate">0%</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Conversion Rate</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">approved / total</div>
+          </div>
+          <div class="chart-card" style="padding: 16px; text-align: center;">
+            <div style="font-size: 2rem; font-weight: 700; color: var(--tier-b);" id="avgDealSize">$0</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Avg Deal Size</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">monthly revenue</div>
+          </div>
+        </div>
       </div>
 
       <!-- DETAIL -->
@@ -1940,6 +2371,28 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
             Back to Dashboard
           </button>
+          <!-- Ables AI Branding -->
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <svg viewBox="0 0 100 100" style="width: 32px; height: 32px;">
+              <defs>
+                <linearGradient id="planetGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#eab308"/>
+                  <stop offset="100%" style="stop-color:#ca8a04"/>
+                </linearGradient>
+                <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#eab308;stop-opacity:0.3"/>
+                  <stop offset="50%" style="stop-color:#eab308;stop-opacity:0.8"/>
+                  <stop offset="100%" style="stop-color:#eab308;stop-opacity:0.3"/>
+                </linearGradient>
+              </defs>
+              <ellipse cx="50" cy="50" rx="45" ry="12" fill="none" stroke="url(#ringGradient)" stroke-width="3" transform="rotate(-20 50 50)"/>
+              <circle cx="50" cy="50" r="25" fill="url(#planetGradient)"/>
+              <ellipse cx="50" cy="50" rx="45" ry="12" fill="none" stroke="url(#ringGradient)" stroke-width="3" transform="rotate(-20 50 50)" clip-path="url(#frontRing)"/>
+              <path d="M35 42 Q50 38 65 42" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+              <circle cx="40" cy="55" r="4" fill="rgba(0,0,0,0.2)"/>
+            </svg>
+            <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Powered by AblesAI</span>
+          </div>
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <button class="btn-secondary" onclick="document.getElementById('rescrubUploadMain').click()" style="padding: 8px 14px;">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -1953,187 +2406,9 @@
           </div>
         </div>
         
-        <!-- TOP PANELS ROW - All Same Height, Collapsible -->
-        <div class="top-panels-row">
-          <!-- ABLESCORE & METRICS PANEL -->
-          <div class="collapsible-panel" id="panelScore">
-            <div class="panel-header" onclick="togglePanel('panelScore')">
-              <div class="panel-title">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                ABLESCORE & Metrics
-              </div>
-              <button class="panel-toggle">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-              </button>
-            </div>
-            <div class="panel-body">
-              <!-- Score Ring -->
-              <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
-                <div class="score-ring" id="scoreRing" style="--pct: 0; --score-color: var(--tier-c); flex-shrink: 0;">
-                  <div class="score-ring-inner"><span class="score-number" id="mainScore">0</span></div>
-                </div>
-                <div>
-                  <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;">ABLESCORE v4.2</div>
-                  <div style="font-size: 1.4rem; font-weight: 700;" id="scoreTier">Analyzing...</div>
-                  <div style="font-size: 0.75rem; color: var(--text-muted);">Adjusted by risk factors</div>
-                </div>
-              </div>
-              
-              <!-- Enhanced Metrics Grid -->
-              <div class="metrics-grid">
-                <div class="metric-card highlight">
-                  <div class="metric-value" id="metricFico">--</div>
-                  <div class="metric-label">FICO</div>
-                </div>
-                <div class="metric-card">
-                  <div class="metric-value" id="metricAvgRev">--</div>
-                  <div class="metric-label">Avg Monthly Rev</div>
-                </div>
-                <div class="metric-card">
-                  <div class="metric-value" id="metricDeposits">--</div>
-                  <div class="metric-label">Total Deposits</div>
-                </div>
-                <div class="metric-card">
-                  <div class="metric-value" id="metricAvgBal">--</div>
-                  <div class="metric-label">Avg Daily Bal</div>
-                </div>
-              </div>
-              
-              <div class="metrics-grid" style="grid-template-columns: repeat(3, 1fr);">
-                <div class="metric-card">
-                  <div class="metric-value" id="metricNsf">0</div>
-                  <div class="metric-label">NSFs</div>
-                </div>
-                <div class="metric-card">
-                  <div class="metric-value" id="metricNegDays">0</div>
-                  <div class="metric-label">Neg Days</div>
-                </div>
-                <div class="metric-card">
-                  <div class="metric-value" id="metricMonths">0</div>
-                  <div class="metric-label">Months Data</div>
-                </div>
-              </div>
-              
-              <!-- Score Components -->
-              <div class="score-breakdown" id="scoreBreakdown" style="margin-top: 16px;">
-                <div class="score-breakdown-title">Score Components</div>
-                <div class="score-component">
-                  <span class="score-comp-label">FICO Base</span>
-                  <span class="score-comp-value" id="compFico">0</span>
-                </div>
-                <div class="score-component">
-                  <span class="score-comp-label">Revenue Consistency</span>
-                  <span class="score-comp-value" id="compRevenue">0</span>
-                </div>
-                <div class="score-component">
-                  <span class="score-comp-label">NSF Penalty</span>
-                  <span class="score-comp-value text-negative" id="compNsf">0</span>
-                </div>
-                <div class="score-component">
-                  <span class="score-comp-label">Negative Days Penalty</span>
-                  <span class="score-comp-value text-negative" id="compNegDays">0</span>
-                </div>
-                <div class="score-component score-total">
-                  <span class="score-comp-label">Final Score</span>
-                  <span class="score-comp-value" id="compTotal">0</span>
-                </div>
-              </div>
-              
-              <!-- Profile Completeness -->
-              <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-secondary);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                  <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Profile Completeness</span>
-                  <span style="font-size: 1.1rem; font-weight: 700;" id="profileCompletionPct">0%</span>
-                </div>
-                <div class="completion-bar"><div id="profileCompletionBar"></div></div>
-                <div class="checklist" id="profileMissingList" style="margin-top: 10px;"></div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- QUICK SCRUB PANEL -->
-          <div class="collapsible-panel" id="panelQuickScrub">
-            <div class="panel-header" onclick="togglePanel('panelQuickScrub')">
-              <div class="panel-title">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                Quick Scrub
-              </div>
-              <button class="panel-toggle">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-              </button>
-            </div>
-            <div class="panel-body">
-              <div class="mini-dropzone" id="miniQuickScrubZone" onclick="document.getElementById('quickScrubInput').click()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                <h4>Drop Bank Statements Here</h4>
-                <p>PDF or images - auto-fills financial data</p>
-              </div>
-              <input type="file" id="quickScrubInput" style="display: none;" accept=".pdf,image/*" multiple onchange="handleQuickScrub(event)">
-              
-              <!-- Statement Summary -->
-              <div style="margin-top: 16px; padding: 14px; background: var(--bg-secondary); border-radius: 10px;">
-                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;">Statement Summary</div>
-                <div id="bankSummaryBody" style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.7;">
-                  No statements processed yet.
-                </div>
-              </div>
-              
-              <!-- Entity Verification Status -->
-              <div style="margin-top: 16px; padding: 14px; background: var(--bg-secondary); border-radius: 10px;">
-                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;">Entity Verification</div>
-                <div id="entityVerifySummary" style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.7;">
-                  Run entity verification to enrich the profile.
-                </div>
-                <div class="source-links" id="entityVerifySources" style="margin-top: 10px;"></div>
-                <div style="display: flex; gap: 8px; margin-top: 12px;">
-                  <button class="btn-secondary" style="flex: 1; justify-content: center; padding: 8px;" onclick="refreshEntityVerification()">Refresh</button>
-                  <button class="btn-secondary" style="flex: 1; justify-content: center; padding: 8px; border-color: var(--accent); color: var(--accent);" onclick="runDeepResearch()">Deep Research</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- HUBBLE AI CHAT PANEL -->
-          <div class="collapsible-panel" id="panelHubble">
-            <div class="panel-header" onclick="togglePanel('panelHubble')">
-              <div class="panel-title">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                Hubble
-              </div>
-              <button class="panel-toggle">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-              </button>
-            </div>
-            <div class="panel-body">
-              <div class="ai-chat-container">
-                <div class="ai-chat-messages" id="hubbleMessages">
-                  <div class="ai-message system">Ask me anything about this deal. I can analyze financials, research the business, assess risk, and more.</div>
-                </div>
-                <div class="ai-chat-input-row">
-                  <input type="text" class="ai-chat-input" id="hubbleInput" placeholder="Ask about this business..." onkeydown="if(event.key==='Enter' && !event.shiftKey) { event.preventDefault(); sendHubbleMessage(); }">
-                  <button class="ai-chat-send" onclick="sendHubbleMessage()" id="hubbleSendBtn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                  </button>
-                </div>
-              </div>
-              <div style="margin-top: 12px;">
-                <div style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 8px;">Quick Prompts:</div>
-                <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                  <button class="btn-secondary" style="padding: 6px 10px; font-size: 0.7rem;" onclick="quickHubble('Analyze the cash flow health')">Cash Flow</button>
-                  <button class="btn-secondary" style="padding: 6px 10px; font-size: 0.7rem;" onclick="quickHubble('What are the main risk factors?')">Risk Factors</button>
-                  <button class="btn-secondary" style="padding: 6px 10px; font-size: 0.7rem;" onclick="quickHubble('Recommend funding amount')">Funding Rec</button>
-                  <button class="btn-secondary" style="padding: 6px 10px; font-size: 0.7rem;" onclick="quickHubble('Summarize this deal')">Summary</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="detail-grid">
-          <div class="detail-sidebar" id="detailSidebar" style="display: none;">
-            <!-- Sidebar content moved to top panels -->
-          </div>
-
+        <!-- Main Layout with Right Sidebar -->
+        <div class="detail-with-sidebar">
+          <!-- Main Content -->
           <div class="detail-main">
             <!-- INTEL CENTER - Main Navigation -->
             <div class="card" id="intelCenter">
@@ -2147,10 +2422,29 @@
               <!-- Custom Query Search -->
               <div style="margin-top: 12px; display: flex; gap: 8px;">
                 <input type="text" id="customResearchQuery" class="form-input" placeholder="Ask any question about this business..." style="flex: 1; font-size: 0.85rem; border-color: var(--accent);" onkeydown="if(event.key==='Enter') runCustomQuery()">
-                <button class="btn-secondary" style="padding: 8px 16px; white-space: nowrap; border-color: var(--accent); color: var(--accent);" onclick="runCustomQuery()">
+                <button class="btn-secondary" id="customQueryBtn" style="padding: 8px 16px; white-space: nowrap; border-color: var(--accent); color: var(--accent);" onclick="runCustomQuery()">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                   Search
                 </button>
+              </div>
+              
+              <!-- Inline Query Results -->
+              <div id="inlineQueryResults" style="display: none; margin-top: 12px; padding: 16px; background: var(--bg-secondary); border-radius: 12px; border: 1px solid var(--border-primary);">
+                <div id="inlineQueryLoading" style="display: none; text-align: center; padding: 20px;">
+                  <div style="width: 32px; height: 32px; border: 3px solid var(--border-primary); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px;"></div>
+                  <p style="font-size: 0.85rem; color: var(--text-muted);">Researching...</p>
+                </div>
+                <div id="inlineQueryContent" style="display: none;">
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                    <div id="inlineQueryQuestion" style="font-weight: 600; font-size: 0.85rem; color: var(--accent); flex: 1;"></div>
+                    <button onclick="closeInlineQuery()" style="background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 4px;">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                  </div>
+                  <div id="inlineQueryAnswer" style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;"></div>
+                  <div id="inlineQueryFindings" style="margin-top: 12px;"></div>
+                  <div id="inlineQuerySources" style="margin-top: 12px; font-size: 0.75rem; color: var(--text-muted);"></div>
+                </div>
               </div>
               
               <!-- Intel Tabs - BUSINESS first -->
@@ -2735,19 +3029,163 @@
               </div>
               
               <!-- Generate Offer Button -->
-              <div style="margin-top: 20px; display: flex; gap: 12px;">
-                <button class="btn-secondary" style="flex: 1; justify-content: center;" onclick="copyOfferToClipboard()">
+              <div style="margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap;">
+                <button class="btn-secondary" style="flex: 1; min-width: 140px; justify-content: center;" onclick="copyOfferToClipboard()">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                   Copy Offer
                 </button>
-                <button class="btn-secondary" style="flex: 1; justify-content: center;" onclick="generateOfferPDF()">
+                <button class="btn-secondary" style="flex: 1; min-width: 140px; justify-content: center;" onclick="generateOfferPDF()">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                   Export PDF
+                </button>
+                <button class="btn-primary" style="flex: 1; min-width: 140px; justify-content: center;" onclick="shareToToolbox()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                  Share Link
                 </button>
               </div>
             </div>
           </div>
-        </div>
+          
+          <!-- RIGHT PANELS - Sidebar -->
+          <div class="right-panels">
+            <!-- ABLESCORE & METRICS PANEL -->
+            <div class="collapsible-panel" id="panelScore">
+              <div class="panel-header" onclick="togglePanel('panelScore')">
+                <div class="panel-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                  ABLESCORE
+                </div>
+                <button class="panel-toggle">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+              </div>
+              <div class="panel-body">
+                <!-- Score Ring -->
+                <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 16px; padding: 4px 0;">
+                  <div class="score-ring" id="scoreRing" style="--pct: 0; --score-color: var(--tier-c); flex-shrink: 0; width: 70px; height: 70px;">
+                    <div class="score-ring-inner"><span class="score-number" id="mainScore" style="font-size: 1.4rem;">0</span></div>
+                  </div>
+                  <div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">ABLESCORE v4.2</div>
+                    <div style="font-size: 1.1rem; font-weight: 700;" id="scoreTier">Analyzing...</div>
+                  </div>
+                </div>
+                
+                <!-- Metrics Grid - Now Clickable -->
+                <div class="metrics-grid">
+                  <div class="metric-card highlight" onclick="openBankMetricDetail('fico')" style="cursor: pointer;">
+                    <div class="metric-value" id="metricFico">--</div>
+                    <div class="metric-label">FICO</div>
+                  </div>
+                  <div class="metric-card" onclick="openBankMetricDetail('revenue')" style="cursor: pointer;">
+                    <div class="metric-value" id="metricAvgRev">--</div>
+                    <div class="metric-label">Avg Rev</div>
+                  </div>
+                  <div class="metric-card" onclick="openBankMetricDetail('deposits')" style="cursor: pointer;">
+                    <div class="metric-value" id="metricDeposits">--</div>
+                    <div class="metric-label">Deposits</div>
+                  </div>
+                  <div class="metric-card" onclick="openBankMetricDetail('balance')" style="cursor: pointer;">
+                    <div class="metric-value" id="metricAvgBal">--</div>
+                    <div class="metric-label">Avg Bal</div>
+                  </div>
+                  <div class="metric-card" onclick="openBankMetricDetail('nsf')" style="cursor: pointer;">
+                    <div class="metric-value" id="metricNsf">0</div>
+                    <div class="metric-label">NSFs</div>
+                  </div>
+                  <div class="metric-card" onclick="openBankMetricDetail('negdays')" style="cursor: pointer;">
+                    <div class="metric-value" id="metricNegDays">0</div>
+                    <div class="metric-label">Neg Days</div>
+                  </div>
+                </div>
+                
+                <!-- Monthly Breakdown Mini Chart -->
+                <div style="margin-top: 12px; padding: 10px; background: var(--bg-secondary); border-radius: 8px; cursor: pointer;" onclick="openBankMetricDetail('monthly')">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Monthly Trend</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" style="width: 14px; height: 14px;"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                  </div>
+                  <div id="miniMonthlyChart" style="display: flex; align-items: flex-end; gap: 3px; height: 40px;">
+                    <!-- Mini bar chart will be populated by JS -->
+                  </div>
+                </div>
+                
+                <!-- Profile Completeness -->
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-secondary);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Profile</span>
+                    <span style="font-size: 0.9rem; font-weight: 700;" id="profileCompletionPct">0%</span>
+                  </div>
+                  <div class="completion-bar"><div id="profileCompletionBar"></div></div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- QUICK SCRUB PANEL -->
+            <div class="collapsible-panel" id="panelQuickScrub">
+              <div class="panel-header" onclick="togglePanel('panelQuickScrub')">
+                <div class="panel-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  Quick Scrub
+                </div>
+                <button class="panel-toggle">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+              </div>
+              <div class="panel-body">
+                <div class="mini-dropzone" id="miniQuickScrubZone" onclick="document.getElementById('quickScrubInput').click()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  <h4>Drop Bank Statements</h4>
+                  <p>PDF or images</p>
+                </div>
+                <input type="file" id="quickScrubInput" style="display: none;" accept=".pdf,image/*" multiple onchange="handleQuickScrub(event)">
+                
+                <div style="margin-top: 12px; padding: 10px; background: var(--bg-secondary); border-radius: 8px;">
+                  <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Summary</div>
+                  <div id="bankSummaryBody" style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5;">
+                    No statements yet.
+                  </div>
+                </div>
+                
+                <div style="display: flex; gap: 6px; margin-top: 10px;">
+                  <button class="btn-secondary" style="flex: 1; justify-content: center; padding: 6px; font-size: 0.75rem;" onclick="refreshEntityVerification()">Refresh</button>
+                  <button class="btn-secondary" style="flex: 1; justify-content: center; padding: 6px; font-size: 0.75rem; border-color: var(--accent); color: var(--accent);" onclick="runDeepResearch()">Deep Research</button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- HUBBLE AI CHAT PANEL -->
+            <div class="collapsible-panel" id="panelHubble">
+              <div class="panel-header" onclick="togglePanel('panelHubble')">
+                <div class="panel-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  Hubble
+                </div>
+                <button class="panel-toggle">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+              </div>
+              <div class="panel-body">
+                <div class="ai-chat-container">
+                  <div class="ai-chat-messages" id="hubbleMessages">
+                    <div class="ai-message system">Ask me anything about this deal.</div>
+                  </div>
+                  <div class="ai-chat-input-row">
+                    <input type="text" class="ai-chat-input" id="hubbleInput" placeholder="Ask about this business..." onkeydown="if(event.key==='Enter' && !event.shiftKey) { event.preventDefault(); sendHubbleMessage(); }">
+                    <button class="ai-chat-send" onclick="sendHubbleMessage()" id="hubbleSendBtn">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    </button>
+                  </div>
+                </div>
+                <div style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px;">
+                  <button class="btn-secondary" style="padding: 4px 8px; font-size: 0.65rem;" onclick="quickHubble('Analyze cash flow')">Cash Flow</button>
+                  <button class="btn-secondary" style="padding: 4px 8px; font-size: 0.65rem;" onclick="quickHubble('Risk factors')">Risk</button>
+                  <button class="btn-secondary" style="padding: 4px 8px; font-size: 0.65rem;" onclick="quickHubble('Funding recommendation')">Funding</button>
+                  <button class="btn-secondary" style="padding: 4px 8px; font-size: 0.65rem;" onclick="quickHubble('Summarize deal')">Summary</button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </main>
@@ -2772,6 +3210,94 @@
           Key Insights
         </div>
         <div id="metricInsights" style="display: flex; flex-direction: column; gap: 8px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BANK DATA DETAIL MODAL -->
+  <div class="modal-overlay" id="bankDataModal">
+    <div class="modal" style="max-width: 800px;">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="bankDataModalTitle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; display: inline; vertical-align: middle; margin-right: 8px; color: var(--accent);"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            Bank Data Analysis
+          </div>
+          <div class="modal-subtitle" id="bankDataModalSubtitle">Monthly breakdown from bank statements</div>
+        </div>
+        <button class="modal-close" onclick="closeBankDataModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Summary Stats -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px;">
+          <div style="padding: 16px; background: var(--bg-secondary); border-radius: 12px; text-align: center;">
+            <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Total Revenue</div>
+            <div style="font-size: 1.25rem; font-weight: 700; color: var(--tier-a);" id="bankModalTotalRev">$0</div>
+          </div>
+          <div style="padding: 16px; background: var(--bg-secondary); border-radius: 12px; text-align: center;">
+            <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Avg Monthly</div>
+            <div style="font-size: 1.25rem; font-weight: 700; color: var(--accent);" id="bankModalAvgRev">$0</div>
+          </div>
+          <div style="padding: 16px; background: var(--bg-secondary); border-radius: 12px; text-align: center;">
+            <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Total Deposits</div>
+            <div style="font-size: 1.25rem; font-weight: 700; color: var(--tier-b);" id="bankModalTotalDep">$0</div>
+          </div>
+          <div style="padding: 16px; background: var(--bg-secondary); border-radius: 12px; text-align: center;">
+            <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Avg Balance</div>
+            <div style="font-size: 1.25rem; font-weight: 700;" id="bankModalAvgBal">$0</div>
+          </div>
+        </div>
+        
+        <!-- Chart -->
+        <div style="height: 220px; margin-bottom: 24px;"><canvas id="bankDataChart"></canvas></div>
+        
+        <!-- Monthly Table -->
+        <div class="card-title" style="margin-bottom: 12px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Monthly Breakdown
+        </div>
+        <div style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border-primary); border-radius: 10px;">
+          <table class="data-table" style="margin: 0;">
+            <thead>
+              <tr>
+                <th>Month</th>
+                <th>Revenue</th>
+                <th>Deposits</th>
+                <th>Avg Balance</th>
+                <th>End Balance</th>
+                <th>NSFs</th>
+                <th>Neg Days</th>
+              </tr>
+            </thead>
+            <tbody id="bankDataTableBody">
+              <tr><td colspan="7" style="text-align: center; padding: 20px; color: var(--text-muted);">No bank data available</td></tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <!-- Risk Indicators -->
+        <div style="margin-top: 20px; padding: 16px; background: var(--bg-secondary); border-radius: 12px;">
+          <div class="card-title" style="margin-bottom: 12px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Risk Indicators
+          </div>
+          <div id="bankRiskIndicators" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+            <div style="padding: 12px; background: var(--bg-primary); border-radius: 8px; text-align: center;">
+              <div style="font-size: 1.5rem; font-weight: 700;" id="bankModalNsf">0</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">Total NSFs</div>
+            </div>
+            <div style="padding: 12px; background: var(--bg-primary); border-radius: 8px; text-align: center;">
+              <div style="font-size: 1.5rem; font-weight: 700;" id="bankModalNegDays">0</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">Negative Days</div>
+            </div>
+            <div style="padding: 12px; background: var(--bg-primary); border-radius: 8px; text-align: center;">
+              <div style="font-size: 1.5rem; font-weight: 700;" id="bankModalLowestBal">$0</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">Lowest Balance</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -2802,7 +3328,7 @@
 
   <!-- SETTINGS MODAL -->
   <div class="modal-overlay" id="settingsModal">
-    <div class="modal" style="max-width: 600px;">
+    <div class="modal" style="max-width: 750px; width: 90%;">
       <div class="modal-header">
         <div>
           <div class="modal-title">
@@ -2835,20 +3361,20 @@
         .settings-tab.active { color: var(--accent) !important; border-bottom-color: var(--accent) !important; }
         .settings-panel { display: none; }
         .settings-panel.active { display: block; }
-        .slider-group { margin-bottom: 16px; }
-        .slider-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
-        .slider-label { font-size: 0.8rem; color: var(--text-primary); }
-        .slider-value { font-size: 0.8rem; color: var(--accent); font-weight: 600; min-width: 40px; text-align: right; }
-        .slider-input { width: 100%; height: 6px; border-radius: 3px; background: var(--bg-tertiary); appearance: none; cursor: pointer; }
-        .slider-input::-webkit-slider-thumb { appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); cursor: pointer; }
-        .slider-input::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--accent); cursor: pointer; border: none; }
-        .slider-hint { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
-        .settings-section { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-secondary); }
+        .slider-group { margin-bottom: 20px; }
+        .slider-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .slider-label { font-size: 0.85rem; color: var(--text-primary); }
+        .slider-value { font-size: 0.85rem; color: var(--accent); font-weight: 600; min-width: 40px; text-align: right; }
+        .slider-input { width: 100%; height: 8px; border-radius: 4px; background: var(--bg-tertiary); appearance: none; cursor: pointer; }
+        .slider-input::-webkit-slider-thumb { appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); cursor: pointer; }
+        .slider-input::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: var(--accent); cursor: pointer; border: none; }
+        .slider-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 6px; }
+        .settings-section { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border-secondary); }
         .settings-section:last-child { border-bottom: none; margin-bottom: 0; }
-        .settings-section-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent); margin-bottom: 12px; font-weight: 600; }
+        .settings-section-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent); margin-bottom: 16px; font-weight: 600; }
       </style>
       
-      <div class="modal-body" style="max-height: 500px; overflow-y: auto;">
+      <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
         <!-- General Panel -->
         <div class="settings-panel active" id="settingsPanelGeneral">
           <div class="form-group">
@@ -3207,8 +3733,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function handleLogin() {
   const pass = document.getElementById('loginPass').value;
+  const user = document.getElementById('loginUser').value;
   if (pass.endsWith('!#')) {
     sessionStorage.setItem('greatdane_logged_in', 'true');
+    // Save username
+    const displayName = user ? user.split('@')[0] : 'User';
+    localStorage.setItem('greatdane_username', displayName);
+    updateHeaderUsername(displayName);
     document.getElementById('loginOverlay').classList.add('hidden');
   } else {
     document.getElementById('loginError').classList.add('active');
@@ -3217,10 +3748,35 @@ function handleLogin() {
   }
 }
 
+function updateHeaderUsername(name) {
+  const el = document.getElementById('headerUsername');
+  if (el) el.textContent = name || 'User';
+}
+
+function initUsername() {
+  const saved = localStorage.getItem('greatdane_username');
+  if (saved) updateHeaderUsername(saved);
+}
+
 function toggleTheme() {
   document.body.classList.toggle('light-mode');
   const isLight = document.body.classList.contains('light-mode');
   localStorage.setItem('greatdane_theme', isLight ? 'light' : 'dark');
+}
+
+function toggleSidebar() {
+  const sidebar = document.getElementById('dealsSidebar');
+  sidebar.classList.toggle('collapsed');
+  const isCollapsed = sidebar.classList.contains('collapsed');
+  localStorage.setItem('greatdane_sidebar_collapsed', isCollapsed ? 'true' : 'false');
+}
+
+function initSidebar() {
+  const saved = localStorage.getItem('greatdane_sidebar_collapsed');
+  const isMobile = window.innerWidth <= 900;
+  if (isMobile || saved === 'true') {
+    document.getElementById('dealsSidebar').classList.add('collapsed');
+  }
 }
 
 function initTheme() {
@@ -3234,6 +3790,8 @@ function initTheme() {
 }
 // Run immediately
 initTheme();
+initSidebar();
+initUsername();
 
 function initCharts() {
   const baseOpts = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } };
@@ -3311,9 +3869,12 @@ function initCharts() {
 
 function renderDealList() {
   const c = document.getElementById('dealList');
+  const pipelineTotal = document.getElementById('pipelineTotal');
+  if (!c) return;
+  
   if (!allDeals.length) {
     c.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><h3>No deals yet</h3><p>No deals yet. Upload bank statements to get started.</p></div>';
-    document.getElementById('pipelineTotal').textContent = '0';
+    if (pipelineTotal) pipelineTotal.textContent = '0';
     return;
   }
 
@@ -3349,7 +3910,7 @@ function renderDealList() {
     `;
   }).join('');
 
-  document.getElementById('pipelineTotal').textContent = allDeals.length;
+  if (pipelineTotal) pipelineTotal.textContent = allDeals.length;
 }
 
 function filterDeals(q) {
@@ -3376,37 +3937,46 @@ function selectDeal(i) {
 }
 
 function showDashboard() {
-  document.getElementById('dashboardView').style.display = 'block';
-  document.getElementById('detailView').classList.remove('active');
+  const dashboardView = document.getElementById('dashboardView');
+  const detailView = document.getElementById('detailView');
+  if (dashboardView) dashboardView.style.display = 'block';
+  if (detailView) detailView.classList.remove('active');
   currentDeal = null;
   updateDashboard();
   renderDealList();
 }
 
 function showDetailView() {
-  document.getElementById('dashboardView').style.display = 'none';
-  document.getElementById('detailView').classList.add('active');
+  const dashboardView = document.getElementById('dashboardView');
+  const detailView = document.getElementById('detailView');
+  if (dashboardView) dashboardView.style.display = 'none';
+  if (detailView) detailView.classList.add('active');
 }
 
 function populateDetailView() {
   if (!currentDeal) return;
-  document.getElementById('editLegalName').value = currentDeal.businessName || '';
-  document.getElementById('editDba').value = currentDeal.dba || '';
-  document.getElementById('editIndustry').value = currentDeal.industry || '';
-  document.getElementById('editTib').value = currentDeal.tib || '';
-  document.getElementById('editAddress').value = currentDeal.address || '';
-  document.getElementById('editStateCode').value = currentDeal.stateCode || '';
-  document.getElementById('editEntityType').value = currentDeal.entityType || '';
-  document.getElementById('editEntityStatus').value = currentDeal.entityStatus || '';
-  document.getElementById('editFormationDate').value = currentDeal.formationDate || '';
-  document.getElementById('editWebsite').value = currentDeal.website || '';
-  document.getElementById('editPhone').value = currentDeal.phone || '';
-
-  document.getElementById('editOwnerName').value = currentDeal.ownerName || '';
-  document.getElementById('editOwnerEmail').value = currentDeal.ownerEmail || '';
-  document.getElementById('editOwnerPhone').value = currentDeal.ownerPhone || '';
-  document.getElementById('editFico').value = currentDeal.fico || '';
-  document.getElementById('editOwnership').value = currentDeal.ownership || '';
+  
+  const setVal = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.value = val || '';
+  };
+  
+  setVal('editLegalName', currentDeal.businessName);
+  setVal('editDba', currentDeal.dba);
+  setVal('editIndustry', currentDeal.industry);
+  setVal('editTib', currentDeal.tib);
+  setVal('editAddress', currentDeal.address);
+  setVal('editStateCode', currentDeal.stateCode);
+  setVal('editEntityType', currentDeal.entityType);
+  setVal('editEntityStatus', currentDeal.entityStatus);
+  setVal('editFormationDate', currentDeal.formationDate);
+  setVal('editWebsite', currentDeal.website);
+  setVal('editPhone', currentDeal.phone);
+  setVal('editOwnerName', currentDeal.ownerName);
+  setVal('editOwnerEmail', currentDeal.ownerEmail);
+  setVal('editOwnerPhone', currentDeal.ownerPhone);
+  setVal('editFico', currentDeal.fico);
+  setVal('editOwnership', currentDeal.ownership);
 
   renderFinancialTable();
   recalculateScore();
@@ -3460,7 +4030,6 @@ function updateMetricsPanel() {
   setMetric('metricAvgBal', avgDailyBal, 'currency');
   setMetric('metricNsf', totalNsf);
   setMetric('metricNegDays', totalNegDays);
-  setMetric('metricMonths', months.length);
   
   // Color code NSF and negative days
   const nsfEl = document.getElementById('metricNsf');
@@ -3477,6 +4046,9 @@ function updateMetricsPanel() {
     else if (totalNegDays <= 5) negEl.classList.add('warning');
     else negEl.classList.add('negative');
   }
+  
+  // Update mini monthly chart
+  updateMiniMonthlyChart();
 }
 
 function updateDealField(f, v) {
@@ -3623,19 +4195,35 @@ function recalculateScore() {
   // Update main score display
   const tc = s >= 85 ? TIER_COLORS.a : s >= 70 ? TIER_COLORS.b : s >= 55 ? TIER_COLORS.c : s >= 40 ? TIER_COLORS.d : TIER_COLORS.e;
   const tl = s >= 85 ? 'Excellent' : s >= 70 ? 'Good' : s >= 55 ? 'Fair' : s >= 40 ? 'Below Average' : 'High Risk';
-  document.getElementById('mainScore').textContent = s;
-  document.getElementById('scoreTier').textContent = tl;
-  document.getElementById('scoreRing').style.setProperty('--pct', s);
-  document.getElementById('scoreRing').style.setProperty('--score-color', tc);
+  const mainScoreEl = document.getElementById('mainScore');
+  const scoreTierEl = document.getElementById('scoreTier');
+  const scoreRingEl = document.getElementById('scoreRing');
   
-  // Update component breakdown
-  document.getElementById('compFico').textContent = (ficoComponent >= 0 ? '+' : '') + ficoComponent;
-  document.getElementById('compFico').className = 'score-comp-value ' + (ficoComponent >= 0 ? 'text-positive' : 'text-negative');
-  document.getElementById('compRevenue').textContent = (revenueComponent >= 0 ? '+' : '') + revenueComponent;
-  document.getElementById('compRevenue').className = 'score-comp-value ' + (revenueComponent >= 0 ? 'text-positive' : 'text-negative');
-  document.getElementById('compNsf').textContent = nsfPenalty > 0 ? '-' + nsfPenalty : '0';
-  document.getElementById('compNegDays').textContent = negDaysPenalty > 0 ? '-' + negDaysPenalty : '0';
-  document.getElementById('compTotal').textContent = s;
+  if (mainScoreEl) mainScoreEl.textContent = s;
+  if (scoreTierEl) scoreTierEl.textContent = tl;
+  if (scoreRingEl) {
+    scoreRingEl.style.setProperty('--pct', s);
+    scoreRingEl.style.setProperty('--score-color', tc);
+  }
+  
+  // Update component breakdown (if elements exist)
+  const compFico = document.getElementById('compFico');
+  const compRevenue = document.getElementById('compRevenue');
+  const compNsf = document.getElementById('compNsf');
+  const compNegDays = document.getElementById('compNegDays');
+  const compTotal = document.getElementById('compTotal');
+  
+  if (compFico) {
+    compFico.textContent = (ficoComponent >= 0 ? '+' : '') + ficoComponent;
+    compFico.className = 'score-comp-value ' + (ficoComponent >= 0 ? 'text-positive' : 'text-negative');
+  }
+  if (compRevenue) {
+    compRevenue.textContent = (revenueComponent >= 0 ? '+' : '') + revenueComponent;
+    compRevenue.className = 'score-comp-value ' + (revenueComponent >= 0 ? 'text-positive' : 'text-negative');
+  }
+  if (compNsf) compNsf.textContent = nsfPenalty > 0 ? '-' + nsfPenalty : '0';
+  if (compNegDays) compNegDays.textContent = negDaysPenalty > 0 ? '-' + negDaysPenalty : '0';
+  if (compTotal) compTotal.textContent = s;
   
   renderDealList();
   updateOffer();
@@ -3651,19 +4239,32 @@ let currentPaymentFrequency = 'daily';
 
 function setPaymentFrequency(freq) {
   currentPaymentFrequency = freq;
-  document.getElementById('freqDaily').classList.toggle('active', freq === 'daily');
-  document.getElementById('freqWeekly').classList.toggle('active', freq === 'weekly');
-  document.getElementById('paymentLabel').textContent = freq === 'daily' ? 'Daily Payment' : 'Weekly Payment';
-  document.getElementById('paymentsCountLabel').textContent = freq === 'daily' ? '# of Payments' : '# of Weeks';
+  const freqDaily = document.getElementById('freqDaily');
+  const freqWeekly = document.getElementById('freqWeekly');
+  const paymentLabel = document.getElementById('paymentLabel');
+  const paymentsCountLabel = document.getElementById('paymentsCountLabel');
+  
+  if (freqDaily) freqDaily.classList.toggle('active', freq === 'daily');
+  if (freqWeekly) freqWeekly.classList.toggle('active', freq === 'weekly');
+  if (paymentLabel) paymentLabel.textContent = freq === 'daily' ? 'Daily Payment' : 'Weekly Payment';
+  if (paymentsCountLabel) paymentsCountLabel.textContent = freq === 'daily' ? '# of Payments' : '# of Weeks';
   updateOffer();
 }
 
 function updateOffer() {
   if (!currentDeal) return;
-  const pm = parseFloat(document.getElementById('positionSlider').value);
-  const hb = parseInt(document.getElementById('holdbackSlider').value);
-  document.getElementById('positionVal').textContent = pm.toFixed(1) + 'x';
-  document.getElementById('holdbackVal').textContent = hb + '%';
+  const posSlider = document.getElementById('positionSlider');
+  const hbSlider = document.getElementById('holdbackSlider');
+  if (!posSlider || !hbSlider) return;
+  
+  const pm = parseFloat(posSlider.value);
+  const hb = parseInt(hbSlider.value);
+  
+  const positionVal = document.getElementById('positionVal');
+  const holdbackVal = document.getElementById('holdbackVal');
+  if (positionVal) positionVal.textContent = pm.toFixed(1) + 'x';
+  if (holdbackVal) holdbackVal.textContent = hb + '%';
+  
   const avgRev = currentDeal.months?.length ? currentDeal.months.reduce((a, m) => a + m.revenue, 0) / currentDeal.months.length : 0;
   const cfgs = { conservative: { rm: 0.8, f: 1.35, t: 90 }, moderate: { rm: 1.0, f: 1.28, t: 120 }, aggressive: { rm: 1.3, f: 1.22, t: 180 } };
   const c = cfgs[currentOfferTab];
@@ -3682,12 +4283,19 @@ function updateOffer() {
     paymentsCount = weeks;
   }
   
-  document.getElementById('offerAmount').textContent = '$' + Math.round(base).toLocaleString();
-  document.getElementById('offerFactor').textContent = c.f.toFixed(2);
-  document.getElementById('offerPayback').textContent = '$' + Math.round(pb).toLocaleString();
-  document.getElementById('offerTerm').textContent = termDays;
-  document.getElementById('offerPayment').textContent = '$' + Math.round(payment).toLocaleString();
-  document.getElementById('offerPaymentsCount').textContent = paymentsCount;
+  const offerAmount = document.getElementById('offerAmount');
+  const offerFactor = document.getElementById('offerFactor');
+  const offerPayback = document.getElementById('offerPayback');
+  const offerTerm = document.getElementById('offerTerm');
+  const offerPayment = document.getElementById('offerPayment');
+  const offerPaymentsCount = document.getElementById('offerPaymentsCount');
+  
+  if (offerAmount) offerAmount.textContent = '$' + Math.round(base).toLocaleString();
+  if (offerFactor) offerFactor.textContent = c.f.toFixed(2);
+  if (offerPayback) offerPayback.textContent = '$' + Math.round(pb).toLocaleString();
+  if (offerTerm) offerTerm.textContent = termDays;
+  if (offerPayment) offerPayment.textContent = '$' + Math.round(payment).toLocaleString();
+  if (offerPaymentsCount) offerPaymentsCount.textContent = paymentsCount;
   
   // Store for ISO preview
   window.currentOfferData = { fundingAmount: base, payback: pb, termDays: termDays };
@@ -3729,6 +4337,92 @@ ${currentPaymentFrequency === 'daily' ? 'Daily' : 'Weekly'} Payment: ${document.
 
 function generateOfferPDF() {
   alert('PDF generation coming soon. For now, use Copy Offer.');
+}
+
+function shareToToolbox() {
+  if (!currentDeal) {
+    alert('No deal selected. Please select a deal first.');
+    return;
+  }
+  
+  const cfgs = { conservative: { rm: 0.8, f: 1.35, t: 90 }, moderate: { rm: 1.0, f: 1.28, t: 120 }, aggressive: { rm: 1.3, f: 1.22, t: 180 } };
+  
+  // Get average revenue for calculations
+  const avgRev = currentDeal.months?.length ? currentDeal.months.reduce((a, m) => a + m.revenue, 0) / currentDeal.months.length : 0;
+  const pm = parseFloat(document.getElementById('positionSlider')?.value || 1);
+  
+  // Determine frequency - map to toolbox format (d=daily, w=weekly)
+  const freq = currentPaymentFrequency === 'weekly' ? 'w' : 'd';
+  
+  // Build all three offer options
+  const offers = [];
+  ['conservative', 'moderate', 'aggressive'].forEach(tier => {
+    const c = cfgs[tier];
+    const fundingAmount = Math.round(avgRev * c.rm * pm);
+    if (fundingAmount > 0) {
+      offers.push({
+        a: fundingAmount,
+        f: c.f,
+        t: c.t,
+        q: freq,
+        fe: 0,
+        pp: null,
+        pd: null,
+        to: tier.charAt(0).toUpperCase() + tier.slice(1),
+        n: '',
+        d: false,
+        dt: ''
+      });
+    }
+  });
+  
+  // If no valid offers, use current offer data
+  if (offers.length === 0) {
+    const data = window.currentOfferData || {};
+    const c = cfgs[currentOfferTab] || cfgs.moderate;
+    offers.push({
+      a: Math.round(data.fundingAmount || 5000),
+      f: c.f,
+      t: data.termDays || c.t,
+      q: freq,
+      fe: 0,
+      pp: null,
+      pd: null,
+      to: null,
+      n: '',
+      d: false,
+      dt: ''
+    });
+  }
+  
+  // Build share data matching Approval Toolbox format
+  const shareData = {
+    b: currentDeal.businessName || 'Business',
+    c: currentDeal.ownerName || '',
+    theme: 'black',
+    accent: 'mint',
+    o: offers
+  };
+  
+  // Compress with LZString
+  const json = JSON.stringify(shareData);
+  const enc = LZString.compressToEncodedURIComponent(json);
+  
+  // Build URL to Approval Toolbox
+  const toolboxUrl = `https://ables.ai/calculator.html?d=${enc}`;
+  
+  // Copy to clipboard and show option to open
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(toolboxUrl).then(() => {
+      if (confirm('Share link copied to clipboard!\n\nOpen in Approval Toolbox?')) {
+        window.open(toolboxUrl, '_blank');
+      }
+    }).catch(() => {
+      prompt('Copy this link:', toolboxUrl);
+    });
+  } else {
+    prompt('Copy this link:', toolboxUrl);
+  }
 }
 
 async function createDealAndSearch() {
@@ -4173,8 +4867,24 @@ IMPORTANT:
     });
     
     const data = await res.json();
+    
+    // Check for API errors
+    if (data.error) {
+      console.error('Gemini API error:', data.error);
+      showToast('API Error', data.error.message || 'Failed to analyze credit report', 'error');
+      return;
+    }
+    
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    console.log('Credit report response:', text.substring(0, 500));
+    
+    if (!text) {
+      showToast('No Response', 'AI did not return any data', 'error');
+      return;
+    }
+    
     const parsed = safeJsonFromText(text);
+    console.log('Parsed credit report:', parsed);
     
     if (parsed?.credit_report) {
       const cr = parsed.credit_report;
@@ -4205,7 +4915,32 @@ IMPORTANT:
         showToast('No Data Found', 'Could not extract credit data from file', 'warning');
       }
     } else {
-      showToast('Analysis Failed', 'Could not parse credit report', 'error');
+      // Try to find credit data even if not in expected format
+      console.warn('Credit report parse failed. Trying fallback...', text);
+      
+      // Try to extract any scores from the response
+      const ficoMatch = text.match(/(?:fico|score)[:\s]*(\d{3})/i);
+      const vantageMatch = text.match(/vantage[:\s]*(\d{3})/i);
+      
+      if (ficoMatch || vantageMatch) {
+        const fallbackReport = {
+          scores: {
+            fico: ficoMatch ? parseInt(ficoMatch[1]) : 0,
+            vantage: vantageMatch ? parseInt(vantageMatch[1]) : 0
+          },
+          tradelines: [],
+          summary: { total_accounts: 0 }
+        };
+        currentDeal.credit_report = fallbackReport;
+        if (fallbackReport.scores.fico && !currentDeal.fico) {
+          currentDeal.fico = fallbackReport.scores.fico;
+        }
+        saveDealsToStorage();
+        populateDetailView();
+        showToast('Partial Data', 'Extracted score only - upload clearer image for full analysis', 'warning');
+      } else {
+        showToast('Analysis Failed', 'Could not parse credit report - try a clearer image', 'error');
+      }
     }
   } catch (err) {
     console.error('Credit report error:', err);
@@ -4781,14 +5516,21 @@ function updateDashboard() {
   const completionVals = allDeals.map(d => calcDealCompleteness(d).pct);
   const avgCompletion = completionVals.length ? Math.round(completionVals.reduce((a,b) => a + b, 0) / completionVals.length) : 0;
 
-  document.getElementById('dashRevenue').textContent = '$' + totalRev.toLocaleString();
-  document.getElementById('dashScore').textContent = avgScore;
-  document.getElementById('dashApproval').textContent = allDeals.length ? Math.round((approved / allDeals.length) * 100) + '%' : '0%';
-  document.getElementById('dashRisk').textContent = highRisk;
+  const dashRevenue = document.getElementById('dashRevenue');
+  const dashScore = document.getElementById('dashScore');
+  const dashApproval = document.getElementById('dashApproval');
+  const dashRisk = document.getElementById('dashRisk');
+  const dashDeals = document.getElementById('dashDeals');
+  const dashAvgMonthlyRev = document.getElementById('dashAvgMonthlyRev');
+  const dashCompletion = document.getElementById('dashCompletion');
 
-  document.getElementById('dashDeals').textContent = allDeals.length;
-  document.getElementById('dashAvgMonthlyRev').textContent = '$' + avgMonthlyRev.toLocaleString();
-  document.getElementById('dashCompletion').textContent = avgCompletion + '%';
+  if (dashRevenue) dashRevenue.textContent = '$' + totalRev.toLocaleString();
+  if (dashScore) dashScore.textContent = avgScore;
+  if (dashApproval) dashApproval.textContent = allDeals.length ? Math.round((approved / allDeals.length) * 100) + '%' : '0%';
+  if (dashRisk) dashRisk.textContent = highRisk;
+  if (dashDeals) dashDeals.textContent = allDeals.length;
+  if (dashAvgMonthlyRev) dashAvgMonthlyRev.textContent = '$' + avgMonthlyRev.toLocaleString();
+  if (dashCompletion) dashCompletion.textContent = avgCompletion + '%';
 
   // Score distribution
   if (scoreChart) {
@@ -4854,6 +5596,244 @@ function updateDashboard() {
     completionChart.data.datasets[0].data = buckets;
     completionChart.update();
   }
+  
+  // === NEW ANALYTICS ===
+  
+  // Calculate new metrics
+  const avgFico = allDeals.length ? Math.round(allDeals.filter(d => d.fico).reduce((s, d) => s + (d.fico || 0), 0) / allDeals.filter(d => d.fico).length) || 0 : 0;
+  const totalDeposits = allMonths.reduce((s, m) => s + (m.deposits || 0), 0);
+  const totalNsf = allMonths.reduce((s, m) => s + (m.nsfs || 0), 0);
+  
+  const dashAvgFico = document.getElementById('dashAvgFico');
+  const dashTotalDeposits = document.getElementById('dashTotalDeposits');
+  const dashTotalNsf = document.getElementById('dashTotalNsf');
+  
+  if (dashAvgFico) {
+    dashAvgFico.textContent = avgFico || '--';
+    dashAvgFico.style.color = avgFico >= 700 ? 'var(--tier-a)' : avgFico >= 650 ? 'var(--tier-b)' : avgFico >= 600 ? 'var(--tier-c)' : 'var(--tier-d)';
+  }
+  if (dashTotalDeposits) dashTotalDeposits.textContent = '$' + totalDeposits.toLocaleString();
+  if (dashTotalNsf) {
+    dashTotalNsf.textContent = totalNsf;
+    dashTotalNsf.style.color = totalNsf === 0 ? 'var(--tier-a)' : totalNsf <= 5 ? 'var(--tier-c)' : 'var(--tier-e)';
+  }
+  
+  // Score Tier Breakdown
+  const tierCounts = {
+    A: allDeals.filter(d => (d.score || 0) >= 85).length,
+    B: allDeals.filter(d => (d.score || 0) >= 70 && (d.score || 0) < 85).length,
+    C: allDeals.filter(d => (d.score || 0) >= 55 && (d.score || 0) < 70).length,
+    D: allDeals.filter(d => (d.score || 0) >= 40 && (d.score || 0) < 55).length,
+    E: allDeals.filter(d => (d.score || 0) < 40).length
+  };
+  const maxTier = Math.max(...Object.values(tierCounts), 1);
+  
+  ['A', 'B', 'C', 'D', 'E'].forEach(tier => {
+    const bar = document.getElementById(`tier${tier}Bar`);
+    const count = document.getElementById(`tier${tier}Count`);
+    if (bar) bar.style.width = `${(tierCounts[tier] / maxTier) * 100}%`;
+    if (count) count.textContent = tierCounts[tier];
+  });
+  
+  // FICO Distribution
+  const ficoCounts = {
+    750: allDeals.filter(d => (d.fico || 0) >= 750).length,
+    700: allDeals.filter(d => (d.fico || 0) >= 700 && (d.fico || 0) < 750).length,
+    650: allDeals.filter(d => (d.fico || 0) >= 650 && (d.fico || 0) < 700).length,
+    600: allDeals.filter(d => (d.fico || 0) >= 600 && (d.fico || 0) < 650).length,
+    599: allDeals.filter(d => (d.fico || 0) > 0 && (d.fico || 0) < 600).length
+  };
+  const maxFico = Math.max(...Object.values(ficoCounts), 1);
+  
+  [750, 700, 650, 600, 599].forEach(range => {
+    const bar = document.getElementById(`fico${range}Bar`);
+    const count = document.getElementById(`fico${range}Count`);
+    if (bar) bar.style.width = `${(ficoCounts[range] / maxFico) * 100}%`;
+    if (count) count.textContent = ficoCounts[range];
+  });
+  
+  // Top Industries
+  const industries = {};
+  allDeals.forEach(d => {
+    const ind = d.industry || 'Unknown';
+    industries[ind] = (industries[ind] || 0) + 1;
+  });
+  
+  const sortedIndustries = Object.entries(industries)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+  
+  const industryContainer = document.getElementById('industryBreakdown');
+  if (industryContainer) {
+    if (sortedIndustries.length === 0 || (sortedIndustries.length === 1 && sortedIndustries[0][0] === 'Unknown')) {
+      industryContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.85rem;">No industry data yet</div>';
+    } else {
+      const maxInd = sortedIndustries[0][1];
+      industryContainer.innerHTML = sortedIndustries.map(([name, count], i) => {
+        const colors = ['var(--tier-a)', 'var(--tier-b)', 'var(--tier-c)', 'var(--tier-d)', 'var(--text-muted)'];
+        return `
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="width: 80px; font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${name}">${name}</span>
+            <div style="flex: 1; height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden;">
+              <div style="height: 100%; background: ${colors[i]}; width: ${(count / maxInd) * 100}%;"></div>
+            </div>
+            <span style="width: 30px; text-align: right; font-size: 0.8rem;">${count}</span>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+  
+  // === ADVANCED ANALYTICS ===
+  
+  // Portfolio Health Score
+  const strongDeals = allDeals.filter(d => (d.score || 0) >= 70).length;
+  const moderateDeals = allDeals.filter(d => (d.score || 0) >= 40 && (d.score || 0) < 70).length;
+  const atRiskDeals = allDeals.filter(d => (d.score || 0) < 40).length;
+  
+  const healthScore = allDeals.length ? Math.round(
+    (strongDeals * 100 + moderateDeals * 60 + atRiskDeals * 20) / allDeals.length
+  ) : 0;
+  
+  const healthScoreEl = document.getElementById('portfolioHealthScore');
+  const healthRing = document.getElementById('portfolioHealthRing');
+  if (healthScoreEl) healthScoreEl.textContent = healthScore;
+  if (healthRing) {
+    healthRing.style.strokeDasharray = `${healthScore} ${100 - healthScore}`;
+    healthRing.style.stroke = healthScore >= 70 ? 'var(--tier-a)' : healthScore >= 40 ? 'var(--tier-c)' : 'var(--tier-e)';
+  }
+  
+  const healthStrongEl = document.getElementById('healthStrong');
+  const healthModerateEl = document.getElementById('healthModerate');
+  const healthAtRiskEl = document.getElementById('healthAtRisk');
+  if (healthStrongEl) healthStrongEl.textContent = strongDeals;
+  if (healthModerateEl) healthModerateEl.textContent = moderateDeals;
+  if (healthAtRiskEl) healthAtRiskEl.textContent = atRiskDeals;
+  
+  // Risk Matrix (Score vs FICO)
+  const riskMatrix = document.getElementById('riskMatrix');
+  if (riskMatrix) {
+    // 5x5 grid: rows = FICO ranges (high to low), cols = Score ranges (low to high)
+    const ficoRanges = [[750, 850], [700, 749], [650, 699], [600, 649], [0, 599]];
+    const scoreRanges = [[0, 40], [40, 55], [55, 70], [70, 85], [85, 100]];
+    
+    let gridHtml = '';
+    ficoRanges.forEach(([ficoMin, ficoMax]) => {
+      scoreRanges.forEach(([scoreMin, scoreMax]) => {
+        const count = allDeals.filter(d => {
+          const fico = d.fico || 0;
+          const score = d.score || 0;
+          return fico >= ficoMin && fico <= ficoMax && score >= scoreMin && score < scoreMax;
+        }).length;
+        
+        // Color based on risk (top-right = green/low risk, bottom-left = red/high risk)
+        const riskLevel = (ficoMax - 600) / 250 + (scoreMax - 40) / 60;
+        let bgColor = 'var(--bg-tertiary)';
+        if (count > 0) {
+          if (riskLevel > 1.3) bgColor = 'var(--tier-a)';
+          else if (riskLevel > 1) bgColor = 'var(--tier-b)';
+          else if (riskLevel > 0.7) bgColor = 'var(--tier-c)';
+          else if (riskLevel > 0.4) bgColor = 'var(--tier-d)';
+          else bgColor = 'var(--tier-e)';
+        }
+        
+        gridHtml += `<div style="aspect-ratio: 1; background: ${bgColor}; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 600; color: ${count > 0 ? '#000' : 'var(--text-muted)'};" title="FICO ${ficoMin}-${ficoMax}, Score ${scoreMin}-${scoreMax}: ${count} deals">${count || ''}</div>`;
+      });
+    });
+    riskMatrix.innerHTML = gridHtml;
+  }
+  
+  // Recent Activity
+  const activityContainer = document.getElementById('recentActivity');
+  if (activityContainer) {
+    const recentDeals = [...allDeals]
+      .sort((a, b) => (b.id || 0) - (a.id || 0))
+      .slice(0, 5);
+    
+    if (recentDeals.length === 0) {
+      activityContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.85rem;">No recent activity</div>';
+    } else {
+      activityContainer.innerHTML = recentDeals.map(d => {
+        const timeAgo = getTimeAgo(d.id || d.createdAt);
+        const scoreColor = (d.score || 0) >= 70 ? 'var(--tier-a)' : (d.score || 0) >= 40 ? 'var(--tier-c)' : 'var(--tier-e)';
+        return `
+          <div style="display: flex; align-items: center; gap: 10px; padding: 8px; background: var(--bg-secondary); border-radius: 8px; cursor: pointer;" onclick="selectDealById(${d.id})">
+            <div style="width: 8px; height: 8px; border-radius: 50%; background: ${scoreColor};"></div>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-size: 0.8rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${d.businessName || 'Untitled'}</div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);">${timeAgo}</div>
+            </div>
+            <div style="font-size: 0.85rem; font-weight: 600; color: ${scoreColor};">${d.score || 0}</div>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+  
+  // Performance Metrics
+  const now = new Date();
+  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const lastMonthKey = `${lastMonth.getFullYear()}-${String(lastMonth.getMonth()+1).padStart(2,'0')}`;
+  
+  const dealsThisMonthCount = allDeals.filter(d => {
+    const dt = new Date(d.id || Date.now());
+    return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}` === thisMonth;
+  }).length;
+  
+  const dealsLastMonthCount = allDeals.filter(d => {
+    const dt = new Date(d.id || Date.now());
+    return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}` === lastMonthKey;
+  }).length;
+  
+  const dealsThisMonthEl = document.getElementById('dealsThisMonth');
+  const dealsMonthTrendEl = document.getElementById('dealsMonthTrend');
+  if (dealsThisMonthEl) dealsThisMonthEl.textContent = dealsThisMonthCount;
+  if (dealsMonthTrendEl) {
+    const diff = dealsThisMonthCount - dealsLastMonthCount;
+    if (diff > 0) {
+      dealsMonthTrendEl.textContent = `↑ ${diff} vs last month`;
+      dealsMonthTrendEl.style.color = 'var(--tier-a)';
+    } else if (diff < 0) {
+      dealsMonthTrendEl.textContent = `↓ ${Math.abs(diff)} vs last month`;
+      dealsMonthTrendEl.style.color = 'var(--tier-e)';
+    } else {
+      dealsMonthTrendEl.textContent = 'Same as last month';
+      dealsMonthTrendEl.style.color = 'var(--text-muted)';
+    }
+  }
+  
+  const conversionRateEl = document.getElementById('conversionRate');
+  if (conversionRateEl) {
+    const rate = allDeals.length ? Math.round((approved / allDeals.length) * 100) : 0;
+    conversionRateEl.textContent = rate + '%';
+    conversionRateEl.style.color = rate >= 70 ? 'var(--tier-a)' : rate >= 50 ? 'var(--tier-c)' : 'var(--tier-e)';
+  }
+  
+  const avgDealSizeEl = document.getElementById('avgDealSize');
+  if (avgDealSizeEl) {
+    const avgSize = allDeals.length ? Math.round(totalRev / allDeals.length) : 0;
+    avgDealSizeEl.textContent = '$' + avgSize.toLocaleString();
+  }
+}
+
+function getTimeAgo(timestamp) {
+  const now = Date.now();
+  const diff = now - (timestamp || now);
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+  
+  if (minutes < 1) return 'Just now';
+  if (minutes < 60) return `${minutes}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  if (days < 7) return `${days}d ago`;
+  return new Date(timestamp).toLocaleDateString();
+}
+
+function selectDealById(id) {
+  const idx = allDeals.findIndex(d => d.id === id);
+  if (idx >= 0) selectDeal(idx);
 }
 
 function openMetricModal(type) {
@@ -5052,6 +6032,246 @@ function openMetricModal(type) {
 function closeMetricModal() { document.getElementById('metricModal').classList.remove('active'); }
 function closeEntityModal() { document.getElementById('entityModal').classList.remove('active'); }
 function closeSettingsModal() { document.getElementById('settingsModal').classList.remove('active'); }
+function closeBankDataModal() { 
+  document.getElementById('bankDataModal').classList.remove('active'); 
+  if (window.bankDataChartInstance) {
+    window.bankDataChartInstance.destroy();
+    window.bankDataChartInstance = null;
+  }
+}
+
+// ===============================
+// BANK DATA DETAIL MODAL
+// ===============================
+function openBankMetricDetail(metric) {
+  if (!currentDeal) return;
+  
+  const modal = document.getElementById('bankDataModal');
+  const months = currentDeal.months || [];
+  const bankData = currentDeal.bankData || {};
+  
+  // Update title based on metric clicked
+  const titles = {
+    fico: 'FICO Score Analysis',
+    revenue: 'Revenue Analysis',
+    deposits: 'Deposit Analysis',
+    balance: 'Balance Analysis',
+    nsf: 'NSF/Overdraft Analysis',
+    negdays: 'Negative Days Analysis',
+    monthly: 'Complete Monthly Breakdown'
+  };
+  
+  document.getElementById('bankDataModalTitle').innerHTML = `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; display: inline; vertical-align: middle; margin-right: 8px; color: var(--accent);"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+    ${titles[metric] || 'Bank Data Analysis'}
+  `;
+  document.getElementById('bankDataModalSubtitle').textContent = currentDeal.businessName || 'Business';
+  
+  // Calculate totals
+  let totalRevenue = 0, totalDeposits = 0, totalBalance = 0, totalNsf = 0, totalNegDays = 0;
+  let lowestBalance = Infinity;
+  
+  months.forEach(m => {
+    const rev = parseFloat(String(m.revenue || m.totalRevenue || 0).replace(/[$,]/g, '')) || 0;
+    const dep = parseFloat(String(m.deposits || m.totalDeposits || 0).replace(/[$,]/g, '')) || 0;
+    const bal = parseFloat(String(m.avgBalance || m.averageBalance || 0).replace(/[$,]/g, '')) || 0;
+    const endBal = parseFloat(String(m.endingBalance || m.endBalance || 0).replace(/[$,]/g, '')) || 0;
+    const nsf = parseInt(m.nsf || m.nsfCount || 0) || 0;
+    const neg = parseInt(m.negativeDays || m.negDays || 0) || 0;
+    
+    totalRevenue += rev;
+    totalDeposits += dep;
+    totalBalance += bal;
+    totalNsf += nsf;
+    totalNegDays += neg;
+    if (endBal < lowestBalance) lowestBalance = endBal;
+  });
+  
+  const avgRevenue = months.length > 0 ? totalRevenue / months.length : 0;
+  const avgBalance = months.length > 0 ? totalBalance / months.length : 0;
+  
+  // Update summary stats
+  document.getElementById('bankModalTotalRev').textContent = formatCurrency(totalRevenue);
+  document.getElementById('bankModalAvgRev').textContent = formatCurrency(avgRevenue);
+  document.getElementById('bankModalTotalDep').textContent = formatCurrency(totalDeposits);
+  document.getElementById('bankModalAvgBal').textContent = formatCurrency(avgBalance);
+  document.getElementById('bankModalNsf').textContent = totalNsf;
+  document.getElementById('bankModalNsf').style.color = totalNsf > 3 ? 'var(--tier-e)' : totalNsf > 0 ? 'var(--tier-d)' : 'var(--tier-a)';
+  document.getElementById('bankModalNegDays').textContent = totalNegDays;
+  document.getElementById('bankModalNegDays').style.color = totalNegDays > 10 ? 'var(--tier-e)' : totalNegDays > 0 ? 'var(--tier-d)' : 'var(--tier-a)';
+  document.getElementById('bankModalLowestBal').textContent = lowestBalance === Infinity ? '$0' : formatCurrency(lowestBalance);
+  document.getElementById('bankModalLowestBal').style.color = lowestBalance < 0 ? 'var(--tier-e)' : 'var(--text-primary)';
+  
+  // Build table
+  const tbody = document.getElementById('bankDataTableBody');
+  if (months.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: var(--text-muted);">No bank data available. Upload bank statements to see analysis.</td></tr>';
+  } else {
+    tbody.innerHTML = months.map((m, i) => {
+      const rev = parseFloat(String(m.revenue || m.totalRevenue || 0).replace(/[$,]/g, '')) || 0;
+      const dep = parseFloat(String(m.deposits || m.totalDeposits || 0).replace(/[$,]/g, '')) || 0;
+      const bal = parseFloat(String(m.avgBalance || m.averageBalance || 0).replace(/[$,]/g, '')) || 0;
+      const endBal = parseFloat(String(m.endingBalance || m.endBalance || 0).replace(/[$,]/g, '')) || 0;
+      const nsf = parseInt(m.nsf || m.nsfCount || 0) || 0;
+      const neg = parseInt(m.negativeDays || m.negDays || 0) || 0;
+      
+      return `
+        <tr>
+          <td style="font-weight: 600;">${m.month || `Month ${i + 1}`}</td>
+          <td style="color: var(--tier-a);">${formatCurrency(rev)}</td>
+          <td>${formatCurrency(dep)}</td>
+          <td>${formatCurrency(bal)}</td>
+          <td style="color: ${endBal < 0 ? 'var(--tier-e)' : 'var(--text-primary)'};">${formatCurrency(endBal)}</td>
+          <td style="color: ${nsf > 0 ? 'var(--tier-e)' : 'var(--text-muted)'};">${nsf}</td>
+          <td style="color: ${neg > 0 ? 'var(--tier-d)' : 'var(--text-muted)'};">${neg}</td>
+        </tr>
+      `;
+    }).join('');
+  }
+  
+  // Create chart based on metric type
+  renderBankDataChart(metric, months);
+  
+  modal.classList.add('active');
+}
+
+function renderBankDataChart(metric, months) {
+  const ctx = document.getElementById('bankDataChart').getContext('2d');
+  
+  if (window.bankDataChartInstance) {
+    window.bankDataChartInstance.destroy();
+  }
+  
+  if (months.length === 0) {
+    // No data - show empty state
+    window.bankDataChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: { labels: ['No Data'], datasets: [{ data: [0], backgroundColor: 'var(--bg-tertiary)' }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+    });
+    return;
+  }
+  
+  const labels = months.map((m, i) => m.month || `M${i + 1}`);
+  
+  // Determine what to show based on metric
+  let datasets = [];
+  let chartType = 'bar';
+  
+  if (metric === 'revenue' || metric === 'monthly') {
+    const revenues = months.map(m => parseFloat(String(m.revenue || m.totalRevenue || 0).replace(/[$,]/g, '')) || 0);
+    datasets.push({
+      label: 'Revenue',
+      data: revenues,
+      backgroundColor: 'rgba(34, 197, 94, 0.7)',
+      borderColor: '#22c55e',
+      borderWidth: 2
+    });
+  }
+  
+  if (metric === 'deposits' || metric === 'monthly') {
+    const deposits = months.map(m => parseFloat(String(m.deposits || m.totalDeposits || 0).replace(/[$,]/g, '')) || 0);
+    datasets.push({
+      label: 'Deposits',
+      data: deposits,
+      backgroundColor: 'rgba(132, 204, 22, 0.7)',
+      borderColor: '#84cc16',
+      borderWidth: 2
+    });
+  }
+  
+  if (metric === 'balance') {
+    const balances = months.map(m => parseFloat(String(m.avgBalance || m.averageBalance || 0).replace(/[$,]/g, '')) || 0);
+    const endBalances = months.map(m => parseFloat(String(m.endingBalance || m.endBalance || 0).replace(/[$,]/g, '')) || 0);
+    chartType = 'line';
+    datasets = [
+      { label: 'Avg Balance', data: balances, borderColor: '#eab308', backgroundColor: 'rgba(234, 179, 8, 0.1)', fill: true, tension: 0.4 },
+      { label: 'End Balance', data: endBalances, borderColor: '#f97316', backgroundColor: 'transparent', tension: 0.4 }
+    ];
+  }
+  
+  if (metric === 'nsf') {
+    const nsfs = months.map(m => parseInt(m.nsf || m.nsfCount || 0) || 0);
+    datasets = [{ label: 'NSFs', data: nsfs, backgroundColor: 'rgba(239, 68, 68, 0.7)', borderColor: '#ef4444', borderWidth: 2 }];
+  }
+  
+  if (metric === 'negdays') {
+    const negDays = months.map(m => parseInt(m.negativeDays || m.negDays || 0) || 0);
+    datasets = [{ label: 'Negative Days', data: negDays, backgroundColor: 'rgba(249, 115, 22, 0.7)', borderColor: '#f97316', borderWidth: 2 }];
+  }
+  
+  if (metric === 'fico') {
+    // FICO doesn't change monthly, show score breakdown
+    const fico = currentDeal.fico || 0;
+    const ranges = ['800+', '750-799', '700-749', '650-699', '600-649', '<600'];
+    const rangeData = [0, 0, 0, 0, 0, 0];
+    if (fico >= 800) rangeData[0] = 1;
+    else if (fico >= 750) rangeData[1] = 1;
+    else if (fico >= 700) rangeData[2] = 1;
+    else if (fico >= 650) rangeData[3] = 1;
+    else if (fico >= 600) rangeData[4] = 1;
+    else rangeData[5] = 1;
+    
+    window.bankDataChartInstance = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ranges,
+        datasets: [{
+          data: rangeData.map(v => v === 0 ? 0.1 : 1),
+          backgroundColor: ['#22c55e', '#84cc16', '#eab308', '#f97316', '#ef4444', '#dc2626'].map((c, i) => rangeData[i] ? c : 'rgba(255,255,255,0.1)')
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'right', labels: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary').trim() } },
+          title: { display: true, text: `FICO: ${fico}`, color: getComputedStyle(document.body).getPropertyValue('--text-primary').trim(), font: { size: 16, weight: '700' } }
+        }
+      }
+    });
+    return;
+  }
+  
+  window.bankDataChartInstance = new Chart(ctx, {
+    type: chartType,
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { 
+          display: datasets.length > 1,
+          labels: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary').trim() }
+        }
+      },
+      scales: {
+        x: { ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-muted').trim() }, grid: { color: 'rgba(255,255,255,0.05)' } },
+        y: { ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-muted').trim() }, grid: { color: 'rgba(255,255,255,0.05)' } }
+      }
+    }
+  });
+}
+
+function updateMiniMonthlyChart() {
+  const container = document.getElementById('miniMonthlyChart');
+  if (!container || !currentDeal) return;
+  
+  const months = currentDeal.months || [];
+  if (months.length === 0) {
+    container.innerHTML = '<div style="width: 100%; text-align: center; color: var(--text-muted); font-size: 0.75rem;">No data</div>';
+    return;
+  }
+  
+  const revenues = months.map(m => parseFloat(String(m.revenue || m.totalRevenue || 0).replace(/[$,]/g, '')) || 0);
+  const maxRev = Math.max(...revenues, 1);
+  
+  container.innerHTML = revenues.map((rev, i) => {
+    const height = Math.max(5, (rev / maxRev) * 100);
+    const color = rev > maxRev * 0.7 ? 'var(--tier-a)' : rev > maxRev * 0.4 ? 'var(--tier-c)' : 'var(--tier-d)';
+    return `<div style="flex: 1; height: ${height}%; background: ${color}; border-radius: 2px; min-width: 8px;" title="${months[i].month || `M${i+1}`}: ${formatCurrency(rev)}"></div>`;
+  }).join('');
+}
 
 function toggleSidebar() {
   const sidebar = document.getElementById('detailSidebar');
@@ -6358,6 +7578,286 @@ function getGeminiModel() {
   return (localStorage.getItem('greatdane_model') || 'gemini-2.5-flash').trim();
 }
 
+// AI Command Center Functions
+let aiGeneratedChartInstance = null;
+
+function runAICommandWith(query) {
+  document.getElementById('aiCommandInput').value = query;
+  runAICommand();
+}
+
+function closeAIResponse() {
+  document.getElementById('aiResponseArea').style.display = 'none';
+  if (aiGeneratedChartInstance) {
+    aiGeneratedChartInstance.destroy();
+    aiGeneratedChartInstance = null;
+  }
+}
+
+async function runAICommand() {
+  const input = document.getElementById('aiCommandInput');
+  const query = input.value.trim();
+  
+  if (!query) {
+    showToast('Error', 'Please enter a question or command.');
+    return;
+  }
+  
+  const apiKey = getGeminiApiKey();
+  if (!apiKey) {
+    showToast('Error', 'Please set your Gemini API key in Settings.');
+    return;
+  }
+  
+  // Show response area with loading
+  const responseArea = document.getElementById('aiResponseArea');
+  const loadingEl = document.getElementById('aiResponseLoading');
+  const contentEl = document.getElementById('aiResponseContent');
+  const btn = document.getElementById('aiCommandBtn');
+  
+  responseArea.style.display = 'block';
+  loadingEl.style.display = 'block';
+  contentEl.style.display = 'none';
+  document.getElementById('aiResponseQuery').textContent = `"${query}"`;
+  
+  btn.disabled = true;
+  btn.innerHTML = '<div style="width: 18px; height: 18px; border: 2px solid rgba(0,0,0,0.3); border-top-color: #000; border-radius: 50%; animation: spin 1s linear infinite;"></div> Thinking...';
+  
+  // Gather current metrics data
+  const metricsData = gatherDashboardMetrics();
+  
+  const prompt = `You are an AI assistant for a business underwriting platform called GREATDANE. You analyze deals and metrics for merchant cash advance underwriting.
+
+CURRENT DASHBOARD DATA:
+${JSON.stringify(metricsData, null, 2)}
+
+USER QUERY: "${query}"
+
+Analyze the data and respond to the user's query. If they ask for a chart, provide chart configuration.
+
+IMPORTANT: Respond with a JSON object in this exact format:
+{
+  "answer": "Your detailed text response here explaining the analysis",
+  "chart": null or {
+    "type": "pie|bar|line|doughnut",
+    "title": "Chart title",
+    "labels": ["Label1", "Label2", ...],
+    "data": [number1, number2, ...],
+    "colors": ["#22c55e", "#84cc16", "#eab308", "#f97316", "#ef4444"]
+  },
+  "insights": [
+    {"label": "Key Metric 1", "value": "Value", "trend": "up|down|neutral"},
+    {"label": "Key Metric 2", "value": "Value", "trend": "up|down|neutral"}
+  ],
+  "actions": ["Suggested action 1", "Suggested action 2"]
+}
+
+If no chart is needed, set chart to null. Always provide a helpful answer.
+If asked about score distribution, use tiers: A (750+), B (650-749), C (550-649), D (450-549), E (<450).
+Use the actual data provided above to generate accurate responses and charts.`;
+
+  try {
+    const model = getGeminiModel();
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.4 }
+      })
+    });
+    
+    const data = await res.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const parsed = safeJsonFromText(text);
+    
+    if (!parsed) {
+      // If no JSON, show raw response
+      loadingEl.style.display = 'none';
+      contentEl.style.display = 'block';
+      document.getElementById('aiResponseText').textContent = text || 'No response received.';
+      document.getElementById('aiResponseChart').style.display = 'none';
+      document.getElementById('aiResponseInsights').style.display = 'none';
+    } else {
+      renderAIResponse(parsed);
+    }
+    
+  } catch (err) {
+    console.error('AI Command failed:', err);
+    loadingEl.style.display = 'none';
+    contentEl.style.display = 'block';
+    document.getElementById('aiResponseText').innerHTML = `<span style="color: var(--tier-e);">Error: ${err.message}</span>`;
+    document.getElementById('aiResponseChart').style.display = 'none';
+    document.getElementById('aiResponseInsights').style.display = 'none';
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Ask AI';
+  }
+}
+
+function gatherDashboardMetrics() {
+  // Gather all deals data
+  const deals = JSON.parse(localStorage.getItem('greatdane_deals') || '[]');
+  
+  // Calculate metrics
+  let totalRevenue = 0;
+  let totalScore = 0;
+  let scoreCount = 0;
+  let approvedCount = 0;
+  let highRiskCount = 0;
+  const scoreTiers = { A: 0, B: 0, C: 0, D: 0, E: 0 };
+  const industries = {};
+  const monthlyDeals = {};
+  
+  deals.forEach(deal => {
+    // Revenue
+    if (deal.avgMonthlyRevenue) {
+      const rev = parseFloat(String(deal.avgMonthlyRevenue).replace(/[$,]/g, '')) || 0;
+      totalRevenue += rev;
+    }
+    
+    // Scores
+    if (deal.score && deal.score > 0) {
+      totalScore += deal.score;
+      scoreCount++;
+      
+      // Tier distribution
+      if (deal.score >= 750) scoreTiers.A++;
+      else if (deal.score >= 650) scoreTiers.B++;
+      else if (deal.score >= 550) scoreTiers.C++;
+      else if (deal.score >= 450) scoreTiers.D++;
+      else scoreTiers.E++;
+      
+      // High risk
+      if (deal.score < 550) highRiskCount++;
+    }
+    
+    // Status
+    if (deal.status === 'approved') approvedCount++;
+    
+    // Industries
+    const ind = deal.industry || 'Unknown';
+    industries[ind] = (industries[ind] || 0) + 1;
+    
+    // Monthly tracking
+    const month = deal.created ? new Date(deal.created).toLocaleDateString('en-US', { month: 'short', year: '2-digit' }) : 'Unknown';
+    monthlyDeals[month] = (monthlyDeals[month] || 0) + 1;
+  });
+  
+  return {
+    totalDeals: deals.length,
+    totalRevenue: totalRevenue,
+    avgRevenue: deals.length > 0 ? Math.round(totalRevenue / deals.length) : 0,
+    avgScore: scoreCount > 0 ? Math.round(totalScore / scoreCount) : 0,
+    approvalRate: deals.length > 0 ? Math.round((approvedCount / deals.length) * 100) : 0,
+    highRiskCount: highRiskCount,
+    scoreTiers: scoreTiers,
+    industries: industries,
+    monthlyDeals: monthlyDeals,
+    deals: deals.map(d => ({
+      name: d.businessName,
+      score: d.score,
+      revenue: d.avgMonthlyRevenue,
+      industry: d.industry,
+      status: d.status,
+      fico: d.fico
+    }))
+  };
+}
+
+function renderAIResponse(response) {
+  const loadingEl = document.getElementById('aiResponseLoading');
+  const contentEl = document.getElementById('aiResponseContent');
+  const textEl = document.getElementById('aiResponseText');
+  const chartEl = document.getElementById('aiResponseChart');
+  const insightsEl = document.getElementById('aiResponseInsights');
+  
+  loadingEl.style.display = 'none';
+  contentEl.style.display = 'block';
+  
+  // Render answer text
+  textEl.innerHTML = response.answer || 'No answer provided.';
+  
+  // Render chart if provided
+  if (response.chart && response.chart.type) {
+    chartEl.style.display = 'block';
+    
+    // Destroy previous chart
+    if (aiGeneratedChartInstance) {
+      aiGeneratedChartInstance.destroy();
+    }
+    
+    const ctx = document.getElementById('aiGeneratedChart').getContext('2d');
+    const chartConfig = {
+      type: response.chart.type,
+      data: {
+        labels: response.chart.labels || [],
+        datasets: [{
+          data: response.chart.data || [],
+          backgroundColor: response.chart.colors || ['#22c55e', '#84cc16', '#eab308', '#f97316', '#ef4444'],
+          borderColor: response.chart.type === 'line' ? '#eab308' : 'transparent',
+          borderWidth: response.chart.type === 'line' ? 3 : 0,
+          tension: 0.4,
+          fill: response.chart.type === 'line'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: response.chart.type === 'pie' || response.chart.type === 'doughnut' ? 'right' : 'top',
+            labels: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary').trim() }
+          },
+          title: {
+            display: true,
+            text: response.chart.title || 'Chart',
+            color: getComputedStyle(document.body).getPropertyValue('--text-primary').trim(),
+            font: { size: 14, weight: '600' }
+          }
+        },
+        scales: response.chart.type === 'pie' || response.chart.type === 'doughnut' ? {} : {
+          x: { ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-muted').trim() }, grid: { color: 'rgba(255,255,255,0.05)' } },
+          y: { ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-muted').trim() }, grid: { color: 'rgba(255,255,255,0.05)' } }
+        }
+      }
+    };
+    
+    aiGeneratedChartInstance = new Chart(ctx, chartConfig);
+  } else {
+    chartEl.style.display = 'none';
+  }
+  
+  // Render insights if provided
+  if (response.insights && response.insights.length > 0) {
+    insightsEl.style.display = 'block';
+    insightsEl.innerHTML = `
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 16px;">
+        ${response.insights.map(i => `
+          <div style="padding: 12px; background: var(--bg-secondary); border-radius: 10px; text-align: center;">
+            <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">${i.label}</div>
+            <div style="font-size: 1.1rem; font-weight: 700; color: ${i.trend === 'up' ? 'var(--tier-a)' : i.trend === 'down' ? 'var(--tier-e)' : 'var(--text-primary)'};">${i.value}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    
+    // Add actions if provided
+    if (response.actions && response.actions.length > 0) {
+      insightsEl.innerHTML += `
+        <div style="padding: 12px; background: rgba(234, 179, 8, 0.1); border-radius: 10px; border-left: 3px solid var(--accent);">
+          <div style="font-size: 0.75rem; font-weight: 600; color: var(--accent); margin-bottom: 8px;">💡 Recommended Actions</div>
+          <ul style="margin: 0; padding-left: 20px; font-size: 0.85rem; color: var(--text-secondary);">
+            ${response.actions.map(a => `<li style="margin-bottom: 4px;">${a}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    }
+  } else {
+    insightsEl.style.display = 'none';
+  }
+}
+
 function safeJsonFromText(text) {
   const t = String(text || '');
   
@@ -7278,35 +8778,32 @@ async function runCustomQuery() {
   const query = queryInput.value.trim();
   
   if (!query) {
-    alert('Please enter a question or command.');
+    showToast('Error', 'Please enter a question or command.');
     return;
   }
   
   if (!currentDeal?.businessName) {
-    alert('No business name set for this deal.');
+    showToast('Error', 'No business name set for this deal.');
     return;
   }
   
   const apiKey = getGeminiApiKey();
   if (!apiKey) {
-    alert('Enter your Gemini API key first (Settings).');
+    showToast('Error', 'Enter your Gemini API key first (Settings).');
     return;
   }
   
-  const modal = document.getElementById('deepResearchModal');
-  const body = document.getElementById('deepResearchBody');
-  const subtitle = document.getElementById('deepResearchSubtitle');
+  // Show inline loading
+  const resultsContainer = document.getElementById('inlineQueryResults');
+  const loadingEl = document.getElementById('inlineQueryLoading');
+  const contentEl = document.getElementById('inlineQueryContent');
+  const btn = document.getElementById('customQueryBtn');
   
-  subtitle.textContent = `Custom Research: ${currentDeal.businessName}`;
-  body.innerHTML = `
-    <div style="text-align: center; padding: 40px;">
-      <div style="width: 60px; height: 60px; border: 4px solid var(--border-primary); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
-      <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;">Researching...</p>
-      <p style="color: var(--text-muted);">"${query}"</p>
-      <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 16px;">Searching the web for answers...</p>
-    </div>
-  `;
-  modal.classList.add('active');
+  resultsContainer.style.display = 'block';
+  loadingEl.style.display = 'block';
+  contentEl.style.display = 'none';
+  btn.disabled = true;
+  btn.innerHTML = '<div style="width: 14px; height: 14px; border: 2px solid var(--border-primary); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite;"></div>';
   
   const prompt = `You are a business intelligence researcher.
 
@@ -7351,25 +8848,55 @@ Return as JSON:
     currentDeal.customQueries.unshift(parsed);
     saveDealsToStorage();
     
+    // Show inline results
+    loadingEl.style.display = 'none';
+    contentEl.style.display = 'block';
+    
+    document.getElementById('inlineQueryQuestion').textContent = `Q: ${parsed.question || query}`;
+    document.getElementById('inlineQueryAnswer').textContent = parsed.answer || 'No answer available.';
+    
+    const findingsEl = document.getElementById('inlineQueryFindings');
+    if (parsed.key_findings?.length) {
+      findingsEl.innerHTML = `
+        <div style="padding: 10px; background: var(--bg-tertiary); border-radius: 8px;">
+          <div style="font-weight: 600; margin-bottom: 6px; font-size: 0.8rem; color: var(--accent);">Key Findings</div>
+          <ul style="margin: 0; padding-left: 16px; font-size: 0.8rem; color: var(--text-secondary);">
+            ${parsed.key_findings.map(f => `<li style="margin-bottom: 4px;">${f}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    } else {
+      findingsEl.innerHTML = '';
+    }
+    
+    const sourcesEl = document.getElementById('inlineQuerySources');
+    if (parsed.sources?.length && parsed.sources[0]?.url) {
+      sourcesEl.innerHTML = `Sources: ${parsed.sources.map(s => `<a href="${s.url}" target="_blank" style="color: var(--accent);">${s.title || 'Link'}</a>`).join(', ')}`;
+    } else {
+      sourcesEl.innerHTML = '';
+    }
+    
+    // Also render in the Research tab for history
     renderCustomQuerySection(parsed);
-    closeDeepResearchModal();
     queryInput.value = '';
     showToast('Research Complete', `Confidence: ${parsed.confidence || 0}%`);
     
   } catch (err) {
     console.error('Custom query failed:', err);
-    body.innerHTML = `
-      <div style="padding: 20px; text-align: center;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="var(--tier-e)" stroke-width="2" style="width: 48px; height: 48px; margin-bottom: 16px;">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="15" y1="9" x2="9" y2="15"/>
-          <line x1="9" y1="9" x2="15" y2="15"/>
-        </svg>
-        <p style="color: var(--tier-e); font-weight: 600;">Query Failed</p>
-        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 8px;">${err.message}</p>
-      </div>
-    `;
+    loadingEl.style.display = 'none';
+    contentEl.style.display = 'block';
+    document.getElementById('inlineQueryQuestion').textContent = 'Error';
+    document.getElementById('inlineQueryAnswer').innerHTML = `<span style="color: var(--tier-e);">${err.message}</span>`;
+    document.getElementById('inlineQueryFindings').innerHTML = '';
+    document.getElementById('inlineQuerySources').innerHTML = '';
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Search';
   }
+}
+
+function closeInlineQuery() {
+  document.getElementById('inlineQueryResults').style.display = 'none';
 }
 
 function renderCustomQuerySection(result) {
