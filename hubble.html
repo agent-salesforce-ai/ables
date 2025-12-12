@@ -317,27 +317,6 @@
     .search-btn:hover { transform: scale(1.05); box-shadow: 0 8px 24px rgba(234, 179, 8, 0.4); }
     .search-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
     .search-btn svg { width: 24px; height: 24px; }
-    .model-toggle { display: flex; justify-content: center; gap: 0.6rem; }
-    .model-btn {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.55rem 1rem;
-      background: transparent;
-      border: 1.5px solid var(--border-primary);
-      border-radius: 50px;
-      color: var(--text-muted);
-      font-size: 0.8rem;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .model-btn:hover { border-color: var(--text-muted); color: var(--text-primary); }
-    .model-btn.active { border-color: var(--accent); color: var(--accent); }
-    .model-badge { padding: 0.2rem 0.4rem; border-radius: 3px; font-size: 0.6rem; font-weight: 700; }
-    .model-badge.flash { background: #22c55e; color: #000; }
-    .model-badge.pro { background: #8b5cf6; color: #fff; }
     
     .hero-footer {
       position: absolute;
@@ -420,11 +399,26 @@
       padding: 2px 6px;
       border-radius: 10px;
       background: var(--bg-primary);
+      min-width: 20px;
+      text-align: center;
     }
     .intel-tab.active .tab-badge { background: rgba(234, 179, 8, 0.2); color: var(--accent); }
     .intel-tab.has-data .tab-badge { background: rgba(34, 197, 94, 0.2); color: var(--tier-a); }
     .intel-tab.has-warning .tab-badge { background: rgba(239, 68, 68, 0.2); color: var(--tier-e); }
-    .intel-tab.loading .tab-badge { animation: pulse 1.5s infinite; }
+    .intel-tab.loading .tab-badge { background: rgba(234, 179, 8, 0.15); }
+    
+    .badge-spinner {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border: 2px solid rgba(234, 179, 8, 0.3);
+      border-top-color: #eab308;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
     .intel-panel { display: none; }
@@ -464,6 +458,58 @@
     .card-title svg { width: 16px; height: 16px; }
 
     /* LOADING / EMPTY STATES */
+    /* MINI GAME */
+    .game-container {
+      display: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border-primary);
+      border-radius: 16px;
+      padding: 16px;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .game-container.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+    .game-scores {
+      display: flex;
+      gap: 16px;
+    }
+    .game-score {
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .game-high {
+      font-weight: 600;
+      color: var(--tier-a);
+    }
+    #brickGame {
+      background: var(--bg-primary);
+      border-radius: 8px;
+      border: 1px solid var(--border-primary);
+      display: block;
+      margin: 0 auto;
+      max-width: 100%;
+    }
+    .game-hint {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
     .empty-state {
       text-align: center;
       padding: 60px 20px;
@@ -482,6 +528,14 @@
     .loading-spinner {
       width: 48px;
       height: 48px;
+      border: 3px solid var(--border-primary);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    .spinner {
+      width: 32px;
+      height: 32px;
       border: 3px solid var(--border-primary);
       border-top-color: var(--accent);
       border-radius: 50%;
@@ -551,6 +605,94 @@
       font-size: 0.9rem;
       color: var(--text-secondary);
       line-height: 1.6;
+    }
+    
+    /* STREAMING STATES */
+    .streaming-container {
+      min-height: 200px;
+    }
+    .streaming-field {
+      animation: fieldFadeIn 0.3s ease forwards;
+    }
+    @keyframes fieldFadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .streaming-text {
+      display: inline;
+    }
+    .streaming-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: var(--accent);
+      margin-left: 2px;
+      animation: cursorBlink 0.8s ease-in-out infinite;
+      vertical-align: text-bottom;
+    }
+    @keyframes cursorBlink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+    .stream-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      background: rgba(234, 179, 8, 0.08);
+      border: 1px solid rgba(234, 179, 8, 0.2);
+      border-radius: 10px;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+      color: var(--accent);
+    }
+    .stream-status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: statusPulse 1s ease-in-out infinite;
+    }
+    @keyframes statusPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.7; }
+    }
+    .stream-complete .stream-status {
+      background: rgba(34, 197, 94, 0.08);
+      border-color: rgba(34, 197, 94, 0.2);
+      color: var(--tier-a);
+    }
+    .stream-complete .stream-status-dot {
+      background: var(--tier-a);
+      animation: none;
+    }
+    .data-field-streaming {
+      background: rgba(234, 179, 8, 0.05);
+      border-radius: 6px;
+      transition: background 0.3s ease;
+    }
+    .data-field-complete {
+      background: transparent;
+    }
+    .section-box.streaming {
+      position: relative;
+      overflow: hidden;
+    }
+    .section-box.streaming::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(234, 179, 8, 0.1), transparent);
+      animation: shimmer 1.5s infinite;
+    }
+    @keyframes shimmer {
+      to { left: 100%; }
+    }
+    .section-box.complete::after {
+      display: none;
     }
 
     /* DATA STYLES */
@@ -1096,10 +1238,6 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </button>
       </div>
-      <div class="model-toggle">
-        <button class="model-btn active" data-model="gemini-3-pro-preview"><span class="model-badge pro">PRO</span> Recommended</button>
-        <button class="model-btn" data-model="gemini-2.5-flash"><span class="model-badge flash">FLASH</span> Faster</button>
-      </div>
     </div>
     <div class="hero-footer">
       Powered by <a href="#">AblesAI</a> | Gemini API with Google Search Grounding
@@ -1158,7 +1296,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             Deep Research
           </span>
-          <button class="btn-secondary" onclick="runResearchAuto()">
+          <button class="btn-secondary" onclick="runSOSLookup(); runFullResearchAuto();">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
             Run
           </button>
@@ -1250,6 +1388,19 @@
         </div>
         <div id="debtContent"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><p>Run a search to find debt and financing positions</p></div></div>
       </div>
+    </div>
+
+    <!-- MINI GAME WHILE LOADING -->
+    <div class="game-container" id="gameContainer">
+      <div class="game-header">
+        <span>🎮 Play while you wait</span>
+        <div class="game-scores">
+          <span class="game-score">Score: <span id="gameScore">0</span></span>
+          <span class="game-high">Best: <span id="gameHigh">0</span></span>
+        </div>
+      </div>
+      <canvas id="brickGame" width="400" height="250"></canvas>
+      <p class="game-hint">← → to move | CLICK or SPACE to fire lasers</p>
     </div>
   </section>
 
@@ -1414,14 +1565,22 @@ let currentBusiness = '';
 let selectedModel = 'gemini-3-pro-preview';
 let researchData = null, backgroundData = null, footprintData = null, debtData = null, reviewsData = null, socialData = null;
 
-// Model toggle
-document.querySelectorAll('.model-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.model-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    selectedModel = btn.dataset.model;
-  });
-});
+const loadingFacts = [
+  "UCC filings remain public record for 5 years and reveal secured creditors.",
+  "Secretary of State databases contain entity formation dates and registered agents.",
+  "A single negative review can cost a business up to 30 customers.",
+  "Companies with consistent NAP data rank 50% higher in local search.",
+  "Federal tax liens filed after 2018 no longer appear on credit reports.",
+  "PACER contains over 1 billion federal court documents.",
+  "The MCA industry processes over $20 billion annually.",
+  "Businesses with complete Google profiles get 7x more clicks.",
+  "SSL certificates became a Google ranking signal in 2014.",
+  "A one-star Yelp increase correlates with 5-9% revenue increase.",
+  "Stacked debt positions are a leading indicator of financial distress.",
+  "The BBB maintains complaint records for 3 years.",
+  "Court records often contain revenue figures disclosed during litigation.",
+  "Trademark filings can reveal upcoming product launches."
+];
 
 function toggleTheme() {
   document.body.classList.toggle('light-mode');
@@ -1455,19 +1614,110 @@ async function runSearch() {
   // Force light mode for results
   document.body.classList.add('light-mode');
   
-  // Reset all panels
+  // Reset all panels and show loading states
   ['Research', 'Background', 'Reviews', 'Social', 'Footprint', 'Debt'].forEach(t => {
-    document.getElementById('badge' + t).textContent = '--';
-    document.getElementById('tab' + t).classList.remove('has-data', 'has-warning', 'loading');
+    document.getElementById('badge' + t).innerHTML = '<span class="badge-spinner"></span>';
+    document.getElementById('tab' + t).classList.remove('has-data', 'has-warning');
+    document.getElementById('tab' + t).classList.add('loading');
   });
+  window.sosData = null;
   
-  // Fire ALL reports simultaneously - each updates UI as it completes
-  runResearchAuto();
+  // Show initial loading content in ALL panels
+  setLoading('research', 'Searching Secretary of State...');
+  setLoading('background', 'Scanning court records & UCC filings...');
+  setLoading('reviews', 'Finding reviews on Google, Yelp, BBB...');
+  setLoading('social', 'Discovering social media profiles...');
+  setLoading('footprint', 'Analyzing digital presence...');
+  setLoading('debt', 'Searching debt & MCA positions...');
+  
+  // Start mini game while loading
+  startGame();
+  
+  // ALL IN PARALLEL - fastest possible loading
+  runSOSLookup();
+  runFullResearchAuto();
   runBackgroundAuto();
   runReviewsAuto();
   runSocialAuto();
   runFootprintAuto();
   runDebtAuto();
+}
+
+// Ultra-fast SOS lookup - minimal prompt = faster response
+async function runSOSLookup() {
+  if (!currentBusiness) return;
+  // Don't overwrite loading state - just run the query
+  
+  const sosPrompt = `Secretary of State lookup for "${currentBusiness}". Return ONLY: {"state":"","status":"","filed_date":"","entity_type":"","entity_number":"","sos_url":""}`;
+
+  try {
+    const response = await callGemini(sosPrompt);
+    const data = safeJson(response);
+    if (data) {
+      // Might be nested or flat
+      const sr = data.state_registration || data;
+      if (sr.state || sr.status) {
+        window.sosData = sr; // Store for merge with full research
+        renderResearchSOS(sr);
+        document.getElementById('badgeResearch').textContent = 'SOS ✓';
+      }
+    }
+    
+  } catch (e) {
+    console.log('SOS error:', e);
+    
+  }
+}
+
+// Full research - runs in parallel, merges with SOS when done
+async function runFullResearchAuto() {
+  if (!currentBusiness) return;
+  
+  
+  const prompt = `Research "${currentBusiness}": company overview, key people, industry, competitors, news, financials. Return ONLY JSON:
+{
+  "company_name": "",
+  "dba": "",
+  "industry": "",
+  "founded": "",
+  "headquarters": "",
+  "website": "",
+  "employees": "",
+  "annual_revenue": "",
+  "description": "",
+  "key_people": [{"name": "", "title": ""}],
+  "competitors": [{"name": "", "website": ""}],
+  "recent_news": [{"title": "", "date": "", "summary": "", "url": ""}],
+  "products_services": [],
+  "confidence_score": 85,
+  "summary": ""
+}`;
+  
+  try {
+    const response = await callGemini(prompt);
+    researchData = safeJson(response);
+    if (researchData) {
+      // Merge with SOS data if it loaded
+      if (window.sosData) {
+        researchData.state_registration = window.sosData;
+      }
+      renderResearchSection(researchData);
+      document.getElementById('badgeResearch').textContent = researchData.confidence_score + '%';
+      document.getElementById('tabResearch').classList.add('has-data');
+      showToast('Research Complete', researchData.company_name || currentBusiness);
+    } else if (!window.sosData) {
+      setEmpty('research', 'Could not parse research data');
+      document.getElementById('badgeResearch').textContent = '--';
+    }
+    
+  } catch (e) {
+    
+    if (!window.sosData) {
+      setEmpty('research', 'Error: ' + e.message);
+      document.getElementById('badgeResearch').textContent = 'ERR';
+    }
+  }
+  document.getElementById('tabResearch').classList.remove('loading');
 }
 
 function newSearch() {
@@ -1478,6 +1728,7 @@ function newSearch() {
   document.getElementById('businessInput').value = '';
   currentBusiness = '';
   researchData = backgroundData = footprintData = debtData = reviewsData = socialData = null;
+  window.sosData = null;
   switchIntelTab('research');
   ['researchContent', 'backgroundContent', 'reviewsContent', 'socialContent', 'footprintContent', 'debtContent'].forEach(id => {
     const el = document.getElementById(id);
@@ -1486,8 +1737,21 @@ function newSearch() {
 }
 
 function getApiKey() {
-  return document.getElementById('apiKey').value.trim();
+  const input = document.getElementById('apiKey');
+  const key = input.value.trim();
+  if (key) {
+    localStorage.setItem('hubble_api_key', key);
+  }
+  return key || localStorage.getItem('hubble_api_key') || '';
 }
+
+// Load saved API key on page load
+document.addEventListener('DOMContentLoaded', () => {
+  const savedKey = localStorage.getItem('hubble_api_key');
+  if (savedKey) {
+    document.getElementById('apiKey').value = savedKey;
+  }
+});
 
 async function callGemini(prompt) {
   const apiKey = getApiKey();
@@ -1513,35 +1777,64 @@ async function callGemini(prompt) {
 }
 
 function safeJson(text) {
+  if (!text) return null;
+  
   try {
-    const match = text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/\{[\s\S]*\}/);
-    const jsonStr = match ? (match[1] || match[0]) : text;
-    return JSON.parse(jsonStr);
-  } catch { return null; }
+    // Try direct parse first
+    return JSON.parse(text);
+  } catch (e) {}
+  
+  try {
+    // Try to extract from markdown code block
+    const codeBlockMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+    if (codeBlockMatch) {
+      return JSON.parse(codeBlockMatch[1]);
+    }
+  } catch (e) {}
+  
+  try {
+    // Try to extract JSON object
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      let jsonStr = jsonMatch[0];
+      // Clean up common issues
+      jsonStr = jsonStr.replace(/,\s*}/g, '}'); // trailing commas in objects
+      jsonStr = jsonStr.replace(/,\s*]/g, ']'); // trailing commas in arrays
+      jsonStr = jsonStr.replace(/'/g, '"'); // single quotes to double
+      jsonStr = jsonStr.replace(/(\w+):/g, '"$1":'); // unquoted keys
+      jsonStr = jsonStr.replace(/""/g, '"'); // fix double-double quotes
+      return JSON.parse(jsonStr);
+    }
+  } catch (e) {}
+  
+  // Last resort: try to build object from key patterns
+  try {
+    const result = {};
+    
+    // Extract digital_score
+    const scoreMatch = text.match(/"?digital_score"?\s*:\s*(\d+)/i);
+    if (scoreMatch) result.digital_score = parseInt(scoreMatch[1]);
+    
+    // Extract web_presence object
+    const wpMatch = text.match(/"?web_presence"?\s*:\s*\{([^}]+)\}/i);
+    if (wpMatch) {
+      result.web_presence = {};
+      const wpFields = ['website', 'domain_age', 'ssl_status', 'seo_visibility', 'traffic_estimate'];
+      wpFields.forEach(field => {
+        const fieldMatch = wpMatch[1].match(new RegExp(`"?${field}"?\\s*:\\s*"([^"]*)"`, 'i'));
+        if (fieldMatch) result.web_presence[field] = fieldMatch[1];
+      });
+    }
+    
+    // Extract summary
+    const summaryMatch = text.match(/"?summary"?\s*:\s*"([^"]*)"/i);
+    if (summaryMatch) result.summary = summaryMatch[1];
+    
+    if (Object.keys(result).length > 0) return result;
+  } catch (e) {}
+  
+  return null;
 }
-
-const loadingFacts = [
-  "UCC filings remain public record for 5 years and reveal a company's secured creditors and collateral.",
-  "Secretary of State databases contain entity formation dates, registered agents, and good standing status.",
-  "A single negative review can cost a business up to 30 customers, making reputation monitoring critical.",
-  "The average B2B buyer consumes 13 pieces of content before making a purchasing decision.",
-  "Companies with consistent NAP (Name, Address, Phone) data rank 50% higher in local search results.",
-  "Federal tax liens filed after 2018 no longer appear on credit reports but remain in public court records.",
-  "Judgment liens can attach to all real property owned by a debtor in the county where filed.",
-  "Domain age is a minor ranking factor—sites over 3 years old tend to have more search authority.",
-  "PACER (Public Access to Court Electronic Records) contains over 1 billion federal court documents.",
-  "The MCA (Merchant Cash Advance) industry processes over $20 billion annually, often without traditional credit checks.",
-  "Businesses with complete Google Business Profiles receive 7x more clicks than those with incomplete listings.",
-  "SSL certificates became a Google ranking signal in 2014, making HTTPS essential for SEO.",
-  "Corporate subsidiaries and DBAs (Doing Business As) often reveal hidden ownership structures.",
-  "A one-star increase on Yelp correlates with a 5-9% increase in revenue for restaurants.",
-  "LinkedIn Sales Navigator data shows decision-makers change roles every 2.8 years on average.",
-  "Stacked debt positions—multiple MCAs or loans—are a leading indicator of business financial distress.",
-  "The BBB maintains complaint records for 3 years and business reviews for the life of the accreditation.",
-  "Cross-referencing social media employee counts with LinkedIn data reveals hiring or layoff trends.",
-  "Court records often contain financial details like revenue figures disclosed during litigation.",
-  "Trademark filings in USPTO can reveal upcoming product launches and brand expansion plans."
-];
 
 const loadingStatuses = {
   research: [
@@ -1669,51 +1962,33 @@ function clearLoadingInterval(section) {
 }
 
 // ==================== RESEARCH ====================
-async function runResearchAuto() {
-  if (!currentBusiness) return;
-  document.getElementById('tabResearch').classList.add('loading');
-  setLoading('research', 'Researching ' + currentBusiness + '...');
+// Render just the SOS section first while rest loads
+function renderResearchSOS(sr) {
+  const status = (sr.status || '').toLowerCase();
+  let h = `<div class="section-box" style="border-left:4px solid var(--accent-gold);"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>State Registration</div><div class="data-grid" style="grid-template-columns:1fr 1fr;">`;
+  if (sr.state) h += `<div><div class="label">State</div><div class="value">${sr.state}</div></div>`;
+  if (sr.status) h += `<div><div class="label">Status</div><div class="value"><span class="status-badge ${status.includes('active') ? 'good' : 'active'}">${sr.status}</span></div></div>`;
+  if (sr.filed_date) h += `<div><div class="label">Filed Date</div><div class="value">${sr.filed_date}</div></div>`;
+  if (sr.entity_type) h += `<div><div class="label">Entity Type</div><div class="value">${sr.entity_type}</div></div>`;
+  if (sr.entity_number) h += `<div><div class="label">Entity Number</div><div class="value">${sr.entity_number}</div></div>`;
+  if (sr.registered_agent) h += `<div><div class="label">Registered Agent</div><div class="value">${sr.registered_agent}</div></div>`;
+  if (sr.sos_url) h += `<div style="grid-column:span 2;"><div class="label">Secretary of State</div><div class="value"><a href="${sr.sos_url}" target="_blank" style="color:var(--accent-blue)">View Official Filing →</a></div></div>`;
+  h += `</div></div>`;
   
-  const prompt = `You are a business intelligence analyst. Search for and compile comprehensive research on "${currentBusiness}". Include company overview, key people, industry, competitors, recent news, financials if available. Return ONLY valid JSON in this format:
-{
-  "company_name": "",
-  "dba": "",
-  "industry": "",
-  "founded": "",
-  "headquarters": "",
-  "website": "",
-  "employees": "",
-  "annual_revenue": "",
-  "description": "",
-  "key_people": [{"name": "", "title": "", "linkedin_url": ""}],
-  "competitors": [{"name": "", "website": ""}],
-  "recent_news": [{"title": "", "date": "", "summary": "", "url": ""}],
-  "products_services": [],
-  "confidence_score": 85,
-  "summary": ""
-}`;
+  // Show SOS first, then loading indicator for rest
+  h += `<div class="section-box" style="text-align:center;padding:30px;color:var(--text-muted);"><div class="spinner" style="margin:0 auto 12px;"></div><p>Loading company details...</p></div>`;
   
-  try {
-    const response = await callGemini(prompt);
-    researchData = safeJson(response);
-    if (researchData) {
-      renderResearchSection(researchData);
-      document.getElementById('badgeResearch').textContent = researchData.confidence_score + '%';
-      document.getElementById('tabResearch').classList.add('has-data');
-      showToast('Research Complete', researchData.company_name || currentBusiness);
-    } else {
-      setEmpty('research', 'Could not parse research data');
-      document.getElementById('badgeResearch').textContent = 'ERR';
-    }
-  } catch (e) {
-    setEmpty('research', 'Error: ' + e.message);
-    document.getElementById('badgeResearch').textContent = 'ERR';
-  }
-  document.getElementById('tabResearch').classList.remove('loading');
+  document.getElementById('researchContent').innerHTML = h;
+}
+
+function updateLoadingStatus(section, message) {
+  const el = document.querySelector(`#${section}Content .loading-status`);
+  if (el) el.textContent = message;
 }
 
 function renderResearchSection(d) {
   clearLoadingInterval('research');
+  stopGame(); // Hide game when data arrives
   let h = `<div class="risk-banner low"><div class="risk-badge"><span>${d.confidence_score || 0}</span></div><div class="risk-info"><h3>Confidence Score: ${d.confidence_score || 0}%</h3><p>Data reliability assessment</p></div></div>`;
   
   h += `<div class="section-box"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Company Overview</div><div class="data-grid">`;
@@ -1726,6 +2001,21 @@ function renderResearchSection(d) {
   if (d.employees) h += `<div><div class="label">Employees</div><div class="value">${d.employees}</div></div>`;
   if (d.annual_revenue) h += `<div><div class="label">Annual Revenue</div><div class="value">${d.annual_revenue}</div></div>`;
   h += `</div></div>`;
+  
+  // State Registration section
+  if (d.state_registration) {
+    const sr = d.state_registration;
+    const status = (sr.status || '').toLowerCase();
+    h += `<div class="section-box" style="border-left:4px solid var(--accent-gold);"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>State Registration</div><div class="data-grid" style="grid-template-columns:1fr 1fr;">`;
+    if (sr.state) h += `<div><div class="label">State</div><div class="value">${sr.state}</div></div>`;
+    if (sr.status) h += `<div><div class="label">Status</div><div class="value"><span class="status-badge ${status.includes('active') ? 'good' : 'active'}">${sr.status}</span></div></div>`;
+    if (sr.filed_date) h += `<div><div class="label">Filed Date</div><div class="value">${sr.filed_date}</div></div>`;
+    if (sr.entity_type) h += `<div><div class="label">Entity Type</div><div class="value">${sr.entity_type}</div></div>`;
+    if (sr.entity_number) h += `<div><div class="label">Entity Number</div><div class="value">${sr.entity_number}</div></div>`;
+    if (sr.registered_agent) h += `<div><div class="label">Registered Agent</div><div class="value">${sr.registered_agent}</div></div>`;
+    if (sr.sos_url) h += `<div style="grid-column:span 2;"><div class="label">Secretary of State</div><div class="value"><a href="${sr.sos_url}" target="_blank" style="color:var(--accent-blue)">View Official Filing →</a></div></div>`;
+    h += `</div></div>`;
+  }
   
   if (d.description) h += `<div class="section-box"><div class="section-title">Description</div><p style="font-size:0.9rem;color:var(--text-secondary);line-height:1.7;">${d.description}</p></div>`;
   
@@ -1768,9 +2058,9 @@ async function runBackgroundAuto() {
   document.getElementById('tabBackground').classList.add('loading');
   setLoading('background', 'Running background check on ' + currentBusiness + '...');
   
-  const prompt = `Search for legal and compliance information about "${currentBusiness}" including UCC filings, liens, judgments, lawsuits, bankruptcies, state registrations. Include source URLs where available. Return ONLY valid JSON:
+  
+  const prompt = `Search for legal and compliance information about "${currentBusiness}" including UCC filings, liens, judgments, lawsuits, bankruptcies. Include source URLs where available. Return ONLY valid JSON (no markdown, no explanation):
 {
-  "state_registration": {"state": "", "status": "Active/Inactive", "filed_date": "", "entity_type": "", "sos_url": ""},
   "ucc_filings": [{"filing_number": "", "secured_party": "", "filed_date": "", "status": "", "source_url": ""}],
   "liens": [{"type": "", "amount": "", "filed_date": "", "status": "", "court_url": ""}],
   "judgments": [{"case": "", "amount": "", "date": "", "status": "", "court_url": ""}],
@@ -1783,42 +2073,36 @@ async function runBackgroundAuto() {
   
   try {
     const response = await callGemini(prompt);
+    console.log('Background raw response:', response?.substring(0, 500));
     backgroundData = safeJson(response);
-    if (backgroundData) {
+    
+    if (backgroundData && (backgroundData.risk_score !== undefined || backgroundData.ucc_filings || backgroundData.summary)) {
       renderBackgroundSection(backgroundData);
       const score = backgroundData.risk_score || 0;
-      document.getElementById('badgeBackground').textContent = score + ' risk';
+      document.getElementById('badgeBackground').textContent = score <= 30 ? 'Low' : score <= 60 ? 'Med' : 'High';
       document.getElementById('tabBackground').classList.add('has-data');
       if (score > 50) document.getElementById('tabBackground').classList.add('has-warning');
       showToast('Background Complete', `Risk score: ${score}`);
     } else {
-      setEmpty('background', 'Could not parse background data');
-      document.getElementById('badgeBackground').textContent = 'ERR';
+      console.log('Background parse failed, data:', backgroundData);
+      setEmpty('background', 'Could not parse background data - try clicking Run to retry');
+      document.getElementById('badgeBackground').textContent = '--';
     }
   } catch (e) {
+    console.error('Background error:', e);
     setEmpty('background', 'Error: ' + e.message);
     document.getElementById('badgeBackground').textContent = 'ERR';
   }
+  
   document.getElementById('tabBackground').classList.remove('loading');
 }
 
 function renderBackgroundSection(d) {
   clearLoadingInterval('background');
+  stopGame(); // Hide game when data arrives
   const score = d.risk_score || 0;
   const cls = score <= 30 ? 'low' : score <= 60 ? 'medium' : 'high';
   let h = `<div class="risk-banner ${cls}"><div class="risk-badge"><span>${score}</span></div><div class="risk-info"><h3>Risk Score: ${score}/100</h3><p>${cls.charAt(0).toUpperCase() + cls.slice(1)} risk assessment</p></div></div>`;
-  
-  if (d.state_registration) {
-    const sr = d.state_registration;
-    const status = (sr.status || '').toLowerCase();
-    h += `<div class="section-box"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>State Registration</div><div class="data-grid" style="grid-template-columns:1fr 1fr;">`;
-    if (sr.state) h += `<div><div class="label">State</div><div class="value">${sr.state}</div></div>`;
-    if (sr.status) h += `<div><div class="label">Status</div><div class="value"><span class="status-badge ${status.includes('active') ? 'good' : 'active'}">${sr.status}</span></div></div>`;
-    if (sr.filed_date) h += `<div><div class="label">Filed Date</div><div class="value">${sr.filed_date}</div></div>`;
-    if (sr.entity_type) h += `<div><div class="label">Entity Type</div><div class="value">${sr.entity_type}</div></div>`;
-    if (sr.sos_url) h += `<div style="grid-column:span 2;"><div class="label">Secretary of State</div><div class="value"><a href="${sr.sos_url}" target="_blank" style="color:var(--accent-blue)">View Filing</a></div></div>`;
-    h += `</div></div>`;
-  }
   
   const renderRecords = (items, title, icon) => {
     if (!items?.length) return '';
@@ -1854,6 +2138,7 @@ async function runReviewsAuto() {
   document.getElementById('tabReviews').classList.add('loading');
   setLoading('reviews', 'Finding reviews for ' + currentBusiness + '...');
   
+  
   const prompt = `Search for reviews and ratings for "${currentBusiness}" on Google, Yelp, BBB, Trustpilot, and other review platforms. Find at least 3-5 actual reviews with the review text. Return ONLY valid JSON:
 {
   "google": {"rating": 0, "count": 0, "url": "", "recent_reviews": [{"text": "", "author": "", "rating": 0, "date": ""}]},
@@ -1885,6 +2170,7 @@ async function runReviewsAuto() {
     setEmpty('reviews', 'Error: ' + e.message);
     document.getElementById('badgeReviews').textContent = 'ERR';
   }
+  
   document.getElementById('tabReviews').classList.remove('loading');
 }
 
@@ -1961,6 +2247,7 @@ async function runSocialAuto() {
   document.getElementById('tabSocial').classList.add('loading');
   setLoading('social', 'Finding social profiles for ' + currentBusiness + '...');
   
+  
   const prompt = `Search for social media profiles and presence for "${currentBusiness}" on Facebook, Instagram, Twitter/X, LinkedIn, YouTube, TikTok, and other platforms. Return ONLY valid JSON:
 {
   "profiles": [
@@ -1994,6 +2281,7 @@ async function runSocialAuto() {
     setEmpty('social', 'Error: ' + e.message);
     document.getElementById('badgeSocial').textContent = 'ERR';
   }
+  
   document.getElementById('tabSocial').classList.remove('loading');
 }
 
@@ -2033,7 +2321,8 @@ async function runFootprintAuto() {
   document.getElementById('tabFootprint').classList.add('loading');
   setLoading('footprint', 'Analyzing digital footprint for ' + currentBusiness + '...');
   
-  const prompt = `Search for digital footprint information about "${currentBusiness}" including website details, SEO visibility, domain info, and news mentions. Include URLs. Return ONLY valid JSON:
+  
+  const prompt = `Search for digital footprint information about "${currentBusiness}" including website details, SEO visibility, domain info, and news mentions. Include URLs. Return ONLY valid JSON (no markdown, no explanation):
 {
   "web_presence": {
     "website": "",
@@ -2050,20 +2339,25 @@ async function runFootprintAuto() {
   
   try {
     const response = await callGemini(prompt);
+    console.log('Footprint raw response:', response?.substring(0, 500));
     footprintData = safeJson(response);
-    if (footprintData) {
+    
+    if (footprintData && (footprintData.web_presence || footprintData.digital_score)) {
       renderFootprintSection(footprintData);
-      document.getElementById('badgeFootprint').textContent = footprintData.digital_score + '/100';
+      document.getElementById('badgeFootprint').textContent = (footprintData.digital_score || 50) + '/100';
       document.getElementById('tabFootprint').classList.add('has-data');
-      showToast('Footprint Complete', `Digital score: ${footprintData.digital_score}`);
+      showToast('Footprint Complete', `Digital score: ${footprintData.digital_score || 'N/A'}`);
     } else {
-      setEmpty('footprint', 'Could not parse footprint data');
-      document.getElementById('badgeFootprint').textContent = 'ERR';
+      console.log('Footprint parse failed, data:', footprintData);
+      setEmpty('footprint', 'Could not parse footprint data - try clicking Run to retry');
+      document.getElementById('badgeFootprint').textContent = '--';
     }
   } catch (e) {
+    console.error('Footprint error:', e);
     setEmpty('footprint', 'Error: ' + e.message);
     document.getElementById('badgeFootprint').textContent = 'ERR';
   }
+  
   document.getElementById('tabFootprint').classList.remove('loading');
 }
 
@@ -2103,7 +2397,8 @@ function renderFootprintSection(d) {
 async function runDebtAuto() {
   if (!currentBusiness) return;
   document.getElementById('tabDebt').classList.add('loading');
-  setLoading('debt', 'Finding debt positions for ' + currentBusiness + '...');
+  setLoading('debt', 'Analyzing debt for ' + currentBusiness + '...');
+  
   
   const prompt = `Search for debt and financing information about "${currentBusiness}" including MCA positions, term loans, lines of credit, stacking indicators. Include source URLs where available. Return ONLY valid JSON:
 {
@@ -2136,6 +2431,7 @@ async function runDebtAuto() {
     setEmpty('debt', 'Error: ' + e.message);
     document.getElementById('badgeDebt').textContent = 'ERR';
   }
+  
   document.getElementById('tabDebt').classList.remove('loading');
 }
 
@@ -2351,6 +2647,15 @@ function loadDemoData() {
     website: "www.example.com",
     employees: "50-200",
     annual_revenue: "$5M - $10M (estimated)",
+    state_registration: { 
+      state: "California", 
+      status: "Active", 
+      filed_date: "2018-03-15", 
+      entity_type: "LLC",
+      entity_number: "201812345678",
+      registered_agent: "CT Corporation System",
+      sos_url: "https://bizfileonline.sos.ca.gov/search/business"
+    },
     key_people: [
       { name: "John Smith", title: "CEO & Founder" },
       { name: "Sarah Johnson", title: "COO" },
@@ -2361,11 +2666,10 @@ function loadDemoData() {
   };
   
   const demoBackground = {
-    state_registration: { state: "California", status: "Active", filed_date: "2018-03-15", entity_type: "LLC" },
     ucc_filings: [
       { filing_number: "DEMO-12345", secured_party: "Sample Bank", filed_date: "2023-06-01", status: "Active" }
     ],
-    risk_score: "Low",
+    risk_score: 25,
     summary: "This is demo data. Real background checks will show actual UCC filings, liens, judgments, and legal records."
   };
   
@@ -2437,6 +2741,338 @@ document.getElementById('apiModal').addEventListener('click', function(e) {
     closeApiModal();
   }
 });
+
+// ==================== BRICK BREAKER GAME ====================
+let gameRunning = false;
+let gameAnimationId = null;
+
+function startGame() {
+  const container = document.getElementById('gameContainer');
+  container.classList.add('active');
+  
+  // Load high score
+  const highScore = parseInt(localStorage.getItem('hubble_game_high') || '0');
+  document.getElementById('gameHigh').textContent = highScore;
+  
+  if (gameRunning) return;
+  gameRunning = true;
+  
+  const canvas = document.getElementById('brickGame');
+  const ctx = canvas.getContext('2d');
+  
+  // Game state
+  let score = 0;
+  let level = 1;
+  const paddleWidth = 65, paddleHeight = 12;
+  let paddleX = (canvas.width - paddleWidth) / 2;
+  const ballRadius = 5;
+  let ballX = canvas.width / 2, ballY = canvas.height - 40;
+  let ballDX = 2.5, ballDY = -2.5;  // Slower speed
+  
+  // Lasers
+  let lasers = [];
+  let laserCooldown = 0;
+  const laserSpeed = 6;  // Slower lasers too
+  
+  // Bricks - more rows = harder
+  const brickRows = 5, brickCols = 10;
+  const brickWidth = 35, brickHeight = 14, brickPadding = 4;
+  const brickOffsetTop = 15, brickOffsetLeft = 8;
+  
+  // Use site accent colors
+  const brickColors = ['#ef4444', '#f97316', '#eab308', '#84cc16', '#22c55e', '#14b8a6', '#3b82f6', '#8b5cf6', '#a855f7', '#ec4899'];
+  
+  let bricks = [];
+  function initBricks() {
+    bricks = [];
+    for (let r = 0; r < brickRows; r++) {
+      bricks[r] = [];
+      for (let c = 0; c < brickCols; c++) {
+        // Some bricks take 2 hits (armored)
+        const hp = (r < 2 && Math.random() > 0.5) ? 2 : 1;
+        bricks[r][c] = { x: 0, y: 0, status: hp, maxHp: hp };
+      }
+    }
+  }
+  initBricks();
+  
+  // Update score helper
+  function updateScore(points) {
+    score += points;
+    document.getElementById('gameScore').textContent = score;
+    // Update high score if beaten
+    if (score > highScore) {
+      localStorage.setItem('hubble_game_high', score.toString());
+      document.getElementById('gameHigh').textContent = score;
+    }
+  }
+  
+  // Controls
+  let rightPressed = false, leftPressed = false, spacePressed = false;
+  
+  function keyDownHandler(e) {
+    if (e.key === 'Right' || e.key === 'ArrowRight') rightPressed = true;
+    if (e.key === 'Left' || e.key === 'ArrowLeft') leftPressed = true;
+    if (e.key === ' ' || e.key === 'Spacebar') { spacePressed = true; e.preventDefault(); }
+  }
+  function keyUpHandler(e) {
+    if (e.key === 'Right' || e.key === 'ArrowRight') rightPressed = false;
+    if (e.key === 'Left' || e.key === 'ArrowLeft') leftPressed = false;
+    if (e.key === ' ' || e.key === 'Spacebar') spacePressed = false;
+  }
+  function mouseMoveHandler(e) {
+    const rect = canvas.getBoundingClientRect();
+    const relX = e.clientX - rect.left;
+    if (relX > paddleWidth/2 && relX < canvas.width - paddleWidth/2) {
+      paddleX = relX - paddleWidth / 2;
+    }
+  }
+  function touchMoveHandler(e) {
+    const rect = canvas.getBoundingClientRect();
+    const relX = e.touches[0].clientX - rect.left;
+    if (relX > paddleWidth/2 && relX < canvas.width - paddleWidth/2) {
+      paddleX = relX - paddleWidth / 2;
+    }
+  }
+  function clickHandler() {
+    fireLaser();
+  }
+  
+  document.addEventListener('keydown', keyDownHandler);
+  document.addEventListener('keyup', keyUpHandler);
+  canvas.addEventListener('mousemove', mouseMoveHandler);
+  canvas.addEventListener('touchmove', touchMoveHandler);
+  canvas.addEventListener('click', clickHandler);
+  
+  function fireLaser() {
+    if (laserCooldown <= 0) {
+      lasers.push({ x: paddleX + paddleWidth/2 - 2, y: canvas.height - paddleHeight - 10 });
+      lasers.push({ x: paddleX + paddleWidth/2 + 2, y: canvas.height - paddleHeight - 10 });
+      laserCooldown = 15; // Frames between shots
+    }
+  }
+  
+  function drawBall(isLight) {
+    ctx.beginPath();
+    ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+    const gradient = ctx.createRadialGradient(ballX-2, ballY-2, 0, ballX, ballY, ballRadius);
+    gradient.addColorStop(0, isLight ? '#fff' : '#fef3c7');
+    gradient.addColorStop(1, '#f59e0b');
+    ctx.fillStyle = gradient;
+    ctx.fill();
+    ctx.strokeStyle = isLight ? '#d97706' : '#fbbf24';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.closePath();
+  }
+  
+  function drawPaddle(isLight) {
+    // Main paddle (accent gold from site)
+    ctx.beginPath();
+    ctx.roundRect(paddleX, canvas.height - paddleHeight - 5, paddleWidth, paddleHeight, 4);
+    const gradient = ctx.createLinearGradient(paddleX, canvas.height - paddleHeight - 5, paddleX, canvas.height - 5);
+    gradient.addColorStop(0, '#facc15'); // --accent-light
+    gradient.addColorStop(1, '#ca8a04'); // --accent-dark
+    ctx.fillStyle = gradient;
+    ctx.fill();
+    ctx.strokeStyle = isLight ? '#a16207' : '#fbbf24';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.closePath();
+    
+    // Gun turret
+    const gunWidth = 8, gunHeight = 10;
+    ctx.beginPath();
+    ctx.roundRect(paddleX + paddleWidth/2 - gunWidth/2, canvas.height - paddleHeight - 5 - gunHeight + 2, gunWidth, gunHeight, 2);
+    ctx.fillStyle = isLight ? '#374151' : '#4b5563';
+    ctx.fill();
+    ctx.strokeStyle = isLight ? '#1f2937' : '#6b7280';
+    ctx.stroke();
+    ctx.closePath();
+    
+    // Gun barrel
+    ctx.beginPath();
+    ctx.roundRect(paddleX + paddleWidth/2 - 2, canvas.height - paddleHeight - 5 - gunHeight - 4, 4, 6, 1);
+    ctx.fillStyle = isLight ? '#6b7280' : '#9ca3af';
+    ctx.fill();
+    ctx.closePath();
+  }
+  
+  function drawLasers(isLight) {
+    lasers.forEach(laser => {
+      // Laser glow
+      ctx.beginPath();
+      ctx.rect(laser.x - 1, laser.y, 4, 12);
+      ctx.fillStyle = isLight ? 'rgba(239, 68, 68, 0.3)' : 'rgba(239, 68, 68, 0.5)';
+      ctx.fill();
+      // Laser core
+      ctx.beginPath();
+      ctx.rect(laser.x, laser.y + 2, 2, 8);
+      ctx.fillStyle = '#ef4444';
+      ctx.fill();
+      ctx.closePath();
+    });
+  }
+  
+  function drawBricks(isLight) {
+    for (let r = 0; r < brickRows; r++) {
+      for (let c = 0; c < brickCols; c++) {
+        if (bricks[r][c].status > 0) {
+          const brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
+          const brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
+          bricks[r][c].x = brickX;
+          bricks[r][c].y = brickY;
+          
+          ctx.beginPath();
+          ctx.roundRect(brickX, brickY, brickWidth, brickHeight, 3);
+          
+          // Armored bricks - theme aware
+          if (bricks[r][c].maxHp === 2 && bricks[r][c].status === 2) {
+            ctx.fillStyle = isLight ? '#374151' : '#1f2937';
+            ctx.fill();
+            ctx.strokeStyle = brickColors[c % brickColors.length];
+            ctx.lineWidth = 2;
+            ctx.stroke();
+          } else {
+            const gradient = ctx.createLinearGradient(brickX, brickY, brickX, brickY + brickHeight);
+            gradient.addColorStop(0, brickColors[c % brickColors.length]);
+            gradient.addColorStop(1, brickColors[(c + 1) % brickColors.length]);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+          }
+          ctx.closePath();
+        }
+      }
+    }
+  }
+  
+  function collisionDetection() {
+    // Ball collision
+    for (let r = 0; r < brickRows; r++) {
+      for (let c = 0; c < brickCols; c++) {
+        const b = bricks[r][c];
+        if (b.status > 0) {
+          if (ballX > b.x && ballX < b.x + brickWidth && ballY > b.y && ballY < b.y + brickHeight) {
+            ballDY = -ballDY;
+            b.status--;
+            updateScore(b.status === 0 ? 10 : 5);
+          }
+        }
+      }
+    }
+    
+    // Laser collision
+    lasers = lasers.filter(laser => {
+      for (let r = 0; r < brickRows; r++) {
+        for (let c = 0; c < brickCols; c++) {
+          const b = bricks[r][c];
+          if (b.status > 0) {
+            if (laser.x > b.x && laser.x < b.x + brickWidth && laser.y > b.y && laser.y < b.y + brickHeight) {
+              b.status--;
+              updateScore(b.status === 0 ? 15 : 5);
+              return false; // Remove laser
+            }
+          }
+        }
+      }
+      return laser.y > 0; // Keep if still on screen
+    });
+    
+    // Check level clear
+    let allCleared = true;
+    for (let r = 0; r < brickRows; r++) {
+      for (let c = 0; c < brickCols; c++) {
+        if (bricks[r][c].status > 0) allCleared = false;
+      }
+    }
+    if (allCleared) {
+      level++;
+      initBricks();
+      ballDX *= 1.08;
+      ballDY *= 1.08;
+    }
+  }
+  
+  function draw() {
+    if (!gameRunning) return;
+    
+    // Detect theme - match site exactly
+    const isLight = document.body.classList.contains('light-mode');
+    
+    // Theme-aware background (matches --bg-primary)
+    ctx.fillStyle = isLight ? '#f8f8f8' : '#0a0a0a';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Subtle grid (matches .bg-grid)
+    ctx.strokeStyle = isLight ? 'rgba(234, 179, 8, 0.05)' : 'rgba(234, 179, 8, 0.03)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < canvas.width; i += 20) {
+      ctx.beginPath();
+      ctx.moveTo(i, 0);
+      ctx.lineTo(i, canvas.height);
+      ctx.stroke();
+    }
+    for (let i = 0; i < canvas.height; i += 20) {
+      ctx.beginPath();
+      ctx.moveTo(0, i);
+      ctx.lineTo(canvas.width, i);
+      ctx.stroke();
+    }
+    
+    drawBricks(isLight);
+    drawLasers(isLight);
+    drawBall(isLight);
+    drawPaddle(isLight);
+    collisionDetection();
+    
+    // Update lasers
+    lasers.forEach(laser => laser.y -= laserSpeed);
+    if (laserCooldown > 0) laserCooldown--;
+    
+    // Auto-fire with space
+    if (spacePressed) fireLaser();
+    
+    // Ball wall collision
+    if (ballX + ballDX > canvas.width - ballRadius || ballX + ballDX < ballRadius) {
+      ballDX = -ballDX;
+    }
+    if (ballY + ballDY < ballRadius) {
+      ballDY = -ballDY;
+    } else if (ballY + ballDY > canvas.height - ballRadius - paddleHeight - 5) {
+      if (ballX > paddleX && ballX < paddleX + paddleWidth) {
+        const hitPos = (ballX - paddleX) / paddleWidth;
+        ballDX = 5 * (hitPos - 0.5);
+        ballDY = -Math.abs(ballDY);
+      } else if (ballY + ballDY > canvas.height - ballRadius) {
+        // Ball lost - reset but keep score
+        ballX = canvas.width / 2;
+        ballY = canvas.height - 40;
+        ballDX = 2.5 * (Math.random() > 0.5 ? 1 : -1);
+        ballDY = -2.5 - level * 0.3;
+      }
+    }
+    
+    // Paddle movement
+    if (rightPressed && paddleX < canvas.width - paddleWidth) paddleX += 5;
+    if (leftPressed && paddleX > 0) paddleX -= 5;
+    
+    ballX += ballDX;
+    ballY += ballDY;
+    
+    gameAnimationId = requestAnimationFrame(draw);
+  }
+  
+  draw();
+}
+
+function stopGame() {
+  gameRunning = false;
+  if (gameAnimationId) {
+    cancelAnimationFrame(gameAnimationId);
+    gameAnimationId = null;
+  }
+  document.getElementById('gameContainer').classList.remove('active');
+}
 </script>
 </body>
 </html>
