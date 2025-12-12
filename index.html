@@ -1242,7 +1242,7 @@
     }
 
     .header-logo h1 {
-      font-size: 1.25rem;
+      font-size: 1.5rem;
       font-weight: 800;
       letter-spacing: -0.5px;
     }
@@ -1262,12 +1262,15 @@
       border: 1px solid transparent;
       border-radius: 8px;
       color: var(--text-muted);
-      font-size: 13px;
-      font-weight: 700;
+      font-size: 12px;
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       white-space: nowrap;
       transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .tab-btn:hover {
@@ -1286,12 +1289,11 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      background: var(--accent);
-      color: #000;
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent);
       padding: 2px 5px;
       border-radius: 4px;
-      margin-left: 6px;
-      vertical-align: middle;
     }
 
     /* Theme Toggle */
@@ -1477,12 +1479,49 @@
     }
 
     .hero-card {
+      position: relative;
+      z-index: 1;
       background: rgba(26, 26, 26, 0.7);
       backdrop-filter: blur(12px);
       border: 1px solid var(--border-secondary);
       border-radius: 24px;
       overflow: hidden;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .hero-card-wrapper {
+      position: relative;
+    }
+
+    .hero-orbit-container {
+      position: absolute;
+      bottom: -180px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      max-width: 150%;
+      opacity: 0.85;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .hero-orbit-svg {
+      width: 100%;
+      height: auto;
+    }
+
+    @media (max-width: 1024px) {
+      .hero-orbit-container {
+        width: 500px;
+        bottom: -150px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero-orbit-container {
+        width: 400px;
+        bottom: -120px;
+      }
     }
 
     .score-panel {
@@ -4766,12 +4805,11 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      background: var(--tier-a);
-      color: #000;
+      background: transparent;
+      color: var(--tier-a);
+      border: 1px solid var(--tier-a);
       padding: 2px 5px;
       border-radius: 4px;
-      margin-left: 6px;
-      vertical-align: middle;
     }
 
     .tab-btn .lite-badge {
@@ -4779,12 +4817,23 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      background: #a855f7;
-      color: #fff;
+      background: transparent;
+      color: #a855f7;
+      border: 1px solid #a855f7;
       padding: 2px 5px;
       border-radius: 4px;
-      margin-left: 6px;
-      vertical-align: middle;
+    }
+
+    .tab-btn .invite-badge {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: transparent;
+      color: #ef4444;
+      border: 1px solid #ef4444;
+      padding: 2px 5px;
+      border-radius: 4px;
     }
 
     /* Background Effects */
@@ -5052,7 +5101,8 @@
     </div>
     <nav class="tab-nav">
       <button class="tab-btn" id="headerModelBtn">Model</button>
-      <a href="https://ables.ai/hubble.html" class="tab-btn">Hubble<span class="api-badge">API</span></a>
+      <a href="https://ables.ai/search.html" class="tab-btn">Hubble<span class="api-badge">API</span></a>
+      <a href="https://ables.ai/booyah.html" class="tab-btn">BOOYAH<span class="invite-badge">INVITE</span></a>
       <a href="https://ables.ai/calculator.html" class="tab-btn">Calculator<span class="lite-badge">Lite</span></a>
       <a href="https://ables.ai/toolbox.html" class="tab-btn">Toolbox<span class="free-badge">Free</span></a>
       <a href="#pricing" class="tab-btn">Pricing</a>
@@ -5068,7 +5118,8 @@
   <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
   <nav class="mobile-nav" id="mobileNav">
     <button class="tab-btn" id="mobileModelBtn">Model</button>
-    <a href="https://ables.ai/hubble.html" class="tab-btn">Hubble<span class="api-badge">API</span></a>
+    <a href="https://ables.ai/search.html" class="tab-btn">Hubble<span class="api-badge">API</span></a>
+    <a href="https://ables.ai/booyah.html" class="tab-btn">BOOYAH<span class="invite-badge">INVITE</span></a>
     <a href="https://ables.ai/calculator.html" class="tab-btn">Calculator<span class="lite-badge">Lite</span></a>
     <a href="https://ables.ai/toolbox.html" class="tab-btn">Toolbox<span class="free-badge">Free</span></a>
     <a href="#pricing" class="tab-btn">Pricing</a>
@@ -5112,51 +5163,131 @@
         </div>
       </div>
       
-      <div class="hero-card">
-        <div class="score-panel">
-          <div class="score-header">
-            <div class="score-label">Risk Score</div>
-            <div class="score-value">54</div>
-            <div class="score-tier">Tier C - Mid-Prime</div>
-          </div>
-          <div class="score-body">
-            <div class="breakdown-list">
-              <div class="breakdown-item">
-                <span class="breakdown-label">FICO</span>
-                <div class="breakdown-bar-track"><div class="breakdown-bar-fill bar-red" style="width: 33%"></div></div>
-                <span class="breakdown-value">10/30</span>
-              </div>
-              <div class="breakdown-item">
-                <span class="breakdown-label">Behavior</span>
-                <div class="breakdown-bar-track"><div class="breakdown-bar-fill bar-orange" style="width: 37%"></div></div>
-                <span class="breakdown-value">11/30</span>
-              </div>
-              <div class="breakdown-item">
-                <span class="breakdown-label">Revenue</span>
-                <div class="breakdown-bar-track"><div class="breakdown-bar-fill bar-yellow" style="width: 70%"></div></div>
-                <span class="breakdown-value">14/20</span>
-              </div>
-              <div class="breakdown-item">
-                <span class="breakdown-label">Time in Biz</span>
-                <div class="breakdown-bar-track"><div class="breakdown-bar-fill bar-green" style="width: 90%"></div></div>
-                <span class="breakdown-value">9/10</span>
-              </div>
-              <div class="breakdown-item">
-                <span class="breakdown-label">Buffer</span>
-                <div class="breakdown-bar-track"><div class="breakdown-bar-fill bar-green" style="width: 100%"></div></div>
-                <span class="breakdown-value">10/10</span>
-              </div>
+      <div class="hero-card-wrapper">
+        <!-- Orbit Animation Behind Hero Card -->
+        <div class="hero-orbit-container">
+          <svg class="hero-orbit-svg" viewBox="0 0 600 200" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <radialGradient id="heroSunGrad" cx="35%" cy="35%" r="60%">
+                <stop offset="0%" stop-color="#fcd34d"/>
+                <stop offset="50%" stop-color="#eab308"/>
+                <stop offset="100%" stop-color="#ca8a04"/>
+              </radialGradient>
+              <linearGradient id="heroRingGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#f97316" stop-opacity="0.4"/>
+                <stop offset="50%" stop-color="#dc2626" stop-opacity="0.5"/>
+                <stop offset="100%" stop-color="#f97316" stop-opacity="0.4"/>
+              </linearGradient>
+              <filter id="heroGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="3" result="blur"/>
+                <feMerge>
+                  <feMergeNode in="blur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+            <style>
+              .hero-planet-1 {
+                animation: heroPlanet1Orbit 6s linear infinite;
+              }
+              .hero-planet-2 {
+                animation: heroPlanet2Orbit 10s linear infinite;
+              }
+              .hero-planet-3 {
+                animation: heroPlanet3Orbit 15s linear infinite;
+              }
+              .hero-planet-4 {
+                animation: heroPlanet4Orbit 20s linear infinite;
+              }
+              @keyframes heroPlanet1Orbit {
+                from { transform: rotate(0deg) translateX(60px) rotate(0deg); }
+                to { transform: rotate(360deg) translateX(60px) rotate(-360deg); }
+              }
+              @keyframes heroPlanet2Orbit {
+                from { transform: rotate(45deg) translateX(100px) rotate(-45deg); }
+                to { transform: rotate(405deg) translateX(100px) rotate(-405deg); }
+              }
+              @keyframes heroPlanet3Orbit {
+                from { transform: rotate(180deg) translateX(150px) rotate(-180deg); }
+                to { transform: rotate(540deg) translateX(150px) rotate(-540deg); }
+              }
+              @keyframes heroPlanet4Orbit {
+                from { transform: rotate(270deg) translateX(210px) rotate(-270deg); }
+                to { transform: rotate(630deg) translateX(210px) rotate(-630deg); }
+              }
+            </style>
+            <!-- Orbit rings -->
+            <ellipse cx="300" cy="100" rx="60" ry="24" stroke="url(#heroRingGrad)" stroke-width="1" fill="none" opacity="0.5"/>
+            <ellipse cx="300" cy="100" rx="100" ry="40" stroke="url(#heroRingGrad)" stroke-width="1" fill="none" opacity="0.4"/>
+            <ellipse cx="300" cy="100" rx="150" ry="60" stroke="url(#heroRingGrad)" stroke-width="1" fill="none" opacity="0.35"/>
+            <ellipse cx="300" cy="100" rx="210" ry="84" stroke="url(#heroRingGrad)" stroke-width="1" fill="none" opacity="0.3"/>
+            <!-- Sun glow -->
+            <circle cx="300" cy="100" r="35" fill="#eab308" opacity="0.25" filter="url(#heroGlow)"/>
+            <!-- Sun -->
+            <circle cx="300" cy="100" r="28" fill="url(#heroSunGrad)" filter="url(#heroGlow)"/>
+            <!-- Sun highlight -->
+            <ellipse cx="290" cy="90" rx="9" ry="6" fill="#fef3c7" opacity="0.5"/>
+            <!-- Orbiting planets -->
+            <g style="transform-origin: 300px 100px;" class="hero-planet-1">
+              <circle cx="300" cy="100" r="8" fill="#a855f7" filter="url(#heroGlow)"/>
+            </g>
+            <g style="transform-origin: 300px 100px;" class="hero-planet-2">
+              <circle cx="300" cy="100" r="10" fill="#10b981" filter="url(#heroGlow)"/>
+            </g>
+            <g style="transform-origin: 300px 100px;" class="hero-planet-3">
+              <circle cx="300" cy="100" r="12" fill="#3b82f6" filter="url(#heroGlow)"/>
+            </g>
+            <g style="transform-origin: 300px 100px;" class="hero-planet-4">
+              <circle cx="300" cy="100" r="9" fill="#ec4899" filter="url(#heroGlow)"/>
+            </g>
+          </svg>
+        </div>
+        <div class="hero-card">
+          <div class="score-panel">
+            <div class="score-header">
+              <div class="score-label">Risk Score</div>
+              <div class="score-value">54</div>
+              <div class="score-tier">Tier C - Mid-Prime</div>
             </div>
-            
-            <div class="result-preview">
-              <div class="result-grid">
-                <div class="result-cell">
-                  <div class="result-cell-label">Max Funding</div>
-                  <div class="result-cell-value green">$155,000</div>
+            <div class="score-body">
+              <div class="breakdown-list">
+                <div class="breakdown-item">
+                  <span class="breakdown-label">FICO</span>
+                  <div class="breakdown-bar-track"><div class="breakdown-bar-fill bar-red" style="width: 33%"></div></div>
+                  <span class="breakdown-value">10/30</span>
                 </div>
-                <div class="result-cell">
-                  <div class="result-cell-label">Factor Rate</div>
-                  <div class="result-cell-value yellow">1.28x</div>
+                <div class="breakdown-item">
+                  <span class="breakdown-label">Behavior</span>
+                  <div class="breakdown-bar-track"><div class="breakdown-bar-fill bar-orange" style="width: 37%"></div></div>
+                  <span class="breakdown-value">11/30</span>
+                </div>
+                <div class="breakdown-item">
+                  <span class="breakdown-label">Revenue</span>
+                  <div class="breakdown-bar-track"><div class="breakdown-bar-fill bar-yellow" style="width: 70%"></div></div>
+                  <span class="breakdown-value">14/20</span>
+                </div>
+                <div class="breakdown-item">
+                  <span class="breakdown-label">Time in Biz</span>
+                  <div class="breakdown-bar-track"><div class="breakdown-bar-fill bar-green" style="width: 90%"></div></div>
+                  <span class="breakdown-value">9/10</span>
+                </div>
+                <div class="breakdown-item">
+                  <span class="breakdown-label">Buffer</span>
+                  <div class="breakdown-bar-track"><div class="breakdown-bar-fill bar-green" style="width: 100%"></div></div>
+                  <span class="breakdown-value">10/10</span>
+                </div>
+              </div>
+              
+              <div class="result-preview">
+                <div class="result-grid">
+                  <div class="result-cell">
+                    <div class="result-cell-label">Max Funding</div>
+                    <div class="result-cell-value green">$155,000</div>
+                  </div>
+                  <div class="result-cell">
+                    <div class="result-cell-label">Factor Rate</div>
+                    <div class="result-cell-value yellow">1.28x</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -6771,7 +6902,7 @@
         <a href="https://ables.ai/signup" class="final-cta-btn primary">Start Free Trial</a>
         <a href="https://calendly.com/ables-ai/demo" class="final-cta-btn secondary">Book a Demo</a>
       </div>
-      <p class="final-cta-note">Questions? Email us at <a href="mailto:hello@ables.ai" style="color: var(--accent);">hello@ables.ai</a></p>
+      <p class="final-cta-note">Questions? Email us at <a href="/cdn-cgi/l/email-protection#6e060b0202012e0f0c020b1d400f07" style="color: var(--accent);"><span class="__cf_email__" data-cfemail="5038353c3c3f1031323c35237e3139">[email&#160;protected]</span></a></p>
     </div>
   </section>
 
@@ -6902,7 +7033,7 @@
           <div class="footer-links">
             <a href="#">About Us</a>
             <a href="#">Careers</a>
-            <a href="mailto:hello@ables.ai">Contact</a>
+            <a href="/cdn-cgi/l/email-protection#b7dfd2dbdbd8f7d6d5dbd2c499d6de">Contact</a>
             <a href="#">Partners</a>
           </div>
         </div>
@@ -7100,7 +7231,7 @@
     </div>
   </div>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     (function() {
       // Theme Toggle
       const themeToggle = document.getElementById('themeToggle');
@@ -8153,17 +8284,4 @@
       const carouselClientCta = document.getElementById('carouselClientCta');
       if (carouselClientCta) {
         carouselClientCta.addEventListener('click', function() {
-          if (this.classList.contains('accepted')) {
-            this.classList.remove('accepted');
-            this.textContent = 'Accept Offer';
-          } else {
-            this.classList.add('accepted');
-            createConfetti(this);
-          }
-        });
-      }
-
-    })();
-  </script>
-</body>
-</html>
+          if (this.classList.contains('accept
