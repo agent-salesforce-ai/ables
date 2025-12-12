@@ -3,19 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Business Intelligence | AblesAI</title>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NLL9GDQY8S"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-NLL9GDQY8S');
-  </script>
-  <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="f4131404-42af-4d2e-9472-473077a790bb" type="text/javascript" async></script>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 64 64' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3CradialGradient id='pg' cx='35%25' cy='35%25' r='60%25'%3E%3Cstop offset='0%25' stop-color='%23fcd34d'/%3E%3Cstop offset='50%25' stop-color='%23eab308'/%3E%3Cstop offset='100%25' stop-color='%23ca8a04'/%3E%3C/radialGradient%3E%3ClinearGradient id='rg' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23f97316'/%3E%3Cstop offset='100%25' stop-color='%23dc2626'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cellipse cx='32' cy='32' rx='28' ry='8' stroke='url(%23rg)' stroke-width='2.5' fill='none' transform='rotate(-20 32 32)' stroke-dasharray='70 140' opacity='0.6'/%3E%3Ccircle cx='32' cy='32' r='12' fill='url(%23pg)'/%3E%3Cellipse cx='28' cy='28' rx='4' ry='3' fill='%23fef3c7' opacity='0.4'/%3E%3Cellipse cx='32' cy='32' rx='28' ry='8' stroke='url(%23rg)' stroke-width='2.5' fill='none' transform='rotate(-20 32 32)' stroke-dasharray='70 140' stroke-dashoffset='-70'/%3E%3Ccircle cx='58' cy='28' r='4' fill='%23a855f7'/%3E%3C/svg%3E">
+  <title>Hubble | Business Intelligence</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-primary: #0a0a0a;
@@ -27,6 +18,7 @@
       --text-muted: #71717a;
       --accent: #eab308;
       --accent-light: #facc15;
+      --accent-dark: #ca8a04;
       --tier-a: #22c55e;
       --tier-b: #84cc16;
       --tier-c: #eab308;
@@ -38,41 +30,69 @@
       --border-secondary: #1f1f22;
       --glow-gold: rgba(234, 179, 8, 0.15);
     }
-
-    [data-theme="light"] {
-      --bg-primary: #f8f9fa;
+    
+    body.light-mode {
+      --bg-primary: #f8f8f8;
       --bg-secondary: #ffffff;
-      --bg-tertiary: #e9ecef;
+      --bg-tertiary: #f0f0f0;
       --bg-card: #ffffff;
-      --text-primary: #1a1a2e;
-      --text-secondary: #374151;
-      --text-muted: #5a5a6e;
-      --border-primary: #d1d5db;
-      --border-secondary: #e5e7eb;
+      --text-primary: #18181b;
+      --text-secondary: #52525b;
+      --text-muted: #71717a;
+      --border-primary: #e4e4e7;
+      --border-secondary: #d4d4d8;
+      --glow-gold: rgba(234, 179, 8, 0.25);
     }
-
+    body.light-mode .bg-grid {
+      background-image: linear-gradient(rgba(234, 179, 8, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(234, 179, 8, 0.05) 1px, transparent 1px);
+    }
+    body.light-mode .bg-gradient {
+      background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(234, 179, 8, 0.12), transparent);
+    }
+    
+    .theme-toggle {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .theme-toggle:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(234, 179, 8, 0.05);
+    }
+    .theme-toggle svg { width: 18px; height: 18px; }
+    .theme-toggle .sun-icon { display: none; }
+    .theme-toggle .moon-icon { display: block; }
+    body.light-mode .theme-toggle .sun-icon { display: block; }
+    body.light-mode .theme-toggle .moon-icon { display: none; }
+    
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
+    html, body { overflow-x: hidden; width: 100%; max-width: 100vw; }
     body {
-      font-family: 'DM Sans', system-ui, sans-serif;
+      font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
       background: var(--bg-primary);
       color: var(--text-primary);
       min-height: 100vh;
       line-height: 1.6;
-      padding-top: 65px;
     }
-
     .bg-grid {
       position: fixed;
       inset: 0;
-      background-image: 
-        linear-gradient(rgba(234, 179, 8, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(234, 179, 8, 0.03) 1px, transparent 1px);
+      background-image: linear-gradient(rgba(234, 179, 8, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(234, 179, 8, 0.02) 1px, transparent 1px);
       background-size: 60px 60px;
       pointer-events: none;
       z-index: 0;
     }
-
     .bg-gradient {
       position: fixed;
       top: 0;
@@ -85,136 +105,160 @@
       z-index: 0;
     }
 
-    /* Header */
+    /* Orbital Animation */
+    .orbit-system {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 700px;
+      height: 700px;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
+      transition: opacity 0.5s;
+    }
+    .orbit-system.dimmed { opacity: 0.08; }
+    .orbit-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle, rgba(234, 179, 8, 0.4) 0%, rgba(234, 179, 8, 0.1) 40%, transparent 70%);
+      border-radius: 50%;
+      filter: blur(20px);
+    }
+    .orbit-ring {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      border: 1px solid rgba(234, 179, 8, 0.12);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .orbit-ring-1 { width: 250px; height: 250px; animation: orbit-rotate 30s linear infinite; }
+    .orbit-ring-2 { width: 400px; height: 400px; animation: orbit-rotate 45s linear infinite reverse; }
+    .orbit-ring-3 { width: 550px; height: 550px; animation: orbit-rotate 60s linear infinite; }
+    @keyframes orbit-rotate {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    .orbit-particle { position: absolute; border-radius: 50%; top: 50%; left: 50%; }
+    .particle-1 { width: 10px; height: 10px; background: #eab308; box-shadow: 0 0 15px 5px rgba(234, 179, 8, 0.5); animation: orb1 20s linear infinite; }
+    .particle-2 { width: 8px; height: 8px; background: #a855f7; box-shadow: 0 0 12px 4px rgba(168, 85, 247, 0.5); animation: orb2 25s linear infinite; }
+    .particle-3 { width: 6px; height: 6px; background: #22c55e; box-shadow: 0 0 10px 3px rgba(34, 197, 94, 0.5); animation: orb3 18s linear infinite reverse; }
+    .particle-4 { width: 8px; height: 8px; background: #f97316; box-shadow: 0 0 12px 4px rgba(249, 115, 22, 0.5); animation: orb4 30s linear infinite; }
+    @keyframes orb1 { from { transform: translate(-50%, -50%) rotate(0deg) translateX(125px); } to { transform: translate(-50%, -50%) rotate(360deg) translateX(125px); } }
+    @keyframes orb2 { from { transform: translate(-50%, -50%) rotate(60deg) translateX(200px); } to { transform: translate(-50%, -50%) rotate(420deg) translateX(200px); } }
+    @keyframes orb3 { from { transform: translate(-50%, -50%) rotate(120deg) translateX(275px); } to { transform: translate(-50%, -50%) rotate(480deg) translateX(275px); } }
+    @keyframes orb4 { from { transform: translate(-50%, -50%) rotate(180deg) translateX(150px); } to { transform: translate(-50%, -50%) rotate(540deg) translateX(150px); } }
+
+    /* HEADER */
     .main-header {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      height: 65px;
+      height: 64px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 24px;
-      background: rgba(10, 10, 10, 0.95);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border-secondary);
+      background: transparent;
       z-index: 100;
     }
-
     .header-logo {
       display: flex;
       align-items: center;
       gap: 12px;
     }
-
-    .header-logo svg {
-      width: 36px;
-      height: 36px;
-    }
-
-    .header-logo h1 {
-      font-size: 1.1rem;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-    }
-
-    .header-logo h1 span { color: var(--text-muted); font-weight: 500; }
-
-    .header-actions {
+    .header-logo svg { width: 36px; height: 36px; border-radius: 10px; }
+    .header-logo h1 { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px; }
+    .header-logo h1 .ables { color: var(--text-primary); }
+    .header-logo h1 .ai { color: var(--accent); font-weight: 700; }
+    
+    .header-nav {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 32px;
     }
-
-    .api-input-wrap {
+    .nav-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
       display: flex;
       align-items: center;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-primary);
-      border-radius: 8px;
-      padding: 0 12px;
       gap: 8px;
-      height: 38px;
     }
-
-    .api-input-wrap svg { width: 14px; height: 14px; color: var(--text-muted); flex-shrink: 0; }
-
-    .api-input-wrap input {
-      width: 140px;
+    .nav-link:hover { color: var(--text-primary); }
+    .nav-link.active { color: var(--accent); }
+    .nav-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .nav-badge.lite { background: var(--accent); color: #000; }
+    .nav-badge.free { background: #22c55e; color: #000; }
+    
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    
+    /* Hero title with telescope */
+    .hero-title-wrap {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 4px;
+      margin-bottom: 0.5rem;
+      position: relative;
+    }
+    .telescope-icon {
+      position: absolute;
+      right: -36px;
+      top: -8px;
+    }
+    
+    /* API Key in search box */
+    .api-key-input {
+      width: 100px;
+      padding: 0.6rem 0;
       background: transparent;
       border: none;
-      color: var(--text-primary);
-      font-size: 0.8rem;
+      border-left: 1px solid var(--border-primary);
+      padding-left: 12px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
       font-family: inherit;
-      -webkit-text-security: disc;
+      text-align: right;
     }
+    .api-key-input:focus { outline: none; color: var(--text-primary); }
+    .api-key-input::placeholder { color: var(--text-muted); }
 
-    .api-input-wrap input:focus { outline: none; }
-
-    .theme-toggle {
-      width: 38px;
-      height: 38px;
+    /* HERO SECTION */
+    .hero-section {
+      min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-primary);
-      border-radius: 8px;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .theme-toggle:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .theme-toggle svg { width: 18px; height: 18px; }
-
-    /* Main Content */
-    .main-content {
+      padding: 2rem;
       position: relative;
       z-index: 1;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem 1.5rem;
+      transition: all 0.4s ease;
     }
-
-    /* Search Section */
-    .search-section {
-      text-align: center;
-      padding: 3rem 0 2rem;
-      transition: padding 0.4s ease;
-    }
-
-    .search-section.has-results {
-      padding: 1.5rem 0 1rem;
-    }
-
-    .search-logo {
-      width: 80px;
-      height: 80px;
-      margin: 0 auto 1.5rem;
-    }
-
-    .search-title {
-      font-size: 2rem;
-      font-weight: 800;
-      margin-bottom: 0.5rem;
-      background: linear-gradient(135deg, var(--text-primary), var(--accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .search-subtitle {
-      color: var(--text-muted);
-      font-size: 1rem;
-      margin-bottom: 2rem;
-    }
-
+    .hero-section.hidden { display: none; }
+    .hero-logo { width: 100px; height: 100px; margin-bottom: 1.5rem; }
+    .hero-logo svg { width: 100%; height: 100%; }
+    .hero-title { font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 700; letter-spacing: -2px; text-align: center; margin: 0; }
+    .hero-title .hubble { font-style: normal; color: var(--accent); }
+    .hero-subtitle { font-size: 1rem; color: var(--text-muted); margin-bottom: 2rem; text-align: center; }
+    .search-box { width: 100%; max-width: 600px; }
     .search-input-container {
       display: flex;
       align-items: center;
@@ -222,513 +266,398 @@
       border: 1px solid var(--border-primary);
       border-radius: 50px;
       padding: 6px 6px 6px 20px;
-      max-width: 700px;
-      margin: 0 auto;
-      gap: 12px;
-      transition: all 0.3s;
+      gap: 10px;
+      margin-bottom: 1.25rem;
+      transition: all 0.2s;
     }
-
     .search-input-container:focus-within {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.1);
+      box-shadow: 0 0 0 3px var(--glow-gold);
     }
-
-    .search-input {
+    .search-input-container input#businessInput {
       flex: 1;
+      min-width: 0;
+      padding: 0.6rem 0;
       background: transparent;
       border: none;
-      font-size: 1rem;
       color: var(--text-primary);
+      font-size: 1rem;
       font-family: inherit;
     }
-
-    .search-input:focus { outline: none; }
-    .search-input::placeholder { color: var(--text-muted); }
-
+    .search-input-container input#businessInput:focus { outline: none; }
+    .search-input-container input#businessInput::placeholder { color: var(--text-muted); }
     .search-btn {
+      width: 48px;
+      height: 48px;
+      min-width: 48px;
+      background: var(--accent);
+      border: none;
+      border-radius: 50%;
+      color: #000;
+      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 12px 24px;
-      background: linear-gradient(135deg, var(--accent), #d97706);
-      border: none;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .search-btn:hover { transform: scale(1.05); box-shadow: 0 8px 24px rgba(234, 179, 8, 0.4); }
+    .search-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .search-btn svg { width: 22px; height: 22px; }
+    .model-toggle { display: flex; justify-content: center; gap: 0.75rem; }
+    .model-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.25rem;
+      background: transparent;
+      border: 2px solid var(--border-primary);
       border-radius: 50px;
-      color: #000;
+      color: var(--text-muted);
       font-size: 0.9rem;
-      font-weight: 700;
+      font-weight: 600;
+      font-family: inherit;
       cursor: pointer;
       transition: all 0.2s;
     }
-
-    .search-btn:hover {
-      transform: scale(1.02);
-      box-shadow: 0 4px 20px rgba(234, 179, 8, 0.4);
+    .model-btn:hover { border-color: var(--text-muted); color: var(--text-primary); }
+    .model-btn.active { border-color: var(--accent); color: var(--accent); }
+    .model-badge { padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; }
+    .model-badge.flash { background: #22c55e; color: #000; }
+    .model-badge.pro { background: #8b5cf6; color: #fff; }
+    
+    .hero-footer {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.8rem;
+      color: var(--text-muted);
     }
+    .hero-footer a { color: var(--accent); text-decoration: none; }
+    .hero-footer a:hover { text-decoration: underline; }
 
-    .search-btn svg { width: 18px; height: 18px; }
-
-    /* Model Selector */
-    .model-selector {
+    /* RESULTS SECTION */
+    .results-section {
+      display: none;
+      padding: 88px 24px 24px;
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .results-section.active { display: block; }
+    .results-header {
       display: flex;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 1rem;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
     }
-
-    .model-btn {
+    .results-title { font-size: 1.35rem; font-weight: 700; }
+    .results-title span { color: var(--accent); }
+    .btn-secondary {
+      display: flex;
+      align-items: center;
+      gap: 6px;
       padding: 8px 16px;
-      background: var(--bg-secondary);
+      background: transparent;
+      color: var(--text-secondary);
       border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-secondary svg { width: 14px; height: 14px; }
+
+    /* INTEL TABS */
+    .intel-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 4px;
+      background: var(--bg-tertiary);
+      border-radius: 10px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+    }
+    .intel-tab {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      background: transparent;
+      border: none;
       border-radius: 8px;
       color: var(--text-muted);
       font-size: 0.8rem;
       font-weight: 600;
+      font-family: inherit;
       cursor: pointer;
       transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .intel-tab:hover { color: var(--text-primary); background: var(--bg-secondary); }
+    .intel-tab.active { background: var(--bg-secondary); color: var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .intel-tab svg { width: 14px; height: 14px; }
+    .tab-badge {
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 10px;
+      background: var(--bg-primary);
+    }
+    .intel-tab.active .tab-badge { background: rgba(234, 179, 8, 0.2); color: var(--accent); }
+    .intel-tab.has-data .tab-badge { background: rgba(34, 197, 94, 0.2); color: var(--tier-a); }
+    .intel-tab.has-warning .tab-badge { background: rgba(239, 68, 68, 0.2); color: var(--tier-e); }
+    .intel-tab.loading .tab-badge { animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+    .intel-panel { display: none; }
+    .intel-panel.active { display: block; }
+
+    /* CARD */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-primary);
+      border-radius: 16px;
+      padding: 24px;
+      position: relative;
+      box-sizing: border-box;
+    }
+    .card-accent::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-light), var(--tier-d));
+      border-radius: 16px 16px 0 0;
+    }
+    .card-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 20px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      justify-content: space-between;
     }
+    .card-title-left { display: flex; align-items: center; gap: 8px; }
+    .card-title svg { width: 16px; height: 16px; }
 
-    .model-btn:hover { border-color: var(--accent); color: var(--text-secondary); }
-
-    .model-btn.active {
-      background: var(--glow-gold);
-      border-color: var(--accent);
-      color: var(--accent);
+    /* LOADING / EMPTY STATES */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
     }
-
-    .model-badge {
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.65rem;
-      font-weight: 700;
-    }
-
-    .model-badge.flash { background: #22c55e; color: #000; }
-    .model-badge.pro { background: #8b5cf6; color: #fff; }
-
-    .error-message {
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      border-radius: 10px;
-      padding: 0.75rem 1rem;
-      margin: 1rem auto;
-      max-width: 700px;
-      color: var(--tier-e);
-      font-size: 0.85rem;
-      display: none;
-    }
-
-    .error-message.active { display: block; }
-
-    /* Loading Overlay */
-    .loading-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(10, 10, 10, 0.95);
-      backdrop-filter: blur(10px);
-      z-index: 200;
+    .empty-state svg { width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.3; }
+    .empty-state p { font-size: 0.9rem; }
+    .loading-state {
+      display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
+      padding: 60px 20px;
+      gap: 16px;
     }
-
-    .loading-overlay.active { display: flex; }
-
     .loading-spinner {
-      width: 60px;
-      height: 60px;
+      width: 40px;
+      height: 40px;
       border: 3px solid var(--border-primary);
       border-top-color: var(--accent);
       border-radius: 50%;
       animation: spin 1s linear infinite;
-      margin-bottom: 1.5rem;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    .loading-title {
-      font-size: 1.25rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-
-    .loading-status {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .loading-progress {
-      width: 300px;
-      height: 4px;
-      background: var(--border-primary);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .loading-progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent), var(--accent-light));
-      width: 0%;
-      transition: width 0.3s;
-    }
-
-    /* Results Section */
-    .results-section {
-      display: none;
-      margin-top: 2rem;
-    }
-
-    .results-section.active { display: block; }
-
-    /* Risk Banner */
-    .risk-banner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.25rem 1.5rem;
-      border-radius: 16px;
-      margin-bottom: 1.5rem;
-      border: 1px solid;
-    }
-
-    .risk-banner.low {
-      background: rgba(34, 197, 94, 0.1);
-      border-color: rgba(34, 197, 94, 0.3);
-    }
-
-    .risk-banner.medium {
-      background: rgba(234, 179, 8, 0.1);
-      border-color: rgba(234, 179, 8, 0.3);
-    }
-
-    .risk-banner.high {
-      background: rgba(239, 68, 68, 0.1);
-      border-color: rgba(239, 68, 68, 0.3);
-    }
-
-    .risk-badge {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .risk-letter {
-      width: 48px;
-      height: 48px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.75rem;
-      font-weight: 800;
+    .loading-state p { color: var(--text-muted); font-size: 0.9rem; }
+    .loading-fact {
+      max-width: 400px;
+      text-align: center;
+      margin-top: 12px;
+      padding: 16px 20px;
+      background: rgba(234, 179, 8, 0.05);
+      border: 1px solid rgba(234, 179, 8, 0.15);
       border-radius: 12px;
-      background: rgba(255, 255, 255, 0.1);
     }
-
-    .risk-info h3 {
-      font-size: 1.1rem;
-      font-weight: 700;
-    }
-
-    .risk-info p {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    .risk-confidence {
-      text-align: right;
-    }
-
-    .risk-confidence .value {
-      font-size: 2rem;
-      font-weight: 800;
-    }
-
-    .risk-confidence .label {
+    .loading-fact-label {
       font-size: 0.7rem;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-    }
-
-    /* Report Grid */
-    .report-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-    }
-
-    .report-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-primary);
-      border-radius: 16px;
-      padding: 1.25rem;
-    }
-
-    .report-card.full-width {
-      grid-column: 1 / -1;
-    }
-
-    .report-card-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 1rem;
-      padding-bottom: 0.75rem;
-      border-bottom: 1px solid var(--border-secondary);
-    }
-
-    .report-card-header svg {
-      width: 18px;
-      height: 18px;
+      letter-spacing: 0.1em;
       color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .loading-fact-text {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .loading-fact-icon {
+      font-size: 1.5rem;
+      margin-bottom: 8px;
     }
 
-    .report-card-header h3 {
-      font-size: 0.85rem;
+    /* DATA STYLES */
+    .section-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-secondary);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: 0.75rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-
     .data-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
     }
-
-    .data-item {
-      background: var(--bg-secondary);
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid var(--border-secondary);
-    }
-
-    .data-item.full { grid-column: 1 / -1; }
-
-    .data-label {
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-
-    .data-value {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .data-value.positive { color: var(--tier-a); }
-    .data-value.warning { color: var(--tier-c); }
-    .data-value.negative { color: var(--tier-e); }
-
-    /* Red Flags */
-    .red-flags-section {
-      background: rgba(239, 68, 68, 0.08);
-      border: 1px solid rgba(239, 68, 68, 0.25);
-      border-radius: 12px;
-      padding: 1rem;
-      margin-top: 1rem;
-    }
-
-    .red-flags-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--tier-e);
-      font-weight: 700;
-      margin-bottom: 0.75rem;
-    }
-
-    .red-flags-header svg { width: 16px; height: 16px; }
-
-    .red-flags-list {
-      list-style: none;
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-    }
-
-    .red-flags-list li {
-      padding: 6px 0;
-      padding-left: 20px;
-      position: relative;
-    }
-
-    .red-flags-list li::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 8px;
-      height: 8px;
-      background: var(--tier-e);
-      border-radius: 50%;
-    }
-
-    /* Officers List */
-    .officers-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .officer-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-primary);
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 0.85rem;
-    }
-
-    .officer-tag .title {
-      color: var(--text-muted);
-      font-size: 0.75rem;
-    }
-
-    /* Stat Row */
-    .stat-row {
+    .data-grid .label { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .data-grid .value { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); word-break: break-word; }
+    
+    .stats-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 12px;
+      margin-bottom: 20px;
     }
-
-    .stat-item {
-      text-align: center;
-      padding: 12px;
+    .stat-card {
       background: var(--bg-secondary);
-      border-radius: 10px;
       border: 1px solid var(--border-secondary);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
     }
-
-    .stat-item .value {
-      font-size: 1.25rem;
-      font-weight: 700;
-    }
-
-    .stat-item .label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    /* Summary */
-    .summary-text {
-      font-size: 0.9rem;
-      line-height: 1.8;
-      color: var(--text-secondary);
-    }
-
-    /* Sources */
-    .sources-section {
-      margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--border-secondary);
-    }
-
-    .sources-title {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-      margin-bottom: 0.75rem;
-      font-weight: 600;
-    }
-
-    .sources-list {
+    .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+    .stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    
+    .risk-banner {
       display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+      align-items: center;
+      gap: 16px;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
     }
-
-    .source-link {
-      font-size: 0.8rem;
-      color: var(--accent);
-      text-decoration: none;
-      padding: 4px 10px;
-      background: var(--bg-secondary);
-      border-radius: 6px;
-      transition: all 0.2s;
-    }
-
-    .source-link:hover {
-      background: var(--glow-gold);
-    }
-
-    /* Actions */
-    .actions-row {
-      display: flex;
-      gap: 12px;
-      margin-top: 1.5rem;
-    }
-
-    .action-btn {
-      flex: 1;
+    .risk-banner.low { background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); }
+    .risk-banner.medium { background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.3); }
+    .risk-banner.high { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); }
+    .risk-badge {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 14px 20px;
+      font-weight: 800;
+      font-size: 1.2rem;
+    }
+    .risk-banner.low .risk-badge { background: var(--tier-a); color: #000; }
+    .risk-banner.medium .risk-badge { background: var(--accent); color: #000; }
+    .risk-banner.high .risk-badge { background: var(--tier-e); color: #fff; }
+    .risk-info h3 { font-size: 1.1rem; font-weight: 700; }
+    .risk-info p { font-size: 0.85rem; color: var(--text-muted); }
+    
+    .record-item {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-secondary);
+    }
+    .record-item:last-child { border-bottom: none; }
+    .record-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    .record-title { font-weight: 600; font-size: 0.9rem; }
+    .record-meta { font-size: 0.8rem; color: var(--text-muted); }
+    .status-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .status-badge.good { background: rgba(34, 197, 94, 0.15); color: var(--tier-a); }
+    .status-badge.warning { background: rgba(234, 179, 8, 0.15); color: var(--accent); }
+    .status-badge.active { background: rgba(239, 68, 68, 0.15); color: var(--tier-e); }
+    
+    .red-flags {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+    .red-flags h4 { color: var(--tier-e); font-size: 0.85rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .red-flags h4 svg { width: 16px; height: 16px; }
+    .red-flags ul { list-style: none; }
+    .red-flags li { font-size: 0.85rem; color: var(--text-secondary); padding: 4px 0; padding-left: 16px; position: relative; }
+    .red-flags li::before { content: '!'; position: absolute; left: 0; color: var(--tier-e); font-weight: 700; }
+    
+    .summary-box {
+      background: linear-gradient(135deg, rgba(234, 179, 8, 0.05), rgba(168, 85, 247, 0.05));
+      border: 1px solid var(--border-secondary);
       border-radius: 12px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .summary-box h4 { font-size: 0.8rem; color: var(--accent); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .summary-box p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; }
+    
+    .social-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+    .social-card { background: var(--bg-tertiary); border-radius: 10px; padding: 16px; }
+    .social-platform { font-weight: 700; font-size: 0.9rem; margin-bottom: 4px; }
+    .social-followers { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; }
+    .social-link { font-size: 0.75rem; color: var(--accent-blue); text-decoration: none; }
+    .social-link:hover { text-decoration: underline; }
+    
+    .review-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+    .review-card { background: var(--bg-tertiary); border-radius: 10px; padding: 16px; text-align: center; }
+    .review-platform { font-weight: 600; font-size: 0.8rem; margin-bottom: 8px; }
+    .review-rating { font-size: 1.8rem; font-weight: 800; margin-bottom: 4px; }
+    .review-rating.good { color: var(--tier-a); }
+    .review-rating.ok { color: var(--accent); }
+    .review-rating.bad { color: var(--tier-e); }
+    .review-count { font-size: 0.75rem; color: var(--text-muted); }
+    
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      z-index: 1000;
+      animation: slideIn 0.3s ease;
+    }
+    .toast strong { color: var(--accent); margin-right: 8px; }
+    @keyframes slideIn {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
 
-    .action-btn svg { width: 18px; height: 18px; }
-
-    .action-btn.primary {
-      background: linear-gradient(135deg, var(--accent), #d97706);
-      border: none;
-      color: #000;
-    }
-
-    .action-btn.primary:hover {
-      transform: scale(1.02);
-      box-shadow: 0 4px 20px rgba(234, 179, 8, 0.4);
-    }
-
-    .action-btn.secondary {
-      background: transparent;
-      border: 1px dashed var(--border-primary);
-      color: var(--text-muted);
-    }
-
-    .action-btn.secondary:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    /* Responsive */
+    /* RESPONSIVE */
     @media (max-width: 768px) {
-      .report-grid {
-        grid-template-columns: 1fr;
-      }
-      .data-grid {
-        grid-template-columns: 1fr;
-      }
-      .stat-row {
-        grid-template-columns: 1fr;
-      }
-      .risk-banner {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-      }
-      .risk-confidence {
-        text-align: center;
-      }
+      .data-grid { grid-template-columns: repeat(2, 1fr); }
+      .stats-row { grid-template-columns: 1fr; }
+      .review-grid { grid-template-columns: repeat(2, 1fr); }
+      .intel-tabs { flex-wrap: nowrap; }
+      .intel-tab { padding: 8px 12px; font-size: 0.75rem; }
+      .header-nav { display: none; }
+      .api-key-input { width: 80px; font-size: 0.8rem; }
     }
   </style>
 </head>
@@ -736,876 +665,880 @@
   <div class="bg-grid"></div>
   <div class="bg-gradient"></div>
 
-  <!-- Header -->
+  <div class="orbit-system" id="orbitSystem">
+    <div class="orbit-center"></div>
+    <div class="orbit-ring orbit-ring-1"></div>
+    <div class="orbit-ring orbit-ring-2"></div>
+    <div class="orbit-ring orbit-ring-3"></div>
+    <div class="orbit-particle particle-1"></div>
+    <div class="orbit-particle particle-2"></div>
+    <div class="orbit-particle particle-3"></div>
+    <div class="orbit-particle particle-4"></div>
+  </div>
+
   <header class="main-header">
     <div class="header-logo">
-      <svg viewBox="0 0 64 64" fill="none">
-        <defs>
-          <radialGradient id="pg" cx="35%" cy="35%" r="60%">
-            <stop offset="0%" stop-color="#fcd34d"/>
-            <stop offset="50%" stop-color="#eab308"/>
-            <stop offset="100%" stop-color="#ca8a04"/>
-          </radialGradient>
-          <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#f97316"/>
-            <stop offset="100%" stop-color="#dc2626"/>
-          </linearGradient>
-        </defs>
-        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#rg)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" opacity="0.6"/>
-        <circle cx="32" cy="32" r="12" fill="url(#pg)"/>
-        <ellipse cx="28" cy="28" rx="4" ry="3" fill="#fef3c7" opacity="0.4"/>
-        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#rg)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
-        <circle cx="58" cy="28" r="4" fill="#a855f7"/>
-      </svg>
-      <h1>AblesAI <span>Business Intelligence</span></h1>
+      <svg viewBox="0 0 64 64" fill="none"><defs><radialGradient id="pg" cx="35%" cy="35%" r="60%"><stop offset="0%" stop-color="#fcd34d"/><stop offset="50%" stop-color="#eab308"/><stop offset="100%" stop-color="#ca8a04"/></radialGradient><linearGradient id="rg" x1="0%" y1="0%" x2="100%"><stop offset="0%" stop-color="#ffab40"/><stop offset="50%" stop-color="#ff8c00"/><stop offset="100%" stop-color="#ff6d00"/></linearGradient></defs><ellipse cx="32" cy="32" rx="26" ry="7" stroke="url(#rg)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="65 130" opacity="0.6"/><circle cx="32" cy="32" r="11" fill="url(#pg)"/><ellipse cx="28" cy="28" rx="3.5" ry="2.5" fill="#fef3c7" opacity="0.4"/><ellipse cx="32" cy="32" rx="26" ry="7" stroke="url(#rg)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="65 130" stroke-dashoffset="-65"/></svg>
+      <h1><span class="ables">Ables</span><span class="ai">AI</span></h1>
     </div>
+    <nav class="header-nav">
+      <a href="#" class="nav-link">HOME</a>
+      <a href="#" class="nav-link">CALCULATOR <span class="nav-badge lite">LITE</span></a>
+      <a href="#" class="nav-link">TOOLBOX <span class="nav-badge free">FREE</span></a>
+      <a href="#" class="nav-link active">HUBBLE</a>
+    </nav>
     <div class="header-actions">
-      <div class="api-input-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        <input type="password" id="apiKey" placeholder="Gemini API Key">
-      </div>
-      <button class="theme-toggle" id="themeToggle">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <button class="theme-toggle" onclick="toggleTheme()">
+        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
     </div>
   </header>
 
-  <!-- Main Content -->
-  <main class="main-content">
-    <!-- Search Section -->
-    <section class="search-section" id="searchSection">
-      <svg class="search-logo" viewBox="0 0 64 64" fill="none">
-        <defs>
-          <radialGradient id="pg2" cx="35%" cy="35%" r="60%">
-            <stop offset="0%" stop-color="#fcd34d"/>
-            <stop offset="50%" stop-color="#eab308"/>
-            <stop offset="100%" stop-color="#ca8a04"/>
-          </radialGradient>
-        </defs>
-        <circle cx="32" cy="32" r="28" fill="url(#pg2)" opacity="0.15"/>
-        <circle cx="32" cy="32" r="20" fill="url(#pg2)" opacity="0.3"/>
-        <circle cx="32" cy="32" r="12" fill="url(#pg2)"/>
-        <ellipse cx="28" cy="28" rx="3" ry="2" fill="#fef3c7" opacity="0.5"/>
-      </svg>
-      <h1 class="search-title">Deep Business Intelligence</h1>
-      <p class="search-subtitle">Comprehensive research, risk assessment, and compliance analysis powered by AI</p>
-      
-      <div class="search-input-container">
-        <input type="text" class="search-input" id="entityName" placeholder="Enter business name (e.g., Acme Corporation)">
-        <button class="search-btn" onclick="runDeepResearch()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          Deep Research
-        </button>
-      </div>
-
-      <div class="model-selector">
-        <button class="model-btn active" id="modelPro" data-model="gemini-3-pro-preview">
-          <span class="model-badge pro">PRO</span>
-          Gemini Pro
-        </button>
-        <button class="model-btn" id="modelFlash" data-model="gemini-2.5-flash">
-          <span class="model-badge flash">FLASH</span>
-          Gemini Flash
-        </button>
-      </div>
-
-      <div class="error-message" id="errorMessage"></div>
-    </section>
-
-    <!-- Results Section -->
-    <section class="results-section" id="resultsSection">
-      <!-- Risk Banner -->
-      <div class="risk-banner" id="riskBanner">
-        <div class="risk-badge">
-          <div class="risk-letter" id="riskLetter">?</div>
-          <div class="risk-info">
-            <h3 id="riskLabel">Risk Assessment</h3>
-            <p id="businessNameDisplay">Loading...</p>
-          </div>
-        </div>
-        <div class="risk-confidence">
-          <div class="value" id="confidenceValue">0%</div>
-          <div class="label">Research Confidence</div>
-        </div>
-      </div>
-
-      <!-- Report Grid -->
-      <div class="report-grid">
-        <!-- Company Overview -->
-        <div class="report-card">
-          <div class="report-card-header">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            <h3>Company Overview</h3>
-          </div>
-          <div class="data-grid">
-            <div class="data-item full">
-              <div class="data-label">Legal Name</div>
-              <div class="data-value" id="legalName">--</div>
-            </div>
-            <div class="data-item">
-              <div class="data-label">DBA</div>
-              <div class="data-value" id="dbaName">--</div>
-            </div>
-            <div class="data-item">
-              <div class="data-label">Entity Type</div>
-              <div class="data-value" id="entityType">--</div>
-            </div>
-            <div class="data-item">
-              <div class="data-label">State</div>
-              <div class="data-value" id="stateName">--</div>
-            </div>
-            <div class="data-item">
-              <div class="data-label">Formation Date</div>
-              <div class="data-value" id="formationDate">--</div>
-            </div>
-            <div class="data-item">
-              <div class="data-label">Status</div>
-              <div class="data-value" id="entityStatus">--</div>
-            </div>
-            <div class="data-item">
-              <div class="data-label">Registered Agent</div>
-              <div class="data-value" id="regAgent">--</div>
-            </div>
-            <div class="data-item full">
-              <div class="data-label">Address</div>
-              <div class="data-value" id="address">--</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Operations -->
-        <div class="report-card">
-          <div class="report-card-header">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-            <h3>Business Operations</h3>
-          </div>
-          <div class="data-grid">
-            <div class="data-item full">
-              <div class="data-label">Industry</div>
-              <div class="data-value" id="industry">--</div>
-            </div>
-            <div class="data-item">
-              <div class="data-label">NAICS Code</div>
-              <div class="data-value" id="naicsCode">--</div>
-            </div>
-            <div class="data-item">
-              <div class="data-label">Locations</div>
-              <div class="data-value" id="locations">--</div>
-            </div>
-            <div class="data-item full">
-              <div class="data-label">Business Description</div>
-              <div class="data-value" id="description" style="font-weight: 400; font-size: 0.85rem;">--</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Financial Indicators -->
-        <div class="report-card">
-          <div class="report-card-header">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-            <h3>Financial Indicators</h3>
-          </div>
-          <div class="stat-row">
-            <div class="stat-item">
-              <div class="value" id="revenueEst">--</div>
-              <div class="label">Revenue Est.</div>
-            </div>
-            <div class="stat-item">
-              <div class="value" id="employeeCount">--</div>
-              <div class="label">Employees</div>
-            </div>
-            <div class="stat-item">
-              <div class="value" id="yearsInBusiness">--</div>
-              <div class="label">Years</div>
-            </div>
-          </div>
-          <div class="data-item full" style="margin-top: 12px;">
-            <div class="data-label">Growth Trend</div>
-            <div class="data-value" id="growthTrend">--</div>
-          </div>
-        </div>
-
-        <!-- Ownership & Management -->
-        <div class="report-card">
-          <div class="report-card-header">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            <h3>Ownership & Management</h3>
-          </div>
-          <div class="data-item full" style="margin-bottom: 12px;">
-            <div class="data-label">Ownership Structure</div>
-            <div class="data-value" id="ownershipStructure">--</div>
-          </div>
-          <div class="officers-list" id="officersList">
-            <span style="color: var(--text-muted); font-size: 0.85rem;">No officers found</span>
-          </div>
-        </div>
-
-        <!-- Compliance & Legal -->
-        <div class="report-card">
-          <div class="report-card-header">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            <h3>Compliance & Legal</h3>
-          </div>
-          <div class="stat-row">
-            <div class="stat-item">
-              <div class="value" id="lawsuitsCount">0</div>
-              <div class="label">Lawsuits</div>
-            </div>
-            <div class="stat-item">
-              <div class="value" id="liensCount">0</div>
-              <div class="label">Liens</div>
-            </div>
-            <div class="stat-item">
-              <div class="value" id="uccCount">0</div>
-              <div class="label">UCC Filings</div>
-            </div>
-          </div>
-          <div class="data-item full" style="margin-top: 12px;">
-            <div class="data-label">Licenses</div>
-            <div class="data-value" id="licenses" style="font-weight: 400; font-size: 0.85rem;">--</div>
-          </div>
-        </div>
-
-        <!-- Reputation -->
-        <div class="report-card">
-          <div class="report-card-header">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <h3>Reputation</h3>
-          </div>
-          <div class="stat-row">
-            <div class="stat-item">
-              <div class="value" id="bbbRating">--</div>
-              <div class="label">BBB Rating</div>
-            </div>
-            <div class="stat-item">
-              <div class="value" id="reviewScore">--</div>
-              <div class="label">Review Score</div>
-            </div>
-            <div class="stat-item">
-              <div class="value" id="reviewCount">0</div>
-              <div class="label">Reviews</div>
-            </div>
-          </div>
-          <div class="data-item full" style="margin-top: 12px;">
-            <div class="data-label">News Mentions</div>
-            <div class="data-value" id="newsMentions" style="font-weight: 400; font-size: 0.85rem;">--</div>
-          </div>
-        </div>
-
-        <!-- Risk Assessment (Full Width) -->
-        <div class="report-card full-width">
-          <div class="report-card-header">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            <h3>Risk Assessment</h3>
-          </div>
-          
-          <div class="stat-row" style="margin-bottom: 1rem;">
-            <div class="stat-item">
-              <div class="value" id="industryRisks">0</div>
-              <div class="label">Industry Risks</div>
-            </div>
-            <div class="stat-item">
-              <div class="value" id="concernsCount">0</div>
-              <div class="label">Concerns</div>
-            </div>
-            <div class="stat-item">
-              <div class="value" id="redFlagsCount">0</div>
-              <div class="label">Red Flags</div>
-            </div>
-          </div>
-
-          <div class="red-flags-section" id="redFlagsSection" style="display: none;">
-            <div class="red-flags-header">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
-              Red Flags Identified
-            </div>
-            <ul class="red-flags-list" id="redFlagsList"></ul>
-          </div>
-
-          <div class="data-item full" id="concernsSection" style="display: none; margin-top: 1rem;">
-            <div class="data-label">Operational Concerns</div>
-            <div class="data-value" id="concerns" style="font-weight: 400; font-size: 0.85rem;"></div>
-          </div>
-        </div>
-
-        <!-- Summary (Full Width) -->
-        <div class="report-card full-width">
-          <div class="report-card-header">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-            <h3>Executive Summary</h3>
-          </div>
-          <p class="summary-text" id="summaryText">No summary available.</p>
-          
-          <div class="sources-section" id="sourcesSection">
-            <div class="sources-title">Sources</div>
-            <div class="sources-list" id="sourcesList"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Actions -->
-      <div class="actions-row">
-        <button class="action-btn primary" onclick="copyFullReport()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-          Copy Full Report
-        </button>
-        <button class="action-btn secondary" onclick="runDeepResearch()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-          Re-run Research
-        </button>
-      </div>
-    </section>
-  </main>
-
-  <!-- Loading Overlay -->
-  <div class="loading-overlay" id="loadingOverlay">
-    <div class="loading-spinner"></div>
-    <div class="loading-title" id="loadingTitle">Deep Research in Progress</div>
-    <div class="loading-status" id="loadingStatus">Initializing...</div>
-    <div class="loading-progress">
-      <div class="loading-progress-bar" id="loadingProgressBar"></div>
+  <!-- HERO SECTION -->
+  <section class="hero-section" id="heroSection">
+    <div class="hero-logo">
+      <svg viewBox="0 0 64 64" fill="none"><defs><radialGradient id="hg" cx="35%" cy="35%" r="60%"><stop offset="0%" stop-color="#fcd34d"/><stop offset="50%" stop-color="#eab308"/><stop offset="100%" stop-color="#ca8a04"/></radialGradient><linearGradient id="hrg" x1="0%" y1="0%" x2="100%"><stop offset="0%" stop-color="#ffab40"/><stop offset="50%" stop-color="#ff8c00"/><stop offset="100%" stop-color="#ff6d00"/></linearGradient><filter id="glow"><feGaussianBlur stdDeviation="2" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><ellipse cx="32" cy="32" rx="26" ry="7" stroke="url(#hrg)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="65 130" opacity="0.6"/><circle cx="32" cy="32" r="13" fill="#eab308" opacity="0.2" filter="url(#glow)"/><circle cx="32" cy="32" r="11" fill="url(#hg)" filter="url(#glow)"/><ellipse cx="28" cy="28" rx="3.5" ry="2.5" fill="#fef3c7" opacity="0.4"/><ellipse cx="32" cy="32" rx="26" ry="7" stroke="url(#hrg)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="65 130" stroke-dashoffset="-65"/></svg>
     </div>
-  </div>
+    <div class="hero-title-wrap">
+      <h1 class="hero-title"><span class="hubble">Hubble</span></h1>
+      <svg class="telescope-icon" viewBox="0 0 40 40" fill="none" width="28" height="28">
+        <defs>
+          <linearGradient id="tg1" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#c084fc"/>
+            <stop offset="100%" stop-color="#7c3aed"/>
+          </linearGradient>
+          <linearGradient id="tg2" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#60a5fa"/>
+            <stop offset="100%" stop-color="#3b82f6"/>
+          </linearGradient>
+        </defs>
+        <!-- Telescope body pointing up-left -->
+        <rect x="16" y="16" width="18" height="5" rx="2" fill="url(#tg1)" transform="rotate(-50 25 18)"/>
+        <!-- Telescope lens/eyepiece -->
+        <circle cx="30" cy="30" r="3.5" fill="url(#tg2)"/>
+        <!-- Signal waves going up toward planet -->
+        <path d="M8 12 L4 8" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"/>
+        <path d="M12 8 L6 2" stroke="#a855f7" stroke-width="2" stroke-linecap="round"/>
+        <path d="M6 14 L2 10" stroke="#c084fc" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+      </svg>
+    </div>
+    <p class="hero-subtitle">AI-powered business intelligence</p>
+    <div class="search-box">
+      <div class="search-input-container">
+        <input type="text" id="businessInput" placeholder="Enter business name" onkeydown="if(event.key==='Enter') runSearch()">
+        <input type="text" id="apiKey" class="api-key-input" placeholder="API Key">
+        <button class="search-btn" onclick="runSearch()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+      <div class="model-toggle">
+        <button class="model-btn active" data-model="gemini-3-pro-preview"><span class="model-badge pro">PRO</span> Recommended</button>
+        <button class="model-btn" data-model="gemini-2.5-flash"><span class="model-badge flash">FLASH</span> Faster</button>
+      </div>
+    </div>
+    <div class="hero-footer">
+      Powered by <a href="#">AblesAI</a> | Gemini API with Google Search Grounding
+    </div>
+  </section>
 
-  <script>
-    // ==================== GLOBALS ====================
-    let selectedModel = 'gemini-3-pro-preview';
-    let loadingInterval;
-    let currentResearch = null;
+  <!-- RESULTS SECTION -->
+  <section class="results-section" id="resultsSection">
+    <div class="results-header">
+      <h2 class="results-title">Intel: <span id="businessDisplay"></span></h2>
+      <button class="btn-secondary" onclick="newSearch()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Search
+      </button>
+    </div>
 
-    // ==================== INIT ====================
-    document.addEventListener('DOMContentLoaded', function() {
-      const savedTheme = localStorage.getItem('theme') || 'dark';
-      document.documentElement.setAttribute('data-theme', savedTheme);
-      
-      const savedKey = localStorage.getItem('gemini_api_key_deep_research');
-      if (savedKey) {
-        document.getElementById('apiKey').value = savedKey;
-      }
-      
-      const savedModel = localStorage.getItem('deep_research_model');
-      if (savedModel) {
-        selectedModel = savedModel;
-        updateModelButtons();
-      }
-    });
+    <!-- INTEL TABS -->
+    <div class="intel-tabs">
+      <button class="intel-tab active" onclick="switchIntelTab('research')" id="tabResearch">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        RESEARCH
+        <span class="tab-badge" id="badgeResearch">--</span>
+      </button>
+      <button class="intel-tab" onclick="switchIntelTab('background')" id="tabBackground">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        BACKGROUND
+        <span class="tab-badge" id="badgeBackground">--</span>
+      </button>
+      <button class="intel-tab" onclick="switchIntelTab('reviews')" id="tabReviews">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        REVIEWS
+        <span class="tab-badge" id="badgeReviews">--</span>
+      </button>
+      <button class="intel-tab" onclick="switchIntelTab('social')" id="tabSocial">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        SOCIAL
+        <span class="tab-badge" id="badgeSocial">--</span>
+      </button>
+      <button class="intel-tab" onclick="switchIntelTab('footprint')" id="tabFootprint">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        FOOTPRINT
+        <span class="tab-badge" id="badgeFootprint">--</span>
+      </button>
+      <button class="intel-tab" onclick="switchIntelTab('debt')" id="tabDebt">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        DEBT
+        <span class="tab-badge" id="badgeDebt">--</span>
+      </button>
+    </div>
 
-    // ==================== EVENT LISTENERS ====================
-    document.getElementById('apiKey').addEventListener('input', function() {
-      const key = this.value.trim();
-      if (key) {
-        localStorage.setItem('gemini_api_key_deep_research', key);
-      }
-    });
+    <!-- RESEARCH PANEL -->
+    <div class="intel-panel active" id="panelResearch">
+      <div class="card card-accent">
+        <div class="card-title">
+          <span class="card-title-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Deep Research
+          </span>
+          <button class="btn-secondary" onclick="runResearchAuto()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            Run
+          </button>
+        </div>
+        <div id="researchContent"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><p>Run a search to get deep business research</p></div></div>
+      </div>
+    </div>
 
-    document.getElementById('entityName').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') runDeepResearch();
-    });
+    <!-- BACKGROUND PANEL -->
+    <div class="intel-panel" id="panelBackground">
+      <div class="card card-accent">
+        <div class="card-title">
+          <span class="card-title-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Background Check
+          </span>
+          <button class="btn-secondary" onclick="runBackgroundAuto()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            Run
+          </button>
+        </div>
+        <div id="backgroundContent"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg><p>Run a search to check UCC filings, liens & judgments</p></div></div>
+      </div>
+    </div>
 
-    document.getElementById('themeToggle').addEventListener('click', function() {
-      const current = document.documentElement.getAttribute('data-theme');
-      const next = current === 'light' ? 'dark' : 'light';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
-    });
+    <!-- REVIEWS PANEL -->
+    <div class="intel-panel" id="panelReviews">
+      <div class="card card-accent">
+        <div class="card-title">
+          <span class="card-title-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Reviews & Ratings
+          </span>
+          <button class="btn-secondary" onclick="runReviewsAuto()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            Run
+          </button>
+        </div>
+        <div id="reviewsContent"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><p>Run a search to find reviews and ratings</p></div></div>
+      </div>
+    </div>
 
-    document.getElementById('modelPro').addEventListener('click', function() {
-      selectedModel = this.dataset.model;
-      localStorage.setItem('deep_research_model', selectedModel);
-      updateModelButtons();
-    });
+    <!-- SOCIAL PANEL -->
+    <div class="intel-panel" id="panelSocial">
+      <div class="card card-accent">
+        <div class="card-title">
+          <span class="card-title-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            Social Media
+          </span>
+          <button class="btn-secondary" onclick="runSocialAuto()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            Run
+          </button>
+        </div>
+        <div id="socialContent"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg><p>Run a search to find social media profiles</p></div></div>
+      </div>
+    </div>
 
-    document.getElementById('modelFlash').addEventListener('click', function() {
-      selectedModel = this.dataset.model;
-      localStorage.setItem('deep_research_model', selectedModel);
-      updateModelButtons();
-    });
+    <!-- FOOTPRINT PANEL -->
+    <div class="intel-panel" id="panelFootprint">
+      <div class="card card-accent">
+        <div class="card-title">
+          <span class="card-title-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            Digital Footprint
+          </span>
+          <button class="btn-secondary" onclick="runFootprintAuto()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            Run
+          </button>
+        </div>
+        <div id="footprintContent"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/></svg><p>Run a search to analyze online presence</p></div></div>
+      </div>
+    </div>
 
-    function updateModelButtons() {
-      document.getElementById('modelPro').classList.toggle('active', selectedModel.includes('pro'));
-      document.getElementById('modelFlash').classList.toggle('active', selectedModel.includes('flash'));
-    }
+    <!-- DEBT PANEL -->
+    <div class="intel-panel" id="panelDebt">
+      <div class="card card-accent">
+        <div class="card-title">
+          <span class="card-title-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Debt Positions
+          </span>
+          <button class="btn-secondary" onclick="runDebtAuto()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            Run
+          </button>
+        </div>
+        <div id="debtContent"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><p>Run a search to find debt and financing positions</p></div></div>
+      </div>
+    </div>
+  </section>
 
-    // ==================== LOADING ====================
-    function startLoading(businessName) {
-      document.getElementById('loadingOverlay').classList.add('active');
-      document.getElementById('loadingTitle').textContent = `Researching: ${businessName}`;
-      
-      const phases = [
-        { msg: 'Searching official registries...', pct: 15 },
-        { msg: 'Analyzing SEC and corporate filings...', pct: 30 },
-        { msg: 'Checking compliance databases...', pct: 45 },
-        { msg: 'Gathering reputation data...', pct: 60 },
-        { msg: 'Assessing financial indicators...', pct: 75 },
-        { msg: 'Compiling risk assessment...', pct: 90 },
-        { msg: 'Generating report...', pct: 100 }
-      ];
-      
-      let phase = 0;
-      loadingInterval = setInterval(() => {
-        if (phase < phases.length) {
-          document.getElementById('loadingStatus').textContent = phases[phase].msg;
-          document.getElementById('loadingProgressBar').style.width = phases[phase].pct + '%';
-          phase++;
-        }
-      }, 2500);
-    }
+<script>
+let currentBusiness = '';
+let selectedModel = 'gemini-3-pro-preview';
+let researchData = null, backgroundData = null, footprintData = null, debtData = null, reviewsData = null, socialData = null;
 
-    function stopLoading() {
-      clearInterval(loadingInterval);
-      document.getElementById('loadingOverlay').classList.remove('active');
-    }
+// Model toggle
+document.querySelectorAll('.model-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.model-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedModel = btn.dataset.model;
+  });
+});
 
-    // ==================== DEEP RESEARCH PROMPT ====================
-    function buildDeepResearchPrompt(businessName) {
-      return `You are a comprehensive business research and due diligence analyst.
-
-BUSINESS: "${businessName}"
-
-Conduct thorough deep research using all available web sources and provide a COMPREHENSIVE analysis including:
-
-1. COMPANY OVERVIEW
-   - Legal name (exact as registered)
-   - DBAs / Trade names
-   - Entity type (LLC, Corp, Inc, LP, etc.)
-   - State of incorporation
-   - Formation/Registration date
-   - Current registration status (Active, Inactive, Dissolved, Good Standing)
-   - Registered agent name and address
-   - Principal business address
-
-2. OWNERSHIP & MANAGEMENT
-   - Officers, directors, principals (names and titles)
-   - Ownership structure (private, public, subsidiary)
-   - Key executives
-
-3. BUSINESS OPERATIONS
-   - Industry classification
-   - NAICS/SIC codes
-   - Business description and model
-   - Products/Services offered
-   - Number of locations
-   - Competitors
-
-4. FINANCIAL INDICATORS
-   - Revenue estimates (if available)
-   - Employee count estimates
-   - Years in business
-   - Growth trend indicators
-   - Funding history (if applicable)
-
-5. COMPLIANCE & LEGAL
-   - Business licenses
-   - Regulatory actions or violations
-   - Lawsuits (plaintiff or defendant)
-   - Liens (tax liens, mechanic's liens)
-   - Judgments
-   - UCC filings
-   - Bankruptcies
-
-6. REPUTATION
-   - BBB rating and accreditation
-   - Online review scores (Google, Yelp, etc.)
-   - Review count
-   - News mentions (positive or negative)
-   - Awards or recognitions
-
-7. RISK ASSESSMENT
-   - Overall risk rating: Low, Medium, or High
-   - Red flags identified
-   - Industry-specific risks
-   - Operational concerns
-   - Recommendations
-
-SEARCH STRATEGY:
-- Search state Secretary of State / Corporation databases
-- Check SEC EDGAR for public filings
-- Search OpenCorporates
-- Check BBB directory
-- Search news sources
-- Check court records databases
-- Search LinkedIn for company info
-- Check industry-specific registries
-
-Return ONLY valid JSON in this exact schema:
-{
-  "overview": {
-    "legal_name": "",
-    "dba": "",
-    "entity_type": "",
-    "state": "",
-    "formation_date": "",
-    "status": "",
-    "registered_agent": "",
-    "address": ""
-  },
-  "ownership": {
-    "officers": [{"name": "", "title": ""}],
-    "ownership_structure": ""
-  },
-  "operations": {
-    "industry": "",
-    "naics": "",
-    "description": "",
-    "services": [],
-    "locations": 0,
-    "competitors": []
-  },
-  "financials": {
-    "revenue_estimate": "",
-    "employee_count": "",
-    "years_in_business": 0,
-    "growth_trend": ""
-  },
-  "compliance": {
-    "licenses": [],
-    "regulatory_actions": [],
-    "lawsuits": [],
-    "liens": [],
-    "judgments": [],
-    "ucc_filings": [],
-    "bankruptcies": []
-  },
-  "reputation": {
-    "bbb_rating": "",
-    "review_score": "",
-    "review_count": 0,
-    "news_mentions": [],
-    "awards": []
-  },
-  "risk": {
-    "rating": "Low|Medium|High",
-    "red_flags": [],
-    "industry_risks": [],
-    "concerns": []
-  },
-  "sources": [{"title": "", "url": ""}],
-  "summary": "",
-  "confidence": 0
+function toggleTheme() {
+  document.body.classList.toggle('light-mode');
 }
 
-IMPORTANT:
-- Be thorough and comprehensive
-- Use actual data from searches, not assumptions
-- If information is not found, use empty strings or empty arrays
-- Confidence should be 0-100 based on quality of sources found
-- Always provide a risk rating even with limited data`;
+function switchIntelTab(tab) {
+  document.querySelectorAll('.intel-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.intel-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+  document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+}
+
+async function runSearch() {
+  const input = document.getElementById('businessInput').value.trim();
+  if (!input) return;
+  currentBusiness = input;
+  document.getElementById('businessDisplay').textContent = currentBusiness;
+  document.getElementById('heroSection').classList.add('hidden');
+  document.getElementById('resultsSection').classList.add('active');
+  document.getElementById('orbitSystem').classList.add('dimmed');
+  
+  // Reset all panels
+  ['Research', 'Background', 'Reviews', 'Social', 'Footprint', 'Debt'].forEach(t => {
+    document.getElementById('badge' + t).textContent = '--';
+    document.getElementById('tab' + t).classList.remove('has-data', 'has-warning', 'loading');
+  });
+  
+  // Fire ALL reports simultaneously - each updates UI as it completes
+  runResearchAuto();
+  runBackgroundAuto();
+  runReviewsAuto();
+  runSocialAuto();
+  runFootprintAuto();
+  runDebtAuto();
+}
+
+function newSearch() {
+  document.getElementById('heroSection').classList.remove('hidden');
+  document.getElementById('resultsSection').classList.remove('active');
+  document.getElementById('orbitSystem').classList.remove('dimmed');
+  document.getElementById('businessInput').value = '';
+  currentBusiness = '';
+  researchData = backgroundData = footprintData = debtData = reviewsData = socialData = null;
+  switchIntelTab('research');
+  ['researchContent', 'backgroundContent', 'reviewsContent', 'socialContent', 'footprintContent', 'debtContent'].forEach(id => {
+    const el = document.getElementById(id);
+    el.innerHTML = el.dataset.empty || '<div class="empty-state"><p>Run a search to get data</p></div>';
+  });
+}
+
+function getApiKey() {
+  return document.getElementById('apiKey').value.trim();
+}
+
+async function callGemini(prompt) {
+  const apiKey = getApiKey();
+  if (!apiKey) throw new Error('Please enter your Gemini API key');
+  
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.7, maxOutputTokens: 8192 },
+      tools: [{ googleSearch: {} }]
+    })
+  });
+  
+  if (!response.ok) {
+    const err = await response.json();
+    throw new Error(err.error?.message || 'API Error');
+  }
+  
+  const data = await response.json();
+  return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+}
+
+function safeJson(text) {
+  try {
+    const match = text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/\{[\s\S]*\}/);
+    const jsonStr = match ? (match[1] || match[0]) : text;
+    return JSON.parse(jsonStr);
+  } catch { return null; }
+}
+
+const loadingFacts = [
+  { icon: "🔍", text: "The average business has 3-5 active UCC filings at any given time." },
+  { icon: "📊", text: "87% of consumers read online reviews before visiting a local business." },
+  { icon: "⚖️", text: "Over 40 million lawsuits are filed in the US each year." },
+  { icon: "🏛️", text: "UCC filings remain on record for 5 years unless terminated." },
+  { icon: "💳", text: "The MCA industry has grown to over $20 billion annually." },
+  { icon: "🌐", text: "A business's digital footprint affects 93% of buying decisions." },
+  { icon: "📈", text: "Companies with strong social presence see 32% more revenue growth." },
+  { icon: "🔒", text: "SSL certificates became a Google ranking factor in 2014." },
+  { icon: "⭐", text: "A one-star increase in Yelp rating leads to 5-9% revenue increase." },
+  { icon: "🏢", text: "The average small business has $195,000 in debt." },
+  { icon: "📱", text: "78% of local searches on mobile result in an offline purchase." },
+  { icon: "💼", text: "LinkedIn has over 900 million members across 200 countries." },
+  { icon: "🔎", text: "Google processes over 8.5 billion searches per day." },
+  { icon: "📝", text: "Tax liens can remain on credit reports for up to 7 years." },
+  { icon: "🤝", text: "B2B buyers consume 13 pieces of content before making a decision." }
+];
+
+function getRandomFact() {
+  return loadingFacts[Math.floor(Math.random() * loadingFacts.length)];
+}
+
+function setLoading(section, msg) {
+  const fact = getRandomFact();
+  document.getElementById(section + 'Content').innerHTML = `
+    <div class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>${msg}</p>
+      <div class="loading-fact">
+        <div class="loading-fact-icon">${fact.icon}</div>
+        <div class="loading-fact-label">Did you know?</div>
+        <div class="loading-fact-text">${fact.text}</div>
+      </div>
+    </div>`;
+}
+
+function setEmpty(section, msg) {
+  document.getElementById(section + 'Content').innerHTML = `<div class="empty-state"><p>${msg}</p></div>`;
+}
+
+// ==================== RESEARCH ====================
+async function runResearchAuto() {
+  if (!currentBusiness) return;
+  document.getElementById('tabResearch').classList.add('loading');
+  setLoading('research', 'Researching ' + currentBusiness + '...');
+  
+  const prompt = `You are a business intelligence analyst. Search for and compile comprehensive research on "${currentBusiness}". Include company overview, key people, industry, competitors, recent news, financials if available. Return ONLY valid JSON in this format:
+{
+  "company_name": "",
+  "dba": "",
+  "industry": "",
+  "founded": "",
+  "headquarters": "",
+  "website": "",
+  "employees": "",
+  "annual_revenue": "",
+  "description": "",
+  "key_people": [{"name": "", "title": "", "linkedin_url": ""}],
+  "competitors": [{"name": "", "website": ""}],
+  "recent_news": [{"title": "", "date": "", "summary": "", "url": ""}],
+  "products_services": [],
+  "confidence_score": 85,
+  "summary": ""
+}`;
+  
+  try {
+    const response = await callGemini(prompt);
+    researchData = safeJson(response);
+    if (researchData) {
+      renderResearchSection(researchData);
+      document.getElementById('badgeResearch').textContent = researchData.confidence_score + '%';
+      document.getElementById('tabResearch').classList.add('has-data');
+      showToast('Research Complete', researchData.company_name || currentBusiness);
+    } else {
+      setEmpty('research', 'Could not parse research data');
+      document.getElementById('badgeResearch').textContent = 'ERR';
     }
+  } catch (e) {
+    setEmpty('research', 'Error: ' + e.message);
+    document.getElementById('badgeResearch').textContent = 'ERR';
+  }
+  document.getElementById('tabResearch').classList.remove('loading');
+}
 
-    // ==================== API CALLS ====================
-    async function callGeminiDeepResearch(apiKey, prompt) {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`;
-      
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          tools: [{ google_search: {} }],
-          generationConfig: {
-            temperature: 0.2,
-            topP: 0.8,
-            maxOutputTokens: 8192
-          }
-        })
-      });
-      
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error?.message || 'API request failed');
-      }
-      
-      const data = await response.json();
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-      
-      return text;
+function renderResearchSection(d) {
+  let h = `<div class="risk-banner low"><div class="risk-badge"><span>${d.confidence_score || 0}</span></div><div class="risk-info"><h3>Confidence Score: ${d.confidence_score || 0}%</h3><p>Data reliability assessment</p></div></div>`;
+  
+  h += `<div class="section-box"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Company Overview</div><div class="data-grid">`;
+  if (d.company_name) h += `<div><div class="label">Company Name</div><div class="value">${d.company_name}</div></div>`;
+  if (d.dba) h += `<div><div class="label">DBA</div><div class="value">${d.dba}</div></div>`;
+  if (d.industry) h += `<div><div class="label">Industry</div><div class="value">${d.industry}</div></div>`;
+  if (d.founded) h += `<div><div class="label">Founded</div><div class="value">${d.founded}</div></div>`;
+  if (d.headquarters) h += `<div><div class="label">Headquarters</div><div class="value">${d.headquarters}</div></div>`;
+  if (d.website) h += `<div><div class="label">Website</div><div class="value"><a href="${d.website.startsWith('http') ? d.website : 'https://' + d.website}" target="_blank" style="color:var(--accent-blue)">${d.website}</a></div></div>`;
+  if (d.employees) h += `<div><div class="label">Employees</div><div class="value">${d.employees}</div></div>`;
+  if (d.annual_revenue) h += `<div><div class="label">Annual Revenue</div><div class="value">${d.annual_revenue}</div></div>`;
+  h += `</div></div>`;
+  
+  if (d.description) h += `<div class="section-box"><div class="section-title">Description</div><p style="font-size:0.9rem;color:var(--text-secondary);line-height:1.7;">${d.description}</p></div>`;
+  
+  if (d.key_people?.length) {
+    h += `<div class="section-box"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Key People</div>`;
+    d.key_people.forEach(p => {
+      const link = p.linkedin_url ? `<a href="${p.linkedin_url}" target="_blank" style="color:var(--accent-blue);font-size:0.75rem;margin-left:8px;">LinkedIn</a>` : '';
+      h += `<div class="record-item"><div class="record-header"><span class="record-title">${p.name}${link}</span><span class="status-badge good">${p.title}</span></div></div>`;
+    });
+    h += `</div>`;
+  }
+  
+  if (d.products_services?.length) h += `<div class="section-box"><div class="section-title">Products & Services</div><p style="font-size:0.9rem;color:var(--text-secondary);">${d.products_services.join(', ')}</p></div>`;
+  
+  if (d.competitors?.length) {
+    h += `<div class="section-box"><div class="section-title">Competitors</div><p style="font-size:0.9rem;color:var(--text-secondary);">`;
+    const compLinks = d.competitors.map(c => {
+      if (typeof c === 'string') return c;
+      return c.website ? `<a href="${c.website.startsWith('http') ? c.website : 'https://' + c.website}" target="_blank" style="color:var(--accent-blue)">${c.name}</a>` : c.name;
+    });
+    h += compLinks.join(', ') + `</p></div>`;
+  }
+  
+  if (d.recent_news?.length) {
+    h += `<div class="section-box"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>Recent News</div>`;
+    d.recent_news.forEach(n => {
+      const link = n.url ? `<a href="${n.url}" target="_blank" style="color:var(--accent-blue)">${n.title}</a>` : n.title;
+      h += `<div class="record-item"><div class="record-header"><span class="record-title">${link}</span><span class="status-badge warning">${n.date || 'Recent'}</span></div><div class="record-meta">${n.summary || ''}</div></div>`;
+    });
+    h += `</div>`;
+  }
+  
+  if (d.summary) h += `<div class="summary-box"><h4>Summary</h4><p>${d.summary}</p></div>`;
+  document.getElementById('researchContent').innerHTML = h;
+}
+
+// ==================== BACKGROUND ====================
+async function runBackgroundAuto() {
+  if (!currentBusiness) return;
+  document.getElementById('tabBackground').classList.add('loading');
+  setLoading('background', 'Running background check on ' + currentBusiness + '...');
+  
+  const prompt = `Search for legal and compliance information about "${currentBusiness}" including UCC filings, liens, judgments, lawsuits, bankruptcies, state registrations. Include source URLs where available. Return ONLY valid JSON:
+{
+  "state_registration": {"state": "", "status": "Active/Inactive", "filed_date": "", "entity_type": "", "sos_url": ""},
+  "ucc_filings": [{"filing_number": "", "secured_party": "", "filed_date": "", "status": "", "source_url": ""}],
+  "liens": [{"type": "", "amount": "", "filed_date": "", "status": "", "court_url": ""}],
+  "judgments": [{"case": "", "amount": "", "date": "", "status": "", "court_url": ""}],
+  "lawsuits": [{"case_name": "", "case_number": "", "court": "", "type": "", "status": "", "date": "", "court_url": ""}],
+  "bankruptcies": [{"case_number": "", "chapter": "", "date": "", "status": "", "pacer_url": ""}],
+  "risk_score": 25,
+  "red_flags": [],
+  "summary": ""
+}`;
+  
+  try {
+    const response = await callGemini(prompt);
+    backgroundData = safeJson(response);
+    if (backgroundData) {
+      renderBackgroundSection(backgroundData);
+      const score = backgroundData.risk_score || 0;
+      document.getElementById('badgeBackground').textContent = score + ' risk';
+      document.getElementById('tabBackground').classList.add('has-data');
+      if (score > 50) document.getElementById('tabBackground').classList.add('has-warning');
+      showToast('Background Complete', `Risk score: ${score}`);
+    } else {
+      setEmpty('background', 'Could not parse background data');
+      document.getElementById('badgeBackground').textContent = 'ERR';
     }
+  } catch (e) {
+    setEmpty('background', 'Error: ' + e.message);
+    document.getElementById('badgeBackground').textContent = 'ERR';
+  }
+  document.getElementById('tabBackground').classList.remove('loading');
+}
 
-    function parseJsonResponse(text) {
-      try {
-        const jsonMatch = text.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          return JSON.parse(jsonMatch[0]);
-        }
-      } catch (e) {
-        console.error('JSON parse error:', e);
-      }
-      return null;
+function renderBackgroundSection(d) {
+  const score = d.risk_score || 0;
+  const cls = score <= 30 ? 'low' : score <= 60 ? 'medium' : 'high';
+  let h = `<div class="risk-banner ${cls}"><div class="risk-badge"><span>${score}</span></div><div class="risk-info"><h3>Risk Score: ${score}/100</h3><p>${cls.charAt(0).toUpperCase() + cls.slice(1)} risk assessment</p></div></div>`;
+  
+  if (d.state_registration) {
+    const sr = d.state_registration;
+    const status = (sr.status || '').toLowerCase();
+    h += `<div class="section-box"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>State Registration</div><div class="data-grid" style="grid-template-columns:1fr 1fr;">`;
+    if (sr.state) h += `<div><div class="label">State</div><div class="value">${sr.state}</div></div>`;
+    if (sr.status) h += `<div><div class="label">Status</div><div class="value"><span class="status-badge ${status.includes('active') ? 'good' : 'active'}">${sr.status}</span></div></div>`;
+    if (sr.filed_date) h += `<div><div class="label">Filed Date</div><div class="value">${sr.filed_date}</div></div>`;
+    if (sr.entity_type) h += `<div><div class="label">Entity Type</div><div class="value">${sr.entity_type}</div></div>`;
+    if (sr.sos_url) h += `<div style="grid-column:span 2;"><div class="label">Secretary of State</div><div class="value"><a href="${sr.sos_url}" target="_blank" style="color:var(--accent-blue)">View Filing</a></div></div>`;
+    h += `</div></div>`;
+  }
+  
+  const renderRecords = (items, title, icon) => {
+    if (!items?.length) return '';
+    let s = `<div class="section-box"><div class="section-title">${icon}${title} (${items.length})</div>`;
+    items.forEach(i => {
+      const status = (i.status || '').toLowerCase();
+      const cls = status.includes('active') || status.includes('open') ? 'active' : 'good';
+      const url = i.source_url || i.court_url || i.pacer_url;
+      const titleText = i.filing_number || i.case || i.case_name || i.case_number || i.type || 'Record';
+      const titleLink = url ? `<a href="${url}" target="_blank" style="color:var(--accent-blue)">${titleText}</a>` : titleText;
+      s += `<div class="record-item"><div class="record-header"><span class="record-title">${titleLink}</span><span class="status-badge ${cls}">${i.status || 'N/A'}</span></div><div class="record-meta">${i.court || ''} ${i.filed_date || i.date || ''} ${i.amount ? '| ' + i.amount : ''} ${i.secured_party ? '| ' + i.secured_party : ''} ${i.chapter ? '| Chapter ' + i.chapter : ''}</div></div>`;
+    });
+    return s + '</div>';
+  };
+  
+  h += renderRecords(d.ucc_filings, 'UCC Filings', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;margin-right:8px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>');
+  h += renderRecords(d.liens, 'Liens', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;margin-right:8px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>');
+  h += renderRecords(d.judgments, 'Judgments', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;margin-right:8px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>');
+  h += renderRecords(d.lawsuits, 'Lawsuits', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;margin-right:8px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>');
+  h += renderRecords(d.bankruptcies, 'Bankruptcies', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;margin-right:8px;"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>');
+  
+  if (d.red_flags?.length) {
+    h += `<div class="red-flags"><h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Red Flags</h4><ul>${d.red_flags.map(f => `<li>${f}</li>`).join('')}</ul></div>`;
+  }
+  
+  if (d.summary) h += `<div class="summary-box"><h4>Assessment</h4><p>${d.summary}</p></div>`;
+  document.getElementById('backgroundContent').innerHTML = h;
+}
+
+// ==================== REVIEWS ====================
+async function runReviewsAuto() {
+  if (!currentBusiness) return;
+  document.getElementById('tabReviews').classList.add('loading');
+  setLoading('reviews', 'Finding reviews for ' + currentBusiness + '...');
+  
+  const prompt = `Search for reviews and ratings for "${currentBusiness}" on Google, Yelp, BBB, Trustpilot, and other review platforms. Find at least 3-5 actual reviews with the review text. Return ONLY valid JSON:
+{
+  "google": {"rating": 0, "count": 0, "url": "", "recent_reviews": [{"text": "", "author": "", "rating": 0, "date": ""}]},
+  "yelp": {"rating": 0, "count": 0, "url": "", "recent_reviews": [{"text": "", "author": "", "rating": 0, "date": ""}]},
+  "bbb": {"rating": "", "accredited": false, "complaints": 0, "years_accredited": 0, "url": ""},
+  "trustpilot": {"rating": 0, "count": 0, "url": ""},
+  "other_platforms": [{"platform": "", "rating": 0, "count": 0, "url": ""}],
+  "overall_sentiment": "Positive/Mixed/Negative",
+  "average_rating": 0,
+  "total_reviews": 0,
+  "summary": ""
+}`;
+  
+  try {
+    const response = await callGemini(prompt);
+    reviewsData = safeJson(response);
+    if (reviewsData) {
+      renderReviewsSection(reviewsData);
+      const avg = reviewsData.average_rating || 0;
+      document.getElementById('badgeReviews').textContent = avg.toFixed(1) + ' avg';
+      document.getElementById('tabReviews').classList.add('has-data');
+      if (avg < 3) document.getElementById('tabReviews').classList.add('has-warning');
+      showToast('Reviews Complete', `${reviewsData.total_reviews || 0} reviews found`);
+    } else {
+      setEmpty('reviews', 'Could not parse reviews data');
+      document.getElementById('badgeReviews').textContent = 'ERR';
     }
+  } catch (e) {
+    setEmpty('reviews', 'Error: ' + e.message);
+    document.getElementById('badgeReviews').textContent = 'ERR';
+  }
+  document.getElementById('tabReviews').classList.remove('loading');
+}
 
-    // ==================== MAIN FUNCTION ====================
-    async function runDeepResearch() {
-      const apiKey = document.getElementById('apiKey').value.trim();
-      const businessName = document.getElementById('entityName').value.trim();
-      const errorEl = document.getElementById('errorMessage');
-      
-      errorEl.classList.remove('active');
-      
-      if (!apiKey) {
-        errorEl.textContent = 'Please enter your Gemini API key';
-        errorEl.classList.add('active');
-        return;
+function renderReviewsSection(d) {
+  const avg = d.average_rating || 0;
+  const cls = avg >= 4 ? 'low' : avg >= 3 ? 'medium' : 'high';
+  let h = `<div class="risk-banner ${cls}"><div class="risk-badge"><span>${avg.toFixed(1)}</span></div><div class="risk-info"><h3>Average Rating: ${avg.toFixed(1)}/5</h3><p>${d.total_reviews || 0} total reviews - ${d.overall_sentiment || 'Mixed'} sentiment</p></div></div>`;
+  
+  h += `<div class="stats-row"><div class="stat-card"><div class="stat-value">${d.total_reviews || 0}</div><div class="stat-label">Total Reviews</div></div><div class="stat-card"><div class="stat-value">${avg.toFixed(1)}</div><div class="stat-label">Avg Rating</div></div><div class="stat-card"><div class="stat-value">${d.overall_sentiment || 'N/A'}</div><div class="stat-label">Sentiment</div></div></div>`;
+  
+  h += `<div class="section-box"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Platform Ratings</div><div class="review-grid">`;
+  
+  if (d.google) { 
+    const r = d.google.rating || 0; 
+    const link = d.google.url ? `<a href="${d.google.url}" target="_blank" class="social-link" style="display:block;margin-top:8px;">View on Google</a>` : '';
+    h += `<div class="review-card"><div class="review-platform">Google</div><div class="review-rating ${r >= 4 ? 'good' : r >= 3 ? 'ok' : 'bad'}">${r.toFixed(1)}</div><div class="review-count">${d.google.count || 0} reviews</div>${link}</div>`; 
+  }
+  if (d.yelp) { 
+    const r = d.yelp.rating || 0; 
+    const link = d.yelp.url ? `<a href="${d.yelp.url}" target="_blank" class="social-link" style="display:block;margin-top:8px;">View on Yelp</a>` : '';
+    h += `<div class="review-card"><div class="review-platform">Yelp</div><div class="review-rating ${r >= 4 ? 'good' : r >= 3 ? 'ok' : 'bad'}">${r.toFixed(1)}</div><div class="review-count">${d.yelp.count || 0} reviews</div>${link}</div>`; 
+  }
+  if (d.bbb) {
+    const link = d.bbb.url ? `<a href="${d.bbb.url}" target="_blank" class="social-link" style="display:block;margin-top:8px;">View on BBB</a>` : '';
+    h += `<div class="review-card"><div class="review-platform">BBB</div><div class="review-rating good">${d.bbb.rating || '--'}</div><div class="review-count">${d.bbb.complaints || 0} complaints</div>${link}</div>`;
+  }
+  if (d.trustpilot) { 
+    const r = d.trustpilot.rating || 0; 
+    const link = d.trustpilot.url ? `<a href="${d.trustpilot.url}" target="_blank" class="social-link" style="display:block;margin-top:8px;">View on Trustpilot</a>` : '';
+    h += `<div class="review-card"><div class="review-platform">Trustpilot</div><div class="review-rating ${r >= 4 ? 'good' : r >= 3 ? 'ok' : 'bad'}">${r.toFixed(1)}</div><div class="review-count">${d.trustpilot.count || 0} reviews</div>${link}</div>`; 
+  }
+  
+  // Add other platforms
+  if (d.other_platforms?.length) {
+    d.other_platforms.forEach(p => {
+      if (p.platform) {
+        const r = p.rating || 0;
+        const link = p.url ? `<a href="${p.url}" target="_blank" class="social-link" style="display:block;margin-top:8px;">View</a>` : '';
+        h += `<div class="review-card"><div class="review-platform">${p.platform}</div><div class="review-rating ${r >= 4 ? 'good' : r >= 3 ? 'ok' : 'bad'}">${r.toFixed(1)}</div><div class="review-count">${p.count || 0} reviews</div>${link}</div>`;
       }
-      
-      if (!businessName) {
-        errorEl.textContent = 'Please enter a business name to research';
-        errorEl.classList.add('active');
-        return;
-      }
-      
-      startLoading(businessName);
-      document.getElementById('searchSection').classList.add('has-results');
-      
-      try {
-        const prompt = buildDeepResearchPrompt(businessName);
-        const responseText = await callGeminiDeepResearch(apiKey, prompt);
-        const research = parseJsonResponse(responseText);
-        
-        if (!research) {
-          throw new Error('Failed to parse research data. Please try again.');
-        }
-        
-        currentResearch = research;
-        displayResults(research, businessName);
-        
-      } catch (error) {
-        errorEl.textContent = 'Error: ' + error.message;
-        errorEl.classList.add('active');
-      } finally {
-        stopLoading();
-      }
+    });
+  }
+  
+  h += `</div></div>`;
+  
+  // Recent reviews - show at least 3
+  const allReviews = [...(d.google?.recent_reviews || []).map(r => ({...r, source: 'Google'})), 
+                      ...(d.yelp?.recent_reviews || []).map(r => ({...r, source: 'Yelp'}))];
+  if (allReviews.length) {
+    h += `<div class="section-box"><div class="section-title">Recent Reviews (${allReviews.length})</div>`;
+    allReviews.slice(0, 6).forEach(r => {
+      const stars = r.rating || 0;
+      const starDisplay = Array(5).fill(0).map((_, i) => i < stars ? '<span style="color:var(--accent);">*</span>' : '<span style="color:var(--text-muted);">*</span>').join('');
+      h += `<div class="record-item" style="padding:16px 0;">
+        <div class="record-header" style="margin-bottom:8px;">
+          <span class="record-title">${r.author || 'Anonymous'} <span style="font-weight:400;color:var(--text-muted);font-size:0.8rem;">via ${r.source}</span></span>
+          <span class="status-badge ${stars >= 4 ? 'good' : stars >= 3 ? 'warning' : 'active'}">${stars}/5</span>
+        </div>
+        <div style="font-size:0.9rem;color:var(--text-secondary);line-height:1.6;margin-bottom:6px;">"${r.text || 'No review text'}"</div>
+        <div class="record-meta">${r.date || 'Recent'}</div>
+      </div>`;
+    });
+    h += `</div>`;
+  }
+  
+  if (d.summary) h += `<div class="summary-box"><h4>Assessment</h4><p>${d.summary}</p></div>`;
+  document.getElementById('reviewsContent').innerHTML = h;
+}
+
+// ==================== SOCIAL ====================
+async function runSocialAuto() {
+  if (!currentBusiness) return;
+  document.getElementById('tabSocial').classList.add('loading');
+  setLoading('social', 'Finding social profiles for ' + currentBusiness + '...');
+  
+  const prompt = `Search for social media profiles and presence for "${currentBusiness}" on Facebook, Instagram, Twitter/X, LinkedIn, YouTube, TikTok, and other platforms. Return ONLY valid JSON:
+{
+  "profiles": [
+    {"platform": "Facebook", "url": "", "followers": "", "engagement": "", "last_post": "", "verified": false},
+    {"platform": "Instagram", "url": "", "followers": "", "engagement": "", "last_post": "", "verified": false},
+    {"platform": "Twitter/X", "url": "", "followers": "", "engagement": "", "last_post": "", "verified": false},
+    {"platform": "LinkedIn", "url": "", "followers": "", "engagement": "", "last_post": "", "verified": false},
+    {"platform": "YouTube", "url": "", "subscribers": "", "videos": "", "verified": false},
+    {"platform": "TikTok", "url": "", "followers": "", "likes": "", "verified": false}
+  ],
+  "total_followers": "",
+  "most_active_platform": "",
+  "social_score": 75,
+  "summary": ""
+}`;
+  
+  try {
+    const response = await callGemini(prompt);
+    socialData = safeJson(response);
+    if (socialData) {
+      renderSocialSection(socialData);
+      const count = socialData.profiles?.filter(p => p.url).length || 0;
+      document.getElementById('badgeSocial').textContent = count + ' profiles';
+      document.getElementById('tabSocial').classList.add('has-data');
+      showToast('Social Complete', `Found ${count} profiles`);
+    } else {
+      setEmpty('social', 'Could not parse social data');
+      document.getElementById('badgeSocial').textContent = 'ERR';
     }
+  } catch (e) {
+    setEmpty('social', 'Error: ' + e.message);
+    document.getElementById('badgeSocial').textContent = 'ERR';
+  }
+  document.getElementById('tabSocial').classList.remove('loading');
+}
 
-    // ==================== DISPLAY RESULTS ====================
-    function displayResults(research, businessName) {
-      document.getElementById('resultsSection').classList.add('active');
-      
-      // Risk Banner
-      const riskRating = research.risk?.rating || 'Unknown';
-      const riskBanner = document.getElementById('riskBanner');
-      riskBanner.className = 'risk-banner ' + riskRating.toLowerCase();
-      
-      const riskColors = {
-        'Low': 'var(--tier-a)',
-        'Medium': 'var(--tier-c)',
-        'High': 'var(--tier-e)'
-      };
-      const riskColor = riskColors[riskRating] || 'var(--text-muted)';
-      
-      document.getElementById('riskLetter').textContent = riskRating[0] || '?';
-      document.getElementById('riskLetter').style.color = riskColor;
-      document.getElementById('riskLabel').textContent = `${riskRating} Risk`;
-      document.getElementById('riskLabel').style.color = riskColor;
-      document.getElementById('businessNameDisplay').textContent = research.overview?.legal_name || businessName;
-      document.getElementById('confidenceValue').textContent = (research.confidence || 0) + '%';
-      document.getElementById('confidenceValue').style.color = 
-        research.confidence >= 70 ? 'var(--tier-a)' : 
-        research.confidence >= 50 ? 'var(--tier-c)' : 'var(--tier-e)';
-      
-      // Company Overview
-      document.getElementById('legalName').textContent = research.overview?.legal_name || '--';
-      document.getElementById('dbaName').textContent = research.overview?.dba || '--';
-      document.getElementById('entityType').textContent = research.overview?.entity_type || '--';
-      document.getElementById('stateName').textContent = research.overview?.state || '--';
-      document.getElementById('formationDate').textContent = research.overview?.formation_date || '--';
-      
-      const statusEl = document.getElementById('entityStatus');
-      const status = research.overview?.status || '--';
-      statusEl.textContent = status;
-      statusEl.className = 'data-value';
-      if (status.toLowerCase().includes('active') || status.toLowerCase().includes('good')) {
-        statusEl.classList.add('positive');
-      } else if (status.toLowerCase().includes('inactive') || status.toLowerCase().includes('dissolved')) {
-        statusEl.classList.add('negative');
-      }
-      
-      document.getElementById('regAgent').textContent = research.overview?.registered_agent || '--';
-      document.getElementById('address').textContent = research.overview?.address || '--';
-      
-      // Operations
-      document.getElementById('industry').textContent = research.operations?.industry || '--';
-      document.getElementById('naicsCode').textContent = research.operations?.naics || '--';
-      document.getElementById('locations').textContent = research.operations?.locations || '--';
-      document.getElementById('description').textContent = research.operations?.description || '--';
-      
-      // Financials
-      document.getElementById('revenueEst').textContent = research.financials?.revenue_estimate || '--';
-      document.getElementById('employeeCount').textContent = research.financials?.employee_count || '--';
-      document.getElementById('yearsInBusiness').textContent = research.financials?.years_in_business || '--';
-      document.getElementById('growthTrend').textContent = research.financials?.growth_trend || '--';
-      
-      // Ownership
-      document.getElementById('ownershipStructure').textContent = research.ownership?.ownership_structure || '--';
-      
-      const officers = research.ownership?.officers || [];
-      const officersList = document.getElementById('officersList');
-      if (officers.length > 0) {
-        officersList.innerHTML = officers.map(o => 
-          `<span class="officer-tag">${o.name || 'Unknown'}<span class="title">${o.title ? ' (' + o.title + ')' : ''}</span></span>`
-        ).join('');
-      } else {
-        officersList.innerHTML = '<span style="color: var(--text-muted); font-size: 0.85rem;">No officers found</span>';
-      }
-      
-      // Compliance
-      const lawsuits = research.compliance?.lawsuits?.length || 0;
-      const liens = research.compliance?.liens?.length || 0;
-      const ucc = research.compliance?.ucc_filings?.length || 0;
-      
-      const lawsuitsEl = document.getElementById('lawsuitsCount');
-      lawsuitsEl.textContent = lawsuits;
-      lawsuitsEl.style.color = lawsuits > 0 ? 'var(--tier-e)' : 'var(--tier-a)';
-      
-      const liensEl = document.getElementById('liensCount');
-      liensEl.textContent = liens;
-      liensEl.style.color = liens > 0 ? 'var(--tier-e)' : 'var(--tier-a)';
-      
-      document.getElementById('uccCount').textContent = ucc;
-      
-      const licenses = research.compliance?.licenses || [];
-      document.getElementById('licenses').textContent = licenses.length > 0 ? licenses.join(', ') : 'None found';
-      
-      // Reputation
-      document.getElementById('bbbRating').textContent = research.reputation?.bbb_rating || '--';
-      document.getElementById('reviewScore').textContent = research.reputation?.review_score || '--';
-      document.getElementById('reviewCount').textContent = research.reputation?.review_count || 0;
-      
-      const news = research.reputation?.news_mentions || [];
-      document.getElementById('newsMentions').textContent = news.length > 0 ? news.slice(0, 3).join('; ') : 'None found';
-      
-      // Risk Assessment
-      const industryRisks = research.risk?.industry_risks?.length || 0;
-      const concerns = research.risk?.concerns || [];
-      const redFlags = research.risk?.red_flags || [];
-      
-      document.getElementById('industryRisks').textContent = industryRisks;
-      document.getElementById('concernsCount').textContent = concerns.length;
-      document.getElementById('redFlagsCount').textContent = redFlags.length;
-      document.getElementById('redFlagsCount').style.color = redFlags.length > 0 ? 'var(--tier-e)' : 'var(--tier-a)';
-      
-      const redFlagsSection = document.getElementById('redFlagsSection');
-      if (redFlags.length > 0) {
-        redFlagsSection.style.display = 'block';
-        document.getElementById('redFlagsList').innerHTML = redFlags.map(f => `<li>${f}</li>`).join('');
-      } else {
-        redFlagsSection.style.display = 'none';
-      }
-      
-      const concernsSection = document.getElementById('concernsSection');
-      if (concerns.length > 0) {
-        concernsSection.style.display = 'block';
-        document.getElementById('concerns').textContent = concerns.join('; ');
-      } else {
-        concernsSection.style.display = 'none';
-      }
-      
-      // Summary
-      document.getElementById('summaryText').textContent = research.summary || 'No summary available.';
-      
-      // Sources
-      const sources = research.sources || [];
-      const sourcesList = document.getElementById('sourcesList');
-      if (sources.length > 0) {
-        sourcesList.innerHTML = sources.slice(0, 8).map(s => 
-          `<a href="${s.url}" target="_blank" rel="noopener noreferrer" class="source-link">${s.title || 'Source'}</a>`
-        ).join('');
-        document.getElementById('sourcesSection').style.display = 'block';
-      } else {
-        document.getElementById('sourcesSection').style.display = 'none';
-      }
-      
-      // Scroll to results
-      document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+function renderSocialSection(d) {
+  const score = d.social_score || 0;
+  const cls = score >= 70 ? 'low' : score >= 40 ? 'medium' : 'high';
+  let h = `<div class="risk-banner ${cls}"><div class="risk-badge"><span>${score}</span></div><div class="risk-info"><h3>Social Score: ${score}/100</h3><p>Social media presence strength</p></div></div>`;
+  
+  const activeProfiles = d.profiles?.filter(p => p.url || p.followers || p.subscribers) || [];
+  h += `<div class="stats-row"><div class="stat-card"><div class="stat-value">${activeProfiles.length}</div><div class="stat-label">Active Profiles</div></div><div class="stat-card"><div class="stat-value">${d.total_followers || 'N/A'}</div><div class="stat-label">Total Followers</div></div><div class="stat-card"><div class="stat-value">${d.most_active_platform || 'N/A'}</div><div class="stat-label">Most Active</div></div></div>`;
+  
+  if (activeProfiles.length) {
+    h += `<div class="section-box"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>Social Profiles</div><div class="social-grid">`;
+    activeProfiles.forEach(p => {
+      const platformLink = p.url ? `<a href="${p.url}" target="_blank" style="color:var(--accent-blue);font-weight:600;">${p.platform}</a>` : p.platform;
+      h += `<div class="social-card">
+        <div class="social-platform">${platformLink} ${p.verified ? '<span style="color:var(--accent-blue);">&#10003;</span>' : ''}</div>
+        <div class="social-followers">${p.followers || p.subscribers || 'N/A'} followers</div>
+        ${p.engagement ? `<div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:4px;">Engagement: ${p.engagement}</div>` : ''}
+        ${p.last_post ? `<div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:8px;">Last post: ${p.last_post}</div>` : ''}
+        ${p.url ? `<a href="${p.url}" target="_blank" class="social-link">View Profile</a>` : ''}
+      </div>`;
+    });
+    h += `</div></div>`;
+  } else {
+    h += `<div class="section-box" style="text-align:center;padding:40px;color:var(--text-muted);"><p>No social media profiles found</p></div>`;
+  }
+  
+  if (d.summary) h += `<div class="summary-box"><h4>Assessment</h4><p>${d.summary}</p></div>`;
+  document.getElementById('socialContent').innerHTML = h;
+}
+
+// ==================== FOOTPRINT ====================
+async function runFootprintAuto() {
+  if (!currentBusiness) return;
+  document.getElementById('tabFootprint').classList.add('loading');
+  setLoading('footprint', 'Analyzing digital footprint for ' + currentBusiness + '...');
+  
+  const prompt = `Search for digital footprint information about "${currentBusiness}" including website details, SEO visibility, domain info, and news mentions. Include URLs. Return ONLY valid JSON:
+{
+  "web_presence": {
+    "website": "",
+    "domain_age": "",
+    "ssl_status": "",
+    "seo_visibility": "",
+    "traffic_estimate": "",
+    "technologies": []
+  },
+  "news_mentions": [{"title": "", "source": "", "date": "", "sentiment": "Positive/Neutral/Negative", "url": ""}],
+  "digital_score": 75,
+  "summary": ""
+}`;
+  
+  try {
+    const response = await callGemini(prompt);
+    footprintData = safeJson(response);
+    if (footprintData) {
+      renderFootprintSection(footprintData);
+      document.getElementById('badgeFootprint').textContent = footprintData.digital_score + '/100';
+      document.getElementById('tabFootprint').classList.add('has-data');
+      showToast('Footprint Complete', `Digital score: ${footprintData.digital_score}`);
+    } else {
+      setEmpty('footprint', 'Could not parse footprint data');
+      document.getElementById('badgeFootprint').textContent = 'ERR';
     }
+  } catch (e) {
+    setEmpty('footprint', 'Error: ' + e.message);
+    document.getElementById('badgeFootprint').textContent = 'ERR';
+  }
+  document.getElementById('tabFootprint').classList.remove('loading');
+}
 
-    // ==================== COPY REPORT ====================
-    function copyFullReport() {
-      if (!currentResearch) return;
-      
-      const r = currentResearch;
-      const report = `
-========================================
-BUSINESS INTELLIGENCE REPORT
-========================================
+function renderFootprintSection(d) {
+  const score = d.digital_score || 0;
+  const cls = score >= 70 ? 'low' : score >= 40 ? 'medium' : 'high';
+  let h = `<div class="risk-banner ${cls}"><div class="risk-badge"><span>${score}</span></div><div class="risk-info"><h3>Digital Score: ${score}/100</h3><p>Online presence strength</p></div></div>`;
+  
+  if (d.web_presence) {
+    h += `<div class="section-box"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/></svg>Web Presence</div><div class="data-grid" style="grid-template-columns:1fr 1fr;">`;
+    if (d.web_presence.website) h += `<div><div class="label">Website</div><div class="value"><a href="${d.web_presence.website.startsWith('http') ? d.web_presence.website : 'https://' + d.web_presence.website}" target="_blank" style="color:var(--accent-blue)">${d.web_presence.website}</a></div></div>`;
+    if (d.web_presence.domain_age) h += `<div><div class="label">Domain Age</div><div class="value">${d.web_presence.domain_age}</div></div>`;
+    if (d.web_presence.ssl_status) h += `<div><div class="label">SSL</div><div class="value">${d.web_presence.ssl_status}</div></div>`;
+    if (d.web_presence.seo_visibility) h += `<div><div class="label">SEO</div><div class="value">${d.web_presence.seo_visibility}</div></div>`;
+    if (d.web_presence.traffic_estimate) h += `<div><div class="label">Traffic</div><div class="value">${d.web_presence.traffic_estimate}</div></div>`;
+    if (d.web_presence.technologies?.length) h += `<div style="grid-column:span 2;"><div class="label">Technologies</div><div class="value">${d.web_presence.technologies.join(', ')}</div></div>`;
+    h += `</div></div>`;
+  }
+  
+  if (d.news_mentions?.length) {
+    h += `<div class="section-box"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>News Mentions (${d.news_mentions.length})</div>`;
+    d.news_mentions.slice(0, 5).forEach(n => {
+      const sent = (n.sentiment || '').toLowerCase();
+      const cls = sent.includes('positive') ? 'good' : sent.includes('negative') ? 'active' : 'warning';
+      const titleLink = n.url ? `<a href="${n.url}" target="_blank" style="color:var(--accent-blue)">${n.title || 'News'}</a>` : (n.title || 'News');
+      h += `<div class="record-item"><div class="record-header"><span class="record-title">${titleLink}</span><span class="status-badge ${cls}">${n.sentiment || 'Neutral'}</span></div><div class="record-meta">${n.source || ''} ${n.date ? '| ' + n.date : ''}</div></div>`;
+    });
+    h += `</div>`;
+  }
+  
+  if (d.summary) h += `<div class="summary-box"><h4>Assessment</h4><p>${d.summary}</p></div>`;
+  document.getElementById('footprintContent').innerHTML = h;
+}
 
-RISK RATING: ${r.risk?.rating || 'Unknown'}
-CONFIDENCE: ${r.confidence || 0}%
-
-----------------------------------------
-COMPANY OVERVIEW
-----------------------------------------
-Legal Name: ${r.overview?.legal_name || 'N/A'}
-DBA: ${r.overview?.dba || 'N/A'}
-Entity Type: ${r.overview?.entity_type || 'N/A'}
-State: ${r.overview?.state || 'N/A'}
-Formation Date: ${r.overview?.formation_date || 'N/A'}
-Status: ${r.overview?.status || 'N/A'}
-Registered Agent: ${r.overview?.registered_agent || 'N/A'}
-Address: ${r.overview?.address || 'N/A'}
-
-----------------------------------------
-OWNERSHIP & MANAGEMENT
-----------------------------------------
-Structure: ${r.ownership?.ownership_structure || 'N/A'}
-Officers: ${(r.ownership?.officers || []).map(o => `${o.name} (${o.title || 'N/A'})`).join(', ') || 'N/A'}
-
-----------------------------------------
-BUSINESS OPERATIONS
-----------------------------------------
-Industry: ${r.operations?.industry || 'N/A'}
-NAICS: ${r.operations?.naics || 'N/A'}
-Locations: ${r.operations?.locations || 'N/A'}
-Description: ${r.operations?.description || 'N/A'}
-
-----------------------------------------
-FINANCIAL INDICATORS
-----------------------------------------
-Revenue Estimate: ${r.financials?.revenue_estimate || 'N/A'}
-Employees: ${r.financials?.employee_count || 'N/A'}
-Years in Business: ${r.financials?.years_in_business || 'N/A'}
-Growth Trend: ${r.financials?.growth_trend || 'N/A'}
-
-----------------------------------------
-COMPLIANCE & LEGAL
-----------------------------------------
-Lawsuits: ${r.compliance?.lawsuits?.length || 0}
-Liens: ${r.compliance?.liens?.length || 0}
-UCC Filings: ${r.compliance?.ucc_filings?.length || 0}
-Licenses: ${(r.compliance?.licenses || []).join(', ') || 'None found'}
-
-----------------------------------------
-REPUTATION
-----------------------------------------
-BBB Rating: ${r.reputation?.bbb_rating || 'N/A'}
-Review Score: ${r.reputation?.review_score || 'N/A'}
-Review Count: ${r.reputation?.review_count || 0}
-
-----------------------------------------
-RISK ASSESSMENT
-----------------------------------------
-Rating: ${r.risk?.rating || 'N/A'}
-Red Flags: ${(r.risk?.red_flags || []).join(', ') || 'None'}
-Industry Risks: ${(r.risk?.industry_risks || []).join(', ') || 'None'}
-Concerns: ${(r.risk?.concerns || []).join(', ') || 'None'}
-
-----------------------------------------
-SUMMARY
-----------------------------------------
-${r.summary || 'No summary available.'}
-
-========================================
-Generated by AblesAI Business Intelligence
-      `.trim();
-      
-      navigator.clipboard.writeText(report).then(() => {
-        const btn = document.querySelector('.action-btn.primary');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Copied!';
-        setTimeout(() => {
-          btn.innerHTML = originalText;
-        }, 2000);
-      });
+// ==================== DEBT ====================
+async function runDebtAuto() {
+  if (!currentBusiness) return;
+  document.getElementById('tabDebt').classList.add('loading');
+  setLoading('debt', 'Finding debt positions for ' + currentBusiness + '...');
+  
+  const prompt = `Search for debt and financing information about "${currentBusiness}" including MCA positions, term loans, lines of credit, stacking indicators. Include source URLs where available. Return ONLY valid JSON:
+{
+  "mca_positions": [{"funder": "", "original_amount": "", "estimated_balance": "", "daily_payment": "", "status": "Active/Paid Off", "ucc_url": ""}],
+  "term_loans": [{"lender": "", "type": "", "original_amount": "", "monthly_payment": "", "status": "", "source_url": ""}],
+  "lines_of_credit": [{"lender": "", "limit": "", "utilization": "", "status": "", "source_url": ""}],
+  "stacking_indicators": [],
+  "active_positions": 0,
+  "estimated_total_debt": "$0",
+  "estimated_monthly_obligations": "$0",
+  "risk_level": "Low/Medium/High",
+  "summary": ""
+}`;
+  
+  try {
+    const response = await callGemini(prompt);
+    debtData = safeJson(response);
+    if (debtData) {
+      renderDebtSection(debtData);
+      const positions = debtData.active_positions || 0;
+      document.getElementById('badgeDebt').textContent = positions + ' positions';
+      document.getElementById('tabDebt').classList.add('has-data');
+      if (positions > 0) document.getElementById('tabDebt').classList.add('has-warning');
+      showToast('Debt Analysis Complete', `${positions} positions found`);
+    } else {
+      setEmpty('debt', 'Could not parse debt data');
+      document.getElementById('badgeDebt').textContent = 'ERR';
     }
-  </script>
+  } catch (e) {
+    setEmpty('debt', 'Error: ' + e.message);
+    document.getElementById('badgeDebt').textContent = 'ERR';
+  }
+  document.getElementById('tabDebt').classList.remove('loading');
+}
+
+function renderDebtSection(d) {
+  const risk = (d.risk_level || 'medium').toLowerCase();
+  const letter = risk === 'low' ? 'L' : risk === 'high' ? 'H' : 'M';
+  let h = `<div class="risk-banner ${risk}"><div class="risk-badge"><span>${letter}</span></div><div class="risk-info"><h3>${d.risk_level || 'Medium'} Debt Risk</h3><p>${d.active_positions || 0} active positions</p></div></div>`;
+  
+  h += `<div class="stats-row"><div class="stat-card"><div class="stat-value">${d.active_positions || 0}</div><div class="stat-label">Positions</div></div><div class="stat-card"><div class="stat-value">${d.estimated_total_debt || '$0'}</div><div class="stat-label">Est. Total Debt</div></div><div class="stat-card"><div class="stat-value">${d.estimated_monthly_obligations || '$0'}</div><div class="stat-label">Monthly Obligations</div></div></div>`;
+  
+  const renderPos = (items, title) => {
+    if (!items?.length) return '';
+    let s = `<div class="section-box"><div class="section-title">${title} (${items.length})</div>`;
+    items.forEach(i => {
+      const status = (i.status || '').toLowerCase();
+      const cls = status.includes('active') ? 'active' : 'good';
+      const url = i.ucc_url || i.source_url;
+      const name = i.funder || i.lender || 'Unknown';
+      const nameLink = url ? `<a href="${url}" target="_blank" style="color:var(--accent-blue)">${name}</a>` : name;
+      s += `<div class="record-item"><div class="record-header"><span class="record-title">${nameLink}</span><span class="status-badge ${cls}">${i.status || 'Active'}</span></div><div class="record-meta">Original: ${i.original_amount || 'N/A'} | Payment: ${i.daily_payment || i.monthly_payment || 'N/A'}${i.limit ? ' | Limit: ' + i.limit : ''}${i.utilization ? ' | Utilization: ' + i.utilization : ''}</div></div>`;
+    });
+    return s + '</div>';
+  };
+  
+  h += renderPos(d.mca_positions, 'MCA Positions');
+  h += renderPos(d.term_loans, 'Term Loans');
+  h += renderPos(d.lines_of_credit, 'Lines of Credit');
+  
+  if (d.stacking_indicators?.length) {
+    h += `<div class="red-flags"><h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Stacking Indicators</h4><ul>${d.stacking_indicators.map(s => `<li>${s}</li>`).join('')}</ul></div>`;
+  }
+  
+  if (!d.mca_positions?.length && !d.term_loans?.length && !d.lines_of_credit?.length) {
+    h += `<div class="section-box" style="text-align:center;padding:40px;color:var(--tier-a);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:32px;height:32px;margin-bottom:8px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><p style="font-weight:600;">No Debt Positions Found</p></div>`;
+  }
+  
+  if (d.summary) h += `<div class="summary-box"><h4>Assessment</h4><p>${d.summary}</p></div>`;
+  document.getElementById('debtContent').innerHTML = h;
+}
+
+function showToast(title, msg) {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<strong>${title}</strong>${msg}`;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+</script>
 </body>
 </html>
