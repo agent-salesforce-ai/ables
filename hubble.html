@@ -1587,8 +1587,10 @@ function toggleTheme() {
 }
 
 function switchIntelTab(tab) {
-  document.querySelectorAll('.intel-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.intel-panel').forEach(p => p.classList.remove('active'));
+  // Scope to only the main results section, not the demo modal
+  const resultsSection = document.getElementById('resultsSection');
+  resultsSection.querySelectorAll('.intel-tab').forEach(t => t.classList.remove('active'));
+  resultsSection.querySelectorAll('.intel-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
   document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
 }
@@ -1621,6 +1623,7 @@ async function runSearch() {
     document.getElementById('tab' + t).classList.add('loading');
   });
   window.sosData = null;
+  window.researchCompleted = false;
   
   // Show initial loading content in ALL panels
   setLoading('research', 'Searching Secretary of State...');
@@ -1658,8 +1661,11 @@ async function runSOSLookup() {
       const sr = data.state_registration || data;
       if (sr.state || sr.status) {
         window.sosData = sr; // Store for merge with full research
-        renderResearchSOS(sr);
-        document.getElementById('badgeResearch').textContent = 'SOS ✓';
+        // Only render SOS preview if full research hasn't already completed
+        if (!window.researchCompleted) {
+          renderResearchSOS(sr);
+          document.getElementById('badgeResearch').textContent = 'SOS ✓';
+        }
       }
     }
     
@@ -1705,18 +1711,26 @@ async function runFullResearchAuto() {
       document.getElementById('badgeResearch').textContent = researchData.confidence_score + '%';
       document.getElementById('tabResearch').classList.add('has-data');
       showToast('Research Complete', researchData.company_name || currentBusiness);
-    } else if (!window.sosData) {
+    } else if (window.sosData) {
+      // SOS succeeded but full research failed - show SOS with error for rest
+      renderResearchSOSWithError(window.sosData, 'Could not load full company details - click Run to retry');
+      document.getElementById('badgeResearch').textContent = 'SOS ✓';
+    } else {
       setEmpty('research', 'Could not parse research data');
       document.getElementById('badgeResearch').textContent = '--';
     }
     
   } catch (e) {
-    
-    if (!window.sosData) {
+    if (window.sosData) {
+      // SOS succeeded but full research errored - show SOS with error for rest
+      renderResearchSOSWithError(window.sosData, 'Error loading details: ' + e.message + ' - click Run to retry');
+      document.getElementById('badgeResearch').textContent = 'SOS ✓';
+    } else {
       setEmpty('research', 'Error: ' + e.message);
       document.getElementById('badgeResearch').textContent = 'ERR';
     }
   }
+  window.researchCompleted = true; // Mark that full research has finished
   document.getElementById('tabResearch').classList.remove('loading');
 }
 
@@ -1729,6 +1743,7 @@ function newSearch() {
   currentBusiness = '';
   researchData = backgroundData = footprintData = debtData = reviewsData = socialData = null;
   window.sosData = null;
+  window.researchCompleted = false;
   switchIntelTab('research');
   ['researchContent', 'backgroundContent', 'reviewsContent', 'socialContent', 'footprintContent', 'debtContent'].forEach(id => {
     const el = document.getElementById(id);
@@ -1977,6 +1992,27 @@ function renderResearchSOS(sr) {
   
   // Show SOS first, then loading indicator for rest
   h += `<div class="section-box" style="text-align:center;padding:30px;color:var(--text-muted);"><div class="spinner" style="margin:0 auto 12px;"></div><p>Loading company details...</p></div>`;
+  
+  document.getElementById('researchContent').innerHTML = h;
+}
+
+// Render SOS with error message when full research fails
+function renderResearchSOSWithError(sr, errorMsg) {
+  clearLoadingInterval('research');
+  stopGame();
+  const status = (sr.status || '').toLowerCase();
+  let h = `<div class="section-box" style="border-left:4px solid var(--accent-gold);"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>State Registration</div><div class="data-grid" style="grid-template-columns:1fr 1fr;">`;
+  if (sr.state) h += `<div><div class="label">State</div><div class="value">${sr.state}</div></div>`;
+  if (sr.status) h += `<div><div class="label">Status</div><div class="value"><span class="status-badge ${status.includes('active') ? 'good' : 'active'}">${sr.status}</span></div></div>`;
+  if (sr.filed_date) h += `<div><div class="label">Filed Date</div><div class="value">${sr.filed_date}</div></div>`;
+  if (sr.entity_type) h += `<div><div class="label">Entity Type</div><div class="value">${sr.entity_type}</div></div>`;
+  if (sr.entity_number) h += `<div><div class="label">Entity Number</div><div class="value">${sr.entity_number}</div></div>`;
+  if (sr.registered_agent) h += `<div><div class="label">Registered Agent</div><div class="value">${sr.registered_agent}</div></div>`;
+  if (sr.sos_url) h += `<div style="grid-column:span 2;"><div class="label">Secretary of State</div><div class="value"><a href="${sr.sos_url}" target="_blank" style="color:var(--accent-blue)">View Official Filing →</a></div></div>`;
+  h += `</div></div>`;
+  
+  // Show error message instead of loading spinner
+  h += `<div class="section-box" style="text-align:center;padding:30px;color:var(--text-muted);border-left:4px solid var(--tier-d);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:24px;height:24px;margin-bottom:8px;color:var(--tier-d);"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p>${errorMsg}</p></div>`;
   
   document.getElementById('researchContent').innerHTML = h;
 }
