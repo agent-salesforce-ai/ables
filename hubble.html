@@ -364,6 +364,70 @@
     }
     .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
     .btn-secondary svg { width: 14px; height: 14px; }
+    .results-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-share {
+      background: linear-gradient(135deg, rgba(234, 179, 8, 0.1), rgba(168, 85, 247, 0.1));
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .btn-share:hover {
+      background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(168, 85, 247, 0.2));
+    }
+    .btn-share-card {
+      background: linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(168, 85, 247, 0.15));
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .btn-share-card:hover {
+      background: linear-gradient(135deg, rgba(234, 179, 8, 0.25), rgba(168, 85, 247, 0.25));
+    }
+    .shared-mode .btn-share-card { display: none !important; }
+    .shared-banner {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, rgba(234, 179, 8, 0.1), rgba(168, 85, 247, 0.1));
+      border: 1px solid rgba(234, 179, 8, 0.3);
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+    .shared-banner svg { width: 16px; height: 16px; color: var(--accent); }
+    .shared-mode .shared-banner { display: flex; }
+    .shared-banner a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .shared-banner a:hover { text-decoration: underline; }
+    .copy-toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      padding: 14px 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      font-weight: 500;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      z-index: 1000;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+    .copy-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
 
     /* INTEL TABS */
     .intel-tabs {
@@ -457,24 +521,15 @@
     .card-title-left { display: flex; align-items: center; gap: 8px; }
     .card-title svg { width: 16px; height: 16px; }
 
-    /* LOADING / EMPTY STATES */
-    /* MINI GAME */
+    /* ASTEROIDS MINI GAME */
     .game-container {
-      display: none;
       background: var(--bg-card);
       border: 1px solid var(--border-primary);
       border-radius: 16px;
       padding: 16px;
-      margin-top: 20px;
+      margin: 20px auto;
+      max-width: 900px;
       text-align: center;
-    }
-    .game-container.active {
-      display: block;
-      animation: fadeIn 0.3s ease;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
     }
     .game-header {
       display: flex;
@@ -484,31 +539,65 @@
       font-size: 0.85rem;
       color: var(--text-secondary);
     }
-    .game-scores {
+    .game-scores { display: flex; gap: 16px; align-items: center; }
+    .game-score { font-weight: 600; color: var(--accent); }
+    .game-high { font-weight: 600; color: var(--tier-a); }
+    .btn-fullscreen {
+      background: transparent;
+      border: 1px solid var(--border-primary);
+      border-radius: 6px;
+      padding: 4px 6px;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+    .btn-fullscreen:hover {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+    }
+    .btn-fullscreen svg { width: 14px; height: 14px; display: block; }
+    .game-container.fullscreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      max-width: none;
+      margin: 0;
+      border-radius: 0;
+      z-index: 9999;
       display: flex;
-      gap: 16px;
+      flex-direction: column;
+      background: #0a0a0f;
     }
-    .game-score {
-      font-weight: 600;
-      color: var(--accent);
+    .game-container.fullscreen #asteroidsGame {
+      flex: 1;
+      height: auto;
+      border-radius: 0;
+      border: none;
     }
-    .game-high {
-      font-weight: 600;
-      color: var(--tier-a);
+    .game-container.fullscreen .game-header {
+      padding: 12px 20px;
     }
-    #brickGame {
-      background: var(--bg-primary);
+    .game-container.fullscreen .game-hint {
+      padding: 12px;
+    }
+    #asteroidsGame {
+      background: linear-gradient(180deg, #0a0a0f 0%, #1a1a2e 100%);
       border-radius: 8px;
       border: 1px solid var(--border-primary);
       display: block;
-      margin: 0 auto;
-      max-width: 100%;
+      width: 100%;
+      height: 280px;
     }
     .game-hint {
       font-size: 0.75rem;
       color: var(--text-muted);
       margin-top: 8px;
     }
+
+    /* LOADING / EMPTY STATES */
 
     .empty-state {
       text-align: center;
@@ -1248,10 +1337,16 @@
   <section class="results-section" id="resultsSection">
     <div class="results-header">
       <h2 class="results-title">Intel: <span id="businessDisplay"></span></h2>
-      <button class="btn-secondary" onclick="newSearch()">
+      <button class="btn-secondary" onclick="newSearch()" id="newSearchBtn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         New Search
       </button>
+    </div>
+
+    <!-- SHARED REPORT BANNER -->
+    <div class="shared-banner" id="sharedBanner">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      <span>You're viewing a shared report. <a href="javascript:void(0)" onclick="runOwnSearch()">Run your own search</a> for live data.</span>
     </div>
 
     <!-- INTEL TABS -->
@@ -1296,10 +1391,16 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             Deep Research
           </span>
-          <button class="btn-secondary" onclick="runSOSLookup(); runFullResearchAuto();">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-            Run
-          </button>
+          <div style="display:flex; gap:8px;">
+            <button class="btn-secondary btn-share-card" onclick="shareReport()" id="shareBtnCard" style="display:none;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              Share
+            </button>
+            <button class="btn-secondary" onclick="runSOSLookup(); runFullResearchAuto();">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              Run
+            </button>
+          </div>
         </div>
         <div id="researchContent"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><p>Run a search to get deep business research</p></div></div>
       </div>
@@ -1389,20 +1490,23 @@
         <div id="debtContent"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><p>Run a search to find debt and financing positions</p></div></div>
       </div>
     </div>
-
-    <!-- MINI GAME WHILE LOADING -->
-    <div class="game-container" id="gameContainer">
-      <div class="game-header">
-        <span>🎮 Play while you wait</span>
-        <div class="game-scores">
-          <span class="game-score">Score: <span id="gameScore">0</span></span>
-          <span class="game-high">Best: <span id="gameHigh">0</span></span>
-        </div>
-      </div>
-      <canvas id="brickGame" width="400" height="250"></canvas>
-      <p class="game-hint">← → to move | CLICK or SPACE to fire lasers</p>
-    </div>
   </section>
+
+  <!-- ASTEROIDS MINI GAME -->
+  <div class="game-container" id="gameContainer">
+    <div class="game-header">
+      <span>🔭 Hubble Defense</span>
+      <div class="game-scores">
+        <span class="game-score">Score: <span id="gameScore">0</span></span>
+        <span class="game-high">Best: <span id="gameHigh">0</span></span>
+        <button class="btn-fullscreen" onclick="toggleGameFullscreen()" title="Fullscreen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        </button>
+      </div>
+    </div>
+    <canvas id="asteroidsGame"></canvas>
+    <p class="game-hint">← → to rotate | ↑ to thrust | SPACE to fire</p>
+  </div>
 
   <!-- API KEY MODAL WITH DEMO -->
   <div class="api-modal-overlay" id="apiModal">
@@ -1582,6 +1686,187 @@ const loadingFacts = [
   "Trademark filings can reveal upcoming product launches."
 ];
 
+// ==================== SHARE FUNCTIONALITY ====================
+function shareReport() {
+  // Collect all report data
+  const reportData = {
+    business: currentBusiness,
+    timestamp: new Date().toISOString(),
+    research: researchData,
+    background: backgroundData,
+    reviews: reviewsData,
+    social: socialData,
+    footprint: footprintData,
+    debt: debtData,
+    sos: window.sosData
+  };
+  
+  // Compress to base64
+  const jsonStr = JSON.stringify(reportData);
+  const compressed = btoa(encodeURIComponent(jsonStr));
+  
+  // Create shareable URL
+  const baseUrl = window.location.origin + window.location.pathname;
+  const shareUrl = baseUrl + '#report=' + compressed;
+  
+  // Copy to clipboard
+  navigator.clipboard.writeText(shareUrl).then(() => {
+    showCopyToast('Link copied to clipboard!');
+  }).catch(() => {
+    // Fallback for older browsers
+    const textArea = document.createElement('textarea');
+    textArea.value = shareUrl;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+    showCopyToast('Link copied to clipboard!');
+  });
+}
+
+function showCopyToast(message) {
+  let toast = document.getElementById('copyToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'copyToast';
+    toast.className = 'copy-toast';
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;margin-right:8px;color:var(--tier-a);"><polyline points="20 6 9 17 4 12"/></svg>${message}`;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+function loadSharedReport() {
+  const hash = window.location.hash;
+  if (!hash.startsWith('#report=')) return false;
+  
+  try {
+    const compressed = hash.substring(8); // Remove '#report='
+    const jsonStr = decodeURIComponent(atob(compressed));
+    const reportData = JSON.parse(jsonStr);
+    
+    // Set the business name
+    currentBusiness = reportData.business || 'Unknown Business';
+    document.getElementById('businessDisplay').textContent = currentBusiness;
+    
+    // Store all the data
+    researchData = reportData.research;
+    backgroundData = reportData.background;
+    reviewsData = reportData.reviews;
+    socialData = reportData.social;
+    footprintData = reportData.footprint;
+    debtData = reportData.debt;
+    window.sosData = reportData.sos;
+    
+    // Show results section
+    document.getElementById('heroSection').classList.add('hidden');
+    document.getElementById('resultsSection').classList.add('active');
+    document.getElementById('orbitSystem').classList.add('dimmed');
+    document.body.classList.add('light-mode');
+    document.body.classList.add('shared-mode');
+    
+    // Render all sections that have data
+    if (researchData) {
+      if (window.sosData) researchData.state_registration = window.sosData;
+      renderResearchSection(researchData);
+      document.getElementById('badgeResearch').textContent = researchData.confidence_score + '%';
+      document.getElementById('tabResearch').classList.add('has-data');
+    } else if (window.sosData) {
+      renderResearchSOSWithError(window.sosData, 'Full research data not available in shared report');
+      document.getElementById('badgeResearch').textContent = 'SOS ✓';
+    } else {
+      setEmpty('research', 'No research data in shared report');
+      document.getElementById('badgeResearch').textContent = '--';
+    }
+    
+    if (backgroundData) {
+      renderBackgroundSection(backgroundData);
+      const score = backgroundData.risk_score || 0;
+      document.getElementById('badgeBackground').textContent = score <= 30 ? 'Low' : score <= 60 ? 'Med' : 'High';
+      document.getElementById('tabBackground').classList.add('has-data');
+    } else {
+      setEmpty('background', 'No background data in shared report');
+      document.getElementById('badgeBackground').textContent = '--';
+    }
+    
+    if (reviewsData) {
+      renderReviewsSection(reviewsData);
+      const avg = reviewsData.average_rating || 0;
+      document.getElementById('badgeReviews').textContent = avg.toFixed(1) + ' avg';
+      document.getElementById('tabReviews').classList.add('has-data');
+    } else {
+      setEmpty('reviews', 'No reviews data in shared report');
+      document.getElementById('badgeReviews').textContent = '--';
+    }
+    
+    if (socialData) {
+      renderSocialSection(socialData);
+      const profiles = socialData.profiles?.length || 0;
+      document.getElementById('badgeSocial').textContent = profiles + ' profiles';
+      document.getElementById('tabSocial').classList.add('has-data');
+    } else {
+      setEmpty('social', 'No social data in shared report');
+      document.getElementById('badgeSocial').textContent = '--';
+    }
+    
+    if (footprintData) {
+      renderFootprintSection(footprintData);
+      const score = footprintData.digital_score || 0;
+      document.getElementById('badgeFootprint').textContent = score + '/100';
+      document.getElementById('tabFootprint').classList.add('has-data');
+    } else {
+      setEmpty('footprint', 'No footprint data in shared report');
+      document.getElementById('badgeFootprint').textContent = '--';
+    }
+    
+    if (debtData) {
+      renderDebtSection(debtData);
+      const positions = debtData.active_positions || 0;
+      document.getElementById('badgeDebt').textContent = positions + ' positions';
+      document.getElementById('tabDebt').classList.add('has-data');
+    } else {
+      setEmpty('debt', 'No debt data in shared report');
+      document.getElementById('badgeDebt').textContent = '--';
+    }
+    
+    // In shared mode, button is hidden via CSS (.shared-mode .btn-share)
+    
+    return true;
+  } catch (e) {
+    console.error('Failed to load shared report:', e);
+    return false;
+  }
+}
+
+function runOwnSearch() {
+  // Clear the hash and go back to search
+  window.location.hash = '';
+  document.body.classList.remove('shared-mode');
+  newSearch();
+  // Pre-fill the search box with the business name
+  document.getElementById('businessInput').value = currentBusiness;
+}
+
+// Check for shared report on page load
+document.addEventListener('DOMContentLoaded', () => {
+  const savedKey = localStorage.getItem('hubble_api_key');
+  if (savedKey) {
+    document.getElementById('apiKey').value = savedKey;
+  }
+  
+  // Try to load shared report
+  loadSharedReport();
+});
+
+// Show share button when data is loaded
+function showShareButton() {
+  const hasData = researchData || backgroundData || reviewsData || socialData || footprintData || debtData;
+  if (hasData && !document.body.classList.contains('shared-mode')) {
+    document.getElementById('shareBtnCard').style.display = 'flex';
+  }
+}
+
 function toggleTheme() {
   document.body.classList.toggle('light-mode');
 }
@@ -1632,9 +1917,6 @@ async function runSearch() {
   setLoading('social', 'Discovering social media profiles...');
   setLoading('footprint', 'Analyzing digital presence...');
   setLoading('debt', 'Searching debt & MCA positions...');
-  
-  // Start mini game while loading
-  startGame();
   
   // ALL IN PARALLEL - fastest possible loading
   runSOSLookup();
@@ -1711,6 +1993,7 @@ async function runFullResearchAuto() {
       document.getElementById('badgeResearch').textContent = researchData.confidence_score + '%';
       document.getElementById('tabResearch').classList.add('has-data');
       showToast('Research Complete', researchData.company_name || currentBusiness);
+      showShareButton();
     } else if (window.sosData) {
       // SOS succeeded but full research failed - show SOS with error for rest
       renderResearchSOSWithError(window.sosData, 'Could not load full company details - click Run to retry');
@@ -1739,7 +2022,9 @@ function newSearch() {
   document.getElementById('resultsSection').classList.remove('active');
   document.getElementById('orbitSystem').classList.remove('dimmed');
   document.body.classList.remove('light-mode');
+  document.body.classList.remove('shared-mode');
   document.getElementById('businessInput').value = '';
+  document.getElementById('shareBtnCard').style.display = 'none';
   currentBusiness = '';
   researchData = backgroundData = footprintData = debtData = reviewsData = socialData = null;
   window.sosData = null;
@@ -1759,14 +2044,6 @@ function getApiKey() {
   }
   return key || localStorage.getItem('hubble_api_key') || '';
 }
-
-// Load saved API key on page load
-document.addEventListener('DOMContentLoaded', () => {
-  const savedKey = localStorage.getItem('hubble_api_key');
-  if (savedKey) {
-    document.getElementById('apiKey').value = savedKey;
-  }
-});
 
 async function callGemini(prompt) {
   const apiKey = getApiKey();
@@ -1999,7 +2276,6 @@ function renderResearchSOS(sr) {
 // Render SOS with error message when full research fails
 function renderResearchSOSWithError(sr, errorMsg) {
   clearLoadingInterval('research');
-  stopGame();
   const status = (sr.status || '').toLowerCase();
   let h = `<div class="section-box" style="border-left:4px solid var(--accent-gold);"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>State Registration</div><div class="data-grid" style="grid-template-columns:1fr 1fr;">`;
   if (sr.state) h += `<div><div class="label">State</div><div class="value">${sr.state}</div></div>`;
@@ -2024,7 +2300,6 @@ function updateLoadingStatus(section, message) {
 
 function renderResearchSection(d) {
   clearLoadingInterval('research');
-  stopGame(); // Hide game when data arrives
   let h = `<div class="risk-banner low"><div class="risk-badge"><span>${d.confidence_score || 0}</span></div><div class="risk-info"><h3>Confidence Score: ${d.confidence_score || 0}%</h3><p>Data reliability assessment</p></div></div>`;
   
   h += `<div class="section-box"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Company Overview</div><div class="data-grid">`;
@@ -2118,6 +2393,7 @@ async function runBackgroundAuto() {
       document.getElementById('badgeBackground').textContent = score <= 30 ? 'Low' : score <= 60 ? 'Med' : 'High';
       document.getElementById('tabBackground').classList.add('has-data');
       if (score > 50) document.getElementById('tabBackground').classList.add('has-warning');
+      showShareButton();
       showToast('Background Complete', `Risk score: ${score}`);
     } else {
       console.log('Background parse failed, data:', backgroundData);
@@ -2135,7 +2411,6 @@ async function runBackgroundAuto() {
 
 function renderBackgroundSection(d) {
   clearLoadingInterval('background');
-  stopGame(); // Hide game when data arrives
   const score = d.risk_score || 0;
   const cls = score <= 30 ? 'low' : score <= 60 ? 'medium' : 'high';
   let h = `<div class="risk-banner ${cls}"><div class="risk-badge"><span>${score}</span></div><div class="risk-info"><h3>Risk Score: ${score}/100</h3><p>${cls.charAt(0).toUpperCase() + cls.slice(1)} risk assessment</p></div></div>`;
@@ -2198,6 +2473,7 @@ async function runReviewsAuto() {
       document.getElementById('tabReviews').classList.add('has-data');
       if (avg < 3) document.getElementById('tabReviews').classList.add('has-warning');
       showToast('Reviews Complete', `${reviewsData.total_reviews || 0} reviews found`);
+      showShareButton();
     } else {
       setEmpty('reviews', 'Could not parse reviews data');
       document.getElementById('badgeReviews').textContent = 'ERR';
@@ -2309,6 +2585,7 @@ async function runSocialAuto() {
       document.getElementById('badgeSocial').textContent = count + ' profiles';
       document.getElementById('tabSocial').classList.add('has-data');
       showToast('Social Complete', `Found ${count} profiles`);
+      showShareButton();
     } else {
       setEmpty('social', 'Could not parse social data');
       document.getElementById('badgeSocial').textContent = 'ERR';
@@ -2383,6 +2660,7 @@ async function runFootprintAuto() {
       document.getElementById('badgeFootprint').textContent = (footprintData.digital_score || 50) + '/100';
       document.getElementById('tabFootprint').classList.add('has-data');
       showToast('Footprint Complete', `Digital score: ${footprintData.digital_score || 'N/A'}`);
+      showShareButton();
     } else {
       console.log('Footprint parse failed, data:', footprintData);
       setEmpty('footprint', 'Could not parse footprint data - try clicking Run to retry');
@@ -2459,6 +2737,7 @@ async function runDebtAuto() {
       document.getElementById('tabDebt').classList.add('has-data');
       if (positions > 0) document.getElementById('tabDebt').classList.add('has-warning');
       showToast('Debt Analysis Complete', `${positions} positions found`);
+      showShareButton();
     } else {
       setEmpty('debt', 'Could not parse debt data');
       document.getElementById('badgeDebt').textContent = 'ERR';
@@ -2778,337 +3057,356 @@ document.getElementById('apiModal').addEventListener('click', function(e) {
   }
 });
 
-// ==================== BRICK BREAKER GAME ====================
-let gameRunning = false;
-let gameAnimationId = null;
+// ==================== GAME FULLSCREEN ====================
+let gameResizeCanvas = null;
 
-function startGame() {
+function toggleGameFullscreen() {
   const container = document.getElementById('gameContainer');
-  container.classList.add('active');
+  const canvas = document.getElementById('asteroidsGame');
+  container.classList.toggle('fullscreen');
   
-  // Load high score
-  const highScore = parseInt(localStorage.getItem('hubble_game_high') || '0');
-  document.getElementById('gameHigh').textContent = highScore;
-  
-  if (gameRunning) return;
-  gameRunning = true;
-  
-  const canvas = document.getElementById('brickGame');
+  // Resize canvas after toggle
+  setTimeout(() => {
+    if (gameResizeCanvas) gameResizeCanvas();
+  }, 50);
+}
+
+// ESC to exit fullscreen
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    const container = document.getElementById('gameContainer');
+    if (container.classList.contains('fullscreen')) {
+      toggleGameFullscreen();
+    }
+  }
+});
+
+// ==================== ASTEROIDS GAME ====================
+(function() {
+  const canvas = document.getElementById('asteroidsGame');
   const ctx = canvas.getContext('2d');
+  let highScore = 0;
   
-  // Game state
+  function resizeCanvas() {
+    const container = document.getElementById('gameContainer');
+    canvas.width = canvas.offsetWidth;
+    canvas.height = container.classList.contains('fullscreen') ? canvas.offsetHeight : 280;
+  }
+  gameResizeCanvas = resizeCanvas;
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+  
+  // Ship (telescope)
+  let ship = {
+    x: 0, y: 0, angle: -Math.PI/2, 
+    vx: 0, vy: 0, radius: 15
+  };
+  
+  let bullets = [];
+  let asteroids = [];
+  let particles = [];
   let score = 0;
-  let level = 1;
-  const paddleWidth = 65, paddleHeight = 12;
-  let paddleX = (canvas.width - paddleWidth) / 2;
-  const ballRadius = 5;
-  let ballX = canvas.width / 2, ballY = canvas.height - 40;
-  let ballDX = 2.5, ballDY = -2.5;  // Slower speed
+  let gameOver = false;
+  let keys = {};
   
-  // Lasers
-  let lasers = [];
-  let laserCooldown = 0;
-  const laserSpeed = 6;  // Slower lasers too
+  function resetGame() {
+    ship.x = canvas.width / 2;
+    ship.y = canvas.height / 2;
+    ship.angle = -Math.PI / 2;
+    ship.vx = 0;
+    ship.vy = 0;
+    bullets = [];
+    asteroids = [];
+    particles = [];
+    score = 0;
+    gameOver = false;
+    for (let i = 0; i < 4; i++) spawnAsteroid();
+  }
   
-  // Bricks - more rows = harder
-  const brickRows = 5, brickCols = 10;
-  const brickWidth = 35, brickHeight = 14, brickPadding = 4;
-  const brickOffsetTop = 15, brickOffsetLeft = 8;
-  
-  // Use site accent colors
-  const brickColors = ['#ef4444', '#f97316', '#eab308', '#84cc16', '#22c55e', '#14b8a6', '#3b82f6', '#8b5cf6', '#a855f7', '#ec4899'];
-  
-  let bricks = [];
-  function initBricks() {
-    bricks = [];
-    for (let r = 0; r < brickRows; r++) {
-      bricks[r] = [];
-      for (let c = 0; c < brickCols; c++) {
-        // Some bricks take 2 hits (armored)
-        const hp = (r < 2 && Math.random() > 0.5) ? 2 : 1;
-        bricks[r][c] = { x: 0, y: 0, status: hp, maxHp: hp };
-      }
+  function spawnAsteroid(x, y, size) {
+    size = size || 40;
+    if (x === undefined) {
+      const edge = Math.floor(Math.random() * 4);
+      if (edge === 0) { x = 0; y = Math.random() * canvas.height; }
+      else if (edge === 1) { x = canvas.width; y = Math.random() * canvas.height; }
+      else if (edge === 2) { x = Math.random() * canvas.width; y = 0; }
+      else { x = Math.random() * canvas.width; y = canvas.height; }
     }
-  }
-  initBricks();
-  
-  // Update score helper
-  function updateScore(points) {
-    score += points;
-    document.getElementById('gameScore').textContent = score;
-    // Update high score if beaten
-    if (score > highScore) {
-      localStorage.setItem('hubble_game_high', score.toString());
-      document.getElementById('gameHigh').textContent = score;
-    }
-  }
-  
-  // Controls
-  let rightPressed = false, leftPressed = false, spacePressed = false;
-  
-  function keyDownHandler(e) {
-    if (e.key === 'Right' || e.key === 'ArrowRight') rightPressed = true;
-    if (e.key === 'Left' || e.key === 'ArrowLeft') leftPressed = true;
-    if (e.key === ' ' || e.key === 'Spacebar') { spacePressed = true; e.preventDefault(); }
-  }
-  function keyUpHandler(e) {
-    if (e.key === 'Right' || e.key === 'ArrowRight') rightPressed = false;
-    if (e.key === 'Left' || e.key === 'ArrowLeft') leftPressed = false;
-    if (e.key === ' ' || e.key === 'Spacebar') spacePressed = false;
-  }
-  function mouseMoveHandler(e) {
-    const rect = canvas.getBoundingClientRect();
-    const relX = e.clientX - rect.left;
-    if (relX > paddleWidth/2 && relX < canvas.width - paddleWidth/2) {
-      paddleX = relX - paddleWidth / 2;
-    }
-  }
-  function touchMoveHandler(e) {
-    const rect = canvas.getBoundingClientRect();
-    const relX = e.touches[0].clientX - rect.left;
-    if (relX > paddleWidth/2 && relX < canvas.width - paddleWidth/2) {
-      paddleX = relX - paddleWidth / 2;
-    }
-  }
-  function clickHandler() {
-    fireLaser();
-  }
-  
-  document.addEventListener('keydown', keyDownHandler);
-  document.addEventListener('keyup', keyUpHandler);
-  canvas.addEventListener('mousemove', mouseMoveHandler);
-  canvas.addEventListener('touchmove', touchMoveHandler);
-  canvas.addEventListener('click', clickHandler);
-  
-  function fireLaser() {
-    if (laserCooldown <= 0) {
-      lasers.push({ x: paddleX + paddleWidth/2 - 2, y: canvas.height - paddleHeight - 10 });
-      lasers.push({ x: paddleX + paddleWidth/2 + 2, y: canvas.height - paddleHeight - 10 });
-      laserCooldown = 15; // Frames between shots
-    }
-  }
-  
-  function drawBall(isLight) {
-    ctx.beginPath();
-    ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
-    const gradient = ctx.createRadialGradient(ballX-2, ballY-2, 0, ballX, ballY, ballRadius);
-    gradient.addColorStop(0, isLight ? '#fff' : '#fef3c7');
-    gradient.addColorStop(1, '#f59e0b');
-    ctx.fillStyle = gradient;
-    ctx.fill();
-    ctx.strokeStyle = isLight ? '#d97706' : '#fbbf24';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-    ctx.closePath();
-  }
-  
-  function drawPaddle(isLight) {
-    // Main paddle (accent gold from site)
-    ctx.beginPath();
-    ctx.roundRect(paddleX, canvas.height - paddleHeight - 5, paddleWidth, paddleHeight, 4);
-    const gradient = ctx.createLinearGradient(paddleX, canvas.height - paddleHeight - 5, paddleX, canvas.height - 5);
-    gradient.addColorStop(0, '#facc15'); // --accent-light
-    gradient.addColorStop(1, '#ca8a04'); // --accent-dark
-    ctx.fillStyle = gradient;
-    ctx.fill();
-    ctx.strokeStyle = isLight ? '#a16207' : '#fbbf24';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-    ctx.closePath();
-    
-    // Gun turret
-    const gunWidth = 8, gunHeight = 10;
-    ctx.beginPath();
-    ctx.roundRect(paddleX + paddleWidth/2 - gunWidth/2, canvas.height - paddleHeight - 5 - gunHeight + 2, gunWidth, gunHeight, 2);
-    ctx.fillStyle = isLight ? '#374151' : '#4b5563';
-    ctx.fill();
-    ctx.strokeStyle = isLight ? '#1f2937' : '#6b7280';
-    ctx.stroke();
-    ctx.closePath();
-    
-    // Gun barrel
-    ctx.beginPath();
-    ctx.roundRect(paddleX + paddleWidth/2 - 2, canvas.height - paddleHeight - 5 - gunHeight - 4, 4, 6, 1);
-    ctx.fillStyle = isLight ? '#6b7280' : '#9ca3af';
-    ctx.fill();
-    ctx.closePath();
-  }
-  
-  function drawLasers(isLight) {
-    lasers.forEach(laser => {
-      // Laser glow
-      ctx.beginPath();
-      ctx.rect(laser.x - 1, laser.y, 4, 12);
-      ctx.fillStyle = isLight ? 'rgba(239, 68, 68, 0.3)' : 'rgba(239, 68, 68, 0.5)';
-      ctx.fill();
-      // Laser core
-      ctx.beginPath();
-      ctx.rect(laser.x, laser.y + 2, 2, 8);
-      ctx.fillStyle = '#ef4444';
-      ctx.fill();
-      ctx.closePath();
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 1 + Math.random() * 1.5;
+    asteroids.push({
+      x, y, size,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      rotation: 0,
+      rotSpeed: (Math.random() - 0.5) * 0.05
     });
   }
   
-  function drawBricks(isLight) {
-    for (let r = 0; r < brickRows; r++) {
-      for (let c = 0; c < brickCols; c++) {
-        if (bricks[r][c].status > 0) {
-          const brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
-          const brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
-          bricks[r][c].x = brickX;
-          bricks[r][c].y = brickY;
-          
-          ctx.beginPath();
-          ctx.roundRect(brickX, brickY, brickWidth, brickHeight, 3);
-          
-          // Armored bricks - theme aware
-          if (bricks[r][c].maxHp === 2 && bricks[r][c].status === 2) {
-            ctx.fillStyle = isLight ? '#374151' : '#1f2937';
-            ctx.fill();
-            ctx.strokeStyle = brickColors[c % brickColors.length];
-            ctx.lineWidth = 2;
-            ctx.stroke();
-          } else {
-            const gradient = ctx.createLinearGradient(brickX, brickY, brickX, brickY + brickHeight);
-            gradient.addColorStop(0, brickColors[c % brickColors.length]);
-            gradient.addColorStop(1, brickColors[(c + 1) % brickColors.length]);
-            ctx.fillStyle = gradient;
-            ctx.fill();
-          }
-          ctx.closePath();
-        }
-      }
+  function drawShip() {
+    ctx.save();
+    ctx.translate(ship.x, ship.y);
+    ctx.rotate(ship.angle + Math.PI/2);
+    
+    // Telescope body
+    ctx.fillStyle = '#a855f7';
+    ctx.beginPath();
+    ctx.roundRect(-6, -12, 12, 24, 3);
+    ctx.fill();
+    
+    // Telescope lens (gold)
+    ctx.fillStyle = '#eab308';
+    ctx.beginPath();
+    ctx.ellipse(0, -14, 8, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Lens shine
+    ctx.fillStyle = '#fef3c7';
+    ctx.beginPath();
+    ctx.ellipse(-2, -15, 3, 2, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Tripod legs
+    ctx.strokeStyle = '#7c3aed';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-4, 10); ctx.lineTo(-10, 20);
+    ctx.moveTo(4, 10); ctx.lineTo(10, 20);
+    ctx.moveTo(0, 10); ctx.lineTo(0, 22);
+    ctx.stroke();
+    
+    ctx.restore();
+    
+    // Thrust flame
+    if (keys['ArrowUp'] || keys['w'] || keys['W']) {
+      ctx.save();
+      ctx.translate(ship.x, ship.y);
+      ctx.rotate(ship.angle + Math.PI/2);
+      ctx.fillStyle = '#f97316';
+      ctx.beginPath();
+      ctx.moveTo(-4, 22);
+      ctx.lineTo(0, 30 + Math.random() * 8);
+      ctx.lineTo(4, 22);
+      ctx.fill();
+      ctx.restore();
     }
   }
   
-  function collisionDetection() {
-    // Ball collision
-    for (let r = 0; r < brickRows; r++) {
-      for (let c = 0; c < brickCols; c++) {
-        const b = bricks[r][c];
-        if (b.status > 0) {
-          if (ballX > b.x && ballX < b.x + brickWidth && ballY > b.y && ballY < b.y + brickHeight) {
-            ballDY = -ballDY;
-            b.status--;
-            updateScore(b.status === 0 ? 10 : 5);
-          }
-        }
-      }
+  function drawAsteroid(a) {
+    ctx.save();
+    ctx.translate(a.x, a.y);
+    ctx.rotate(a.rotation);
+    
+    // Planet body
+    ctx.shadowColor = '#eab308';
+    ctx.shadowBlur = 10;
+    const grad = ctx.createRadialGradient(-a.size*0.2, -a.size*0.2, 0, 0, 0, a.size);
+    grad.addColorStop(0, '#fef3c7');
+    grad.addColorStop(0.5, '#fbbf24');
+    grad.addColorStop(1, '#d97706');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(0, 0, a.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    
+    // Ring
+    ctx.save();
+    ctx.scale(1, 0.35);
+    ctx.strokeStyle = '#f97316';
+    ctx.lineWidth = a.size > 25 ? 3 : 2;
+    ctx.beginPath();
+    ctx.arc(0, 0, a.size + 6, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+    
+    ctx.restore();
+  }
+  
+  function drawBullet(b) {
+    ctx.shadowColor = '#a855f7';
+    ctx.shadowBlur = 8;
+    ctx.fillStyle = '#c084fc';
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+  
+  function drawParticle(p) {
+    ctx.globalAlpha = p.life;
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+  
+  function explode(x, y, color) {
+    for (let i = 0; i < 12; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 2 + Math.random() * 3;
+      particles.push({
+        x, y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        size: 2 + Math.random() * 3,
+        life: 1,
+        color: color || '#eab308'
+      });
+    }
+  }
+  
+  function update() {
+    // Ship controls
+    if (keys['ArrowLeft'] || keys['a'] || keys['A']) ship.angle -= 0.08;
+    if (keys['ArrowRight'] || keys['d'] || keys['D']) ship.angle += 0.08;
+    if (keys['ArrowUp'] || keys['w'] || keys['W']) {
+      ship.vx += Math.cos(ship.angle) * 0.15;
+      ship.vy += Math.sin(ship.angle) * 0.15;
     }
     
-    // Laser collision
-    lasers = lasers.filter(laser => {
-      for (let r = 0; r < brickRows; r++) {
-        for (let c = 0; c < brickCols; c++) {
-          const b = bricks[r][c];
-          if (b.status > 0) {
-            if (laser.x > b.x && laser.x < b.x + brickWidth && laser.y > b.y && laser.y < b.y + brickHeight) {
-              b.status--;
-              updateScore(b.status === 0 ? 15 : 5);
-              return false; // Remove laser
-            }
-          }
-        }
-      }
-      return laser.y > 0; // Keep if still on screen
+    // Ship movement with drag
+    ship.vx *= 0.99;
+    ship.vy *= 0.99;
+    ship.x += ship.vx;
+    ship.y += ship.vy;
+    
+    // Wrap ship
+    if (ship.x < 0) ship.x = canvas.width;
+    if (ship.x > canvas.width) ship.x = 0;
+    if (ship.y < 0) ship.y = canvas.height;
+    if (ship.y > canvas.height) ship.y = 0;
+    
+    // Update bullets
+    bullets = bullets.filter(b => {
+      b.x += b.vx;
+      b.y += b.vy;
+      b.life--;
+      return b.life > 0 && b.x > 0 && b.x < canvas.width && b.y > 0 && b.y < canvas.height;
     });
     
-    // Check level clear
-    let allCleared = true;
-    for (let r = 0; r < brickRows; r++) {
-      for (let c = 0; c < brickCols; c++) {
-        if (bricks[r][c].status > 0) allCleared = false;
-      }
+    // Update asteroids
+    asteroids.forEach(a => {
+      a.x += a.vx;
+      a.y += a.vy;
+      a.rotation += a.rotSpeed;
+      if (a.x < -50) a.x = canvas.width + 50;
+      if (a.x > canvas.width + 50) a.x = -50;
+      if (a.y < -50) a.y = canvas.height + 50;
+      if (a.y > canvas.height + 50) a.y = -50;
+    });
+    
+    // Update particles
+    particles = particles.filter(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= 0.03;
+      return p.life > 0;
+    });
+    
+    // Bullet-asteroid collision
+    bullets.forEach(b => {
+      asteroids.forEach((a, i) => {
+        const dx = b.x - a.x, dy = b.y - a.y;
+        if (Math.sqrt(dx*dx + dy*dy) < a.size + 3) {
+          b.life = 0;
+          explode(a.x, a.y);
+          score += a.size > 25 ? 20 : a.size > 15 ? 50 : 100;
+          if (a.size > 20) {
+            spawnAsteroid(a.x, a.y, a.size * 0.6);
+            spawnAsteroid(a.x, a.y, a.size * 0.6);
+          }
+          asteroids.splice(i, 1);
+        }
+      });
+    });
+    
+    // Ship-asteroid collision
+    if (!gameOver) {
+      asteroids.forEach(a => {
+        const dx = ship.x - a.x, dy = ship.y - a.y;
+        if (Math.sqrt(dx*dx + dy*dy) < a.size + ship.radius) {
+          gameOver = true;
+          explode(ship.x, ship.y, '#a855f7');
+          if (score > highScore) {
+            highScore = score;
+            document.getElementById('gameHigh').textContent = highScore;
+          }
+        }
+      });
     }
-    if (allCleared) {
-      level++;
-      initBricks();
-      ballDX *= 1.08;
-      ballDY *= 1.08;
+    
+    // Spawn more asteroids
+    if (asteroids.length < 3 + Math.floor(score / 200)) {
+      spawnAsteroid();
     }
   }
   
   function draw() {
-    if (!gameRunning) return;
-    
-    // Detect theme - match site exactly
-    const isLight = document.body.classList.contains('light-mode');
-    
-    // Theme-aware background (matches --bg-primary)
-    ctx.fillStyle = isLight ? '#f8f8f8' : '#0a0a0a';
+    // Always dark mode for game
+    ctx.fillStyle = '#0a0a0f';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Subtle grid (matches .bg-grid)
-    ctx.strokeStyle = isLight ? 'rgba(234, 179, 8, 0.05)' : 'rgba(234, 179, 8, 0.03)';
-    ctx.lineWidth = 1;
-    for (let i = 0; i < canvas.width; i += 20) {
-      ctx.beginPath();
-      ctx.moveTo(i, 0);
-      ctx.lineTo(i, canvas.height);
-      ctx.stroke();
-    }
-    for (let i = 0; i < canvas.height; i += 20) {
-      ctx.beginPath();
-      ctx.moveTo(0, i);
-      ctx.lineTo(canvas.width, i);
-      ctx.stroke();
+    // Draw stars
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    for (let i = 0; i < 50; i++) {
+      const sx = (i * 137.5) % canvas.width;
+      const sy = (i * 91.3) % canvas.height;
+      ctx.fillRect(sx, sy, 1, 1);
     }
     
-    drawBricks(isLight);
-    drawLasers(isLight);
-    drawBall(isLight);
-    drawPaddle(isLight);
-    collisionDetection();
+    particles.forEach(drawParticle);
+    asteroids.forEach(drawAsteroid);
+    bullets.forEach(drawBullet);
+    if (!gameOver) drawShip();
     
-    // Update lasers
-    lasers.forEach(laser => laser.y -= laserSpeed);
-    if (laserCooldown > 0) laserCooldown--;
+    // Score
+    document.getElementById('gameScore').textContent = score;
     
-    // Auto-fire with space
-    if (spacePressed) fireLaser();
-    
-    // Ball wall collision
-    if (ballX + ballDX > canvas.width - ballRadius || ballX + ballDX < ballRadius) {
-      ballDX = -ballDX;
+    // Game over message
+    if (gameOver) {
+      ctx.fillStyle = 'rgba(0,0,0,0.5)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#eab308';
+      ctx.font = 'bold 28px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('GAME OVER', canvas.width/2, canvas.height/2 - 10);
+      ctx.fillStyle = '#9ca3af';
+      ctx.font = '15px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText('Press SPACE to restart', canvas.width/2, canvas.height/2 + 20);
     }
-    if (ballY + ballDY < ballRadius) {
-      ballDY = -ballDY;
-    } else if (ballY + ballDY > canvas.height - ballRadius - paddleHeight - 5) {
-      if (ballX > paddleX && ballX < paddleX + paddleWidth) {
-        const hitPos = (ballX - paddleX) / paddleWidth;
-        ballDX = 5 * (hitPos - 0.5);
-        ballDY = -Math.abs(ballDY);
-      } else if (ballY + ballDY > canvas.height - ballRadius) {
-        // Ball lost - reset but keep score
-        ballX = canvas.width / 2;
-        ballY = canvas.height - 40;
-        ballDX = 2.5 * (Math.random() > 0.5 ? 1 : -1);
-        ballDY = -2.5 - level * 0.3;
-      }
-    }
-    
-    // Paddle movement
-    if (rightPressed && paddleX < canvas.width - paddleWidth) paddleX += 5;
-    if (leftPressed && paddleX > 0) paddleX -= 5;
-    
-    ballX += ballDX;
-    ballY += ballDY;
-    
-    gameAnimationId = requestAnimationFrame(draw);
   }
   
-  draw();
-}
-
-function stopGame() {
-  gameRunning = false;
-  if (gameAnimationId) {
-    cancelAnimationFrame(gameAnimationId);
-    gameAnimationId = null;
+  function gameLoop() {
+    if (!gameOver) update();
+    draw();
+    requestAnimationFrame(gameLoop);
   }
-  document.getElementById('gameContainer').classList.remove('active');
-}
+  
+  // Controls
+  document.addEventListener('keydown', e => {
+    keys[e.key] = true;
+    if (e.key === ' ') {
+      e.preventDefault();
+      if (gameOver) {
+        resetGame();
+      } else {
+        bullets.push({
+          x: ship.x + Math.cos(ship.angle) * 20,
+          y: ship.y + Math.sin(ship.angle) * 20,
+          vx: Math.cos(ship.angle) * 8,
+          vy: Math.sin(ship.angle) * 8,
+          life: 60
+        });
+      }
+    }
+  });
+  document.addEventListener('keyup', e => keys[e.key] = false);
+  
+  resetGame();
+  gameLoop();
+})();
 </script>
 </body>
 </html>
