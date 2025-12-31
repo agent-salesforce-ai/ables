@@ -1529,8 +1529,7 @@
 
     @media (max-width: 640px) {
       .hero-orbit-container {
-        width: 400px;
-        bottom: -120px;
+        display: none;
       }
     }
 
@@ -2295,12 +2294,22 @@
 
     .slider {
       -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
       width: 100%;
       height: 6px;
-      background: var(--border-secondary);
+      background: linear-gradient(to right, var(--accent) 0%, var(--accent) 50%, var(--border-secondary) 50%, var(--border-secondary) 100%);
       border-radius: 3px;
       outline: none;
       cursor: pointer;
+    }
+
+    .slider.iso-slider {
+      background: linear-gradient(to right, #a855f7 0%, #a855f7 50%, var(--border-secondary) 50%, var(--border-secondary) 100%);
+    }
+
+    .slider.client-slider {
+      background: linear-gradient(to right, #10b981 0%, #10b981 50%, var(--border-secondary) 50%, var(--border-secondary) 100%);
     }
 
     .slider::-webkit-slider-thumb {
@@ -2315,8 +2324,36 @@
       box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
 
-    .iso-slider::-webkit-slider-thumb {
+    .slider.iso-slider::-webkit-slider-thumb {
       background: #a855f7;
+    }
+
+    .slider.client-slider::-webkit-slider-thumb {
+      background: #10b981;
+    }
+
+    .slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: var(--accent);
+      border: 2px solid var(--bg-card);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    .slider.iso-slider::-moz-range-thumb {
+      background: #a855f7;
+    }
+
+    .slider.client-slider::-moz-range-thumb {
+      background: #10b981;
+    }
+
+    .slider::-moz-range-track {
+      background: transparent;
+      height: 6px;
+      border-radius: 3px;
     }
 
     .slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
@@ -2959,6 +2996,8 @@
       opacity: 0;
       visibility: hidden;
       transition: all 0.3s ease;
+      overflow-y: auto;
+      padding: 20px;
     }
 
     .card-modal.active {
@@ -2967,7 +3006,7 @@
     }
 
     .card-modal-backdrop {
-      position: absolute;
+      position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0, 0, 0, 0.9);
       backdrop-filter: blur(8px);
@@ -2979,6 +3018,7 @@
       max-width: 480px;
       transform: scale(0.95) translateY(20px);
       transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      margin: auto;
     }
 
     .card-modal.active .card-modal-content {
@@ -2987,20 +3027,21 @@
 
     .card-modal-close {
       position: absolute;
-      top: -48px;
-      right: 0;
-      width: 40px;
-      height: 40px;
-      background: var(--bg-card);
+      top: 12px;
+      right: 12px;
+      width: 44px;
+      height: 44px;
+      background: rgba(0,0,0,0.5);
       border: 1px solid var(--border-secondary);
       border-radius: 50%;
-      color: var(--text-muted);
-      font-size: 24px;
+      color: #fff;
+      font-size: 28px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       transition: all 0.2s ease;
+      z-index: 10;
     }
 
     .card-modal-close:hover {
@@ -4288,15 +4329,27 @@
     @media (max-width: 768px) {
       .main-header {
         padding: 12px 16px;
+        justify-content: center;
+        position: relative;
+      }
+      .header-logo svg {
+        width: 32px;
+        height: 32px;
       }
       .header-logo h1 {
-        font-size: 1rem;
+        font-size: 1.1rem;
       }
       .theme-toggle {
-        width: 36px;
-        height: 36px;
-        min-width: 36px;
-        margin-right: 8px;
+        width: 28px;
+        height: 28px;
+        min-width: 28px;
+        position: absolute;
+        right: 16px;
+        margin-left: 0;
+      }
+      .theme-toggle svg {
+        width: 14px;
+        height: 14px;
       }
       .steps-grid { grid-template-columns: 1fr; }
       .features-grid { grid-template-columns: 1fr; }
@@ -4307,11 +4360,87 @@
       .kanban-board { grid-template-columns: 1fr; }
       .dashboard-header { flex-direction: column; align-items: flex-start; }
       .constraint-grid { grid-template-columns: 1fr; }
-      .hero-stats { flex-wrap: wrap; gap: 24px; }
       .client-logos { gap: 24px; }
-      .testimonials-grid { grid-template-columns: 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr !important; gap: 16px; }
       .faq-grid { grid-template-columns: 1fr; }
       .final-cta-buttons { flex-direction: column; align-items: center; }
+      
+      /* Mobile: Reduce hero text size */
+      .hero-title {
+        font-size: 2rem;
+        line-height: 1.2;
+      }
+      .hero-desc {
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+      
+      /* Mobile: Simplify hero - hide busy elements */
+      .hero-label {
+        display: none;
+      }
+      .hero-stats {
+        display: none;
+      }
+      .scroll-indicator {
+        display: none !important;
+      }
+      
+      /* Mobile hero buttons */
+      .hero-buttons {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+        width: 100%;
+      }
+      .hero-cta,
+      .hero-cta-secondary {
+        padding: 12px 24px;
+        font-size: 12px;
+        min-height: 44px;
+        width: 100%;
+        max-width: 220px;
+        justify-content: center;
+      }
+      
+      /* Mobile: Larger touch targets (48px min) */
+      .hero-cta,
+      .hero-cta-secondary,
+      .tab-btn,
+      .faq-question,
+      .feature-card,
+      .cta-btn {
+        min-height: 48px;
+      }
+      
+      /* Mobile: Add padding for bottom nav bar */
+      .footer {
+        padding-bottom: 80px;
+      }
+    }
+
+    /* Scroll Indicator */
+    .scroll-indicator {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 32px;
+      color: var(--text-muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .scroll-indicator svg {
+      width: 20px;
+      height: 20px;
+      margin-top: 8px;
+    }
+    
+    @media (min-width: 769px) {
+      .scroll-indicator {
+        display: flex;
+      }
     }
 
     /* ============================================
@@ -4488,6 +4617,25 @@
       align-items: center;
       gap: 48px;
       flex-wrap: wrap;
+    }
+
+    @media (max-width: 768px) {
+      .trust-badges {
+        gap: 16px;
+      }
+      .trust-badge {
+        min-width: 140px;
+        padding: 16px;
+      }
+      .trust-section {
+        padding: 48px 16px;
+      }
+      .testimonials-section {
+        padding: 48px 16px;
+      }
+      .testimonial-card {
+        padding: 20px;
+      }
     }
 
     .trust-badge {
@@ -4776,6 +4924,81 @@
       color: var(--text-primary);
     }
 
+    /* Mobile Sticky CTA */
+    .mobile-sticky-cta {
+      display: none;
+      position: fixed;
+      bottom: -80px;
+      left: 0;
+      right: 0;
+      z-index: 997;
+      transition: bottom 0.4s ease;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding: 8px 12px 12px;
+    }
+
+    .mobile-sticky-cta.visible {
+      bottom: 0;
+    }
+
+    .sticky-nav {
+      display: flex;
+      justify-content: space-around;
+      gap: 4px;
+    }
+
+    .sticky-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 4px;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      flex: 1;
+    }
+
+    .sticky-btn:active {
+      transform: scale(0.95);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .sticky-btn .icon-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .sticky-hubble { color: #eab308; }
+    .sticky-hubble .icon-dot { background: #eab308; box-shadow: 0 0 8px #eab308; }
+
+    .sticky-booyah { color: #ef4444; }
+    .sticky-booyah .icon-dot { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+
+    .sticky-calc { color: #a855f7; }
+    .sticky-calc .icon-dot { background: #a855f7; box-shadow: 0 0 8px #a855f7; }
+
+    .sticky-toolbox { color: #22c55e; }
+    .sticky-toolbox .icon-dot { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+
+    @media (max-width: 768px) {
+      .mobile-sticky-cta {
+        display: block;
+      }
+      .bottom-banner {
+        display: none;
+      }
+    }
+
     /* Light theme adjustments for new sections */
     [data-theme="light"] .client-logos-section {
       background: #ffffff;
@@ -4921,82 +5144,109 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: rgba(10, 10, 10, 0.98);
-      backdrop-filter: blur(20px);
-      border-top: 1px solid var(--border-primary);
-      border-radius: 24px 24px 0 0;
-      padding: 24px 20px 32px;
+      background: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 8px 8px calc(env(safe-area-inset-bottom, 8px) + 4px);
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      z-index: 9999;
+    }
+
+    .mobile-nav .nav-item {
+      display: flex;
       flex-direction: column;
-      gap: 8px;
-      z-index: 99;
-      transform: translateY(100%);
-      opacity: 0;
-      transition: transform 0.3s ease, opacity 0.3s ease;
-      max-height: 70vh;
-      overflow-y: auto;
-    }
-
-    .mobile-nav::before {
-      content: '';
-      position: absolute;
-      top: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 40px;
-      height: 4px;
-      background: var(--border-primary);
-      border-radius: 2px;
-    }
-
-    .mobile-nav.active {
-      transform: translateY(0);
-      opacity: 1;
-    }
-
-    .mobile-nav .tab-btn {
-      width: 100%;
-      text-align: center;
-      padding: 16px 20px;
-      border-radius: 12px;
-      font-size: 15px;
-      background: var(--bg-tertiary);
-      min-height: 48px;
+      align-items: center;
       justify-content: center;
+      gap: 3px;
+      padding: 8px 6px;
+      text-decoration: none;
+      border: none;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      flex: 1;
+      text-align: center;
     }
 
-    .mobile-nav .tab-btn:hover {
-      background: var(--bg-card);
+    .mobile-nav .nav-item span {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      font-weight: 600;
     }
+
+    .mobile-nav .nav-item:active {
+      transform: scale(0.95);
+    }
+
+    .mobile-nav .nav-item .nav-icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Model - white/neutral with subtle bg */
+    .mobile-nav #mobileModelBtn { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); }
+    .mobile-nav #mobileModelBtn .nav-icon { color: rgba(255, 255, 255, 0.9); }
+    .mobile-nav #mobileModelBtn span { color: rgba(255, 255, 255, 0.7); }
+
+    /* Hubble - yellow */
+    .mobile-nav .nav-hubble { background: rgba(251, 191, 36, 0.15); border: 1px solid rgba(251, 191, 36, 0.4); }
+    .mobile-nav .nav-hubble .nav-icon { color: #FBBF24; }
+    .mobile-nav .nav-hubble span { color: rgba(251, 191, 36, 0.9); }
+
+    /* Login - red/coral */
+    .mobile-nav .nav-login { background: rgba(248, 113, 113, 0.15); border: 1px solid rgba(248, 113, 113, 0.4); }
+    .mobile-nav .nav-login .nav-icon { color: #F87171; }
+    .mobile-nav .nav-login span { color: rgba(248, 113, 113, 0.9); }
+
+    /* Calc - purple */
+    .mobile-nav .nav-calc { background: rgba(167, 139, 250, 0.15); border: 1px solid rgba(167, 139, 250, 0.4); }
+    .mobile-nav .nav-calc .nav-icon { color: #A78BFA; }
+    .mobile-nav .nav-calc span { color: rgba(167, 139, 250, 0.9); }
+
+    /* Tools - green */
+    .mobile-nav .nav-tools { background: rgba(52, 211, 153, 0.15); border: 1px solid rgba(52, 211, 153, 0.4); }
+    .mobile-nav .nav-tools .nav-icon { color: #34D399; }
+    .mobile-nav .nav-tools span { color: rgba(52, 211, 153, 0.9); }
 
     [data-theme="light"] .mobile-nav {
       background: rgba(255, 255, 255, 0.98);
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
     }
 
-    [data-theme="light"] .mobile-nav .tab-btn {
-      background: #f3f4f6;
-    }
+    [data-theme="light"] .mobile-nav #mobileModelBtn { background: rgba(0, 0, 0, 0.06); border: 1px solid rgba(0, 0, 0, 0.15); }
+    [data-theme="light"] .mobile-nav #mobileModelBtn .nav-icon { color: rgba(0, 0, 0, 0.7); }
+    [data-theme="light"] .mobile-nav #mobileModelBtn span { color: rgba(0, 0, 0, 0.5); }
+
+    [data-theme="light"] .mobile-nav .nav-hubble { background: rgba(217, 119, 6, 0.12); border: 1px solid rgba(217, 119, 6, 0.35); }
+    [data-theme="light"] .mobile-nav .nav-hubble .nav-icon { color: #D97706; }
+    [data-theme="light"] .mobile-nav .nav-hubble span { color: rgba(180, 100, 10, 0.9); }
+
+    [data-theme="light"] .mobile-nav .nav-login { background: rgba(220, 38, 38, 0.12); border: 1px solid rgba(220, 38, 38, 0.35); }
+    [data-theme="light"] .mobile-nav .nav-login .nav-icon { color: #DC2626; }
+    [data-theme="light"] .mobile-nav .nav-login span { color: rgba(185, 28, 28, 0.9); }
+
+    [data-theme="light"] .mobile-nav .nav-calc { background: rgba(124, 58, 237, 0.12); border: 1px solid rgba(124, 58, 237, 0.35); }
+    [data-theme="light"] .mobile-nav .nav-calc .nav-icon { color: #7C3AED; }
+    [data-theme="light"] .mobile-nav .nav-calc span { color: rgba(109, 40, 217, 0.9); }
+
+    [data-theme="light"] .mobile-nav .nav-tools { background: rgba(5, 150, 105, 0.12); border: 1px solid rgba(5, 150, 105, 0.35); }
+    [data-theme="light"] .mobile-nav .nav-tools .nav-icon { color: #059669; }
+    [data-theme="light"] .mobile-nav .nav-tools span { color: rgba(4, 120, 87, 0.9); }
 
     .mobile-nav-overlay {
       display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 98;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-      visibility: hidden;
-    }
-
-    .mobile-nav-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-      visibility: visible;
     }
 
     @media (max-width: 768px) {
       .hamburger {
-        display: flex;
+        display: none;
       }
 
       .tab-nav {
@@ -5007,8 +5257,8 @@
         display: flex;
       }
 
-      .mobile-nav-overlay {
-        display: block;
+      body {
+        padding-bottom: 80px;
       }
     }
 
@@ -5140,13 +5390,40 @@
 
   <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
   <nav class="mobile-nav" id="mobileNav">
-    <button class="tab-btn" id="mobileModelBtn">Model</button>
-    <a href="https://ables.ai/search.html" class="tab-btn">Hubble<span class="api-badge">API</span></a>
-    <a href="https://ables.ai/booyah.html" class="tab-btn">BOOYAH<span class="invite-badge">INVITE</span></a>
-    <a href="https://ables.ai/calculator.html" class="tab-btn">Calculator<span class="lite-badge">Lite</span></a>
-    <a href="https://ables.ai/toolbox.html" class="tab-btn">Toolbox<span class="free-badge">Free</span></a>
-    <a href="#pricing" class="tab-btn">Pricing</a>
-    <a href="https://ables.ai/login" class="tab-btn">Login</a>
+    <button class="nav-item" id="mobileModelBtn">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="12" r="3"/>
+        <circle cx="12" cy="12" r="8"/>
+      </svg>
+      <span>Model</span>
+    </button>
+    <a href="https://ables.ai/search.html" class="nav-item nav-hubble">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="11" cy="11" r="6"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+      <span>Hubble</span>
+    </a>
+    <a href="https://ables.ai/login" class="nav-item nav-login">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M4 20c0-4 4-6 8-6s8 2 8 6"/>
+      </svg>
+      <span>Login</span>
+    </a>
+    <a href="https://ables.ai/calculator.html" class="nav-item nav-calc">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="4" y="4" width="16" height="16" rx="2"/>
+        <path d="M4 12h16M12 4v16"/>
+      </svg>
+      <span>Calc</span>
+    </a>
+    <a href="https://ables.ai/toolbox.html" class="nav-item nav-tools">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+      </svg>
+      <span>Tools</span>
+    </a>
   </nav>
 
   <!-- Background Effects -->
@@ -5169,6 +5446,12 @@
         <div class="hero-buttons">
           <a href="https://ables.ai/credit-model.html" class="hero-cta">See It In Action</a>
           <a href="https://ables.ai/signup" class="hero-cta hero-cta-secondary">Start Free Trial</a>
+        </div>
+        <div class="scroll-indicator">
+          Scroll to explore
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12l7 7 7-7"/>
+          </svg>
         </div>
         <div class="hero-stats">
           <div class="hero-stat">
@@ -5454,7 +5737,7 @@
         <div class="expanded-body">
           <div class="slider-group">
             <div class="slider-header"><span class="slider-label">Max Funding Amount</span><span class="slider-value" id="staticFundingValue">$155,000</span></div>
-            <input type="range" class="slider" id="staticFundingSlider" min="25000" max="500000" step="1000" value="155000">
+            <input type="range" class="slider" id="staticFundingSlider" min="25000" max="500000" step="1" value="155000">
           </div>
           <div class="slider-group">
             <div class="slider-header"><span class="slider-label">Max Term Length</span><span class="slider-value" id="staticTermValue">10 Months</span></div>
@@ -5512,7 +5795,7 @@
         <div class="expanded-body">
           <div class="slider-group">
             <div class="slider-header"><span class="slider-label">Funding Amount</span><span class="slider-value" id="staticIsoAmountValue">$155,000</span></div>
-            <input type="range" class="slider iso-slider" id="staticIsoAmountSlider" min="25000" max="155000" step="1000" value="155000">
+            <input type="range" class="slider iso-slider" id="staticIsoAmountSlider" min="25000" max="155000" step="1" value="155000">
             <div class="slider-range">
                 <span>$25k</span>
                 <span id="staticIsoMaxAmount">Max: $155k</span>
@@ -5580,7 +5863,7 @@
         <div class="expanded-body">
           <div class="slider-group">
             <div class="slider-header"><span class="slider-label">How Much Do You Need?</span><span class="slider-value" id="staticClientFundingValue">$155,000</span></div>
-            <input type="range" class="slider client-slider" id="staticClientFundingSlider" min="25000" max="155000" step="1000" value="155000">
+            <input type="range" class="slider client-slider" id="staticClientFundingSlider" min="25000" max="155000" step="1" value="155000">
             <div class="slider-range">
                 <span>$25k</span>
                 <span id="staticClientMaxLabel" style="color: #10b981;">Max: $155k</span>
@@ -6171,7 +6454,7 @@
                 <span class="calc-input-pts" id="calcRevenuePoints">14 pts</span>
               </div>
               <div class="calc-input-value" id="calcRevenueValue">$58K</div>
-              <input type="range" id="calcRevenueSlider" min="5000" max="200000" value="58000" step="1000">
+              <input type="range" id="calcRevenueSlider" min="5000" max="200000" value="58000" step="1">
               <div class="calc-input-range-labels">
                 <span>$5K</span>
                 <span>$200K</span>
@@ -6594,28 +6877,28 @@
         <!-- Row 1 -->
         <div class="integration-item">
           <div class="integration-logo">
-            <img src="https://cdn.simpleicons.org/zoho" alt="Zoho" width="32" height="32">
+            <img loading="lazy" src="https://cdn.simpleicons.org/zoho" alt="Zoho" width="32" height="32">
           </div>
           <span class="integration-name">Zoho CRM</span>
         </div>
 
         <div class="integration-item">
           <div class="integration-logo">
-            <img src="https://cdn.simpleicons.org/plaid" alt="Plaid" width="32" height="32">
+            <img loading="lazy" src="https://cdn.simpleicons.org/plaid" alt="Plaid" width="32" height="32">
           </div>
           <span class="integration-name">Plaid</span>
         </div>
 
         <div class="integration-item">
           <div class="integration-logo">
-            <img src="https://cdn.simpleicons.org/googledrive" alt="Google Drive" width="32" height="32">
+            <img loading="lazy" src="https://cdn.simpleicons.org/googledrive" alt="Google Drive" width="32" height="32">
           </div>
           <span class="integration-name">Google Drive</span>
         </div>
 
         <div class="integration-item">
           <div class="integration-logo">
-            <img src="https://cdn.simpleicons.org/zapier" alt="Zapier" width="32" height="32">
+            <img loading="lazy" src="https://cdn.simpleicons.org/zapier" alt="Zapier" width="32" height="32">
           </div>
           <span class="integration-name">Zapier</span>
         </div>
@@ -6634,7 +6917,7 @@
 
         <div class="integration-item">
           <div class="integration-logo">
-            <img src="https://cdn.simpleicons.org/googlegemini" alt="Gemini" width="32" height="32">
+            <img loading="lazy" src="https://cdn.simpleicons.org/googlegemini" alt="Gemini" width="32" height="32">
           </div>
           <span class="integration-name">Gemini</span>
         </div>
@@ -6642,42 +6925,42 @@
         <!-- Row 2 -->
         <div class="integration-item">
           <div class="integration-logo">
-            <img src="https://cdn.simpleicons.org/anthropic" alt="Anthropic" width="32" height="32">
+            <img loading="lazy" src="https://cdn.simpleicons.org/anthropic" alt="Anthropic" width="32" height="32">
           </div>
           <span class="integration-name">Anthropic</span>
         </div>
 
         <div class="integration-item">
           <div class="integration-logo">
-            <img src="https://cdn.simpleicons.org/openai" alt="OpenAI" width="32" height="32">
+            <img loading="lazy" src="https://cdn.simpleicons.org/openai" alt="OpenAI" width="32" height="32">
           </div>
           <span class="integration-name">OpenAI</span>
         </div>
 
         <div class="integration-item">
           <div class="integration-logo">
-            <img src="https://cdn.simpleicons.org/salesforce" alt="Salesforce" width="32" height="32">
+            <img loading="lazy" src="https://cdn.simpleicons.org/salesforce" alt="Salesforce" width="32" height="32">
           </div>
           <span class="integration-name">Salesforce</span>
         </div>
 
         <div class="integration-item">
           <div class="integration-logo">
-            <img src="https://cdn.simpleicons.org/hubspot" alt="HubSpot" width="32" height="32">
+            <img loading="lazy" src="https://cdn.simpleicons.org/hubspot" alt="HubSpot" width="32" height="32">
           </div>
           <span class="integration-name">HubSpot</span>
         </div>
 
         <div class="integration-item">
           <div class="integration-logo">
-            <img src="https://cdn.simpleicons.org/microsoft" alt="Microsoft 365" width="32" height="32">
+            <img loading="lazy" src="https://cdn.simpleicons.org/microsoft" alt="Microsoft 365" width="32" height="32">
           </div>
           <span class="integration-name">Office 365</span>
         </div>
 
         <div class="integration-item">
           <div class="integration-logo">
-            <img src="https://cdn.simpleicons.org/github" alt="GitHub" width="32" height="32">
+            <img loading="lazy" src="https://cdn.simpleicons.org/github" alt="GitHub" width="32" height="32">
           </div>
           <span class="integration-name">GitHub</span>
         </div>
@@ -6707,14 +6990,14 @@
 
         <div class="integration-item">
           <div class="integration-logo">
-            <img src="https://cdn.simpleicons.org/experian" alt="Experian" width="32" height="32">
+            <img loading="lazy" src="https://cdn.simpleicons.org/experian" alt="Experian" width="32" height="32">
           </div>
           <span class="integration-name">Experian</span>
         </div>
 
         <div class="integration-item">
           <div class="integration-logo">
-            <img src="https://cdn.simpleicons.org/equifax" alt="Equifax" width="32" height="32">
+            <img loading="lazy" src="https://cdn.simpleicons.org/equifax" alt="Equifax" width="32" height="32">
           </div>
           <span class="integration-name">Equifax</span>
         </div>
@@ -6732,7 +7015,7 @@
 
         <div class="integration-item">
           <div class="integration-logo">
-            <img src="https://cdn.simpleicons.org/gmail" alt="Gmail" width="32" height="32">
+            <img loading="lazy" src="https://cdn.simpleicons.org/gmail" alt="Gmail" width="32" height="32">
           </div>
           <span class="integration-name">Gmail</span>
         </div>
@@ -7095,6 +7378,28 @@
     </div>
   </footer>
 
+  <!-- Mobile Sticky CTA -->
+  <div class="mobile-sticky-cta" id="mobileStickyCtA">
+    <div class="sticky-nav">
+      <a href="https://ables.ai/hubble.html" class="sticky-btn sticky-hubble">
+        <span class="icon-dot"></span>
+        Hubble
+      </a>
+      <a href="https://ables.ai/booyah.html" class="sticky-btn sticky-booyah">
+        <span class="icon-dot"></span>
+        Booyah
+      </a>
+      <a href="https://ables.ai/calculator.html" class="sticky-btn sticky-calc">
+        <span class="icon-dot"></span>
+        Calculator
+      </a>
+      <a href="https://ables.ai/toolbox.html" class="sticky-btn sticky-toolbox">
+        <span class="icon-dot"></span>
+        Toolbox
+      </a>
+    </div>
+  </div>
+
   <!-- Modal -->
   <div class="card-modal" id="cardModal">
     <div class="card-modal-backdrop"></div>
@@ -7121,11 +7426,13 @@
         <div class="expanded-body">
           <div class="slider-group">
             <div class="slider-header"><span class="slider-label">Max Funding Amount</span><span class="slider-value" id="fundingValue">$155,000</span></div>
-            <input type="range" class="slider" id="fundingSlider" min="25000" max="500000" step="1000" value="155000">
+            <input type="range" class="slider" id="fundingSlider" min="25000" max="500000" step="1" value="155000">
+            <div class="slider-range"><span>$25k</span><span>Max: $500k</span></div>
           </div>
           <div class="slider-group">
             <div class="slider-header"><span class="slider-label">Max Term Length</span><span class="slider-value" id="termValue">10 Months</span></div>
             <input type="range" class="slider" id="termSlider" min="3" max="24" step="1" value="10">
+            <div class="slider-range"><span>3 mo</span><span>Max: 24 mo</span></div>
           </div>
           <div class="frequency-group">
             <div class="frequency-toggle-label">Payment Frequency</div>
@@ -7137,6 +7444,7 @@
           <div class="slider-group">
             <div class="slider-header"><span class="slider-label">Factor Rate</span><span class="slider-value" id="factorValue">1.28x</span></div>
             <input type="range" class="slider" id="factorSlider" min="1.10" max="1.55" step="0.01" value="1.28">
+            <div class="slider-range"><span>1.10x</span><span>Max: 1.55x</span></div>
           </div>
           <div class="expanded-results">
             <div class="result-row"><span>Total Payback</span><span id="lenderPayback">$198,400</span></div>
@@ -7167,7 +7475,7 @@
         <div class="expanded-body">
           <div class="slider-group">
             <div class="slider-header"><span class="slider-label">Amount</span><span class="slider-value" id="clientFundingValue">$155,000</span></div>
-            <input type="range" class="slider client-slider" id="clientFundingSlider" min="25000" step="1000" value="155000">
+            <input type="range" class="slider client-slider" id="clientFundingSlider" min="25000" step="1" value="155000">
             <div class="slider-range">
                 <span>$25k</span>
                 <span id="clientMaxLabel" style="color: #10b981;">Max: $155k</span>
@@ -7207,7 +7515,7 @@
         <div class="expanded-body">
           <div class="slider-group">
             <div class="slider-header"><span class="slider-label">Funding Amount</span><span class="slider-value" id="isoAmountValue">$155,000</span></div>
-            <input type="range" class="slider iso-slider" id="isoAmountSlider" min="25000" max="155000" step="1000" value="155000">
+            <input type="range" class="slider iso-slider" id="isoAmountSlider" min="25000" max="155000" step="1" value="155000">
             <div class="slider-range">
                 <span>$25k</span>
                 <span id="isoMaxAmount">Max: $155k</span>
@@ -7716,6 +8024,30 @@
       // Initial Render
       updateDisplay();
 
+      // Update slider fill based on value
+      function updateSliderFill(slider) {
+        if (!slider) return;
+        const min = parseFloat(slider.min);
+        const max = parseFloat(slider.max);
+        const val = parseFloat(slider.value);
+        const percentage = ((val - min) / (max - min)) * 100;
+        
+        let fillColor = 'var(--accent)';
+        if (slider.classList.contains('iso-slider')) {
+          fillColor = '#a855f7';
+        } else if (slider.classList.contains('client-slider')) {
+          fillColor = '#10b981';
+        }
+        
+        slider.style.background = `linear-gradient(to right, ${fillColor} 0%, ${fillColor} ${percentage}%, var(--border-secondary) ${percentage}%, var(--border-secondary) 100%)`;
+      }
+
+      // Apply to all sliders
+      document.querySelectorAll('.slider').forEach(slider => {
+        updateSliderFill(slider);
+        slider.addEventListener('input', () => updateSliderFill(slider));
+      });
+
       // Carousel hover handlers
       const carousel = document.querySelector('.approval-carousel');
       if (carousel) {
@@ -7849,6 +8181,7 @@
 
       // Header scroll effect
       const mainHeader = document.querySelector('.main-header');
+      const mobileStickyCtA = document.getElementById('mobileStickyCtA');
       
       if (mainHeader) {
         window.addEventListener('scroll', () => {
@@ -7856,6 +8189,15 @@
             mainHeader.classList.add('scrolled');
           } else {
             mainHeader.classList.remove('scrolled');
+          }
+          
+          // Show mobile sticky CTA after scrolling past hero
+          if (mobileStickyCtA) {
+            if (window.scrollY > 500) {
+              mobileStickyCtA.classList.add('visible');
+            } else {
+              mobileStickyCtA.classList.remove('visible');
+            }
           }
         });
       }
@@ -7890,6 +8232,21 @@
         mobileNav.querySelectorAll('a').forEach(link => {
           link.addEventListener('click', closeMobileNav);
         });
+        
+        // Swipe down to close mobile menu
+        let touchStartY = 0;
+        let touchEndY = 0;
+        
+        mobileNav.addEventListener('touchstart', (e) => {
+          touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+        
+        mobileNav.addEventListener('touchend', (e) => {
+          touchEndY = e.changedTouches[0].screenY;
+          if (touchEndY - touchStartY > 50) {
+            closeMobileNav();
+          }
+        }, { passive: true });
       }
 
       // Mobile Model Button
