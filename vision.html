@@ -2847,6 +2847,7 @@
                                 <th colspan="3" class="col-group credits">Credits</th>
                                 <th colspan="3" class="col-group debits">Debits</th>
                                 <th colspan="4" class="col-group balances">Balances</th>
+                                <th colspan="2" class="col-group debits">Issues</th>
                             </tr>
                             <tr>
                                 <th>Total</th>
@@ -2859,6 +2860,8 @@
                                 <th>End</th>
                                 <th>Avg</th>
                                 <th>Min</th>
+                                <th>NSF</th>
+                                <th>OD</th>
                             </tr>
                         </thead>
                         <tbody id="accountTableBody">
@@ -3572,6 +3575,8 @@ Return a JSON object with EXACTLY this structure (no markdown, just pure JSON):
             "endBalance": 967,
             "avgBalance": 571,
             "minBalance": 116,
+            "nsfCount": 2,
+            "overdraftCount": 1,
             "credits": [
                 {"date": "Jul 1", "description": "DEPOSIT ACH SQUARE INC", "amount": 1234.56},
                 {"date": "Jul 3", "description": "DEPOSIT STRIPE TRANSFER", "amount": 567.89}
@@ -3704,7 +3709,7 @@ MCA/LOAN STACKING ANALYSIS - CRITICAL:
             });
         }
 
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.0-flash:generateContent?key=${apiKey}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -3997,6 +4002,9 @@ MCA/LOAN STACKING ANALYSIS - CRITICAL:
             const hasCredits = row.credits && row.credits.length > 0;
             const hasDebits = row.debits && row.debits.length > 0;
 
+            const nsfCount = row.nsfCount || 0;
+            const odCount = row.overdraftCount || 0;
+
             return `
             <tr>
                 <td>${row.month || '--'}</td>
@@ -4010,6 +4018,8 @@ MCA/LOAN STACKING ANALYSIS - CRITICAL:
                 <td>${formatCurrency(row.endBalance || 0)}</td>
                 <td>${formatCurrency(row.avgBalance || 0)}</td>
                 <td class="${(row.minBalance || 0) < 250 ? 'text-warning' : ''}">${formatCurrency(row.minBalance || 0)}</td>
+                <td class="${nsfCount > 0 ? 'text-danger' : ''}">${nsfCount}</td>
+                <td class="${odCount > 0 ? 'text-danger' : ''}">${odCount}</td>
             </tr>
         `}).join('');
 
@@ -4021,8 +4031,10 @@ MCA/LOAN STACKING ANALYSIS - CRITICAL:
             totalDebits: acc.totalDebits + (row.totalDebits || 0),
             trueDebits: acc.trueDebits + (row.trueDebits || 0),
             debitCount: acc.debitCount + (row.debitCount || 0),
-            avgBalanceSum: acc.avgBalanceSum + (row.avgBalance || 0)
-        }), { totalCredits: 0, trueCredits: 0, creditCount: 0, totalDebits: 0, trueDebits: 0, debitCount: 0, avgBalanceSum: 0 });
+            avgBalanceSum: acc.avgBalanceSum + (row.avgBalance || 0),
+            nsfCount: acc.nsfCount + (row.nsfCount || 0),
+            overdraftCount: acc.overdraftCount + (row.overdraftCount || 0)
+        }), { totalCredits: 0, trueCredits: 0, creditCount: 0, totalDebits: 0, trueDebits: 0, debitCount: 0, avgBalanceSum: 0, nsfCount: 0, overdraftCount: 0 });
 
         const first = data.monthlySummary[0] || {};
         const last = data.monthlySummary[data.monthlySummary.length - 1] || {};
@@ -4052,6 +4064,8 @@ MCA/LOAN STACKING ANALYSIS - CRITICAL:
                 <td>${formatCurrency(last.endBalance || 0)}</td>
                 <td>${formatCurrency(avgBalanceAll)}</td>
                 <td>${formatCurrency(minBalanceAll)}</td>
+                <td class="${totals.nsfCount > 0 ? 'text-danger' : ''}">${totals.nsfCount}</td>
+                <td class="${totals.overdraftCount > 0 ? 'text-danger' : ''}">${totals.overdraftCount}</td>
             </tr>
             <tr>
                 <td>AVERAGES</td>
@@ -4065,6 +4079,8 @@ MCA/LOAN STACKING ANALYSIS - CRITICAL:
                 <td>--</td>
                 <td>${formatCurrency(avgBalanceAll)}</td>
                 <td>${formatCurrency(minBalanceAll)}</td>
+                <td>--</td>
+                <td>--</td>
             </tr>
         `;
     }
