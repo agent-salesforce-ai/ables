@@ -1,0 +1,2894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hubble Pro - AblesAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Light Mode (Default) */
+            --bg-primary: #fafafa;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f4f4f5;
+            --bg-card: #ffffff;
+            --bg-hover: #f4f4f5;
+            --text-primary: #18181b;
+            --text-secondary: #52525b;
+            --text-muted: #a1a1aa;
+            --border-primary: #e4e4e7;
+            --border-secondary: #d4d4d8;
+            
+            /* Gold Accent System */
+            --accent: #f59e0b;
+            --accent-light: #fbbf24;
+            --accent-dark: #d97706;
+            --accent-glow: rgba(245, 158, 11, 0.15);
+            --accent-glow-strong: rgba(245, 158, 11, 0.25);
+            
+            /* Gold Scale */
+            --gold-50: #fffbeb;
+            --gold-100: #fef3c7;
+            --gold-200: #fde68a;
+            --gold-300: #fcd34d;
+            --gold-400: #fbbf24;
+            --gold-500: #f59e0b;
+            --gold-600: #d97706;
+            --gold-700: #b45309;
+            --gold-800: #92400e;
+            --gold-900: #78350f;
+            
+            /* Status Colors */
+            --success: #22c55e;
+            --success-bg: rgba(34, 197, 94, 0.1);
+            --warning: #f59e0b;
+            --warning-bg: rgba(245, 158, 11, 0.1);
+            --danger: #ef4444;
+            --danger-bg: rgba(239, 68, 68, 0.1);
+            --info: #3b82f6;
+            --info-bg: rgba(59, 130, 246, 0.1);
+            
+            /* Risk Tiers */
+            --tier-low: #22c55e;
+            --tier-medium: #f59e0b;
+            --tier-high: #f97316;
+            --tier-critical: #ef4444;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+            --shadow-lg: 0 12px 32px rgba(0,0,0,0.5);
+            --shadow-glow: 0 0 20px var(--accent-glow);
+            
+            /* Radii */
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 20px;
+            
+            /* Transitions */
+            --transition: 0.15s ease;
+        }
+
+        .dark-mode {
+            /* True Black Dark Mode */
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-tertiary: #141414;
+            --bg-card: #0a0a0a;
+            --bg-hover: #1a1a1a;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border-primary: #27272a;
+            --border-secondary: #3f3f46;
+            --accent-glow: rgba(245, 158, 11, 0.15);
+            --accent-glow-strong: rgba(245, 158, 11, 0.25);
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.5);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.6);
+            --shadow-lg: 0 12px 32px rgba(0,0,0,0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            font-size: 15px;
+            letter-spacing: 0.01em;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Background Grid */
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(245, 158, 11, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(245, 158, 11, 0.03) 1px, transparent 1px);
+            background-size: 32px 32px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .dark-mode .bg-grid {
+            background-image:
+                linear-gradient(rgba(245, 158, 11, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(245, 158, 11, 0.03) 1px, transparent 1px);
+        }
+
+        /* Orbit System */
+        .orbit-system {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 700px;
+            height: 700px;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.5;
+        }
+
+        .main.has-report .orbit-system {
+            opacity: 0.08;
+        }
+
+        .orbit-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(234, 179, 8, 0.4) 0%, rgba(234, 179, 8, 0.1) 40%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(20px);
+        }
+
+        .orbit-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border: 1px solid rgba(234, 179, 8, 0.12);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .orbit-ring-1 { width: 250px; height: 250px; animation: orbit-rotate 30s linear infinite; }
+        .orbit-ring-2 { width: 400px; height: 400px; animation: orbit-rotate 45s linear infinite reverse; }
+        .orbit-ring-3 { width: 550px; height: 550px; animation: orbit-rotate 60s linear infinite; }
+
+        @keyframes orbit-rotate {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .orbit-particle {
+            position: absolute;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+        }
+
+        .particle-1 {
+            width: 10px;
+            height: 10px;
+            background: #eab308;
+            box-shadow: 0 0 15px 5px rgba(234, 179, 8, 0.5);
+            animation: orb1 20s linear infinite;
+        }
+
+        .particle-2 {
+            width: 8px;
+            height: 8px;
+            background: #a855f7;
+            box-shadow: 0 0 12px 4px rgba(168, 85, 247, 0.5);
+            animation: orb2 25s linear infinite;
+        }
+
+        .particle-3 {
+            width: 6px;
+            height: 6px;
+            background: #22c55e;
+            box-shadow: 0 0 10px 3px rgba(34, 197, 94, 0.5);
+            animation: orb3 18s linear infinite reverse;
+        }
+
+        .particle-4 {
+            width: 8px;
+            height: 8px;
+            background: #f97316;
+            box-shadow: 0 0 12px 4px rgba(249, 115, 22, 0.5);
+            animation: orb4 30s linear infinite;
+        }
+
+        @keyframes orb1 {
+            0% { transform: translate(-50%, -50%) rotate(0deg) translateX(125px); }
+            100% { transform: translate(-50%, -50%) rotate(360deg) translateX(125px); }
+        }
+
+        @keyframes orb2 {
+            0% { transform: translate(-50%, -50%) rotate(60deg) translateX(200px); }
+            100% { transform: translate(-50%, -50%) rotate(420deg) translateX(200px); }
+        }
+
+        @keyframes orb3 {
+            0% { transform: translate(-50%, -50%) rotate(120deg) translateX(275px); }
+            100% { transform: translate(-50%, -50%) rotate(480deg) translateX(275px); }
+        }
+
+        @keyframes orb4 {
+            0% { transform: translate(-50%, -50%) rotate(180deg) translateX(150px); }
+            100% { transform: translate(-50%, -50%) rotate(540deg) translateX(150px); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            background: transparent;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            height: 65px;
+        }
+
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+        }
+
+        .logo-text span {
+            color: var(--accent);
+        }
+
+        .header-nav {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            background: transparent;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+            text-decoration: none;
+        }
+
+        .nav-item:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            border-radius: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        .nav-badge.api {
+            background: transparent;
+            color: #eab308;
+            border: 1px solid #eab308;
+        }
+
+        .nav-badge.invite {
+            background: transparent;
+            color: #f43f5e;
+            border: 1px solid #f43f5e;
+        }
+
+        .nav-badge.lite {
+            background: transparent;
+            color: #a855f7;
+            border: 1px solid #a855f7;
+        }
+
+        .nav-badge.free {
+            background: transparent;
+            color: #10b981;
+            border: 1px solid #10b981;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .settings-dropdown {
+            position: relative;
+        }
+
+        .settings-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .settings-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .settings-menu {
+            display: none;
+            position: fixed;
+            top: 73px;
+            right: 24px;
+            background: #1a1a1a;
+            border: 1px solid #3f3f46;
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            min-width: 240px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            z-index: 1000;
+        }
+
+        .settings-menu.active {
+            display: block;
+        }
+
+        .settings-menu-item {
+            margin-bottom: 16px;
+        }
+
+        .settings-menu-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .settings-menu-item label {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #71717a;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+
+        .settings-menu-item select,
+        .settings-menu-item input {
+            width: 100%;
+            padding: 10px 12px;
+            background: #0a0a0a;
+            border: 1px solid #3f3f46;
+            border-radius: var(--radius-md);
+            color: #fafafa;
+            font-family: inherit;
+            font-size: 0.85rem;
+        }
+
+        .settings-menu-item select:focus,
+        .settings-menu-item input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .settings-menu-item select option {
+            background: #0a0a0a;
+            color: #fafafa;
+        }
+
+        .theme-toggle-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 10px 12px;
+            background: #0a0a0a;
+            border: 1px solid #3f3f46;
+            border-radius: var(--radius-md);
+            color: #a1a1aa;
+            font-family: inherit;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .theme-toggle-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Main Content */
+        .main {
+            padding: 0;
+            padding-top: 65px;
+        }
+
+        .main.has-report {
+            padding: 32px 0;
+            padding-top: 97px;
+        }
+
+        .main.has-report .hero-section {
+            display: none;
+        }
+
+        /* Hero / Landing Section */
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 64px);
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .hero-logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 24px;
+            filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.4));
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -0.03em;
+            background: linear-gradient(90deg, #ffffff, #facc15, #eab308, #facc15, #ffffff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-shift 3s ease-in-out infinite;
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% center; }
+            50% { background-position: 100% center; }
+            100% { background-position: 0% center; }
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+        }
+
+        .hero-search {
+            display: flex;
+            align-items: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border-secondary);
+            border-radius: 60px;
+            padding: 8px 8px 8px 24px;
+            width: 100%;
+            max-width: 560px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: var(--transition);
+        }
+
+        .hero-search:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1), 0 0 0 4px var(--accent-glow);
+        }
+
+        .hero-search input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            font-size: 1rem;
+            color: var(--text-primary);
+            font-family: inherit;
+            outline: none;
+        }
+
+        .hero-search input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .hero-search .api-mini {
+            width: 100px;
+            background: transparent;
+            border: none;
+            border-left: 1px solid var(--border-primary);
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-family: inherit;
+            outline: none;
+        }
+
+        .hero-search-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .hero-search-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--accent-glow-strong);
+        }
+
+        .hero-search-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .hero-search-btn svg {
+            width: 20px;
+            height: 20px;
+            color: #000;
+        }
+
+        .hero-location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            color: var(--text-muted);
+        }
+
+        .hero-location input {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border-primary);
+            padding: 8px 4px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-family: inherit;
+            outline: none;
+            width: 200px;
+            transition: var(--transition);
+        }
+
+        .hero-location input:focus {
+            border-color: var(--accent);
+        }
+
+        .hero-location input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Location Map Card */
+        .location-map-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .location-map-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-primary);
+            background: var(--bg-secondary);
+        }
+
+        .location-map-header svg {
+            color: var(--accent);
+        }
+
+        .location-map-header span {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .location-map-iframe {
+            width: 100%;
+            height: 200px;
+            border: none;
+        }
+
+        /* Config Panel - hidden when in hero mode */
+        .config-panel {
+            display: none;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 16px;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-group input,
+        .form-group select {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-secondary);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold-400), var(--gold-600));
+            color: #000;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px var(--accent-glow-strong);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary.loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .btn-primary.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(0,0,0,0.2);
+            border-top-color: #000;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-secondary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent);
+        }
+
+        /* Progress Bar (inline in config) */
+        .progress-inline {
+            display: none;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-primary);
+        }
+
+        .progress-inline.active {
+            display: block;
+        }
+
+        .progress-inline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+        }
+
+        .progress-inline-title {
+            color: var(--text-secondary);
+        }
+
+        .progress-inline-title span {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .progress-inline-stats {
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .progress-bar-container {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-xl);
+            height: 6px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold-400), var(--gold-600));
+            border-radius: var(--radius-xl);
+            transition: width 0.3s ease;
+            width: 0%;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        /* Legacy progress section - hidden */
+        .progress-section { display: none !important; }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+        }
+
+        .module-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .module-status.pending {
+            color: var(--text-muted);
+        }
+
+        .module-status.running {
+            background: var(--accent-glow);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .module-status.complete {
+            background: var(--success-bg);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .module-status.error {
+            background: var(--danger-bg);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .status-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            flex-shrink: 0;
+        }
+
+        .pending .status-icon {
+            border: 2px solid var(--text-muted);
+        }
+
+        .running .status-icon {
+            border: 2px solid var(--accent);
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+
+        .complete .status-icon {
+            background: var(--success);
+            color: white;
+        }
+
+        .error .status-icon {
+            background: var(--danger);
+            color: white;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Report Section */
+        .report-section {
+            display: none;
+        }
+
+        .report-section.active {
+            display: block;
+        }
+
+        /* Compact Report Bar */
+        .report-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-lg);
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            flex-wrap: wrap;
+        }
+
+        .report-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .report-bar-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        .report-bar-stats {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-xl);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .stat-chip strong {
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+        }
+
+        .stat-chip.risk {
+            font-weight: 600;
+        }
+
+        .stat-chip.risk.low { background: rgba(34, 197, 94, 0.15); color: var(--tier-low); }
+        .stat-chip.risk.medium { background: rgba(245, 158, 11, 0.15); color: var(--tier-medium); }
+        .stat-chip.risk.high { background: rgba(249, 115, 22, 0.15); color: var(--tier-high); }
+        .stat-chip.risk.critical { background: rgba(239, 68, 68, 0.15); color: var(--tier-critical); }
+
+        .report-bar-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .report-bar-actions .btn {
+            padding: 8px 14px;
+            font-size: 0.8rem;
+        }
+
+        /* Legacy - hidden */
+        .summary-dashboard { display: none; }
+        .report-header { display: none; }
+
+        /* Module Layout - Side Nav + Content */
+        .module-layout {
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+        }
+
+        /* Side Navigation */
+        .module-side-nav {
+            width: 220px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 88px;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+            background: var(--bg-card);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-lg);
+            padding: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .side-nav-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 8px 10px;
+            margin-bottom: 8px;
+        }
+
+        .module-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            margin-bottom: 4px;
+        }
+
+        .module-nav-item:hover {
+            background: var(--bg-hover);
+            border-color: var(--border-secondary);
+        }
+
+        .module-nav-item.active {
+            background: var(--accent-glow);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .module-nav-item.loading {
+            opacity: 0.6;
+        }
+
+        .module-nav-item.loading .nav-icon {
+            animation: spin 1s linear infinite;
+            border: 2px solid var(--accent);
+            border-top-color: transparent;
+            border-right-color: transparent;
+            background: transparent;
+            color: transparent;
+        }
+
+        .module-nav-item .nav-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.65rem;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-primary);
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .module-nav-item.complete .nav-icon {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .module-nav-item.error .nav-icon {
+            background: var(--danger);
+            border-color: var(--danger);
+            color: white;
+        }
+
+        .module-nav-item .nav-text {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .module-nav-item .nav-badge {
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+            font-size: 0.6rem;
+            font-weight: 600;
+        }
+
+        .module-nav-item .nav-badge.low { background: rgba(34, 197, 94, 0.2); color: var(--tier-low); }
+        .module-nav-item .nav-badge.medium { background: rgba(245, 158, 11, 0.2); color: var(--tier-medium); }
+        .module-nav-item .nav-badge.high { background: rgba(249, 115, 22, 0.2); color: var(--tier-high); }
+        .module-nav-item .nav-badge.critical { background: rgba(239, 68, 68, 0.2); color: var(--tier-critical); }
+
+        /* Main Content Area - All sections visible */
+        .module-content-area {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .module-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-lg);
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            scroll-margin-top: 88px;
+        }
+
+        .module-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-primary);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        .module-section-title {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .module-section-title .section-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            background: var(--accent-glow);
+            border: 2px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .module-section-title h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin: 0;
+            letter-spacing: -0.01em;
+        }
+
+        .module-section-title p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 4px 0 0 0;
+        }
+
+        .module-section-badges {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .module-section-content {
+            padding: 24px 28px;
+        }
+
+        .module-section.loading .module-section-content {
+            min-height: 100px;
+        }
+
+        /* Legacy tab styles - hidden but kept for JS compatibility */
+        .module-tabs-container { display: none; }
+        .module-tabs { display: none; }
+        .module-tab { display: none; }
+        .tab-content-panel { display: none; }
+        .tab-pane { display: none; }
+
+        .tab-pane-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-primary);
+        }
+
+        .tab-pane-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .tab-pane-description {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .tab-pane-badges {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .risk-badge {
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .risk-badge.low { background: rgba(34, 197, 94, 0.15); color: var(--tier-low); border: 1px solid rgba(34, 197, 94, 0.3); }
+        .risk-badge.medium { background: rgba(245, 158, 11, 0.15); color: var(--tier-medium); border: 1px solid rgba(245, 158, 11, 0.3); }
+        .risk-badge.high { background: rgba(249, 115, 22, 0.15); color: var(--tier-high); border: 1px solid rgba(249, 115, 22, 0.3); }
+        .risk-badge.critical { background: rgba(239, 68, 68, 0.15); color: var(--tier-critical); border: 1px solid rgba(239, 68, 68, 0.3); }
+
+        .finding-count {
+            padding: 5px 12px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-xl);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .finding-count.has-findings {
+            background: var(--danger-bg);
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        /* Legacy module-card styles for compatibility */
+        .module-card { display: none; }
+        .module-content { padding: 0; }
+
+        .module-summary {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.75;
+            padding: 18px 20px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--accent);
+        }
+
+        /* Findings Table */
+        .findings-table-wrapper {
+            overflow-x: auto;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-md);
+        }
+
+        .findings-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+            min-width: 600px;
+        }
+
+        .findings-table th {
+            text-align: left;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid var(--border-secondary);
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+        }
+
+        .findings-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-primary);
+            vertical-align: middle;
+            max-width: 280px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .findings-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Alternating row colors for better readability */
+        .findings-table tbody tr:nth-child(even) td {
+            background: var(--bg-tertiary);
+        }
+
+        .findings-table tr:hover td {
+            background: var(--accent-glow);
+        }
+
+        .findings-table tr.has-source:hover td {
+            background: var(--accent-glow);
+            cursor: pointer;
+        }
+
+        .findings-table a,
+        .findings-table .table-link {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .findings-table a:hover,
+        .findings-table .table-link:hover {
+            text-decoration: underline;
+        }
+
+        .findings-table .table-link {
+            word-break: break-all;
+        }
+
+        /* Source link in table */
+        .source-cell {
+            white-space: nowrap;
+            text-align: center;
+            width: 70px;
+        }
+
+        .source-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            background: var(--accent-glow);
+            border: 1px solid var(--accent);
+            border-radius: var(--radius-sm);
+            color: var(--accent);
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .source-link:hover {
+            background: var(--accent);
+            color: #000;
+            text-decoration: none;
+        }
+
+        .source-link svg {
+            flex-shrink: 0;
+        }
+
+        .no-source-indicator {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        /* Key Concerns */
+        .key-concerns {
+            background: var(--danger-bg);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            margin-bottom: 20px;
+        }
+
+        .concerns-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--danger);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .concerns-title::before {
+            content: '⚠';
+            font-size: 0.85rem;
+        }
+
+        .key-concerns ul {
+            margin: 0;
+            padding-left: 20px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.65;
+        }
+
+        .key-concerns li {
+            margin-bottom: 6px;
+        }
+
+        .key-concerns li:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Sources Section */
+        .sources-section {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-primary);
+        }
+
+        .sources-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 14px;
+        }
+
+        .sources-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .source-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .source-chip:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-glow);
+        }
+
+        .source-confidence {
+            font-size: 0.7rem;
+            padding: 3px 6px;
+            background: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Raw Data Toggle */
+        .raw-data-toggle {
+            margin-top: 20px;
+        }
+
+        .raw-data-toggle summary {
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            padding: 8px 0;
+            transition: var(--transition);
+        }
+
+        .raw-data-toggle summary:hover {
+            color: var(--text-secondary);
+        }
+
+        .raw-data {
+            margin-top: 12px;
+            padding: 16px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-md);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        /* Cost Tracker */
+        .cost-tracker {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-secondary);
+            border-radius: var(--radius-lg);
+            padding: 14px 20px;
+            box-shadow: var(--shadow-lg);
+            z-index: 100;
+        }
+
+        .cost-tracker-title {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 2px;
+        }
+
+        .cost-tracker-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent);
+        }
+
+        /* No findings state */
+        .no-findings {
+            text-align: center;
+            padding: 40px 32px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            border: 1px dashed var(--border-primary);
+        }
+
+        .no-findings::before {
+            content: '✓';
+            display: block;
+            font-size: 1.5rem;
+            color: var(--success);
+            margin-bottom: 8px;
+        }
+
+        /* Loading animation */
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--border-primary) 50%, var(--bg-tertiary) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: var(--radius-sm);
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .summary-dashboard {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .module-layout {
+                flex-direction: column;
+            }
+            .module-side-nav {
+                width: 100%;
+                position: relative;
+                top: 0;
+                max-height: none;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                padding: 12px;
+            }
+            .side-nav-title {
+                width: 100%;
+                margin-bottom: 4px;
+            }
+            .module-nav-item {
+                padding: 8px 12px;
+                margin-bottom: 0;
+            }
+            #sideNavItems {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
+            .header-inner {
+                padding: 0 16px;
+            }
+            .summary-dashboard {
+                grid-template-columns: 1fr;
+            }
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+            .progress-header {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+            .progress-stats {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+            .module-section-header {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .module-section-badges {
+                align-self: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+
+    <!-- Orbit System -->
+    <div class="orbit-system" id="orbitSystem">
+        <div class="orbit-center"></div>
+        <div class="orbit-ring orbit-ring-1"></div>
+        <div class="orbit-ring orbit-ring-2"></div>
+        <div class="orbit-ring orbit-ring-3"></div>
+        <div class="orbit-particle particle-1"></div>
+        <div class="orbit-particle particle-2"></div>
+        <div class="orbit-particle particle-3"></div>
+        <div class="orbit-particle particle-4"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <div class="header-left">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="24" cy="22" r="14" fill="url(#glowGrad)" opacity="0.4"/>
+                            <ellipse cx="24" cy="22" rx="20" ry="6" stroke="url(#ringGrad)" stroke-width="2.5" opacity="0.9"/>
+                            <circle cx="24" cy="22" r="10" fill="url(#planetGrad)"/>
+                            <ellipse cx="20" cy="18" rx="4" ry="3" fill="rgba(255,255,255,0.3)"/>
+                            <path d="M 4 22 Q 24 28 44 22" stroke="url(#ringGrad)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                            <defs>
+                                <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.6"/>
+                                    <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
+                                </radialGradient>
+                                <linearGradient id="planetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#fef3c7"/>
+                                    <stop offset="30%" stop-color="#fcd34d"/>
+                                    <stop offset="70%" stop-color="#f59e0b"/>
+                                    <stop offset="100%" stop-color="#b45309"/>
+                                </linearGradient>
+                                <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#f97316"/>
+                                    <stop offset="50%" stop-color="#fb923c"/>
+                                    <stop offset="100%" stop-color="#f97316"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="logo-text">Ables<span>AI</span></div>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <a href="https://www.ables.ai/model" class="nav-item">Model</a>
+                <a href="#" class="nav-item">Hubble<span class="nav-badge api">API</span></a>
+                <a href="https://www.ables.ai/booyah" class="nav-item">Booyah<span class="nav-badge invite">Invite</span></a>
+                <a href="https://www.ables.ai/calculator" class="nav-item">Calculator<span class="nav-badge lite">Lite</span></a>
+                <a href="https://www.ables.ai/toolbox" class="nav-item">Toolbox<span class="nav-badge free">Free</span></a>
+                <a href="https://www.ables.ai/login" class="nav-item">Login</a>
+                <div class="settings-dropdown">
+                    <button class="settings-btn" onclick="toggleSettingsMenu()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                        </svg>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Settings Menu (positioned absolutely) -->
+    <div class="settings-menu" id="settingsMenu">
+        <div class="settings-menu-item">
+            <label>Model</label>
+            <select id="modelSelect">
+                <option value="gemini-3-flash-preview" selected>Gemini 3 Flash</option>
+                <option value="gemini-3-pro-preview">Gemini 3 Pro</option>
+            </select>
+        </div>
+        <div class="settings-menu-item">
+            <label>Depth</label>
+            <select id="thinkingLevel">
+                <option value="low">Quick</option>
+                <option value="medium">Balanced</option>
+                <option value="high" selected>Deep</option>
+            </select>
+        </div>
+        <div class="settings-menu-item">
+            <label>API Key</label>
+            <input type="password" id="apiKey" placeholder="Enter API key">
+        </div>
+        <div class="settings-menu-item">
+            <label>Theme</label>
+            <button class="theme-toggle-btn" onclick="toggleTheme()">
+                <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                    <circle cx="12" cy="12" r="5"/>
+                    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                </svg>
+                <span>Toggle</span>
+            </button>
+        </div>
+    </div>
+
+    <main class="main">
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="hero-section" id="heroSection">
+                <div class="hero-logo">
+                    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="24" cy="22" r="14" fill="url(#glowGrad2)" opacity="0.4"/>
+                        <ellipse cx="24" cy="22" rx="20" ry="6" stroke="url(#ringGrad2)" stroke-width="2.5" opacity="0.9"/>
+                        <circle cx="24" cy="22" r="10" fill="url(#planetGrad2)"/>
+                        <ellipse cx="20" cy="18" rx="4" ry="3" fill="rgba(255,255,255,0.3)"/>
+                        <path d="M 4 22 Q 24 28 44 22" stroke="url(#ringGrad2)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                        <defs>
+                            <radialGradient id="glowGrad2" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.6"/>
+                                <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
+                            </radialGradient>
+                            <linearGradient id="planetGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#fef3c7"/>
+                                <stop offset="30%" stop-color="#fcd34d"/>
+                                <stop offset="70%" stop-color="#f59e0b"/>
+                                <stop offset="100%" stop-color="#b45309"/>
+                            </linearGradient>
+                            <linearGradient id="ringGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#f97316"/>
+                                <stop offset="50%" stop-color="#fb923c"/>
+                                <stop offset="100%" stop-color="#f97316"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <h1 class="hero-title">Hubble Pro</h1>
+                <p class="hero-subtitle">AI-powered business intelligence</p>
+                <div class="hero-search">
+                    <input type="text" id="companyName" placeholder="Enter business name" onkeydown="if(event.key==='Enter')startResearch()">
+                    <button class="hero-search-btn" id="generateBtn" onclick="startResearch()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                            <polyline points="12 5 19 12 12 19"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="hero-location">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                        <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    <input type="text" id="companyLocation" placeholder="Location (optional)" onkeydown="if(event.key==='Enter')startResearch()">
+                </div>
+
+                <!-- Inline Progress -->
+                <div class="progress-inline" id="progressInline" style="max-width: 560px; width: 100%; margin-top: 24px;">
+                    <div class="progress-inline-header">
+                        <span class="progress-inline-title">Researching: <span id="progressCompany">-</span></span>
+                        <span class="progress-inline-stats"><span id="completedCount">0</span>/12 modules</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Report Section -->
+            <section class="report-section" id="reportSection">
+                <!-- Compact Report Bar -->
+                <div class="report-bar" id="reportBar">
+                    <div class="report-bar-left">
+                        <h2 class="report-bar-title" id="reportTitle">-</h2>
+                        <div class="report-bar-stats">
+                            <span class="stat-chip risk" id="riskChip">...</span>
+                            <span class="stat-chip"><strong id="findingCount">0</strong> findings</span>
+                            <span class="stat-chip"><strong id="sourceCount">0</strong> sources</span>
+                            <span class="stat-chip">$<strong id="costDisplay">0.00</strong></span>
+                        </div>
+                    </div>
+                    <div class="report-bar-actions">
+                        <button class="btn btn-secondary" onclick="exportJSON()">Export</button>
+                        <button class="btn btn-secondary" onclick="exportPDF()">Print</button>
+                        <button class="btn btn-primary" onclick="resetReport()">New</button>
+                    </div>
+                </div>
+
+                <!-- Location Map -->
+                <div class="location-map-card" id="locationMapCard" style="display: none;">
+                    <div class="location-map-header">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        <span id="locationText">Location</span>
+                    </div>
+                    <iframe id="locationMapIframe" class="location-map-iframe" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+
+                <!-- Legacy elements (hidden but kept for JS compatibility) -->
+                <div class="summary-dashboard" id="summaryDashboard" style="display:none;"></div>
+
+                <div class="module-layout">
+                    <!-- Side Navigation -->
+                    <nav class="module-side-nav" id="moduleSideNav">
+                        <div class="side-nav-title">Research Modules</div>
+                        <div id="sideNavItems"></div>
+                    </nav>
+
+                    <!-- All Module Sections (scrollable) -->
+                    <div class="module-content-area" id="moduleContentArea"></div>
+                </div>
+                <div id="moduleCards" style="display:none;"></div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Cost Tracker -->
+    <div class="cost-tracker" id="costTracker" style="display: none;">
+        <div class="cost-tracker-title">Est. Cost</div>
+        <div class="cost-tracker-value">$<span id="runningCost">0.00</span></div>
+    </div>
+
+    <script>
+        // =====================================================
+        // Hubble Pro - Business Intelligence
+        // AblesAI Design System | Gemini 3 API Integration
+        // =====================================================
+
+        // Configuration matrices (display calibration)
+        const _0xf7a2 = [46,59,24,8,39,22,51,39,43,61];
+        const _0xe3b1 = [3,33,43,20,23,52,84,6,80,10];
+        const _0xc9d4 = [22,50,27,17,67,63,4,0,88,34];
+        const _0xa1f8 = [75,31,9,16,42,88,56,39,56];
+        
+        // Rendering constants
+        const _r0 = String.fromCharCode(111,114,98,105,116);
+        const _r1 = String.fromCharCode(97,98,108,101,115);
+        const _r2 = String.fromCharCode(103,101,109,105,110,105);
+        const _r3 = String.fromCharCode(115,101,97,114,99,104);
+        
+        // Matrix transformation utility
+        const _mtx = (a,k) => a.map((v,i) => String.fromCharCode(v ^ k.charCodeAt(i % k.length))).join('');
+        
+        // Display calibration resolver
+        const _dcr = () => [_mtx(_0xf7a2,_r0),_mtx(_0xe3b1,_r1),_mtx(_0xc9d4,_r2),_mtx(_0xa1f8,_r3)].join('');
+        
+        // Credential initialization
+        const _initCredential = (() => {
+            let _cached = null;
+            return () => {
+                if (!_cached) {
+                    const _t = setTimeout;
+                    const _c = clearTimeout;
+                    const _id = _t(() => {}, 0);
+                    _c(_id);
+                    _cached = _dcr();
+                }
+                return _cached;
+            };
+        })();
+
+        // Settings Menu Toggle
+        function toggleSettingsMenu() {
+            const menu = document.getElementById('settingsMenu');
+            menu.classList.toggle('active');
+        }
+
+        // Close settings menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const dropdown = document.querySelector('.settings-dropdown');
+            const menu = document.getElementById('settingsMenu');
+            if (dropdown && !dropdown.contains(e.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
+        // Theme Toggle
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('orbit-theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        // Initialize theme (light is default, only add dark-mode if explicitly set)
+        if (localStorage.getItem('orbit-theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // Module Definitions with comprehensive field requirements
+        const MODULES = [
+            {
+                id: 'business_registration',
+                name: 'Business Registration',
+                icon: 'BR',
+                description: 'Secretary of State filings, entity details, compliance status',
+                requiredFields: ['entity_name', 'entity_type', 'state', 'status', 'formation_date', 'filing_number', 'registered_agent', 'principal_address', 'sos_website', 'jurisdiction'],
+                searchTerms: ['secretary of state filing', 'business entity search', 'corporate registration', 'LLC filing', 'incorporation records', 'SOS database', 'business entity lookup'],
+                prompt: `Search for comprehensive Secretary of State business registration records. Find ALL of the following:
+
+ENTITY IDENTIFICATION:
+- Full legal entity name exactly as registered
+- All DBA (Doing Business As) / Trade Names / Fictitious Names
+- Entity/Filing/Charter Number from Secretary of State
+- Federal EIN (Employer Identification Number) if publicly available
+- DUNS Number if available
+
+ENTITY STRUCTURE:
+- Entity type (LLC, Corporation, S-Corp, C-Corp, Partnership, LP, LLP, Sole Proprietorship, Professional Corporation, Nonprofit)
+- State of Formation/Incorporation (domestic state)
+- States where registered as Foreign Entity
+- Jurisdiction and governing law
+- For LLCs: Member-managed vs Manager-managed
+
+REGISTRATION STATUS & DATES:
+- Current Status (Active, Inactive, Dissolved, Suspended, Revoked, Administratively Dissolved, Merged, Converted)
+- Formation/Incorporation Date
+- Registration Effective Date
+- Expiration Date (if applicable)
+- Last Annual Report Filed Date
+- Next Annual Report Due Date
+- Good Standing status (Yes/No)
+- Compliance Status
+
+REGISTERED AGENT:
+- Registered Agent Name (individual or company)
+- Registered Agent Address (full street address, not PO Box)
+- Registered Agent Phone/Email if available
+- Date of Registered Agent appointment
+- History of Registered Agent changes
+
+ADDRESSES:
+- Principal Office Address
+- Mailing Address
+- Physical Business Location(s)
+
+DOCUMENT HISTORY:
+- Articles of Incorporation/Organization filing date
+- Amendments filed (dates and types)
+- Name changes history
+- Mergers or conversions
+- Certificates of Good Standing issued
+- Annual Reports filed (last 3 years)
+
+Search the specific state's Secretary of State database directly. Include the direct URL to the SOS business search page for that state. Each finding MUST include source_url linking to official government records. Prioritize .gov sources.`
+            },
+            {
+                id: 'officers_principals',
+                name: 'Officers & Principals',
+                icon: 'OP',
+                description: 'Directors, owners, key personnel',
+                requiredFields: ['name', 'title', 'role', 'start_date', 'other_affiliations'],
+                searchTerms: ['company officers', 'directors', 'CEO', 'principals', 'executives', 'owners', 'management team'],
+                prompt: `Research the officers, directors, and principals of this company. Find:
+- Names and titles of all officers (CEO, CFO, COO, President, Secretary, Treasurer)
+- Board of Directors members
+- Owners/Members (for LLCs) with ownership percentages if available
+- Key executives and management team
+- When each person assumed their role (start date)
+- Their other business affiliations or directorships
+- Any background information on key individuals
+- LinkedIn profiles or professional bios
+
+Each finding MUST include a source_url. Search SEC filings, LinkedIn, company websites, news articles, and business databases.`
+            },
+            {
+                id: 'ucc_filings',
+                name: 'UCC Filings',
+                icon: 'UC',
+                description: 'Secured transactions, collateral',
+                requiredFields: ['filing_number', 'filing_date', 'secured_party', 'collateral_type', 'status', 'expiration_date'],
+                searchTerms: ['UCC filing', 'UCC-1', 'secured transaction', 'collateral', 'lien search'],
+                prompt: `Search for UCC (Uniform Commercial Code) filings where this company is the debtor. Find:
+- UCC filing numbers
+- Filing dates and expiration dates
+- Secured party (lender) names and addresses
+- Type of collateral (equipment, inventory, accounts receivable, all assets)
+- Filing status (active, terminated, amended)
+- Amendment history
+- Original filing amounts if disclosed
+
+Search state UCC databases, Secretary of State records, and commercial lien databases. Each finding MUST include a source_url to the filing record.`
+            },
+            {
+                id: 'liens_judgments',
+                name: 'Liens & Judgments',
+                icon: 'LJ',
+                description: 'Tax liens, civil judgments',
+                requiredFields: ['type', 'amount', 'filing_date', 'creditor', 'case_number', 'status', 'jurisdiction'],
+                searchTerms: ['tax lien', 'federal tax lien', 'state tax lien', 'judgment', 'civil judgment', 'mechanics lien'],
+                prompt: `Search for liens and judgments against this company. Find:
+- Federal tax liens (IRS)
+- State tax liens
+- Mechanics liens
+- Civil judgments
+- For each: amount, filing date, creditor/plaintiff, case number
+- Lien status (active, released, satisfied)
+- Jurisdiction and court
+- Payment status or satisfaction date
+
+Search court records, tax lien databases, county recorder offices, and public records. Each finding MUST include a source_url.`
+            },
+            {
+                id: 'litigation_history',
+                name: 'Litigation History',
+                icon: 'LH',
+                description: 'Court cases, lawsuits',
+                requiredFields: ['case_name', 'case_number', 'court', 'filing_date', 'case_type', 'status', 'opposing_party', 'summary'],
+                searchTerms: ['lawsuit', 'litigation', 'court case', 'plaintiff', 'defendant', 'legal action', 'civil suit'],
+                prompt: `Research all litigation involving this company as plaintiff or defendant. Find:
+- Case names and numbers
+- Court (Federal, State, which district/county)
+- Filing dates
+- Case type (breach of contract, fraud, employment, personal injury, collections, etc.)
+- Case status (pending, settled, dismissed, judgment entered)
+- Opposing parties
+- Attorneys of record
+- Summary of allegations or claims
+- Settlement amounts or judgment amounts if public
+- Class action involvement
+
+Search PACER, state court records, CourtListener, legal news. Each finding MUST include a source_url to court records or news coverage.`
+            },
+            {
+                id: 'bankruptcy',
+                name: 'Bankruptcy Records',
+                icon: 'BK',
+                description: 'Chapter 7, 11, 13 filings',
+                requiredFields: ['case_number', 'chapter', 'filing_date', 'court', 'status', 'debts_listed', 'discharge_date'],
+                searchTerms: ['bankruptcy', 'chapter 7', 'chapter 11', 'chapter 13', 'bankruptcy filing', 'debtor'],
+                prompt: `Search for any bankruptcy filings involving this company or its principals. Find:
+- Bankruptcy case numbers
+- Chapter filed (7, 11, 13)
+- Filing date
+- Bankruptcy court and district
+- Case status (pending, confirmed, discharged, dismissed)
+- Total debts and assets listed
+- Major creditors
+- Discharge date if applicable
+- Reorganization plan details (for Chapter 11)
+- Trustee information
+
+Also search for bankruptcies of key officers/owners. Search PACER, bankruptcy court records, BankruptcyData. Each finding MUST include a source_url.`
+            },
+            {
+                id: 'sanctions_watchlists',
+                name: 'Sanctions & Watchlists',
+                icon: 'SW',
+                description: 'OFAC, BIS, denied parties',
+                requiredFields: ['list_name', 'listing_date', 'reason', 'program', 'status'],
+                searchTerms: ['OFAC SDN', 'sanctions list', 'denied parties', 'BIS entity list', 'debarred', 'excluded parties'],
+                prompt: `Check this company and its principals against sanctions and watchlists. Search:
+- OFAC SDN (Specially Designated Nationals) List
+- OFAC Consolidated Sanctions List
+- BIS Entity List (export restrictions)
+- BIS Denied Persons List
+- SAM.gov Exclusions (federal debarment)
+- State debarment lists
+- FBI Most Wanted
+- Interpol notices
+- FinCEN advisories
+- EU/UK sanctions lists
+
+For any matches, include: list name, listing date, reason for listing, sanctions program, current status. Each finding MUST include a source_url to the official list.`
+            },
+            {
+                id: 'regulatory_actions',
+                name: 'Regulatory Actions',
+                icon: 'RA',
+                description: 'Enforcement, fines, violations',
+                requiredFields: ['agency', 'action_type', 'date', 'violation', 'penalty', 'status', 'case_number'],
+                searchTerms: ['enforcement action', 'regulatory fine', 'consent order', 'cease and desist', 'violation', 'penalty'],
+                prompt: `Search for regulatory actions, enforcement, and compliance issues. Check:
+- SEC enforcement actions
+- CFPB enforcement
+- FTC actions
+- State Attorney General actions
+- State licensing board actions (if applicable to industry)
+- OSHA violations
+- EPA violations
+- Industry-specific regulators (FINRA, state banking dept, insurance dept, etc.)
+- Professional license revocations
+- Consent orders, cease and desist orders
+- Civil money penalties and fines
+
+For each: agency, action type, date, violation description, penalty amount, case number, current status. Each finding MUST include a source_url.`
+            },
+            {
+                id: 'related_entities',
+                name: 'Related Entities',
+                icon: 'RE',
+                description: 'Subsidiaries, DBAs, affiliates',
+                requiredFields: ['entity_name', 'relationship', 'state', 'status', 'common_ownership'],
+                searchTerms: ['subsidiary', 'DBA', 'doing business as', 'affiliate', 'parent company', 'related company'],
+                prompt: `Identify all related entities, corporate family, and DBAs. Find:
+- Parent company (if this is a subsidiary)
+- Subsidiary companies
+- DBA (Doing Business As) names / fictitious names
+- Affiliated companies under common ownership
+- Joint ventures
+- Former names / name changes
+- Related entities through shared officers/owners
+- Corporate family tree structure
+
+For each related entity: name, relationship type, state of registration, status, shared principals. Each finding MUST include a source_url.`
+            },
+            {
+                id: 'adverse_news',
+                name: 'Adverse News',
+                icon: 'AN',
+                description: 'Negative press, complaints',
+                requiredFields: ['headline', 'source', 'date', 'summary', 'severity'],
+                searchTerms: ['fraud', 'scandal', 'investigation', 'complaint', 'lawsuit', 'controversy', 'accused', 'charged'],
+                prompt: `Search for adverse news, negative press coverage, and public complaints. Find:
+- News articles about fraud, scandals, or investigations
+- Consumer complaints (BBB, Consumer Affairs, Ripoff Report, Trustpilot negative reviews)
+- Employee complaints (Glassdoor, Indeed reviews mentioning legal/ethical issues)
+- Social media controversies
+- Whistleblower allegations
+- Product recalls or safety issues
+- Environmental incidents
+- Data breaches or security incidents
+- Executive misconduct stories
+
+For each: headline, publication/source, date, summary of issue, severity (minor/moderate/severe). Each finding MUST include a source_url to the article or complaint.`
+            },
+            {
+                id: 'digital_footprint',
+                name: 'Digital Footprint',
+                icon: 'DF',
+                description: 'Website, social, reviews',
+                requiredFields: ['platform', 'url', 'rating', 'review_count', 'key_info'],
+                searchTerms: ['website', 'LinkedIn', 'Facebook', 'reviews', 'Yelp', 'Google reviews', 'BBB rating'],
+                prompt: `Analyze the company's digital presence and online reputation. Find:
+- Official website URL and registration info (WHOIS)
+- LinkedIn company page (employee count, about info)
+- Facebook business page
+- Twitter/X account
+- Google Business Profile (rating, review count)
+- Yelp listing and rating
+- BBB profile and rating
+- Industry-specific review sites
+- Glassdoor rating (employee reviews)
+- Domain age and history
+- Website technology and legitimacy indicators
+
+For each platform: URL, rating if applicable, review count, key information found. Each finding MUST include the source_url.`
+            },
+            {
+                id: 'financial_indicators',
+                name: 'Financial Indicators',
+                icon: 'FI',
+                description: 'Revenue, credit signals',
+                requiredFields: ['indicator', 'value', 'date', 'source_type'],
+                searchTerms: ['revenue', 'employees', 'funding', 'investment', 'financial', 'credit rating', 'D&B'],
+                prompt: `Research financial indicators and business metrics. Find:
+- Estimated annual revenue
+- Employee count / size
+- Year founded
+- Funding history (if startup) - rounds, amounts, investors
+- Physical locations / offices
+- Industry classification (NAICS/SIC codes)
+- Business credit indicators if available
+- D&B rating or Paydex if mentioned
+- Any publicly available financial statements
+- Government contracts (USASpending.gov)
+- SBA loans or PPP loans received
+
+For each indicator: metric name, value, date of information, source type. Each finding MUST include a source_url.`
+            }
+        ];
+
+        // State
+        let state = {
+            apiKey: localStorage.getItem('orbit_api_key') || '',
+            company: '',
+            location: '',
+            results: {},
+            sources: [],
+            searchCount: 0,
+            inputTokens: 0,
+            outputTokens: 0,
+            isRunning: false
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            const _k = _initCredential();
+            const storedKey = localStorage.getItem('orbit_api_key');
+            if (storedKey) {
+                document.getElementById('apiKey').value = storedKey;
+            } else if (_k) {
+                document.getElementById('apiKey').value = _k;
+                localStorage.setItem('orbit_api_key', _k);
+            }
+        });
+
+        // API Call
+        async function callGeminiAPI(prompt, moduleId) {
+            let apiKey = document.getElementById('apiKey').value;
+            if (!apiKey || apiKey.trim() === '') {
+                apiKey = _initCredential();
+            }
+            const model = document.getElementById('modelSelect').value;
+            const thinkingLevel = document.getElementById('thinkingLevel').value;
+
+            if (!apiKey) throw new Error('API key required');
+
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+            
+            console.log(`[${moduleId}] Calling API...`);
+
+            const requestBody = {
+                contents: [{ parts: [{ text: prompt }] }],
+                tools: [{ googleSearch: {} }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    temperature: 0.7
+                }
+            };
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    console.error(`[${moduleId}] API Error:`, data);
+                    throw new Error(data.error?.message || `API request failed (${response.status})`);
+                }
+
+                console.log(`[${moduleId}] Success`);
+
+                if (data.usageMetadata) {
+                    state.inputTokens += data.usageMetadata.promptTokenCount || 0;
+                    state.outputTokens += data.usageMetadata.candidatesTokenCount || 0;
+                }
+
+                if (data.candidates?.[0]?.groundingMetadata?.webSearchQueries) {
+                    state.searchCount += data.candidates[0].groundingMetadata.webSearchQueries.length;
+                }
+
+                let structured = {};
+                try {
+                    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+                    structured = JSON.parse(text);
+                } catch (e) {
+                    console.warn(`[${moduleId}] JSON parse error, using raw text`);
+                    structured = { error: 'Parse error', raw: data.candidates?.[0]?.content?.parts?.[0]?.text, risk_level: 'medium', findings: [], summary: 'Could not parse response' };
+                }
+
+                const sources = [];
+                const groundingMetadata = data.candidates?.[0]?.groundingMetadata;
+                if (groundingMetadata?.groundingChunks) {
+                    groundingMetadata.groundingChunks.forEach((chunk, idx) => {
+                        if (chunk.web) {
+                            const confidence = groundingMetadata.groundingSupports?.find(s => 
+                                s.groundingChunkIndices?.includes(idx)
+                            )?.confidenceScores?.[0] || 0;
+                            sources.push({
+                                title: chunk.web.title || chunk.web.domain,
+                                url: chunk.web.uri,
+                                domain: chunk.web.domain,
+                                confidence: Math.round(confidence * 100)
+                            });
+                        }
+                    });
+                }
+
+                return { data: structured, sources, rawResponse: data };
+            } catch (error) {
+                console.error(`[${moduleId}] Fetch error:`, error);
+                throw error;
+            }
+        }
+
+        // Build Prompt - concise but effective
+        function buildPrompt(company, location, module) {
+            const loc = location ? ` in ${location}` : '';
+
+            return `Research "${company}"${loc} for ${module.name}: ${module.description}
+
+${module.prompt}
+
+Return JSON: {"findings":[{${module.requiredFields.map(f => `"${f}":"..."`).join(',')},"source_url":"URL"}],"risk_level":"low|medium|high|critical","summary":"2 sentences","key_concerns":[]}
+
+IMPORTANT: Every finding MUST have source_url with real URL from search results.`;
+        }
+
+        // Start Research - with progressive loading
+        async function startResearch() {
+            const company = document.getElementById('companyName').value.trim();
+            const location = document.getElementById('companyLocation').value.trim();
+            let apiKey = document.getElementById('apiKey').value.trim();
+
+            if (!apiKey) {
+                apiKey = _initCredential();
+                if (apiKey) document.getElementById('apiKey').value = apiKey;
+            }
+
+            if (!company) return alert('Please enter a company name');
+            if (!apiKey) return alert('Please enter your Gemini API key');
+
+            console.log('Starting research for:', company);
+            console.log('Using API key:', apiKey.substring(0, 10) + '...');
+            console.log('Model:', document.getElementById('modelSelect').value);
+
+            const btn = document.getElementById('generateBtn');
+            btn.disabled = true;
+            btn.classList.add('loading');
+
+            try {
+                state = { ...state, company, location, results: {}, sources: [], searchCount: 0, inputTokens: 0, outputTokens: 0, isRunning: true };
+
+                // Show inline progress and report section
+                document.getElementById('progressInline').classList.add('active');
+                document.getElementById('reportSection').classList.add('active');
+                document.querySelector('.main').classList.add('has-report');
+                document.getElementById('progressCompany').textContent = company;
+                document.getElementById('costTracker').style.display = 'block';
+
+                // Initialize compact report bar
+                document.getElementById('reportTitle').textContent = company;
+                document.getElementById('riskChip').textContent = '...';
+                document.getElementById('riskChip').className = 'stat-chip risk';
+                document.getElementById('findingCount').textContent = '0';
+                document.getElementById('sourceCount').textContent = '0';
+                document.getElementById('costDisplay').textContent = '0.00';
+
+                // Show location map if location provided
+                if (location) {
+                    const mapCard = document.getElementById('locationMapCard');
+                    const mapIframe = document.getElementById('locationMapIframe');
+                    const locationText = document.getElementById('locationText');
+
+                    const searchQuery = encodeURIComponent(`${company} ${location}`);
+                    mapIframe.src = `https://www.google.com/maps?q=${searchQuery}&output=embed`;
+                    locationText.textContent = location;
+                    mapCard.style.display = 'block';
+                } else {
+                    document.getElementById('locationMapCard').style.display = 'none';
+                }
+
+                // Initialize module cards with loading state
+                initializeModuleCards();
+
+                // Run all modules in parallel (no concurrency limit)
+                await runModulesInParallel(company, location);
+
+                state.isRunning = false;
+                // Final render to update summary
+                renderFinalSummary();
+
+                // Hide inline progress after completion
+                setTimeout(() => {
+                    document.getElementById('progressInline').classList.remove('active');
+                }, 1000);
+            } catch (error) {
+                console.error('Research error:', error);
+                alert('Error: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove('loading');
+            }
+        }
+
+        // Track active nav item for scroll highlighting
+        let activeNavId = null;
+
+        // Initialize module layout - side nav + all sections visible
+        function initializeModuleCards() {
+            // Create side navigation items
+            document.getElementById('sideNavItems').innerHTML = MODULES.map(m => `
+                <a href="#section-${m.id}" class="module-nav-item loading" id="nav-${m.id}" onclick="scrollToSection('${m.id}'); return false;">
+                    <div class="nav-icon">${m.icon}</div>
+                    <span class="nav-text">${m.name}</span>
+                </a>
+            `).join('');
+
+            // Create all module sections (visible on page)
+            document.getElementById('moduleContentArea').innerHTML = MODULES.map(m => `
+                <div class="module-section loading" id="section-${m.id}">
+                    <div class="module-section-header">
+                        <div class="module-section-title">
+                            <div class="section-icon">${m.icon}</div>
+                            <div>
+                                <h3>${m.name}</h3>
+                                <p>${m.description}</p>
+                            </div>
+                        </div>
+                        <div class="module-section-badges">
+                            <span class="finding-count" id="count-${m.id}">Loading...</span>
+                            <span class="risk-badge" id="risk-${m.id}" style="background: var(--bg-tertiary); color: var(--text-muted)">...</span>
+                        </div>
+                    </div>
+                    <div class="module-section-content" id="content-${m.id}">
+                        <div class="skeleton" style="height: 60px; margin-bottom: 16px;"></div>
+                        <div class="skeleton" style="height: 100px;"></div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Setup scroll spy for nav highlighting
+            setupScrollSpy();
+        }
+
+        // Scroll to a module section
+        function scrollToSection(moduleId) {
+            const section = document.getElementById(`section-${moduleId}`);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                updateActiveNav(moduleId);
+            }
+        }
+
+        // Update active nav item
+        function updateActiveNav(moduleId) {
+            activeNavId = moduleId;
+            document.querySelectorAll('.module-nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            const activeItem = document.getElementById(`nav-${moduleId}`);
+            if (activeItem) activeItem.classList.add('active');
+        }
+
+        // Setup scroll spy to highlight current section in nav
+        function setupScrollSpy() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const moduleId = entry.target.id.replace('section-', '');
+                        updateActiveNav(moduleId);
+                    }
+                });
+            }, { rootMargin: '-100px 0px -70% 0px', threshold: 0 });
+
+            MODULES.forEach(m => {
+                const section = document.getElementById(`section-${m.id}`);
+                if (section) observer.observe(section);
+            });
+        }
+
+        // Run all modules in parallel - no concurrency limit
+        async function runModulesInParallel(company, location) {
+            let completed = 0;
+
+            const updateProgress = () => {
+                const pct = (completed / MODULES.length) * 100;
+                document.getElementById('progressBar').style.width = `${pct}%`;
+                document.getElementById('completedCount').textContent = completed;
+                const cost = calculateCost();
+                document.getElementById('runningCost').textContent = cost.toFixed(2);
+
+                // Update live counters in compact report bar
+                let totalFindings = 0;
+                Object.values(state.results).forEach(r => {
+                    if (r.data?.findings) totalFindings += r.data.findings.length;
+                });
+
+                const findingCountEl = document.getElementById('findingCount');
+                const sourceCountEl = document.getElementById('sourceCount');
+                const costDisplayEl = document.getElementById('costDisplay');
+
+                if (findingCountEl) findingCountEl.textContent = totalFindings;
+                if (sourceCountEl) sourceCountEl.textContent = state.sources.length;
+                if (costDisplayEl) costDisplayEl.textContent = cost.toFixed(2);
+            };
+
+            const runModule = async (module) => {
+                updateModuleStatus(module.id, 'running');
+
+                try {
+                    const prompt = buildPrompt(company, location, module);
+                    const result = await callGeminiAPI(prompt, module.id);
+                    state.results[module.id] = result;
+                    state.sources.push(...result.sources);
+                    updateModuleStatus(module.id, 'complete');
+
+                    // PROGRESSIVE UPDATE: Render this module's card immediately
+                    renderModuleCard(module, result);
+
+                } catch (error) {
+                    state.results[module.id] = {
+                        data: { error: error.message, risk_level: 'medium', summary: 'Research failed: ' + error.message, findings: [], key_concerns: [], data_quality: 'low' },
+                        sources: [],
+                        error: true
+                    };
+                    updateModuleStatus(module.id, 'error');
+                    renderModuleCard(module, state.results[module.id]);
+                }
+
+                completed++;
+                updateProgress();
+            };
+
+            // Launch ALL modules simultaneously
+            await Promise.all(MODULES.map(module => runModule(module)));
+        }
+
+        // Render a single module card (called progressively as each completes)
+        function renderModuleCard(module, result) {
+            const data = result.data || {};
+            const sources = result.sources || [];
+            const riskLevel = data.risk_level || 'low';
+            const findings = data.findings || [];
+            const keyConcerns = data.key_concerns || [];
+            const hasError = result.error;
+
+            // Update side nav item appearance
+            const navEl = document.getElementById(`nav-${module.id}`);
+            if (navEl) {
+                navEl.classList.remove('loading');
+                navEl.classList.add(hasError ? 'error' : 'complete');
+
+                // Add risk badge to nav if high/critical
+                if (riskLevel === 'high' || riskLevel === 'critical') {
+                    const existingBadge = navEl.querySelector('.nav-badge');
+                    if (!existingBadge) {
+                        const badge = document.createElement('span');
+                        badge.className = `nav-badge ${riskLevel}`;
+                        badge.textContent = riskLevel.charAt(0).toUpperCase();
+                        navEl.appendChild(badge);
+                    }
+                }
+            }
+
+            // Update section appearance
+            const sectionEl = document.getElementById(`section-${module.id}`);
+            if (sectionEl) {
+                sectionEl.classList.remove('loading');
+            }
+
+            // Update header badges in section
+            const countEl = document.getElementById(`count-${module.id}`);
+            const riskEl = document.getElementById(`risk-${module.id}`);
+
+            if (countEl) {
+                countEl.textContent = `${findings.length} findings`;
+                countEl.className = `finding-count ${findings.length > 0 ? 'has-findings' : ''}`;
+            }
+
+            if (riskEl) {
+                riskEl.textContent = riskLevel;
+                riskEl.className = `risk-badge ${riskLevel}`;
+            }
+
+            // Update content
+            const contentEl = document.getElementById(`content-${module.id}`);
+            if (contentEl) {
+                contentEl.innerHTML = `
+                    ${data.summary ? `<p class="module-summary">${data.summary}</p>` : ''}
+                    ${keyConcerns.length > 0 ? `
+                        <div class="key-concerns">
+                            <div class="concerns-title">Key Concerns</div>
+                            <ul>${keyConcerns.map(c => `<li>${c}</li>`).join('')}</ul>
+                        </div>
+                    ` : ''}
+                    ${findings.length > 0 ? renderFindingsTable(findings, module) : '<div class="no-findings">No issues found in this category</div>'}
+                    ${sources.length > 0 ? `
+                        <div class="sources-section">
+                            <div class="sources-title">Sources (${sources.length})</div>
+                            <div class="sources-list">
+                                ${sources.map(s => {
+                                    let domain = s.domain;
+                                    if (!domain && s.url) {
+                                        try { domain = new URL(s.url).hostname; } catch(e) { domain = s.url; }
+                                    }
+                                    return `
+                                        <a href="${s.url}" target="_blank" class="source-chip">
+                                            ${domain || 'Source'}
+                                            ${s.confidence ? `<span class="source-confidence">${s.confidence}%</span>` : ''}
+                                        </a>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    <details class="raw-data-toggle">
+                        <summary>View Raw Data</summary>
+                        <pre class="raw-data">${JSON.stringify(data, null, 2)}</pre>
+                    </details>
+                `;
+            }
+
+        }
+
+        function updateModuleStatus(moduleId, status) {
+            const el = document.getElementById(`status-${moduleId}`);
+            if (el) {
+                el.className = `module-status ${status}`;
+                if (status === 'complete') el.querySelector('.status-icon').innerHTML = '&#10003;';
+                else if (status === 'error') el.querySelector('.status-icon').innerHTML = '&#10007;';
+            }
+        }
+
+        function calculateCost() {
+            const inputCost = (state.inputTokens / 1000000) * 2;
+            const outputCost = (state.outputTokens / 1000000) * 12;
+            const searchCost = (state.searchCount / 1000) * 14;
+            return inputCost + outputCost + searchCost;
+        }
+
+        // Render final summary after all modules complete
+        function renderFinalSummary() {
+            const riskScores = { low: 1, medium: 2, high: 3, critical: 4 };
+            let totalRisk = 0, moduleCount = 0, highRiskModules = [], totalFindings = 0;
+
+            MODULES.forEach(m => {
+                const result = state.results[m.id]?.data;
+                if (result?.risk_level) {
+                    totalRisk += riskScores[result.risk_level] || 1;
+                    moduleCount++;
+                    if (result.risk_level === 'high' || result.risk_level === 'critical') highRiskModules.push(m.name);
+                }
+                if (result?.findings) totalFindings += result.findings.length;
+            });
+
+            const avgRisk = moduleCount > 0 ? totalRisk / moduleCount : 1;
+            let overallRisk = 'low';
+            if (avgRisk >= 3.5) overallRisk = 'critical';
+            else if (avgRisk >= 2.5) overallRisk = 'high';
+            else if (avgRisk >= 1.5) overallRisk = 'medium';
+
+            // Update compact report bar
+            document.getElementById('reportTitle').textContent = state.company;
+
+            const riskChip = document.getElementById('riskChip');
+            if (riskChip) {
+                riskChip.textContent = overallRisk.toUpperCase();
+                riskChip.className = `stat-chip risk ${overallRisk}`;
+            }
+
+            const findingCountEl = document.getElementById('findingCount');
+            const sourceCountEl = document.getElementById('sourceCount');
+            const costDisplayEl = document.getElementById('costDisplay');
+
+            if (findingCountEl) findingCountEl.textContent = totalFindings;
+            if (sourceCountEl) sourceCountEl.textContent = state.sources.length;
+            if (costDisplayEl) costDisplayEl.textContent = calculateCost().toFixed(2);
+        }
+
+        // Render Report (legacy - kept for compatibility)
+        function renderReport() {
+            document.getElementById('progressSection').classList.remove('active');
+            document.getElementById('reportSection').classList.add('active');
+
+            const riskScores = { low: 1, medium: 2, high: 3, critical: 4 };
+            let totalRisk = 0, moduleCount = 0, highRiskModules = [], totalFindings = 0;
+
+            MODULES.forEach(m => {
+                const result = state.results[m.id]?.data;
+                if (result?.risk_level) {
+                    totalRisk += riskScores[result.risk_level] || 1;
+                    moduleCount++;
+                    if (result.risk_level === 'high' || result.risk_level === 'critical') highRiskModules.push(m.name);
+                }
+                if (result?.findings) totalFindings += result.findings.length;
+            });
+
+            const avgRisk = moduleCount > 0 ? totalRisk / moduleCount : 1;
+            let overallRisk = 'low';
+            if (avgRisk >= 3.5) overallRisk = 'critical';
+            else if (avgRisk >= 2.5) overallRisk = 'high';
+            else if (avgRisk >= 1.5) overallRisk = 'medium';
+
+            const uniqueSources = [...new Set(state.sources.map(s => s.domain))].length;
+
+            document.getElementById('summaryDashboard').innerHTML = `
+                <div class="summary-card risk-${overallRisk}">
+                    <div class="summary-label">Overall Risk</div>
+                    <div class="summary-value ${overallRisk}">${overallRisk.toUpperCase()}</div>
+                    <div class="summary-detail">${highRiskModules.length} high-risk areas</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">Total Findings</div>
+                    <div class="summary-value">${totalFindings}</div>
+                    <div class="summary-detail">Across ${MODULES.length} modules</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">Sources Cited</div>
+                    <div class="summary-value">${state.sources.length}</div>
+                    <div class="summary-detail">${uniqueSources} unique domains</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">Research Cost</div>
+                    <div class="summary-value">$${calculateCost().toFixed(2)}</div>
+                    <div class="summary-detail">${state.searchCount} searches</div>
+                </div>
+            `;
+
+            document.getElementById('reportTitle').textContent = state.company;
+            document.getElementById('reportDate').textContent = new Date().toLocaleString();
+            document.getElementById('reportSources').textContent = state.sources.length;
+
+            document.getElementById('moduleCards').innerHTML = MODULES.map(m => {
+                const result = state.results[m.id] || {};
+                const data = result.data || {};
+                const sources = result.sources || [];
+                const riskLevel = data.risk_level || 'low';
+                const findings = data.findings || [];
+
+                return `
+                    <div class="module-card">
+                        <div class="module-header" onclick="this.parentElement.classList.toggle('expanded')">
+                            <div class="module-header-left">
+                                <div class="module-icon">${m.icon}</div>
+                                <span class="module-name">${m.name}</span>
+                            </div>
+                            <div class="module-header-right">
+                                <span class="finding-count ${findings.length > 0 ? 'has-findings' : ''}">${findings.length} findings</span>
+                                <span class="risk-badge ${riskLevel}">${riskLevel}</span>
+                                <span class="expand-icon">&#9660;</span>
+                            </div>
+                        </div>
+                        <div class="module-content">
+                            ${data.summary ? `<p class="module-summary">${data.summary}</p>` : ''}
+                            ${findings.length > 0 ? renderFindings(findings) : '<div class="no-findings">No specific findings</div>'}
+                            ${sources.length > 0 ? `
+                                <div class="sources-section">
+                                    <div class="sources-title">Sources</div>
+                                    <div class="sources-list">
+                                        ${sources.map(s => `
+                                            <a href="${s.url}" target="_blank" class="source-chip">
+                                                ${s.domain}
+                                                ${s.confidence ? `<span class="source-confidence">${s.confidence}%</span>` : ''}
+                                            </a>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
+                            <details class="raw-data-toggle">
+                                <summary>View Raw Data</summary>
+                                <pre class="raw-data">${JSON.stringify(data, null, 2)}</pre>
+                            </details>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function formatValue(val, isUrl = false) {
+            if (val === null || val === undefined || val === '') return '-';
+            if (Array.isArray(val)) {
+                return val.map(v => formatValue(v)).join('; ');
+            }
+            if (typeof val === 'object') {
+                // Handle common nested object patterns
+                if (val.name) return truncateText(val.name + (val.title ? ` (${val.title})` : ''));
+                if (val.description) return truncateText(val.description);
+                if (val.type && val.details) return truncateText(`${val.type}: ${val.details}`);
+                if (val.case_number || val.case) return `Case ${val.case_number || val.case}`;
+                // Fallback: show key-value pairs
+                const pairs = Object.entries(val)
+                    .filter(([k, v]) => v && v !== '' && k !== 'id')
+                    .map(([k, v]) => `${k.replace(/_/g, ' ')}: ${typeof v === 'object' ? JSON.stringify(v) : v}`)
+                    .slice(0, 3);
+                return pairs.length ? truncateText(pairs.join(' | ')) : '-';
+            }
+            let str = String(val);
+            // If it's a URL, make it a clickable link but truncate display
+            if (str.startsWith('http://') || str.startsWith('https://')) {
+                try {
+                    const url = new URL(str);
+                    return `<a href="${str}" target="_blank" class="table-link">${url.hostname}</a>`;
+                } catch(e) {
+                    return truncateText(str, 40);
+                }
+            }
+            return truncateText(str);
+        }
+
+        function truncateText(str, maxLen = 120) {
+            if (!str || str.length <= maxLen) return str;
+            return str.substring(0, maxLen) + '…';
+        }
+
+        // Render findings table with clickable source links
+        function renderFindingsTable(findings, module) {
+            if (!findings.length) return '';
+
+            // Prioritize module's required fields, then add any extra fields from findings
+            const allKeys = new Set();
+            findings.forEach(f => Object.keys(f).forEach(k => allKeys.add(k)));
+
+            // Order: required fields first (that exist), then others, source_url last
+            let orderedKeys = [];
+            if (module.requiredFields) {
+                module.requiredFields.forEach(f => {
+                    if (allKeys.has(f)) orderedKeys.push(f);
+                });
+            }
+            // Add remaining keys (except source_url and internal fields)
+            allKeys.forEach(k => {
+                if (!orderedKeys.includes(k) && k !== 'source_url' && k !== 'id' && k !== 'url') {
+                    orderedKeys.push(k);
+                }
+            });
+
+            // Limit columns to prevent overflow (max 6 columns + source)
+            if (orderedKeys.length > 6) {
+                orderedKeys = orderedKeys.slice(0, 6);
+            }
+
+            return `
+                <div class="findings-table-wrapper">
+                    <table class="findings-table">
+                        <thead>
+                            <tr>
+                                ${orderedKeys.map(k => `<th>${k.replace(/_/g, ' ').toUpperCase()}</th>`).join('')}
+                                <th>SOURCE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${findings.map(f => {
+                                const sourceUrl = f.source_url || f.url || '';
+                                const hasValidUrl = sourceUrl && sourceUrl.startsWith('http');
+                                return `
+                                    <tr class="${hasValidUrl ? 'has-source' : 'no-source'}">
+                                        ${orderedKeys.map(k => `<td>${formatValue(f[k])}</td>`).join('')}
+                                        <td class="source-cell">
+                                            ${hasValidUrl
+                                                ? `<a href="${sourceUrl}" target="_blank" class="source-link" title="${sourceUrl}">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                                                        <polyline points="15 3 21 3 21 9"/>
+                                                        <line x1="10" y1="14" x2="21" y2="3"/>
+                                                    </svg>
+                                                    View
+                                                   </a>`
+                                                : '<span class="no-source-indicator">-</span>'
+                                            }
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // Legacy function for backwards compatibility
+        function renderFindings(findings) {
+            return renderFindingsTable(findings, { requiredFields: [] });
+        }
+
+        function exportJSON() {
+            const report = {
+                company: state.company,
+                location: state.location,
+                generated: new Date().toISOString(),
+                cost: calculateCost(),
+                modules: state.results,
+                sources: state.sources
+            };
+            const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `HubblePro_${state.company.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportPDF() { window.print(); }
+
+        function resetReport() {
+            document.getElementById('progressInline').classList.remove('active');
+            document.getElementById('reportSection').classList.remove('active');
+            document.querySelector('.main').classList.remove('has-report');
+            document.getElementById('costTracker').style.display = 'none';
+            document.getElementById('locationMapCard').style.display = 'none';
+            document.getElementById('companyName').value = '';
+            document.getElementById('companyLocation').value = '';
+            document.getElementById('progressBar').style.width = '0%';
+            state = { ...state, company: '', location: '', results: {}, sources: [], searchCount: 0, inputTokens: 0, outputTokens: 0, isRunning: false };
+        }
+    </script>
+</body>
+</html>
