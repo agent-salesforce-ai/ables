@@ -2080,6 +2080,51 @@
             border-radius: 2px;
         }
 
+        .heat-stats {
+            background: var(--gray-50);
+            border-radius: var(--radius);
+            padding: 16px;
+        }
+
+        .heat-stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .heat-stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .heat-stat-label {
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+
+        .heat-stat-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        body.dark-theme .heat-stats {
+            background: #262626;
+        }
+
+        body.dark-theme .heat-stat-row {
+            border-color: #444;
+        }
+
+        body.dark-theme .heat-stat-label {
+            color: #aaa;
+        }
+
+        body.dark-theme .heat-stat-value {
+            color: #e5e5e5;
+        }
+
         /* Keyboard Shortcuts */
         .keyboard-hint {
             position: fixed;
@@ -3132,26 +3177,59 @@
                 </svg>
             </div>
             <div class="section-body collapsible-content" id="heatCalendarSection">
-                <div class="chart-title">Balance Activity by Day</div>
-                <div class="heat-calendar-header">
-                    <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
-                </div>
-                <div class="heat-calendar" id="heatCalendar">
-                    <!-- Heat calendar will be populated dynamically -->
-                </div>
-                <div class="heat-legend">
-                    <span>Less</span>
-                    <div class="heat-legend-item level-0"></div>
-                    <div class="heat-legend-item level-1"></div>
-                    <div class="heat-legend-item level-2"></div>
-                    <div class="heat-legend-item level-3"></div>
-                    <div class="heat-legend-item level-4"></div>
-                    <div class="heat-legend-item level-5"></div>
-                    <span>More</span>
-                    <span style="margin-left: 16px;">|</span>
-                    <div class="heat-legend-item negative"></div>
-                    <div class="heat-legend-item very-negative"></div>
-                    <span>Negative</span>
+                <div class="two-col" style="gap: 32px; align-items: start;">
+                    <div>
+                        <div class="chart-title">Balance Activity by Day</div>
+                        <div class="heat-calendar-header">
+                            <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                        </div>
+                        <div class="heat-calendar" id="heatCalendar">
+                            <!-- Heat calendar will be populated dynamically -->
+                        </div>
+                        <div class="heat-legend">
+                            <span>Less</span>
+                            <div class="heat-legend-item level-0"></div>
+                            <div class="heat-legend-item level-1"></div>
+                            <div class="heat-legend-item level-2"></div>
+                            <div class="heat-legend-item level-3"></div>
+                            <div class="heat-legend-item level-4"></div>
+                            <div class="heat-legend-item level-5"></div>
+                            <span>More</span>
+                            <span style="margin-left: 16px;">|</span>
+                            <div class="heat-legend-item negative"></div>
+                            <div class="heat-legend-item very-negative"></div>
+                            <span>Negative</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="chart-title">Daily Balance Statistics</div>
+                        <div class="heat-stats" id="heatStats">
+                            <div class="heat-stat-row">
+                                <span class="heat-stat-label">Highest Balance Day</span>
+                                <span class="heat-stat-value text-success" id="highestBalanceDay">--</span>
+                            </div>
+                            <div class="heat-stat-row">
+                                <span class="heat-stat-label">Lowest Balance Day</span>
+                                <span class="heat-stat-value text-danger" id="lowestBalanceDay">--</span>
+                            </div>
+                            <div class="heat-stat-row">
+                                <span class="heat-stat-label">Days with Negative Balance</span>
+                                <span class="heat-stat-value" id="negativeDaysCount">--</span>
+                            </div>
+                            <div class="heat-stat-row">
+                                <span class="heat-stat-label">Days Below $500</span>
+                                <span class="heat-stat-value" id="lowBalanceDaysCount">--</span>
+                            </div>
+                            <div class="heat-stat-row">
+                                <span class="heat-stat-label">Average Daily Balance</span>
+                                <span class="heat-stat-value" id="avgDailyBalance">--</span>
+                            </div>
+                            <div class="heat-stat-row">
+                                <span class="heat-stat-label">Balance Volatility</span>
+                                <span class="heat-stat-value" id="balanceVolatility">--</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -5095,6 +5173,32 @@ MCA/LOAN STACKING ANALYSIS - CRITICAL:
         });
 
         calendar.innerHTML = html;
+
+        // Calculate and display stats
+        const negativeDays = balances.filter(b => b < 0).length;
+        const lowBalanceDays = balances.filter(b => b >= 0 && b < 500).length;
+        const avgBalance = balances.reduce((a, b) => a + b, 0) / balances.length;
+        const maxBal = Math.max(...balances);
+        const minBal = Math.min(...balances);
+        const maxBalIdx = balances.indexOf(maxBal);
+        const minBalIdx = balances.indexOf(minBal);
+
+        // Calculate volatility (standard deviation / mean)
+        const mean = avgBalance;
+        const squaredDiffs = balances.map(b => Math.pow(b - mean, 2));
+        const avgSquaredDiff = squaredDiffs.reduce((a, b) => a + b, 0) / squaredDiffs.length;
+        const stdDev = Math.sqrt(avgSquaredDiff);
+        const volatility = mean !== 0 ? (stdDev / Math.abs(mean)) * 100 : 0;
+
+        document.getElementById('highestBalanceDay').textContent = `Day ${maxBalIdx + 1} (${formatCurrency(maxBal)})`;
+        document.getElementById('lowestBalanceDay').textContent = `Day ${minBalIdx + 1} (${formatCurrency(minBal)})`;
+        document.getElementById('negativeDaysCount').textContent = negativeDays;
+        document.getElementById('negativeDaysCount').className = `heat-stat-value ${negativeDays > 0 ? 'text-danger' : 'text-success'}`;
+        document.getElementById('lowBalanceDaysCount').textContent = lowBalanceDays;
+        document.getElementById('lowBalanceDaysCount').className = `heat-stat-value ${lowBalanceDays > 5 ? 'text-warning' : ''}`;
+        document.getElementById('avgDailyBalance').textContent = formatCurrency(avgBalance);
+        document.getElementById('balanceVolatility').textContent = volatility.toFixed(0) + '%';
+        document.getElementById('balanceVolatility').className = `heat-stat-value ${volatility > 100 ? 'text-danger' : volatility > 50 ? 'text-warning' : ''}`;
     }
 
     // Trend Arrows for Month-over-Month Changes
