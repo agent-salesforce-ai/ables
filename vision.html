@@ -4864,7 +4864,10 @@ MCA/LOAN STACKING ANALYSIS - CRITICAL:
 
     // Save Report to localStorage
     function saveReport() {
-        if (!analysisData) return;
+        if (!analysisData) {
+            alert('No report to save. Please analyze a bank statement first.');
+            return;
+        }
 
         const reports = JSON.parse(localStorage.getItem('savedReports') || '[]');
         const businessName = analysisData.businessInfo?.name || 'Unknown Business';
