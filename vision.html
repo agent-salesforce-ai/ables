@@ -3356,10 +3356,8 @@
         // Also update the main input
         document.getElementById('apiKey').value = apiKey;
         updateAnalyzeButton();
-        // Show saved message
-        const savedMsg = document.getElementById('apiKeySaved');
-        savedMsg.classList.add('visible');
-        setTimeout(() => savedMsg.classList.remove('visible'), 2000);
+        // Close settings panel
+        closeSettings();
     }
 
     function toggleTheme() {
