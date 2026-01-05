@@ -3382,13 +3382,19 @@
     }
 
     function saveApiKey() {
-        const apiKey = document.getElementById('settingsApiKey').value.trim();
-        localStorage.setItem('geminiApiKey', apiKey);
-        // Also update the main input
-        document.getElementById('apiKey').value = apiKey;
-        updateAnalyzeButton();
-        // Close settings panel
-        closeSettings();
+        try {
+            const apiKey = document.getElementById('settingsApiKey').value.trim();
+            localStorage.setItem('geminiApiKey', apiKey);
+            // Also update the main input
+            const mainInput = document.getElementById('apiKey');
+            if (mainInput) mainInput.value = apiKey;
+            if (typeof updateAnalyzeButton === 'function') updateAnalyzeButton();
+        } catch(e) {
+            console.error('Save error:', e);
+        }
+        // Always close settings panel
+        document.getElementById('settingsOverlay').classList.remove('active');
+        document.getElementById('settingsPanel').classList.remove('active');
     }
 
     function toggleTheme() {
