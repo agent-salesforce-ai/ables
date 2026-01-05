@@ -1168,6 +1168,34 @@
             display: flex;
         }
 
+        .settings-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .settings-done-btn {
+            background: linear-gradient(135deg, var(--accent) 0%, #d4a520 100%);
+            color: var(--primary);
+            padding: 10px 24px;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .settings-done-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4);
+        }
+
+        body.dark-theme .settings-footer {
+            border-color: #333;
+        }
+
         /* Theme Toggle */
         .theme-toggle {
             position: relative;
@@ -2737,6 +2765,9 @@
                 </svg>
                 API key saved
             </div>
+        </div>
+        <div class="settings-footer">
+            <button class="settings-done-btn" onclick="saveApiKey()">Save & Close</button>
         </div>
     </div>
 </div>
