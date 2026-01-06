@@ -4514,40 +4514,74 @@ Before returning JSON:
 
     // Single document extraction - more focused prompt for ONE statement
     async function callGeminiAPISingle(apiKey, file) {
-        const prompt = `You are a PRECISION OCR SYSTEM. Extract EXACT data from this ONE bank statement.
+        const prompt = `You are a PRECISION BANK STATEMENT OCR SYSTEM. Your job is to extract EXACT figures from this ONE bank statement document.
 
-═══════════════════════════════════════════════════════════════════════════════
-                    READ THIS ONE DOCUMENT CAREFULLY
-═══════════════════════════════════════════════════════════════════════════════
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                    STEP 1: LOCATE KEY NUMBERS ON THE STATEMENT                 ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
 
-STEP 1: Find the ACCOUNT SUMMARY (usually first page, top section):
-- Beginning Balance: _____ (copy exact number)
-- Ending Balance: _____ (copy exact number)
-- Total Deposits: _____ (copy exact number)
-- Total Withdrawals: _____ (copy exact number)
-- Statement Period: _____ (copy dates)
-- Account Holder: _____ (copy business name)
+FIND THE SUMMARY SECTION (usually on page 1, near top). Look for these EXACT labels and copy the numbers:
 
-STEP 2: Find ALL TRANSACTIONS in the table:
-- Read EVERY line: Date | Description | Amount | Balance
-- Credits/Deposits: positive amounts or in "Deposits" column
-- Debits/Withdrawals: negative amounts or in "Withdrawals" column
+□ "Beginning Balance" or "Opening Balance" or "Previous Balance" → startBalance
+□ "Ending Balance" or "Closing Balance" or "New Balance" → endBalance
+□ "Total Deposits" or "Total Credits" or "Deposits/Credits" → totalCredits
+□ "Total Withdrawals" or "Total Debits" or "Checks/Debits" → totalDebits
+□ "Number of Deposits" or "Deposits: X items" → creditCount
+□ "Number of Withdrawals" or "Withdrawals: X items" → debitCount
+□ "Average Daily Balance" or "Average Ledger Balance" → avgBalance
+□ "Low Balance" or "Minimum Balance" → minBalance
 
-STEP 3: VERIFY YOUR EXTRACTION:
-- Ending Balance MUST = Beginning Balance + Total Deposits - Total Withdrawals
-- If math doesn't match, re-read the statement
+COPY THESE NUMBERS EXACTLY AS PRINTED. For example:
+- If it says "$45,231.67" → use 45231.67
+- If it says "12 items" → use 12
+- If it says "-$500.00" → use 500.00 (as positive number)
 
-═══════════════════════════════════════════════════════════════════════════════
-                    OUTPUT FORMAT (JSON ONLY - NO MARKDOWN)
-═══════════════════════════════════════════════════════════════════════════════
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                    STEP 2: EXTRACT ALL TRANSACTIONS                            ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
 
-Return ONLY this JSON structure with ACTUAL numbers from the statement:
+Read the transaction table. For EACH row, extract:
+- Date (as shown, e.g., "01/15" or "Jan 15")
+- Description (EXACT text, e.g., "ACH CREDIT SQUARE INC DES:SETTLEMENT")
+- Amount (the dollar amount as a number)
+
+DEPOSITS/CREDITS go in the "credits" array:
+- Look for positive amounts, "CR", or amounts in a "Deposits" column
+- Include: ACH credits, wire transfers IN, mobile deposits, card settlements
+
+WITHDRAWALS/DEBITS go in the "debits" array:
+- Look for negative amounts, "DR", or amounts in a "Withdrawals" column
+- Include: ACH debits, wire transfers OUT, checks, debit card, fees
+
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                    STEP 3: VERIFY BEFORE RESPONDING                            ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+CHECK YOUR MATH:
+✓ endBalance = startBalance + totalCredits - totalDebits (±$1 tolerance)
+✓ creditCount = number of items in your credits array
+✓ debitCount = number of items in your debits array
+
+If the math doesn't work, RE-READ the statement. The bank's numbers are correct.
+
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                    STEP 4: DETECT MCA/LOAN PAYMENTS                            ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+Scan debits for MCA patterns:
+- Daily ACH debits of $50-$1000 to same recipient
+- Weekly ACH debits of $200-$5000 to same recipient
+- Keywords: LIBERTAS, YELLOWSTONE, CREDIBLY, ONDECK, KAPITUS, CAN CAPITAL, RAPID, FUNDBOX, BLUEVINE, PAYPAL WC, SQUARE CAPITAL, FORWARD, CLEARCO, FORA, RELIANT, PEARL, KALAMATA, EVEREST, GREENBOX
+
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                    OUTPUT: JSON ONLY (NO MARKDOWN, NO EXPLANATION)             ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
 
 {
     "businessInfo": {
-        "name": "Business name from statement",
-        "bankName": "Bank name",
-        "accountNumber": "****XXXX",
+        "name": "EXACT business name from statement",
+        "bankName": "EXACT bank name",
+        "accountNumber": "****XXXX (last 4 digits)",
         "statementPeriod": "Month YYYY"
     },
     "monthlySummary": [{
@@ -4564,8 +4598,8 @@ Return ONLY this JSON structure with ACTUAL numbers from the statement:
         "minBalance": 0,
         "nsfCount": 0,
         "overdraftCount": 0,
-        "credits": [{"date": "MM/DD", "description": "EXACT TEXT", "amount": 0}],
-        "debits": [{"date": "MM/DD", "description": "EXACT TEXT", "amount": 0}]
+        "credits": [{"date": "MM/DD", "description": "EXACT TEXT FROM STATEMENT", "amount": 0}],
+        "debits": [{"date": "MM/DD", "description": "EXACT TEXT FROM STATEMENT", "amount": 0}]
     }],
     "riskIndicators": {
         "nsfCount": 0,
@@ -4582,11 +4616,11 @@ Return ONLY this JSON structure with ACTUAL numbers from the statement:
     "dailyBalances": []
 }
 
-IMPORTANT:
-- ALL numbers must be numeric (not strings)
-- Use the BANK'S printed totals, not manual addition
-- Include EVERY transaction you can read
-- For MCA detection, look for daily/weekly ACH debits to: Libertas, Yellowstone, Credibly, OnDeck, Kapitus, Fundbox, BlueVine, PayPal WC, Square Capital, Forward, Clearco, Fora, Reliant`;
+CRITICAL RULES:
+1. ALL numbers must be NUMERIC (not strings) - e.g., 45231.67 not "$45,231.67"
+2. Use the BANK'S PRINTED TOTALS - do not manually add transactions
+3. Include EVERY transaction you can read from the statement
+4. Return ONLY valid JSON - no markdown code blocks, no explanations`;
 
         const selectedModel = getSelectedModel();
 
@@ -6084,35 +6118,81 @@ IMPORTANT:
 
         try {
             // Build verification prompt with the data
-            const verifyPrompt = `You are a financial auditor AI. Verify the following bank statement analysis data for mathematical accuracy.
+            const verifyPrompt = `You are a FINANCIAL DATA AUDITOR. Verify the mathematical accuracy of this bank statement analysis.
 
-DATA TO VERIFY:
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                           DATA TO VERIFY                                       ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
 ${JSON.stringify(analysisData, null, 2)}
 
-VERIFICATION TASKS:
-1. Check if monthly totals (totalCredits, totalDebits) are reasonable given the creditCount and debitCount
-2. Verify avgBalance is between minBalance and a reasonable maximum
-3. Check if endBalance - startBalance roughly equals totalCredits - totalDebits
-4. Verify the underwriting score criteria add up correctly
-5. Check if MCA payment calculations are reasonable (amount × frequency)
-6. Verify expense category percentages sum to approximately 100%
-7. Check revenue source percentages sum to approximately 100%
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                    VERIFICATION CHECKS TO PERFORM                              ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
 
-Return a JSON object with EXACTLY this structure:
+For EACH month in monthlySummary, verify:
+
+1. BALANCE EQUATION CHECK:
+   endBalance = startBalance + totalCredits - totalDebits
+   → Calculate: startBalance + totalCredits - totalDebits = ?
+   → Compare to endBalance
+   → PASS if within $10, FAIL if difference > $100, WARNING otherwise
+
+2. TRANSACTION COUNT CHECK:
+   → Count items in credits array, compare to creditCount
+   → Count items in debits array, compare to debitCount
+   → PASS if counts match, WARNING if close, FAIL if very different
+
+3. CREDITS SUM CHECK:
+   → Add up all amounts in credits array
+   → Compare to totalCredits
+   → PASS if within 1%, WARNING if within 5%, FAIL otherwise
+
+4. DEBITS SUM CHECK:
+   → Add up all amounts in debits array
+   → Compare to totalDebits
+   → PASS if within 1%, WARNING if within 5%, FAIL otherwise
+
+5. BALANCE REASONABILITY:
+   → avgBalance should be between minBalance and max(startBalance, endBalance)
+   → minBalance should be <= both startBalance and endBalance
+   → PASS if reasonable, FAIL if impossible values
+
+6. PERCENTAGES CHECK:
+   → Revenue source percentages should sum to ~100%
+   → Expense category percentages should sum to ~100%
+   → PASS if 95-105%, WARNING if 90-110%, FAIL otherwise
+
+7. UNDERWRITING SCORE CHECK:
+   → Verify each criterion's passed/failed status matches the value shown
+   → Check if overall score calculation is reasonable
+
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                    OUTPUT FORMAT (JSON ONLY)                                   ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+Return ONLY this JSON structure:
+
 {
-    "overallStatus": "pass" or "fail" or "warning",
+    "overallStatus": "pass",
     "checks": [
-        {"name": "Monthly Totals", "status": "pass/fail/warning", "note": "explanation"},
-        {"name": "Balance Consistency", "status": "pass/fail/warning", "note": "explanation"},
-        {"name": "Cash Flow Math", "status": "pass/fail/warning", "note": "explanation"},
-        {"name": "Score Calculation", "status": "pass/fail/warning", "note": "explanation"},
-        {"name": "MCA Calculations", "status": "pass/fail/warning", "note": "explanation"},
-        {"name": "Expense Percentages", "status": "pass/fail/warning", "note": "explanation"},
-        {"name": "Revenue Percentages", "status": "pass/fail/warning", "note": "explanation"}
+        {"name": "Balance Equation", "status": "pass", "note": "startBalance ($X) + credits ($Y) - debits ($Z) = $W, matches endBalance ($W)"},
+        {"name": "Transaction Counts", "status": "pass", "note": "Credits: X items (expected X), Debits: Y items (expected Y)"},
+        {"name": "Credits Sum", "status": "pass", "note": "Sum of credits array: $X, totalCredits: $Y, difference: $Z"},
+        {"name": "Debits Sum", "status": "pass", "note": "Sum of debits array: $X, totalDebits: $Y, difference: $Z"},
+        {"name": "Balance Reasonability", "status": "pass", "note": "avgBalance $X is between minBalance $Y and max balance $Z"},
+        {"name": "Percentages", "status": "pass", "note": "Revenue sources sum to X%, Expenses sum to Y%"},
+        {"name": "Underwriting Score", "status": "pass", "note": "X of 8 criteria passed, score of Y% is correct"}
     ],
-    "summary": "Brief overall summary of verification results",
-    "discrepancies": ["List any specific discrepancies found"]
-}`;
+    "summary": "All mathematical checks passed. Data appears accurate.",
+    "discrepancies": []
+}
+
+RULES:
+- "status" must be exactly "pass", "fail", or "warning"
+- "overallStatus" = "fail" if ANY check fails, "warning" if any warnings but no fails, "pass" if all pass
+- Show actual numbers in the "note" field so user can verify
+- List specific discrepancies found in the discrepancies array`;
 
             // Use standard Gemini 3 Pro API for verification
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent?key=${apiKey}`, {
