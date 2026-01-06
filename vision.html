@@ -4329,8 +4329,11 @@
                 });
             }
 
-            // Process based on parser mode
+            // Process based on parser mode with progressive loading
             let response;
+
+            // Show report container early with loading state
+            showProgressiveReport();
 
             if (parserMode === 'moneythumb') {
                 // MoneyThumb only
@@ -4339,36 +4342,122 @@
                 // Compare both parsers
                 response = await processWithComparison(apiKey, fileContents);
             } else {
-                // Gemini (default)
-                response = await processWithGemini(apiKey, fileContents);
+                // Gemini (default) - with progressive callbacks
+                response = await processWithGemini(apiKey, fileContents, updateProgressiveReport);
             }
 
             showUploadStatus('Generating report...');
             setProcessingProgress(95);
             updateProcessingStatus('Rendering report...', 'Final step');
 
-            // Parse and render the report (continues in existing code)
+            // Parse and render the final report
             analysisData = response;
             renderReport(response);
+            hideProgressiveLoadingIndicators();
 
             // Complete!
             setProcessingProgress(100);
             stopProcessingTimer();
             hideUploadStatus();
 
-            // Show the report and hide upload section
+            // Hide upload section (report already visible)
             document.getElementById('uploadSection').style.display = 'none';
-            document.getElementById('reportContainer').classList.add('visible');
 
         } catch (error) {
             console.error('Analysis error:', error);
             stopProcessingTimer();
             showError(`Analysis failed: ${error.message}`);
             hideUploadStatus();
+            hideProgressiveReport();
         }
     }
 
-    async function processWithGemini(apiKey, fileContents) {
+    // Progressive loading functions
+    function showProgressiveReport() {
+        const uploadSection = document.getElementById('uploadSection');
+        const reportContainer = document.getElementById('reportContainer');
+
+        // Keep upload section visible but shrink it
+        uploadSection.style.maxHeight = '200px';
+        uploadSection.style.overflow = 'hidden';
+
+        // Show report container with loading state
+        reportContainer.classList.add('visible', 'loading-state');
+
+        // Add loading banner at top
+        const loadingBanner = document.createElement('div');
+        loadingBanner.id = 'progressiveLoadingBanner';
+        loadingBanner.innerHTML = `
+            <div style="background: linear-gradient(90deg, var(--accent), #10b981); color: white; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
+                <div class="processing-dot" style="width: 10px; height: 10px; background: white; border-radius: 50%; animation: pulse 1.4s ease-in-out infinite;"></div>
+                <span id="progressiveBannerText" style="font-weight: 500;">Analyzing documents...</span>
+                <span id="progressiveBannerTimer" style="margin-left: auto; font-variant-numeric: tabular-nums;">0:00</span>
+            </div>
+        `;
+        reportContainer.insertBefore(loadingBanner, reportContainer.firstChild);
+
+        // Start banner timer
+        const startTime = Date.now();
+        window.progressiveBannerInterval = setInterval(() => {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const mins = Math.floor(elapsed / 60);
+            const secs = elapsed % 60;
+            const timerEl = document.getElementById('progressiveBannerTimer');
+            if (timerEl) timerEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+        }, 1000);
+    }
+
+    function updateProgressiveReport(stage, partialData) {
+        const bannerText = document.getElementById('progressiveBannerText');
+        if (bannerText) {
+            const stageNames = {
+                'ocr': 'Extracting text from documents...',
+                'analysis': 'AI analyzing transactions...',
+                'verify': 'Verifying calculations...',
+                'report': 'Building final report...'
+            };
+            bannerText.textContent = stageNames[stage] || 'Processing...';
+        }
+
+        // If we have partial data, update visible sections
+        if (partialData && partialData.businessInfo) {
+            // Update business info section if available
+            const bizName = document.getElementById('businessName');
+            if (bizName && partialData.businessInfo.name) {
+                bizName.textContent = partialData.businessInfo.name;
+            }
+        }
+    }
+
+    function hideProgressiveLoadingIndicators() {
+        // Remove loading banner
+        const banner = document.getElementById('progressiveLoadingBanner');
+        if (banner) banner.remove();
+
+        // Clear banner timer
+        if (window.progressiveBannerInterval) {
+            clearInterval(window.progressiveBannerInterval);
+            window.progressiveBannerInterval = null;
+        }
+
+        // Remove loading state class
+        const reportContainer = document.getElementById('reportContainer');
+        if (reportContainer) reportContainer.classList.remove('loading-state');
+    }
+
+    function hideProgressiveReport() {
+        hideProgressiveLoadingIndicators();
+        const reportContainer = document.getElementById('reportContainer');
+        if (reportContainer) reportContainer.classList.remove('visible');
+
+        const uploadSection = document.getElementById('uploadSection');
+        if (uploadSection) {
+            uploadSection.style.maxHeight = '';
+            uploadSection.style.overflow = '';
+        }
+    }
+
+    async function processWithGemini(apiKey, fileContents, progressCallback) {
         const totalFiles = fileContents.length;
 
         // Start timer and reset UI
@@ -4376,23 +4465,27 @@
         startProcessingTimer();
         setProcessingStage('ocr');
         setProcessingProgress(5);
+        if (progressCallback) progressCallback('ocr', null);
 
         if (fileContents.length === 1) {
             // Single document - process normally
             showUploadStatus('Analyzing document with Gemini Vision OCR...');
             updateProcessingStatus('Extracting text from document...', 'OCR in progress');
             setProcessingProgress(15);
+            if (progressCallback) progressCallback('ocr', null);
 
             try {
                 setProcessingStage('analysis');
                 setProcessingProgress(30);
                 updateProcessingStatus('AI analyzing transactions...', 'Identifying deposits and withdrawals');
+                if (progressCallback) progressCallback('analysis', null);
 
                 const response = await callGeminiAPISingle(apiKey, fileContents[0]);
 
                 setProcessingStage('verify');
                 setProcessingProgress(70);
                 updateProcessingStatus('Verifying calculations...', 'Cross-checking totals');
+                if (progressCallback) progressCallback('verify', response);
 
                 if (!response || !response.monthlySummary) {
                     throw new Error('Invalid response from API - missing monthlySummary');
@@ -4401,6 +4494,7 @@
                 setProcessingStage('report');
                 setProcessingProgress(90);
                 updateProcessingStatus('Building report...', 'Almost done');
+                if (progressCallback) progressCallback('report', response);
 
                 return response;
             } catch (singleDocError) {
@@ -4488,12 +4582,14 @@
             setProcessingProgress(75);
             showUploadStatus('Merging results from all documents...');
             updateProcessingStatus('Verifying all calculations...', 'Cross-checking totals');
+            if (progressCallback) progressCallback('verify', null);
 
             const merged = mergeDocumentResults(allResults);
 
             setProcessingStage('report');
             setProcessingProgress(90);
             updateProcessingStatus('Building report...', 'Almost done');
+            if (progressCallback) progressCallback('report', merged);
 
             return merged;
         }
@@ -6151,6 +6247,14 @@ CRITICAL: Include EVERY transaction from the statement in credits/debits arrays.
 
     // Render Report Functions
     function renderReport(data) {
+        // MEMORY LEAK FIX: Destroy all existing charts before creating new ones
+        Object.keys(chartInstances).forEach(key => {
+            if (chartInstances[key]) {
+                chartInstances[key].destroy();
+                delete chartInstances[key];
+            }
+        });
+
         // Ensure all required data structures exist with defaults
         data.businessInfo = data.businessInfo || {};
         data.monthlySummary = data.monthlySummary || [{}];
@@ -7267,6 +7371,21 @@ CRITICAL: Include EVERY transaction from the statement in credits/debits arrays.
 
     // New Analysis
     function newAnalysis() {
+        // MEMORY LEAK FIX: Destroy all charts
+        Object.keys(chartInstances).forEach(key => {
+            if (chartInstances[key]) {
+                chartInstances[key].destroy();
+                delete chartInstances[key];
+            }
+        });
+
+        // Stop any running timers
+        stopProcessingTimer();
+        if (window.progressiveBannerInterval) {
+            clearInterval(window.progressiveBannerInterval);
+            window.progressiveBannerInterval = null;
+        }
+
         // Reset state
         uploadedFiles = [];
         analysisData = null;
@@ -7276,7 +7395,14 @@ CRITICAL: Include EVERY transaction from the statement in credits/debits arrays.
 
         // Hide report, show upload
         document.getElementById('reportContainer').classList.remove('visible');
-        document.getElementById('uploadSection').style.display = 'block';
+        const uploadSection = document.getElementById('uploadSection');
+        uploadSection.style.display = 'block';
+        uploadSection.style.maxHeight = '';
+        uploadSection.style.overflow = '';
+
+        // Remove any progressive loading banners
+        const banner = document.getElementById('progressiveLoadingBanner');
+        if (banner) banner.remove();
 
         // Clear file list
         document.getElementById('fileList').innerHTML = '';
