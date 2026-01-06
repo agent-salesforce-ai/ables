@@ -430,6 +430,25 @@
         let score = 0, level = 1, combo = 1, maxCombo = 1, totalCleared = 0;
         let gameOver = false, gameStarted = false, aimAngle = -Math.PI / 2;
         let playerName = '', animating = false;
+        
+        // Lateral movement
+        let launcherX = canvas.width / 2;
+        const LAUNCHER_SPEED = 8;
+        const keys = { left: false, right: false };
+        
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = true;
+            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = true;
+            if (e.key === ' ' && gameStarted && !gameOver && !shootingSnood && !animating) {
+                e.preventDefault();
+                shoot();
+            }
+        });
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = false;
+            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = false;
+        });
 
         let leaderboard = JSON.parse(localStorage.getItem('snoodLeaderboard')) || [];
 
@@ -458,6 +477,7 @@
         function resetGame() {
             grid = []; score = 0; level = 1; combo = 1; maxCombo = 1; totalCleared = 0;
             gameOver = false; animating = false;
+            launcherX = canvas.width / 2;
 
             for (let row = 0; row < 5; row++) {
                 grid[row] = [];
@@ -476,7 +496,7 @@
         }
 
         function createSnood() {
-            return { type: Math.floor(Math.random() * Math.min(5 + Math.floor(level/2), SNOOD_TYPES.length)), x: canvas.width/2, y: SHOOT_Y };
+            return { type: Math.floor(Math.random() * Math.min(5 + Math.floor(level/2), SNOOD_TYPES.length)), x: launcherX, y: SHOOT_Y };
         }
 
         function updateDisplay() {
@@ -522,7 +542,7 @@
             if (gameOver || !gameStarted || shootingSnood) return;
             const rect = canvas.getBoundingClientRect();
             const mx = e.clientX - rect.left, my = e.clientY - rect.top;
-            aimAngle = Math.atan2(my - SHOOT_Y, mx - canvas.width/2);
+            aimAngle = Math.atan2(my - SHOOT_Y, mx - launcherX);
             aimAngle = Math.max(-Math.PI + 0.15, Math.min(-0.15, aimAngle));
         });
 
@@ -533,14 +553,30 @@
 
         function shoot() {
             const speed = 14;
-            shootingSnood = { ...currentSnood, vx: Math.cos(aimAngle) * speed, vy: Math.sin(aimAngle) * speed };
+            shootingSnood = { 
+                type: currentSnood.type, 
+                x: launcherX, 
+                y: SHOOT_Y,
+                vx: Math.cos(aimAngle) * speed, 
+                vy: Math.sin(aimAngle) * speed 
+            };
             currentSnood = nextSnood;
-            currentSnood.x = canvas.width/2;
+            currentSnood.x = launcherX;
             currentSnood.y = SHOOT_Y;
             nextSnood = createSnood();
         }
 
+        function updateLauncher() {
+            if (keys.left) launcherX = Math.max(SNOOD_RADIUS + 30, launcherX - LAUNCHER_SPEED);
+            if (keys.right) launcherX = Math.min(canvas.width - SNOOD_RADIUS - 30, launcherX + LAUNCHER_SPEED);
+            if (currentSnood && !shootingSnood) {
+                currentSnood.x = launcherX;
+            }
+        }
+
         function update() {
+            updateLauncher();
+            
             if (!shootingSnood) return;
             shootingSnood.x += shootingSnood.vx;
             shootingSnood.y += shootingSnood.vy;
@@ -724,9 +760,13 @@
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+            // Floor/platform area
+            ctx.fillStyle = 'rgba(30,20,40,0.9)';
+            ctx.fillRect(0, DANGER_LINE + 20, canvas.width, canvas.height - DANGER_LINE - 20);
+            
             // Simple danger zone
             ctx.fillStyle = 'rgba(255,0,0,0.08)';
-            ctx.fillRect(0, DANGER_LINE, canvas.width, canvas.height - DANGER_LINE);
+            ctx.fillRect(0, DANGER_LINE, canvas.width, 20);
             
             // Danger line
             ctx.strokeStyle = '#ff0000';
@@ -749,56 +789,164 @@
             if (shootingSnood) drawCachedSnood(shootingSnood.x, shootingSnood.y, shootingSnood.type);
 
             if (currentSnood && !shootingSnood && !gameOver) {
-                // Simple launcher base
-                drawSimpleLauncher(currentSnood.x, currentSnood.y, aimAngle);
+                // Draw movement track
+                ctx.fillStyle = 'rgba(60,60,80,0.5)';
+                ctx.fillRect(30, SHOOT_Y + 25, canvas.width - 60, 8);
+                ctx.strokeStyle = '#555';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(30, SHOOT_Y + 25, canvas.width - 60, 8);
                 
-                // Simple aim line
-                ctx.strokeStyle = 'rgba(0,255,170,0.5)';
-                ctx.lineWidth = 2;
-                ctx.setLineDash([8, 8]);
-                ctx.beginPath();
-                ctx.moveTo(currentSnood.x, currentSnood.y);
-                ctx.lineTo(currentSnood.x + Math.cos(aimAngle) * 300, currentSnood.y + Math.sin(aimAngle) * 300);
-                ctx.stroke();
-                ctx.setLineDash([]);
+                // Aim line with reflection preview
+                drawAimLine(launcherX, SHOOT_Y, aimAngle);
                 
-                // Current snood
-                drawCachedSnood(currentSnood.x, currentSnood.y, currentSnood.type);
+                // Draw blaster gun
+                drawBlasterGun(launcherX, SHOOT_Y, aimAngle);
+                
+                // Current snood in gun
+                drawCachedSnood(launcherX, SHOOT_Y - 5, currentSnood.type);
 
-                // Next snood preview
-                ctx.fillStyle = '#888';
-                ctx.font = '14px VT323';
+                // Next snood preview box
+                ctx.fillStyle = 'rgba(20,20,40,0.9)';
+                ctx.strokeStyle = '#ffcc00';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.roundRect(canvas.width - 65, canvas.height - 75, 55, 65, 8);
+                ctx.fill();
+                ctx.stroke();
+                
+                ctx.fillStyle = '#ffcc00';
+                ctx.font = 'bold 12px VT323';
                 ctx.textAlign = 'center';
-                ctx.fillText('NEXT', canvas.width - 40, canvas.height - 60);
-                drawCachedSnood(canvas.width - 40, canvas.height - 32, nextSnood.type, 0.7);
+                ctx.fillText('NEXT', canvas.width - 37, canvas.height - 58);
+                drawCachedSnood(canvas.width - 37, canvas.height - 30, nextSnood.type, 0.8);
+                
+                // Controls hint
+                ctx.fillStyle = 'rgba(150,150,150,0.7)';
+                ctx.font = '14px VT323';
+                ctx.textAlign = 'left';
+                ctx.fillText('A/D or ARROWS: Move', 10, canvas.height - 10);
+                ctx.fillText('CLICK or SPACE: Fire', 10, canvas.height - 25);
+            }
+            
+            // Game over overlay
+            if (gameOver) {
+                ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
             }
         }
-
-        function drawSimpleLauncher(x, y, angle) {
-            const len = 35, w = 20;
+        
+        function drawAimLine(x, y, angle) {
+            // Main aim line
+            ctx.strokeStyle = 'rgba(0,255,170,0.6)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([8, 8]);
             
+            let lineX = x, lineY = y;
+            let dx = Math.cos(angle), dy = Math.sin(angle);
+            
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            
+            // Trace line with wall bounces
+            for (let i = 0; i < 500; i++) {
+                lineX += dx;
+                lineY += dy;
+                
+                // Wall bounce
+                if (lineX < SNOOD_RADIUS || lineX > canvas.width - SNOOD_RADIUS) {
+                    dx *= -1;
+                    ctx.lineTo(lineX, lineY);
+                    ctx.stroke();
+                    ctx.strokeStyle = 'rgba(0,255,170,0.3)';
+                    ctx.beginPath();
+                    ctx.moveTo(lineX, lineY);
+                }
+                
+                if (lineY < 30) break;
+            }
+            ctx.lineTo(lineX, lineY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        function drawBlasterGun(x, y, angle) {
             ctx.save();
             ctx.translate(x, y);
             ctx.rotate(angle + Math.PI/2);
             
-            // Barrel
-            ctx.fillStyle = '#4a4a5a';
-            ctx.fillRect(-w/2, -len, w, len);
+            // Gun body (main housing)
+            const grad = ctx.createLinearGradient(-18, 0, 18, 0);
+            grad.addColorStop(0, '#2a2a3a');
+            grad.addColorStop(0.3, '#4a4a6a');
+            grad.addColorStop(0.5, '#5a5a7a');
+            grad.addColorStop(0.7, '#4a4a6a');
+            grad.addColorStop(1, '#2a2a3a');
             
-            // Barrel outline
-            ctx.strokeStyle = '#6a6a7a';
+            // Back housing
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.roundRect(-18, -5, 36, 35, 5);
+            ctx.fill();
+            ctx.strokeStyle = '#6a6a8a';
             ctx.lineWidth = 2;
-            ctx.strokeRect(-w/2, -len, w, len);
+            ctx.stroke();
             
-            // Base circle
+            // Barrel
             ctx.fillStyle = '#3a3a4a';
             ctx.beginPath();
-            ctx.arc(0, 5, 18, 0, Math.PI * 2);
+            ctx.roundRect(-12, -45, 24, 45, 3);
             ctx.fill();
             ctx.strokeStyle = '#5a5a6a';
             ctx.stroke();
             
+            // Barrel stripes
+            ctx.fillStyle = '#2a2a3a';
+            ctx.fillRect(-12, -35, 24, 4);
+            ctx.fillRect(-12, -25, 24, 4);
+            ctx.fillRect(-12, -15, 24, 4);
+            
+            // Muzzle glow
+            ctx.fillStyle = '#00ffaa';
+            ctx.beginPath();
+            ctx.arc(0, -45, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#aaffdd';
+            ctx.beginPath();
+            ctx.arc(0, -45, 4, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Side vents (left)
+            ctx.fillStyle = '#ff4444';
+            ctx.fillRect(-20, 5, 4, 8);
+            ctx.fillRect(-20, 16, 4, 8);
+            
+            // Side vents (right)
+            ctx.fillRect(16, 5, 4, 8);
+            ctx.fillRect(16, 16, 4, 8);
+            
+            // Energy core window
+            ctx.fillStyle = '#00aaff';
+            ctx.beginPath();
+            ctx.arc(0, 15, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#66ddff';
+            ctx.beginPath();
+            ctx.arc(0, 15, 4, 0, Math.PI * 2);
+            ctx.fill();
+            
             ctx.restore();
+            
+            // Wheels/treads under gun
+            ctx.fillStyle = '#333';
+            ctx.beginPath();
+            ctx.ellipse(x - 20, y + 30, 8, 5, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(x + 20, y + 30, 8, 5, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#555';
+            ctx.lineWidth = 1;
+            ctx.stroke();
         }
 
         // Sprite cache for snoods
