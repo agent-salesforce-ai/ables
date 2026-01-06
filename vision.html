@@ -4090,18 +4090,27 @@
     }
 
     async function callGeminiAPI(apiKey, files) {
-        const prompt = `You are an expert MCA (Merchant Cash Advance) underwriter with strong mathematical skills. Analyze ALL the bank statement documents provided and extract EXACT financial data.
+        const prompt = `You are an expert OCR system and MCA (Merchant Cash Advance) underwriter. Your task is to PRECISELY extract financial data from the bank statement images/documents provided.
 
-CRITICAL MATH RULES:
-- totalCredits = SUM of ALL credit/deposit transactions for that month (add up every single deposit)
-- totalDebits = SUM of ALL debit/withdrawal transactions for that month (add up every single withdrawal)
-- creditCount = COUNT of credit transactions (number of deposits)
-- debitCount = COUNT of debit transactions (number of withdrawals)
-- endBalance should approximately equal: startBalance + totalCredits - totalDebits
-- trueCredits = totalCredits minus any internal transfers or returns
-- trueDebits = totalDebits minus any internal transfers
-- avgBalance = average of all daily ending balances for the month
-- minBalance = lowest balance seen during the month
+OCR EXTRACTION RULES - READ EVERY NUMBER EXACTLY:
+1. Read EVERY transaction line item from the statement - do not skip any
+2. Extract the EXACT dollar amounts as shown (e.g., if it says $1,234.56, use 1234.56)
+3. Extract the EXACT dates and descriptions as printed
+4. Pay attention to columns: Date | Description | Withdrawals/Debits | Deposits/Credits | Balance
+5. Read the statement summary section for Beginning Balance, Ending Balance, Total Deposits, Total Withdrawals
+6. Use the bank's printed totals when available - they are more accurate than manual addition
+7. If the statement shows "Total Deposits: $X" and "Total Withdrawals: $Y", USE THOSE EXACT NUMBERS
+
+CRITICAL MATH VERIFICATION:
+- totalCredits = Use the bank's "Total Deposits" or "Total Credits" if shown, otherwise SUM all credit transactions
+- totalDebits = Use the bank's "Total Withdrawals" or "Total Debits" if shown, otherwise SUM all debit transactions
+- creditCount = COUNT of individual credit/deposit transactions
+- debitCount = COUNT of individual debit/withdrawal transactions
+- startBalance = Beginning/Opening Balance as shown on statement
+- endBalance = Ending/Closing Balance as shown on statement
+- VERIFY: endBalance = startBalance + totalCredits - totalDebits (if this doesn't match, re-check your OCR)
+- avgBalance = Average Daily Balance if shown, otherwise estimate from daily balances
+- minBalance = Minimum/Lowest balance shown or observed
 
 Return a JSON object with EXACTLY this structure (no markdown, just pure JSON). Replace ALL example values with ACTUAL data from the statements:
 
