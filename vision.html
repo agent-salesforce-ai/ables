@@ -126,7 +126,6 @@
             border-radius: var(--radius-lg);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             margin-bottom: 20px;
-            overflow: hidden;
         }
 
         .upload-drop-zone {
@@ -466,233 +465,6 @@
             100% { transform: translateX(350%); }
         }
 
-        /* Snood Game Styles */
-        .snood-game-wrapper {
-            margin-top: 24px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .snood-container {
-            background: #1a1a1a;
-            border-radius: 12px;
-            padding: 16px;
-            border: 1px solid #333;
-        }
-
-        .snood-label {
-            font-size: 12px;
-            color: #888;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-align: center;
-        }
-
-        #snoodCanvas {
-            background: linear-gradient(180deg, #1e1e2e 0%, #0d0d15 100%);
-            border-radius: 8px;
-            cursor: crosshair;
-            display: block;
-            margin: 0 auto;
-        }
-
-        .snood-controls {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 12px;
-            font-size: 11px;
-            color: #666;
-        }
-
-        #snoodScore {
-            color: var(--accent);
-            font-weight: 600;
-        }
-
-        body.dark-theme .snood-container {
-            background: #1a1a1a;
-            border-color: #333;
-        }
-
-        body:not(.dark-theme) .snood-container {
-            background: #f5f5f5;
-            border-color: #ddd;
-        }
-
-        body:not(.dark-theme) #snoodCanvas {
-            background: linear-gradient(180deg, #e8e8f0 0%, #d0d0e0 100%);
-        }
-
-        body:not(.dark-theme) .snood-label,
-        body:not(.dark-theme) .snood-controls {
-            color: #666;
-        }
-
-        /* Game Button in Header - Hank Bank Theme */
-        .game-btn {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 14px;
-            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
-            color: #d4af37;
-            border: 2px solid #d4af37;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .game-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
-            background: linear-gradient(135deg, #2d5a87 0%, #3d6a97 100%);
-        }
-
-        /* Hank Bank Snood Modal */
-        .snood-modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.85);
-            z-index: 2000;
-            backdrop-filter: blur(4px);
-        }
-
-        .snood-modal-overlay.active {
-            display: block;
-        }
-
-        .snood-modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(180deg, #1e3a5f 0%, #0f1d2f 100%);
-            border-radius: 16px;
-            padding: 0;
-            z-index: 2001;
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6), 0 0 60px rgba(212, 175, 55, 0.2);
-            border: 3px solid #d4af37;
-            overflow: hidden;
-        }
-
-        .snood-modal.active {
-            display: block;
-            animation: modalPop 0.3s ease-out;
-        }
-
-        @keyframes modalPop {
-            from { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
-            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-        }
-
-        .snood-modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 20px;
-            background: linear-gradient(90deg, #1e3a5f 0%, #2d5a87 100%);
-            color: #d4af37;
-            border-bottom: 2px solid #d4af37;
-        }
-
-        .snood-modal-header h3 {
-            margin: 0;
-            font-size: 20px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .snood-modal-stats {
-            display: flex;
-            gap: 16px;
-            font-size: 14px;
-            font-weight: 700;
-        }
-
-        .snood-modal-stats span {
-            background: rgba(212, 175, 55, 0.2);
-            padding: 6px 14px;
-            border-radius: 6px;
-            border: 1px solid #d4af37;
-        }
-
-        .snood-modal-close {
-            background: rgba(212, 175, 55, 0.2);
-            border: 1px solid #d4af37;
-            color: #d4af37;
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.2s;
-        }
-
-        .snood-modal-close:hover {
-            background: rgba(212, 175, 55, 0.4);
-        }
-
-        .snood-modal-body {
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            background: #0a1520;
-        }
-
-        #snoodModalCanvas {
-            background: linear-gradient(180deg, #152535 0%, #0a1520 100%);
-            border-radius: 12px;
-            cursor: crosshair;
-            box-shadow: inset 0 0 40px rgba(0,0,0,0.6), 0 0 20px rgba(212, 175, 55, 0.1);
-            border: 2px solid #2d5a87;
-        }
-
-        .snood-modal-footer {
-            padding: 16px 20px;
-            background: #0f1d2f;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 2px solid #d4af37;
-        }
-
-        .snood-modal-controls {
-            display: flex;
-            gap: 16px;
-            font-size: 12px;
-            color: #7a9cc6;
-            font-weight: 500;
-        }
-
-        .snood-restart-btn {
-            background: linear-gradient(135deg, #d4af37 0%, #b8962e 100%);
-            color: #1e3a5f;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 6px;
-            font-weight: 800;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.2s;
-        }
-
-        .snood-restart-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(201, 162, 39, 0.4);
-        }
-
         /* Report Container (hidden until analysis complete) */
         .report-container {
             display: none;
@@ -709,7 +481,7 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
             border: 1px solid var(--gray-200);
             margin-bottom: 16px;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .summary-top {
@@ -828,7 +600,7 @@
             border-radius: var(--radius-lg);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
             margin-bottom: 16px;
-            overflow: hidden;
+            overflow: visible;
             border: 1px solid var(--gray-200);
         }
 
@@ -860,7 +632,7 @@
             border: 1px solid var(--success);
         }
 
-        .section-body { padding: 16px; }
+        .section-body { padding: 16px; overflow: visible; }
 
         /* Two Column Layout */
         .two-col {
@@ -3339,18 +3111,11 @@
             <select class="settings-select" id="modelSelect" onchange="saveModelSelection()">
                 <optgroup label="Gemini 3 (Latest)">
                     <option value="gemini-3-pro-preview">Gemini 3 Pro (Best Accuracy)</option>
-                    <option value="gemini-3-flash-preview">Gemini 3 Flash (Faster)</option>
+                    <option value="gemini-3-flash-preview">Gemini 3 Flash (Fast)</option>
                 </optgroup>
                 <optgroup label="Gemini 2.5">
-                    <option value="gemini-2.5-pro-preview-05-06">Gemini 2.5 Pro (Adaptive Thinking)</option>
-                    <option value="gemini-2.5-flash-preview-05-20">Gemini 2.5 Flash (High Volume)</option>
-                </optgroup>
-                <optgroup label="Gemini 2.0">
-                    <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash</option>
-                </optgroup>
-                <optgroup label="Gemini 1.5">
-                    <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
-                    <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                    <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+                    <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
                 </optgroup>
             </select>
             <div class="model-description" id="modelDescription">
@@ -3384,30 +3149,6 @@
     </div>
     <div class="settings-footer">
         <button class="settings-done-btn" onclick="saveApiKey()">Save & Close</button>
-    </div>
-</div>
-
-<!-- Hank Bank Snood Game Modal -->
-<div class="snood-modal-overlay" id="snoodModalOverlay" onclick="closeSnoodModal()"></div>
-<div class="snood-modal" id="snoodModal">
-    <div class="snood-modal-header">
-        <h3>Bank with Hank</h3>
-        <div class="snood-modal-stats">
-            <span id="snoodModalScore">$0</span>
-            <span id="snoodModalLevel">Level: 1</span>
-        </div>
-        <button class="snood-modal-close" onclick="closeSnoodModal()">✕</button>
-    </div>
-    <div class="snood-modal-body">
-        <canvas id="snoodModalCanvas" width="400" height="500"></canvas>
-    </div>
-    <div class="snood-modal-footer">
-        <div class="snood-modal-controls">
-            <span>Aim with mouse</span>
-            <span>Click to shoot</span>
-            <span>Match 3+ Hanks!</span>
-        </div>
-        <button class="snood-restart-btn" onclick="restartSnoodGame()">Cash Out</button>
     </div>
 </div>
 
@@ -3457,17 +3198,22 @@
                 <span id="uploadStatusText">Analyzing statements...</span>
             </div>
         </div>
-        <!-- Snood Game Container (shows during analysis) -->
-        <div class="snood-game-wrapper" id="snoodGameWrapper" style="display: none;">
-            <div class="snood-container">
-                <div class="snood-label">Play while you wait!</div>
-                <canvas id="snoodCanvas" width="280" height="320"></canvas>
-                <div class="snood-controls">
-                    <span>Move mouse to aim, click to shoot</span>
-                    <span id="snoodScore">Score: 0</span>
-                </div>
+        <!-- Processing indicator (shows during analysis) -->
+        <div id="processingIndicator" style="display: none; text-align: center; padding: 40px 20px;">
+            <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 20px;">
+                <div class="processing-dot" style="width: 12px; height: 12px; background: var(--accent); border-radius: 50%; animation: pulse 1.4s ease-in-out infinite;"></div>
+                <div class="processing-dot" style="width: 12px; height: 12px; background: var(--accent); border-radius: 50%; animation: pulse 1.4s ease-in-out 0.2s infinite;"></div>
+                <div class="processing-dot" style="width: 12px; height: 12px; background: var(--accent); border-radius: 50%; animation: pulse 1.4s ease-in-out 0.4s infinite;"></div>
             </div>
+            <div id="processingStatus" style="font-size: 14px; color: var(--gray-600);"></div>
+            <div id="processingDetails" style="font-size: 12px; color: var(--gray-400); margin-top: 8px;"></div>
         </div>
+        <style>
+            @keyframes pulse {
+                0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+                40% { transform: scale(1.2); opacity: 1; }
+            }
+        </style>
     </div>
 
     <!-- Hidden API Key Input (used by JS) -->
@@ -4084,13 +3830,10 @@
     }
 
     const modelDescriptions = {
-        'gemini-3-pro-preview': 'Best for comprehensive bank statement analysis with high accuracy. Recommended for detailed underwriting.',
-        'gemini-3-flash-preview': 'Fast Gemini 3 model for quick analysis.',
-        'gemini-2.5-pro-preview-05-06': 'Adaptive thinking model with extended reasoning capabilities.',
-        'gemini-2.5-flash-preview-05-20': 'High volume processing with good accuracy.',
-        'gemini-2.0-flash-exp': 'Experimental model with improved speed.',
-        'gemini-1.5-pro': 'Reliable model for comprehensive analysis.',
-        'gemini-1.5-flash': 'Fast and efficient for high-volume processing tasks.',
+        'gemini-3-pro-preview': 'Latest Gemini 3 Pro. Best accuracy for comprehensive bank statement analysis.',
+        'gemini-3-flash-preview': 'Fast Gemini 3 model. Great for quick analysis with good accuracy.',
+        'gemini-2.5-pro': 'Reliable Gemini 2.5 Pro for detailed underwriting.',
+        'gemini-2.5-flash': 'Fast and accurate Gemini 2.5 model.',
     };
 
     function updateModelDescription(model) {
@@ -4168,7 +3911,7 @@
     }
 
     // MoneyThumb API Integration
-    async function callMoneyThumbAPI(file) {
+    async function callMoneyThumbAPI(fileContent) {
         const licenseKey = getMoneyThumbKey();
         if (!licenseKey) {
             throw new Error('MoneyThumb license key not configured');
@@ -4176,14 +3919,28 @@
 
         showUploadStatus('Processing with MoneyThumb PDFInsights...');
 
-        // Convert file to base64 for API
-        const base64Data = await fileToBase64(file);
-
         // MoneyThumb API endpoint
         const apiUrl = 'https://insights.moneythumb.com/api/v1.5/uploadpdfs';
 
+        // fileContent has: { name, mimeType, data (base64), file (original File object) }
+        // MoneyThumb needs the actual file or base64 data
         const formData = new FormData();
-        formData.append('pdf-filename', file.file || file);
+
+        // If we have the original file, use it directly
+        if (fileContent.file instanceof Blob) {
+            formData.append('pdf-filename', fileContent.file, fileContent.name);
+        } else {
+            // Convert base64 back to blob
+            const byteCharacters = atob(fileContent.data);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: fileContent.mimeType || 'application/pdf' });
+            formData.append('pdf-filename', blob, fileContent.name);
+        }
+
         formData.append('appnumber', 'ABLES-Vision');
         formData.append('appid', Date.now().toString());
         formData.append('accounttype', 'Bank');
@@ -4220,7 +3977,20 @@
     }
 
     async function fileToBase64(fileObj) {
-        const file = fileObj.file || fileObj;
+        // Handle different input types
+        let file = fileObj;
+        if (fileObj && fileObj.file instanceof Blob) {
+            file = fileObj.file;
+        } else if (fileObj && fileObj.data) {
+            // Already has base64 data
+            return fileObj.data;
+        }
+
+        if (!(file instanceof Blob)) {
+            throw new Error('Invalid file input for base64 conversion');
+        }
+
+        const f = file;
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = () => resolve(reader.result.split(',')[1]);
@@ -4540,6 +4310,10 @@
             renderReport(response);
             hideUploadStatus();
 
+            // Show the report and hide upload section
+            document.getElementById('uploadSection').style.display = 'none';
+            document.getElementById('reportContainer').classList.add('visible');
+
         } catch (error) {
             console.error('Analysis error:', error);
             showError(`Analysis failed: ${error.message}`);
@@ -4564,53 +4338,77 @@
                 throw new Error(`Document processing failed: ${singleDocError.message}`);
             }
         } else {
-            // Multiple documents - process each separately then merge
-            showUploadStatus(`Analyzing ${totalFiles} documents individually for accuracy...`);
-            const allResults = [];
-            let lastError = null;
+            // Multiple documents - process in PARALLEL for speed
+            showUploadStatus(`Analyzing ${totalFiles} documents in parallel...`);
+            updateProcessingStatus(`Starting ${totalFiles} documents...`, 'OCR extraction beginning');
 
-            for (let i = 0; i < fileContents.length; i++) {
-                showUploadStatus(`OCR Extracting document ${i + 1} of ${totalFiles}: ${fileContents[i].name}...`);
+            // Track completed documents and their results
+            const completedDocs = [];
+            let completedCount = 0;
 
-                let retryCount = 0;
-                const maxRetries = 2;
-                let success = false;
+            // Create array of processing promises
+            const processingPromises = fileContents.map((file, i) => {
+                return (async () => {
+                    const maxRetries = 2;
+                    let lastError = null;
+                    const shortName = file.name.length > 30 ? file.name.substring(0, 27) + '...' : file.name;
 
-                while (retryCount <= maxRetries && !success) {
-                    try {
-                        const docResult = await callGeminiAPISingle(apiKey, fileContents[i]);
-                        if (docResult && docResult.monthlySummary) {
-                            allResults.push(docResult);
-                            success = true;
-                            console.log(`Document ${i + 1} processed successfully`);
-                        } else {
-                            throw new Error('Invalid response structure');
-                        }
-                    } catch (error) {
-                        lastError = error;
-                        retryCount++;
-                        console.error(`Document ${i + 1} attempt ${retryCount} failed:`, error.message);
-                        if (retryCount <= maxRetries) {
-                            const waitTime = 2000 * retryCount;
-                            showUploadStatus(`Retry ${retryCount}/${maxRetries} for document ${i + 1}... (waiting ${waitTime/1000}s)`);
-                            await new Promise(r => setTimeout(r, waitTime));
-                        } else {
-                            console.error(`Failed to process document ${i + 1} after ${maxRetries} retries:`, error);
+                    for (let retryCount = 0; retryCount <= maxRetries; retryCount++) {
+                        try {
+                            console.log(`[Doc ${i + 1}] Starting processing: ${file.name}`);
+                            const docResult = await callGeminiAPISingle(apiKey, file);
+                            if (docResult && docResult.monthlySummary) {
+                                console.log(`[Doc ${i + 1}] Completed successfully`);
+                                completedCount++;
+                                completedDocs.push({ name: shortName, month: docResult.monthlySummary[0]?.month || 'Unknown' });
+
+                                // Update progress with completed document names
+                                const completedNames = completedDocs.map(d => d.month).join(', ');
+                                showUploadStatus(`Processing documents... (${completedCount}/${totalFiles} complete)`);
+                                updateProcessingStatus(
+                                    `${completedCount} of ${totalFiles} documents analyzed`,
+                                    `Completed: ${completedNames}`
+                                );
+
+                                return { success: true, result: docResult, index: i, name: shortName };
+                            } else {
+                                throw new Error('Invalid response structure');
+                            }
+                        } catch (error) {
+                            lastError = error;
+                            console.error(`[Doc ${i + 1}] Attempt ${retryCount + 1} failed:`, error.message);
+                            if (retryCount < maxRetries) {
+                                const waitTime = 2000 * (retryCount + 1);
+                                updateProcessingStatus(
+                                    `Retrying document ${i + 1}...`,
+                                    `Attempt ${retryCount + 2} of ${maxRetries + 1}`
+                                );
+                                await new Promise(r => setTimeout(r, waitTime));
+                            }
                         }
                     }
-                }
+                    console.error(`[Doc ${i + 1}] Failed after ${maxRetries + 1} attempts`);
+                    return { success: false, error: lastError, index: i, name: shortName };
+                })();
+            });
 
-                if (i < fileContents.length - 1 && success) {
-                    showUploadStatus(`Document ${i + 1} complete. Preparing next document...`);
-                    await new Promise(r => setTimeout(r, 1000));
-                }
-            }
+            // Wait for all to complete (parallel execution)
+            const results = await Promise.all(processingPromises);
+
+            // Collect successful results
+            const allResults = results
+                .filter(r => r.success)
+                .sort((a, b) => a.index - b.index)
+                .map(r => r.result);
 
             if (allResults.length === 0) {
-                throw new Error(`Failed to process any documents. Last error: ${lastError?.message || 'Unknown error'}`);
+                const errors = results.filter(r => !r.success).map(r => r.error?.message || 'Unknown');
+                throw new Error(`Failed to process any documents. Errors: ${errors.join(', ')}`);
             }
 
+            console.log(`Successfully processed ${allResults.length}/${totalFiles} documents`);
             showUploadStatus('Merging results from all documents...');
+            updateProcessingStatus('Finalizing report...', 'Combining all statement data');
             return mergeDocumentResults(allResults);
         }
     }
@@ -4693,7 +4491,7 @@
         const uploadStatus = document.getElementById('uploadStatus');
         const uploadStatusText = document.getElementById('uploadStatusText');
         const spinner = uploadStatus.querySelector('.upload-spinner');
-        const snoodWrapper = document.getElementById('snoodGameWrapper');
+        const processingIndicator = document.getElementById('processingIndicator');
 
         uploadStatus.style.display = 'flex';
         uploadStatusText.textContent = message;
@@ -4701,30 +4499,27 @@
         if (isError) {
             spinner.style.display = 'none';
             uploadStatusText.style.color = 'var(--danger)';
-            // Hide game on error
-            if (snoodWrapper) {
-                snoodWrapper.style.display = 'none';
-                stopSnoodGame();
-            }
+            if (processingIndicator) processingIndicator.style.display = 'none';
         } else {
             spinner.style.display = 'block';
             uploadStatusText.style.color = 'var(--accent)';
-            // Show and start the game
-            if (snoodWrapper && snoodWrapper.style.display === 'none') {
-                snoodWrapper.style.display = 'flex';
-                initSnoodGame();
-            }
+            if (processingIndicator) processingIndicator.style.display = 'block';
         }
     }
 
     function hideUploadStatus() {
         const uploadStatus = document.getElementById('uploadStatus');
-        const snoodWrapper = document.getElementById('snoodGameWrapper');
+        const processingIndicator = document.getElementById('processingIndicator');
         uploadStatus.style.display = 'none';
-        if (snoodWrapper) {
-            snoodWrapper.style.display = 'none';
-            stopSnoodGame();
-        }
+        if (processingIndicator) processingIndicator.style.display = 'none';
+    }
+
+    // Update processing details for progressive feedback
+    function updateProcessingStatus(status, details = '') {
+        const statusEl = document.getElementById('processingStatus');
+        const detailsEl = document.getElementById('processingDetails');
+        if (statusEl) statusEl.textContent = status;
+        if (detailsEl) detailsEl.textContent = details;
     }
 
     function fileToBase64(file) {
@@ -5185,32 +4980,36 @@ CRITICAL: Extract EVERY transaction. Calculate True Revenue by excluding non-ope
     // Single document extraction using three-stage pipeline
     async function callGeminiAPISingle(apiKey, file) {
         const selectedModel = getSelectedModel();
-        // Don't use agent models for OCR - use standard Gemini
-        const model = selectedModel.startsWith('agent:') ? 'gemini-3-pro-preview' : selectedModel;
+        // Use Gemini 3 Flash for OCR (faster than Pro, less thinking overhead)
+        // Use selected model for analysis
+        const ocrModel = 'gemini-3-flash-preview';
+        const analysisModel = selectedModel.startsWith('agent:') ? 'gemini-2.5-pro' : selectedModel;
 
         // Reset correction attempts for new analysis
         correctionAttempts = 0;
 
         console.log('=== STAGE 1: OCR (Image → Markdown) ===');
+        console.log('Using OCR model:', ocrModel);
         showUploadStatus('Stage 1: Extracting text from image...');
 
-        // Stage 1: OCR - Convert image to markdown
-        const markdownResult = await callGeminiStage1OCR(apiKey, model, file);
+        // Stage 1: OCR - Convert image to markdown (use fast model)
+        const markdownResult = await callGeminiStage1OCR(apiKey, ocrModel, file);
         console.log('Stage 1 complete. Markdown length:', markdownResult.length);
         console.log('Stage 1 output preview:', markdownResult.substring(0, 500));
 
         console.log('=== STAGE 2: Analysis (Markdown → JSON) ===');
+        console.log('Using analysis model:', analysisModel);
         showUploadStatus('Stage 2: Analyzing transactions & True Revenue...');
 
         // Stage 2: Analysis - Parse markdown and extract structured data
-        const analysisResult = await callGeminiStage2Analysis(apiKey, model, markdownResult);
+        const analysisResult = await callGeminiStage2Analysis(apiKey, analysisModel, markdownResult);
         console.log('Stage 2 complete. Result:', analysisResult);
 
         // Transform new schema to existing schema for compatibility
         const transformed = transformToLegacySchema(analysisResult, markdownResult);
 
         // Stage 3: Verification and Self-Correction
-        const verified = await runStage3Verification(apiKey, model, transformed, markdownResult);
+        const verified = await runStage3Verification(apiKey, analysisModel, transformed, markdownResult);
 
         console.log('=== PIPELINE COMPLETE ===');
         console.log('Reconciliation status:', verified._reconciliationStatus || 'UNKNOWN');
@@ -5793,7 +5592,7 @@ CRITICAL: Include EVERY transaction from the statement in credits/debits arrays.
         const selectedModel = getSelectedModel();
 
         // Don't use agent models for OCR - use standard Gemini
-        const model = selectedModel.startsWith('agent:') ? 'gemini-3-pro-preview-11-2025' : selectedModel;
+        const model = selectedModel.startsWith('agent:') ? 'gemini-3-pro-preview' : selectedModel;
 
         // Create abort controller for timeout
         const controller = new AbortController();
@@ -5911,15 +5710,38 @@ CRITICAL: Include EVERY transaction from the statement in credits/debits arrays.
             benchmarks: { businessScores: [], industryAvg: [], percentiles: [] }
         };
 
-        // Merge monthly summaries from all documents
-        const allMonths = [];
+        // Merge monthly summaries from all documents (with deduplication)
+        const monthMap = new Map(); // Track unique months by name
         const mcaPositions = new Map(); // Track unique MCA positions
 
         for (const result of results) {
-            // Add monthly summaries
+            // Add monthly summaries with deduplication
             if (result.monthlySummary) {
                 for (const month of result.monthlySummary) {
-                    allMonths.push(month);
+                    const monthKey = (month.month || '').toLowerCase().trim();
+                    if (!monthKey) continue;
+
+                    const existing = monthMap.get(monthKey);
+                    if (!existing) {
+                        // First time seeing this month
+                        monthMap.set(monthKey, month);
+                    } else {
+                        // Duplicate month found - merge intelligently
+                        // Prefer bank's printed totals over calculated ones
+                        // Use the entry with higher totalCredits (more complete data)
+                        const existingTotal = existing.totalCredits || 0;
+                        const newTotal = month.totalCredits || 0;
+
+                        if (newTotal > existingTotal) {
+                            // New entry has more complete data, replace
+                            monthMap.set(monthKey, month);
+                        } else if (newTotal === existingTotal && (month.credits?.length || 0) > (existing.credits?.length || 0)) {
+                            // Same totals but new has more transaction detail
+                            monthMap.set(monthKey, month);
+                        }
+                        // Otherwise keep existing entry
+                        console.log(`Duplicate month "${month.month}" found - keeping entry with totalCredits: ${Math.max(existingTotal, newTotal)}`);
+                    }
                 }
             }
 
@@ -5950,7 +5772,8 @@ CRITICAL: Include EVERY transaction from the statement in credits/debits arrays.
             }
         }
 
-        // Sort months chronologically
+        // Convert monthMap to array and sort chronologically
+        const allMonths = Array.from(monthMap.values());
         allMonths.sort((a, b) => {
             const parseMonth = (m) => {
                 if (!m.month) return 0;
@@ -6893,17 +6716,21 @@ CRITICAL: Include EVERY transaction from the statement in credits/debits arrays.
         destroyChart('mcaTimelineChart');
         destroyChart('mcaBurdenChart');
 
-        if (positions.length === 0) {
-            document.getElementById('mcaTimelineChart').parentElement.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 200px; color: var(--gray-400);">No positions to display</div>';
-            document.getElementById('mcaBurdenChart').parentElement.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 200px; color: var(--gray-400);">No positions to display</div>';
-            return;
-        }
-
-        // Ensure canvas elements exist
+        // Ensure canvas elements exist first
         const timelineCanvas = document.getElementById('mcaTimelineChart');
         const burdenCanvas = document.getElementById('mcaBurdenChart');
 
         if (!timelineCanvas || !burdenCanvas) return;
+
+        if (positions.length === 0) {
+            if (timelineCanvas.parentElement) {
+                timelineCanvas.parentElement.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 200px; color: var(--gray-400);">No positions to display</div>';
+            }
+            if (burdenCanvas.parentElement) {
+                burdenCanvas.parentElement.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 200px; color: var(--gray-400);">No positions to display</div>';
+            }
+            return;
+        }
 
         // Create burden by lender pie chart
         const colors = ['#dc2626', '#ea580c', '#d97706', '#ca8a04', '#65a30d', '#16a34a', '#0d9488', '#0891b2'];
@@ -7165,371 +6992,16 @@ CRITICAL: Include EVERY transaction from the statement in credits/debits arrays.
         document.getElementById('loadingOverlay').classList.toggle('active', show);
     }
 
-    // ============================================
-    // SNOOD GAME ENGINE (Enhanced)
-    // ============================================
+    // Game removed - stub functions only
     let snoodGame = null;
     let snoodModalGame = null;
 
-    function createSnoodGame(canvasId, scoreId, levelId = null, isModal = false) {
-        const canvas = document.getElementById(canvasId);
-        if (!canvas) return null;
-        const ctx = canvas.getContext('2d');
-        const W = canvas.width, H = canvas.height;
-        const RADIUS = isModal ? 18 : 14;
-        const COLORS = ['#c9a227', '#ef4444', '#22c55e', '#3b82f6', '#a855f7', '#ec4899', '#06b6d4', '#f97316'];
-
-        let bubbles = [];
-        let shooter = { x: W / 2, y: H - 30, angle: -Math.PI / 2, color: COLORS[0], nextColor: COLORS[1] };
-        let projectile = null;
-        let score = 0;
-        let level = 1;
-        let combo = 0;
-        let gameLoop = null;
-        let particles = [];
-
-        function initBubbles() {
-            bubbles = [];
-            const rows = isModal ? 6 + Math.floor(level / 2) : 5;
-            const colCount = isModal ? Math.floor((W - RADIUS) / (RADIUS * 2)) : 10;
-            for (let row = 0; row < rows; row++) {
-                const offset = (row % 2) * RADIUS;
-                const cols = row % 2 === 0 ? colCount : colCount - 1;
-                for (let col = 0; col < cols; col++) {
-                    bubbles.push({
-                        x: offset + col * RADIUS * 2 + RADIUS,
-                        y: row * RADIUS * 1.7 + RADIUS + 10,
-                        color: COLORS[Math.floor(Math.random() * (Math.min(4 + level, COLORS.length)))],
-                        alive: true
-                    });
-                }
-            }
-        }
-
-        function createParticle(x, y, color) {
-            for (let i = 0; i < 8; i++) {
-                particles.push({
-                    x, y, color,
-                    vx: (Math.random() - 0.5) * 8,
-                    vy: (Math.random() - 0.5) * 8,
-                    life: 30
-                });
-            }
-        }
-
-        function drawBubble(x, y, color, scale = 1) {
-            const r = (RADIUS - 1) * scale;
-            ctx.beginPath();
-            ctx.arc(x, y, r, 0, Math.PI * 2);
-            const grad = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, 0, x, y, r);
-            grad.addColorStop(0, '#ffffff66');
-            grad.addColorStop(0.3, color);
-            grad.addColorStop(1, color + '88');
-            ctx.fillStyle = grad;
-            ctx.fill();
-            ctx.strokeStyle = '#ffffff33';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-        }
-
-        function draw() {
-            ctx.clearRect(0, 0, W, H);
-
-            // Draw particles
-            particles.forEach(p => {
-                ctx.globalAlpha = p.life / 30;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-                ctx.fillStyle = p.color;
-                ctx.fill();
-            });
-            ctx.globalAlpha = 1;
-
-            // Draw bubbles
-            bubbles.forEach(b => {
-                if (b.alive) drawBubble(b.x, b.y, b.color);
-            });
-
-            // Draw aim line with trajectory preview
-            ctx.beginPath();
-            ctx.moveTo(shooter.x, shooter.y);
-            let previewX = shooter.x, previewY = shooter.y;
-            let previewVx = Math.cos(shooter.angle) * 10;
-            let previewVy = Math.sin(shooter.angle) * 10;
-            for (let i = 0; i < 15; i++) {
-                previewX += previewVx;
-                previewY += previewVy;
-                if (previewX < RADIUS || previewX > W - RADIUS) previewVx *= -1;
-                if (previewY < RADIUS) break;
-                if (i % 2 === 0) {
-                    ctx.lineTo(previewX, previewY);
-                } else {
-                    ctx.moveTo(previewX, previewY);
-                }
-            }
-            ctx.strokeStyle = '#ffffff44';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-
-            // Draw shooter base
-            ctx.beginPath();
-            ctx.arc(shooter.x, shooter.y + 15, 30, Math.PI, 0);
-            ctx.fillStyle = '#333';
-            ctx.fill();
-
-            // Draw next bubble preview
-            drawBubble(shooter.x + 35, shooter.y + 10, shooter.nextColor, 0.6);
-            ctx.fillStyle = '#666';
-            ctx.font = '10px sans-serif';
-            ctx.fillText('NEXT', shooter.x + 25, shooter.y + 25);
-
-            // Draw shooter bubble
-            drawBubble(shooter.x, shooter.y, shooter.color);
-
-            // Draw projectile
-            if (projectile) {
-                drawBubble(projectile.x, projectile.y, projectile.color);
-            }
-
-            // Draw combo text
-            if (combo > 1) {
-                ctx.fillStyle = '#c9a227';
-                ctx.font = 'bold 24px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText(`${combo}x COMBO!`, W / 2, H / 2);
-                ctx.textAlign = 'left';
-            }
-        }
-
-        function update() {
-            // Update particles
-            particles = particles.filter(p => {
-                p.x += p.vx;
-                p.y += p.vy;
-                p.vy += 0.3;
-                p.life--;
-                return p.life > 0;
-            });
-
-            if (projectile) {
-                projectile.x += projectile.vx;
-                projectile.y += projectile.vy;
-
-                if (projectile.x < RADIUS || projectile.x > W - RADIUS) {
-                    projectile.vx *= -1;
-                }
-
-                if (projectile.y < RADIUS) {
-                    snapToGrid(projectile);
-                    projectile = null;
-                    advanceShooter();
-                    return;
-                }
-
-                for (const b of bubbles) {
-                    if (!b.alive) continue;
-                    const dx = projectile.x - b.x;
-                    const dy = projectile.y - b.y;
-                    if (Math.sqrt(dx * dx + dy * dy) < RADIUS * 1.8) {
-                        snapToGrid(projectile);
-                        checkMatches(projectile.color);
-                        projectile = null;
-                        advanceShooter();
-                        return;
-                    }
-                }
-            }
-
-            // Check win condition
-            if (bubbles.filter(b => b.alive).length === 0) {
-                level++;
-                if (levelId) document.getElementById(levelId).textContent = 'Level: ' + level;
-                initBubbles();
-            }
-        }
-
-        function advanceShooter() {
-            shooter.color = shooter.nextColor;
-            shooter.nextColor = COLORS[Math.floor(Math.random() * Math.min(4 + level, COLORS.length))];
-            combo = 0;
-        }
-
-        function snapToGrid(p) {
-            const row = Math.max(0, Math.round((p.y - RADIUS - 10) / (RADIUS * 1.7)));
-            const offset = (row % 2) * RADIUS;
-            const col = Math.round((p.x - offset - RADIUS) / (RADIUS * 2));
-            bubbles.push({
-                x: Math.max(RADIUS, Math.min(W - RADIUS, offset + col * RADIUS * 2 + RADIUS)),
-                y: row * RADIUS * 1.7 + RADIUS + 10,
-                color: p.color,
-                alive: true
-            });
-        }
-
-        function checkMatches(color) {
-            const lastBubble = bubbles[bubbles.length - 1];
-
-            function findConnected(bubble, found = new Set()) {
-                if (found.has(bubble)) return found;
-                found.add(bubble);
-                bubbles.forEach(b => {
-                    if (!b.alive || b.color !== color || found.has(b)) return;
-                    const dx = bubble.x - b.x;
-                    const dy = bubble.y - b.y;
-                    if (Math.sqrt(dx * dx + dy * dy) < RADIUS * 2.5) {
-                        findConnected(b, found);
-                    }
-                });
-                return found;
-            }
-
-            const connected = findConnected(lastBubble);
-            if (connected.size >= 3) {
-                combo++;
-                connected.forEach(b => {
-                    createParticle(b.x, b.y, b.color);
-                    b.alive = false;
-                    score += 10 * combo;
-                });
-                updateScore();
-                removeFloating();
-            }
-        }
-
-        function removeFloating() {
-            const attached = new Set();
-
-            function markAttached(bubble) {
-                if (attached.has(bubble)) return;
-                attached.add(bubble);
-                bubbles.forEach(b => {
-                    if (!b.alive || attached.has(b)) return;
-                    const dx = bubble.x - b.x;
-                    const dy = bubble.y - b.y;
-                    if (Math.sqrt(dx * dx + dy * dy) < RADIUS * 2.5) {
-                        markAttached(b);
-                    }
-                });
-            }
-
-            bubbles.forEach(b => {
-                if (b.alive && b.y < RADIUS * 2 + 15) {
-                    markAttached(b);
-                }
-            });
-
-            let floatCount = 0;
-            bubbles.forEach(b => {
-                if (b.alive && !attached.has(b)) {
-                    createParticle(b.x, b.y, b.color);
-                    b.alive = false;
-                    floatCount++;
-                    score += 25 * combo;
-                }
-            });
-            if (floatCount > 0) updateScore();
-        }
-
-        function updateScore() {
-            const scoreEl = document.getElementById(scoreId);
-            if (scoreEl) scoreEl.textContent = '$' + score.toLocaleString();
-        }
-
-        function shoot() {
-            if (projectile) return;
-            projectile = {
-                x: shooter.x,
-                y: shooter.y,
-                vx: Math.cos(shooter.angle) * (isModal ? 12 : 8),
-                vy: Math.sin(shooter.angle) * (isModal ? 12 : 8),
-                color: shooter.color
-            };
-        }
-
-        function handleMouse(e) {
-            const rect = canvas.getBoundingClientRect();
-            const mx = e.clientX - rect.left;
-            const my = e.clientY - rect.top;
-            shooter.angle = Math.atan2(my - shooter.y, mx - shooter.x);
-            if (shooter.angle > -0.15) shooter.angle = -0.15;
-            if (shooter.angle < -Math.PI + 0.15) shooter.angle = -Math.PI + 0.15;
-        }
-
-        canvas.addEventListener('mousemove', handleMouse);
-        canvas.addEventListener('click', shoot);
-
-        initBubbles();
-
-        gameLoop = setInterval(() => {
-            update();
-            draw();
-        }, 1000 / 60);
-
-        return {
-            stop: () => {
-                clearInterval(gameLoop);
-                canvas.removeEventListener('mousemove', handleMouse);
-                canvas.removeEventListener('click', shoot);
-            },
-            restart: () => {
-                score = 0;
-                level = 1;
-                combo = 0;
-                particles = [];
-                projectile = null;
-                shooter.color = COLORS[0];
-                shooter.nextColor = COLORS[1];
-                updateScore();
-                if (levelId) document.getElementById(levelId).textContent = 'Level: 1';
-                initBubbles();
-            }
-        };
-    }
-
-    // Mini game for loading screen
-    function initSnoodGame() {
-        if (snoodGame) return;
-        snoodGame = createSnoodGame('snoodCanvas', 'snoodScore', null, false);
-    }
-
-    function stopSnoodGame() {
-        if (snoodGame) {
-            snoodGame.stop();
-            snoodGame = null;
-        }
-    }
-
-    // Modal game functions
-    function toggleSnoodModal() {
-        const overlay = document.getElementById('snoodModalOverlay');
-        const modal = document.getElementById('snoodModal');
-        const isOpen = modal.classList.contains('active');
-
-        if (isOpen) {
-            closeSnoodModal();
-        } else {
-            overlay.classList.add('active');
-            modal.classList.add('active');
-            if (!snoodModalGame) {
-                snoodModalGame = createSnoodGame('snoodModalCanvas', 'snoodModalScore', 'snoodModalLevel', true);
-            }
-        }
-    }
-
-    function closeSnoodModal() {
-        document.getElementById('snoodModalOverlay').classList.remove('active');
-        document.getElementById('snoodModal').classList.remove('active');
-        if (snoodModalGame) {
-            snoodModalGame.stop();
-            snoodModalGame = null;
-        }
-    }
-
-    function restartSnoodGame() {
-        if (snoodModalGame) {
-            snoodModalGame.restart();
-        }
-    }
+    // Game functions removed - stubs for compatibility
+    function initSnoodGame() {}
+    function stopSnoodGame() {}
+    function toggleSnoodModal() {}
+    function closeSnoodModal() {}
+    function restartSnoodGame() {}
 
     function updateLoadingStatus(text) {
         document.getElementById('loadingStatus').textContent = text;
