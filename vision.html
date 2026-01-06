@@ -467,8 +467,13 @@
         }
 
         /* Snood Game Styles */
+        .snood-game-wrapper {
+            margin-top: 24px;
+            display: flex;
+            justify-content: center;
+        }
+
         .snood-container {
-            margin-top: 32px;
             background: #1a1a1a;
             border-radius: 12px;
             padding: 16px;
@@ -481,6 +486,7 @@
             margin-bottom: 12px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            text-align: center;
         }
 
         #snoodCanvas {
@@ -495,13 +501,32 @@
             display: flex;
             justify-content: space-between;
             margin-top: 12px;
-            font-size: 12px;
+            font-size: 11px;
             color: #666;
         }
 
         #snoodScore {
             color: var(--accent);
             font-weight: 600;
+        }
+
+        body.dark-theme .snood-container {
+            background: #1a1a1a;
+            border-color: #333;
+        }
+
+        body:not(.dark-theme) .snood-container {
+            background: #f5f5f5;
+            border-color: #ddd;
+        }
+
+        body:not(.dark-theme) #snoodCanvas {
+            background: linear-gradient(180deg, #e8e8f0 0%, #d0d0e0 100%);
+        }
+
+        body:not(.dark-theme) .snood-label,
+        body:not(.dark-theme) .snood-controls {
+            color: #666;
         }
 
         /* Report Container (hidden until analysis complete) */
@@ -3177,15 +3202,6 @@
         <div class="loading-progress">
             <div class="loading-progress-bar"></div>
         </div>
-        <!-- Mini Snood Game -->
-        <div class="snood-container">
-            <div class="snood-label">Play while you wait!</div>
-            <canvas id="snoodCanvas" width="280" height="320"></canvas>
-            <div class="snood-controls">
-                <span>Click to shoot</span>
-                <span id="snoodScore">Score: 0</span>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -3217,6 +3233,17 @@
             <div class="upload-status" id="uploadStatus" style="display: none;">
                 <div class="upload-spinner"></div>
                 <span id="uploadStatusText">Analyzing statements...</span>
+            </div>
+        </div>
+        <!-- Snood Game Container (shows during analysis) -->
+        <div class="snood-game-wrapper" id="snoodGameWrapper" style="display: none;">
+            <div class="snood-container">
+                <div class="snood-label">Play while you wait!</div>
+                <canvas id="snoodCanvas" width="280" height="320"></canvas>
+                <div class="snood-controls">
+                    <span>Move mouse to aim, click to shoot</span>
+                    <span id="snoodScore">Score: 0</span>
+                </div>
             </div>
         </div>
     </div>
@@ -4117,7 +4144,7 @@
             // Hide upload, show report
             document.getElementById('uploadSection').style.display = 'none';
             document.getElementById('reportContainer').classList.add('visible');
-            document.getElementById('uploadStatus').style.display = 'none';
+            hideUploadStatus();
 
             // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -4133,6 +4160,7 @@
         const uploadStatus = document.getElementById('uploadStatus');
         const uploadStatusText = document.getElementById('uploadStatusText');
         const spinner = uploadStatus.querySelector('.upload-spinner');
+        const snoodWrapper = document.getElementById('snoodGameWrapper');
 
         uploadStatus.style.display = 'flex';
         uploadStatusText.textContent = message;
@@ -4140,9 +4168,29 @@
         if (isError) {
             spinner.style.display = 'none';
             uploadStatusText.style.color = 'var(--danger)';
+            // Hide game on error
+            if (snoodWrapper) {
+                snoodWrapper.style.display = 'none';
+                stopSnoodGame();
+            }
         } else {
             spinner.style.display = 'block';
             uploadStatusText.style.color = 'var(--accent)';
+            // Show and start the game
+            if (snoodWrapper && snoodWrapper.style.display === 'none') {
+                snoodWrapper.style.display = 'flex';
+                initSnoodGame();
+            }
+        }
+    }
+
+    function hideUploadStatus() {
+        const uploadStatus = document.getElementById('uploadStatus');
+        const snoodWrapper = document.getElementById('snoodGameWrapper');
+        uploadStatus.style.display = 'none';
+        if (snoodWrapper) {
+            snoodWrapper.style.display = 'none';
+            stopSnoodGame();
         }
     }
 
@@ -5862,11 +5910,6 @@ CRITICAL RULES:
 
     function showLoading(show) {
         document.getElementById('loadingOverlay').classList.toggle('active', show);
-        if (show) {
-            initSnoodGame();
-        } else {
-            stopSnoodGame();
-        }
     }
 
     // ============================================
@@ -6220,7 +6263,7 @@ CRITICAL RULES:
         // Clear file list
         document.getElementById('fileList').innerHTML = '';
         document.getElementById('uploadFooter').style.display = 'none';
-        document.getElementById('uploadStatus').style.display = 'none';
+        hideUploadStatus();
 
         // Scroll to top
         window.scrollTo({ top: 0, behavior: 'smooth' });
