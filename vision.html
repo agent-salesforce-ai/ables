@@ -4416,72 +4416,69 @@
     }
 
     async function callGeminiAPI(apiKey, files) {
-        const prompt = `You are a bank statement OCR system. Extract EXACT figures from the document images.
+        const prompt = `Extract ALL data from these bank statement images.
 
-## PRIORITY 1: USE THE BANK'S PRINTED TOTALS
+## STEP 1: SUMMARY TOTALS (from Account Summary section)
 
-Look at the ACCOUNT SUMMARY section (usually page 1, near top). Copy these numbers EXACTLY:
+Copy the bank's printed numbers EXACTLY:
+- Beginning Balance → startBalance
+- Ending Balance → endBalance
+- Total Deposits → totalCredits
+- Total Withdrawals → totalDebits
+- Number of Deposits → creditCount
+- Number of Withdrawals → debitCount
+- Average Daily Balance → avgBalance
+- Minimum Balance → minBalance
 
-| Statement Label | JSON Field |
-|----------------|------------|
-| "Beginning Balance" / "Opening Balance" | startBalance |
-| "Ending Balance" / "Closing Balance" | endBalance |
-| "Total Deposits" / "Total Credits" | totalCredits |
-| "Total Withdrawals" / "Total Debits" | totalDebits |
-| "Number of Deposits" / "X Items" | creditCount |
-| "Number of Withdrawals" / "X Items" | debitCount |
-| "Average Daily Balance" | avgBalance |
-| "Low Balance" / "Minimum Balance" | minBalance |
+## STEP 2: EXTRACT EVERY TRANSACTION (CRITICAL)
 
-NEVER manually add transactions. Use the bank's printed totals.
+Read the transaction table and extract EVERY ROW into the appropriate array.
 
-## PRIORITY 2: EXTRACT ALL TRANSACTIONS
+For deposits/credits (add to "credits" array):
+{"date": "12/01", "description": "ACH DEPOSIT SQUARE INC", "amount": 5000.00}
 
-Read the transaction table. For each row:
-- date: As shown (e.g., "01/15")
-- description: EXACT text (e.g., "ACH CREDIT SQUARE INC DES:SETTLEMENT")
-- amount: Numeric only (1234.56, not "$1,234.56")
+For withdrawals/debits (add to "debits" array):
+{"date": "12/02", "description": "ACH DEBIT PAYROLL", "amount": 3000.00}
 
-DEPOSITS (credits array): ACH credits, wire IN, deposits, card settlements (Square/Stripe/PayPal)
-WITHDRAWALS (debits array): ACH debits, wire OUT, checks, debit card, fees, payments
+IMPORTANT: The sum of all amounts in credits array should equal totalCredits. Extract ALL transactions.
 
-## PRIORITY 3: DETECT MCA/LOANS
+## STEP 3: RISK DETECTION
 
-Look for recurring ACH debits matching MCA patterns:
-- Daily debits $50-$1000 to same recipient
-- Weekly debits $200-$5000 to same recipient
-- Keywords: LIBERTAS, YELLOWSTONE, CREDIBLY, ONDECK, KAPITUS, CAN CAPITAL, RAPID, FUNDBOX, BLUEVINE, PAYPAL WC, SQUARE CAPITAL, FORWARD, CLEARCO, FORA, RELIANT, PEARL, KALAMATA, EVEREST, GREENBOX
+- NSF: Count transactions with NSF, RETURNED, INSUFFICIENT
+- MCA: Look for recurring daily ACH debits ($50-1000) to: LIBERTAS, YELLOWSTONE, CREDIBLY, ONDECK, KAPITUS, RAPID, FUNDBOX, BLUEVINE, FORWARD, FORA
+- Owner Draws: Count WIRE OUT, OWNER DRAW, DISTRIBUTION transactions
 
-## PRIORITY 4: OWNER DRAWS
-
-Count debits with keywords: OWNER, DRAW, WIRE OUT, TRANSFER TO SAVINGS, [OWNER NAME]
-Calculate: ownerDrawTotal / totalDebits * 100 = ownerDrawRatio
-
-## OUTPUT FORMAT (JSON ONLY - NO MARKDOWN)
+## OUTPUT (JSON only, no markdown):
 
 {
     "businessInfo": {
-        "name": "Business name from statement",
-        "bankName": "Bank name",
-        "accountNumber": "****XXXX",
-        "industry": "Inferred from transactions",
-        "statementPeriod": "MMM YYYY or MMM-MMM YYYY",
-        "totalDays": 30
+        "name": "Business Name",
+        "bankName": "Bank Name",
+        "accountNumber": "****1234",
+        "industry": "Retail/Restaurant/etc",
+        "statementPeriod": "Dec 2025",
+        "totalDays": 31
     },
     "monthlySummary": [{
-        "month": "MMM YYYY",
-        "totalCredits": 0,
-        "creditCount": 0,
-        "totalDebits": 0,
-        "debitCount": 0,
-        "startBalance": 0,
-        "endBalance": 0,
-        "avgBalance": 0,
-        "minBalance": 0,
+        "month": "Dec 2025",
+        "totalCredits": 150000,
+        "creditCount": 25,
+        "totalDebits": 140000,
+        "debitCount": 85,
+        "startBalance": 15000,
+        "endBalance": 25000,
+        "avgBalance": 18000,
+        "minBalance": 8000,
         "nsfCount": 0,
         "overdraftCount": 0,
-        "credits": [{"date": "MM/DD", "description": "EXACT TEXT", "amount": 0}],
-        "debits": [{"date": "MM/DD", "description": "EXACT TEXT", "amount": 0}]
+        "credits": [
+            {"date": "12/01", "description": "ACH CREDIT SQUARE", "amount": 8500},
+            {"date": "12/02", "description": "MOBILE DEPOSIT", "amount": 2000}
+        ],
+        "debits": [
+            {"date": "12/01", "description": "ACH DEBIT RENT", "amount": 5000},
+            {"date": "12/02", "description": "WIRE OUT", "amount": 10000}
+        ]
     }],
     "riskIndicators": {
         "nsfCount": 0,
@@ -4490,30 +4487,17 @@ Calculate: ownerDrawTotal / totalDebits * 100 = ownerDrawRatio
         "lowBalanceDays": 0,
         "mcaFound": 0,
         "achReturns": 0,
-        "ownerDrawRatio": 0,
-        "netMargin": 0
+        "ownerDrawRatio": 15,
+        "netMargin": 7
     },
     "mcaAnalysis": {
-        "positionsFound": [{
-            "lenderName": "Lender name",
-            "name": "ACH description",
-            "frequency": "Daily/Weekly",
-            "amount": 0,
-            "estimatedBalance": 0,
-            "confidence": "High/Medium/Low",
-            "totalPaymentsSeen": 0
-        }],
+        "positionsFound": [],
         "totalMonthlyPayments": 0
-    },
-    "dailyBalances": []
+    }
 }
 
-## MATH VERIFICATION
-
-Before responding, verify: endBalance = startBalance + totalCredits - totalDebits (±$10)
-If it doesn't match, re-read the statement.
-
-CRITICAL: Return ONLY valid JSON. No markdown code blocks. All numbers as numeric types.`;
+VERIFY: Sum of credits array amounts ≈ totalCredits. Sum of debits array amounts ≈ totalDebits.
+CRITICAL: Extract EVERY transaction. Return valid JSON only (no markdown).`;
 
         // Build the parts array for Gemini
         const parts = [{ text: prompt }];
@@ -4728,63 +4712,65 @@ CRITICAL: Return ONLY valid JSON. No markdown code blocks. All numbers as numeri
 
     // Single document extraction - more focused prompt for ONE statement
     async function callGeminiAPISingle(apiKey, file) {
-        const prompt = `Extract data from this bank statement. Use the BANK'S PRINTED TOTALS from the summary section.
+        const prompt = `Extract ALL data from this bank statement image.
 
-## STEP 1: COPY BANK'S SUMMARY NUMBERS
+## STEP 1: SUMMARY SECTION (from Account Summary box)
 
-Find the Account Summary (usually page 1). Copy these EXACTLY as printed:
-- Beginning/Opening Balance → startBalance
-- Ending/Closing Balance → endBalance
-- Total Deposits/Credits → totalCredits
-- Total Withdrawals/Debits → totalDebits
+Copy the bank's printed totals EXACTLY:
+- Beginning Balance → startBalance
+- Ending Balance → endBalance
+- Total Deposits → totalCredits
+- Total Withdrawals → totalDebits
 - Number of Deposits → creditCount
 - Number of Withdrawals → debitCount
 - Average Daily Balance → avgBalance
-- Low/Minimum Balance → minBalance
+- Minimum Balance → minBalance
 
-Convert: "$45,231.67" → 45231.67 (numeric only)
+## STEP 2: EXTRACT EVERY TRANSACTION (CRITICAL)
 
-## STEP 2: EXTRACT TRANSACTIONS
+Read the transaction table and extract EVERY SINGLE ROW. This is critical for verification.
 
-For each transaction row:
-- date: "01/15" or "Jan 15"
-- description: EXACT text
-- amount: numeric (1234.56)
+For EACH deposit/credit transaction, add to "credits" array:
+{"date": "12/01", "description": "ACH DEPOSIT SQUARE INC", "amount": 1234.56}
 
-CREDITS: ACH credits, wire IN, deposits, card settlements
-DEBITS: ACH debits, wire OUT, checks, fees, payments
+For EACH withdrawal/debit transaction, add to "debits" array:
+{"date": "12/01", "description": "ACH DEBIT INSURANCE", "amount": 500.00}
 
-## STEP 3: COUNT NSF/OVERDRAFTS
+IMPORTANT: Extract ALL transactions, not just a sample. The sum of credits array should approximately equal totalCredits.
 
-Count transactions containing: NSF, OVERDRAFT, OD FEE, RETURNED ITEM, INSUFFICIENT
+## STEP 3: NSF/OVERDRAFT DETECTION
 
-## STEP 4: DETECT MCA PAYMENTS
+Count any transactions with: NSF, OVERDRAFT, OD FEE, RETURNED ITEM, INSUFFICIENT FUNDS
 
-Look for recurring daily/weekly ACH debits to: LIBERTAS, YELLOWSTONE, CREDIBLY, ONDECK, KAPITUS, CAN CAPITAL, RAPID, FUNDBOX, BLUEVINE, FORWARD, CLEARCO, FORA, RELIANT, PEARL, KALAMATA
-
-## OUTPUT (JSON ONLY)
+## OUTPUT FORMAT (JSON only, no markdown):
 
 {
     "businessInfo": {
-        "name": "Business name",
-        "bankName": "Bank name",
-        "accountNumber": "****XXXX",
-        "statementPeriod": "MMM YYYY"
+        "name": "Business Name from statement",
+        "bankName": "Bank Name",
+        "accountNumber": "****1234",
+        "statementPeriod": "Dec 2025"
     },
     "monthlySummary": [{
-        "month": "MMM YYYY",
-        "totalCredits": 0,
-        "creditCount": 0,
-        "totalDebits": 0,
-        "debitCount": 0,
-        "startBalance": 0,
-        "endBalance": 0,
-        "avgBalance": 0,
-        "minBalance": 0,
+        "month": "Dec 2025",
+        "totalCredits": 50000,
+        "creditCount": 15,
+        "totalDebits": 45000,
+        "debitCount": 80,
+        "startBalance": 10000,
+        "endBalance": 15000,
+        "avgBalance": 12000,
+        "minBalance": 5000,
         "nsfCount": 0,
         "overdraftCount": 0,
-        "credits": [{"date": "MM/DD", "description": "TEXT", "amount": 0}],
-        "debits": [{"date": "MM/DD", "description": "TEXT", "amount": 0}]
+        "credits": [
+            {"date": "12/01", "description": "DEPOSIT", "amount": 5000},
+            {"date": "12/05", "description": "ACH CREDIT", "amount": 3000}
+        ],
+        "debits": [
+            {"date": "12/02", "description": "CHECK 1234", "amount": 1000},
+            {"date": "12/03", "description": "ACH DEBIT", "amount": 500}
+        ]
     }],
     "riskIndicators": {
         "nsfCount": 0,
@@ -4797,12 +4783,10 @@ Look for recurring daily/weekly ACH debits to: LIBERTAS, YELLOWSTONE, CREDIBLY, 
     "mcaAnalysis": {
         "positionsFound": [],
         "totalMonthlyPayments": 0
-    },
-    "dailyBalances": []
+    }
 }
 
-VERIFY: endBalance = startBalance + totalCredits - totalDebits (±$10)
-Return ONLY valid JSON. No markdown. All numbers numeric.`;
+CRITICAL: Include EVERY transaction from the statement in credits/debits arrays. All numbers must be numeric (not strings).`;
 
         const selectedModel = getSelectedModel();
 
