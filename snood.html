@@ -6,883 +6,824 @@
     <title>SNOOD SINDICAL - Official Union Game</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background: #0a0a0f;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2a 50%, #0a1a2a 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             font-family: 'VT323', monospace;
-            overflow: hidden;
-            position: relative;
+            overflow-x: hidden;
         }
 
         body::before {
             content: '';
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: 
-                radial-gradient(ellipse at 20% 20%, rgba(120, 0, 255, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(0, 200, 255, 0.1) 0%, transparent 50%),
-                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.01) 2px, rgba(255,255,255,0.01) 4px);
+                radial-gradient(ellipse at 20% 20%, rgba(255, 0, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(255, 200, 0, 0.1) 0%, transparent 50%);
             pointer-events: none;
             z-index: -1;
         }
 
         .scanlines {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: repeating-linear-gradient(
-                0deg,
-                rgba(0, 0, 0, 0.15),
-                rgba(0, 0, 0, 0.15) 1px,
-                transparent 1px,
-                transparent 2px
-            );
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px);
             pointer-events: none;
             z-index: 1000;
         }
 
         .game-container {
             display: flex;
-            gap: 30px;
+            gap: 20px;
+            padding: 20px;
             align-items: flex-start;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
-        .main-panel {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        .main-panel { display: flex; flex-direction: column; align-items: center; }
 
-        h1 {
+        .header { text-align: center; padding: 15px; }
+
+        .title {
             font-family: 'Press Start 2P', cursive;
-            font-size: 48px;
-            color: #00ff88;
-            text-shadow: 
-                0 0 10px #00ff88,
-                0 0 20px #00ff88,
-                0 0 40px #00ff88,
-                4px 4px 0 #005533;
-            margin-bottom: 20px;
-            letter-spacing: 8px;
-            animation: glow 2s ease-in-out infinite alternate;
+            font-size: 24px;
+            color: #ff0000;
+            text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 3px 3px 0 #000;
+            margin-bottom: 5px;
+            animation: titlePulse 2s ease-in-out infinite;
         }
 
-        @keyframes glow {
-            from { text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88, 0 0 40px #00ff88, 4px 4px 0 #005533; }
-            to { text-shadow: 0 0 20px #00ff88, 0 0 40px #00ff88, 0 0 60px #00ff88, 4px 4px 0 #005533; }
+        @keyframes titlePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+
+        .subtitle {
+            font-size: 20px;
+            color: #ffcc00;
+            text-shadow: 0 0 10px #ffcc00;
         }
 
-        .game-frame {
-            border: 4px solid #333;
-            border-radius: 8px;
-            background: linear-gradient(145deg, #1a1a2e, #16213e);
-            box-shadow: 
-                0 0 0 2px #00ff88,
-                0 0 30px rgba(0, 255, 136, 0.3),
-                inset 0 0 60px rgba(0, 0, 0, 0.5);
-            position: relative;
-            overflow: hidden;
+        .score-display {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 10px;
         }
 
-        canvas {
-            display: block;
+        .score-box {
+            background: linear-gradient(180deg, #1a1a2e 0%, #0d0d1a 100%);
+            border: 3px solid #ff0000;
+            border-radius: 10px;
+            padding: 12px 25px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+        }
+
+        .score-label { font-size: 16px; color: #888; }
+        .score-value {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 20px;
+            color: #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        .player-name-display { font-size: 14px; color: #ffcc00; margin-top: 3px; }
+
+        #gameCanvas {
+            border: 4px solid #ff0000;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+            background: linear-gradient(180deg, #0d0d1a 0%, #1a0a1a 100%);
             cursor: crosshair;
         }
 
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 500px;
+            margin-top: 10px;
+            padding: 0 10px;
+        }
+
+        .level-display { font-size: 18px; color: #ff8800; text-shadow: 0 0 10px #ff8800; }
+        .combo-display { font-size: 18px; color: #ff00ff; text-shadow: 0 0 10px #ff00ff; }
+
         .side-panel {
-            background: linear-gradient(145deg, #1a1a2e, #0f0f1a);
-            border: 2px solid #00ff88;
-            border-radius: 8px;
+            background: linear-gradient(180deg, #1a1a2e 0%, #0d0d1a 100%);
+            border: 3px solid #ffcc00;
+            border-radius: 15px;
             padding: 20px;
-            min-width: 200px;
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+            min-width: 260px;
+            box-shadow: 0 0 30px rgba(255, 200, 0, 0.3);
         }
 
-        .stat-box {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .stat-label {
+        .leaderboard-title {
             font-family: 'Press Start 2P', cursive;
-            font-size: 10px;
-            color: #888;
-            margin-bottom: 8px;
-            letter-spacing: 2px;
-        }
-
-        .stat-value {
-            font-size: 36px;
-            color: #00ff88;
-            text-shadow: 0 0 10px #00ff88;
-        }
-
-        .level-value {
-            color: #ff6b6b;
-            text-shadow: 0 0 10px #ff6b6b;
-        }
-
-        .next-snood {
+            font-size: 12px;
+            color: #ffcc00;
             text-align: center;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #333;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px #ffcc00;
         }
 
-        .next-preview {
-            width: 60px;
-            height: 60px;
-            margin: 10px auto;
-            border-radius: 50%;
-            border: 2px solid #00ff88;
+        .leaderboard-list { list-style: none; }
+
+        .leaderboard-entry {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            font-size: 36px;
-            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 10px;
+            margin-bottom: 5px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            border-left: 3px solid transparent;
         }
 
-        .controls-info {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #333;
+        .leaderboard-entry:nth-child(1) { border-left-color: #ffd700; background: rgba(255, 215, 0, 0.15); }
+        .leaderboard-entry:nth-child(2) { border-left-color: #c0c0c0; background: rgba(192, 192, 192, 0.1); }
+        .leaderboard-entry:nth-child(3) { border-left-color: #cd7f32; background: rgba(205, 127, 50, 0.1); }
+
+        .leaderboard-rank { color: #888; font-size: 16px; min-width: 25px; }
+        .leaderboard-name { color: #fff; font-size: 16px; flex-grow: 1; margin-left: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100px; }
+        .leaderboard-score { color: #00ff00; font-family: 'Press Start 2P', cursive; font-size: 10px; }
+
+        .no-scores { color: #666; text-align: center; font-size: 14px; padding: 20px; }
+
+        .clear-scores-btn {
+            display: block;
+            width: 100%;
+            margin-top: 15px;
+            padding: 8px;
+            background: transparent;
+            border: 1px solid #ff4444;
+            color: #ff4444;
+            font-family: 'VT323', monospace;
             font-size: 14px;
-            color: #666;
-            line-height: 1.8;
+            cursor: pointer;
+            border-radius: 5px;
         }
+        .clear-scores-btn:hover { background: #ff4444; color: #000; }
 
-        .controls-info span {
-            color: #00ff88;
-        }
-
-        .game-over-screen, .start-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.9);
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.92);
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 100;
         }
+        .overlay.hidden { display: none; }
 
-        .game-over-screen.hidden, .start-screen.hidden {
-            display: none;
+        .overlay-content {
+            background: linear-gradient(180deg, #1a1a2e 0%, #0d0d1a 100%);
+            border: 4px solid #ff0000;
+            border-radius: 20px;
+            padding: 35px;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.5);
+            max-width: 450px;
+            width: 90%;
         }
 
-        .game-over-text {
+        .overlay-title {
             font-family: 'Press Start 2P', cursive;
-            font-size: 32px;
-            color: #ff6b6b;
-            text-shadow: 0 0 20px #ff6b6b;
-            margin-bottom: 20px;
+            font-size: 22px;
+            color: #ff0000;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px #ff0000;
         }
 
-        .win-text {
-            color: #00ff88;
-            text-shadow: 0 0 20px #00ff88;
-        }
+        .overlay-subtitle { font-size: 22px; color: #ffcc00; margin-bottom: 25px; }
 
-        .final-score {
-            font-size: 24px;
-            color: #fff;
-            margin-bottom: 30px;
+        .name-input-container { margin: 25px 0; }
+        .name-input-label { font-size: 18px; color: #fff; margin-bottom: 10px; display: block; }
+
+        .name-input {
+            background: #0a0a1a;
+            border: 3px solid #ffcc00;
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            color: #00ff00;
+            text-align: center;
+            width: 100%;
+            max-width: 280px;
+            text-transform: uppercase;
+            outline: none;
         }
+        .name-input:focus { border-color: #00ff00; box-shadow: 0 0 20px rgba(0, 255, 0, 0.3); }
+        .name-input::placeholder { color: #444; }
 
         .btn {
             font-family: 'Press Start 2P', cursive;
             font-size: 14px;
-            padding: 15px 30px;
-            background: transparent;
-            border: 2px solid #00ff88;
-            color: #00ff88;
+            padding: 18px 35px;
+            border: none;
+            border-radius: 10px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            margin: 8px;
         }
 
-        .btn:hover {
-            background: #00ff88;
-            color: #0a0a0f;
-            box-shadow: 0 0 30px #00ff88;
+        .btn-primary {
+            background: linear-gradient(180deg, #ff0000 0%, #aa0000 100%);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5), 0 5px 0 #660000;
         }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 0 30px rgba(255, 0, 0, 0.7), 0 8px 0 #660000; }
+        .btn-primary:active { transform: translateY(2px); }
 
-        .danger-zone {
-            position: absolute;
-            bottom: 80px;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: repeating-linear-gradient(
-                90deg,
-                #ff0000,
-                #ff0000 10px,
-                #ffff00 10px,
-                #ffff00 20px
-            );
-            opacity: 0.8;
-            animation: dangerPulse 0.5s ease-in-out infinite alternate;
+        .btn-secondary {
+            background: linear-gradient(180deg, #333 0%, #111 100%);
+            color: #ffcc00;
+            border: 2px solid #ffcc00;
         }
+        .btn-secondary:hover { background: linear-gradient(180deg, #ffcc00 0%, #ff8800 100%); color: #000; }
 
-        @keyframes dangerPulse {
-            from { opacity: 0.5; }
-            to { opacity: 1; }
+        .btn-share {
+            background: linear-gradient(180deg, #00aa00 0%, #006600 100%);
+            color: #fff;
+            border: 2px solid #00ff00;
         }
+        .btn-share:hover { background: linear-gradient(180deg, #00ff00 0%, #00aa00 100%); color: #000; }
 
-        .logo {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
+        .share-copied {
+            font-family: 'VT323', monospace;
+            font-size: 16px;
+            color: #00ff00;
+            margin-top: 10px;
+            animation: fadeInOut 2s ease-in-out forwards;
+        }
+        .share-copied.hidden { display: none; }
+        @keyframes fadeInOut { 0% { opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; } }
+
+        .final-score {
             font-family: 'Press Start 2P', cursive;
-            font-size: 10px;
-            color: #333;
-            letter-spacing: 2px;
+            font-size: 42px;
+            color: #00ff00;
+            text-shadow: 0 0 30px #00ff00;
+            margin: 15px 0;
         }
 
-        .logo span {
-            color: #00ff88;
+        .game-stats { display: flex; justify-content: center; gap: 25px; margin: 15px 0; flex-wrap: wrap; }
+        .stat-item { text-align: center; }
+        .stat-label { font-size: 14px; color: #888; }
+        .stat-value { font-size: 20px; color: #ffcc00; }
+
+        .new-high-score {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            color: #ffd700;
+            animation: highScorePulse 0.5s ease-in-out infinite alternate;
+            margin-top: 10px;
         }
+        @keyframes highScorePulse { from { opacity: 0.5; transform: scale(1); } to { opacity: 1; transform: scale(1.1); } }
+        .new-high-score.hidden { display: none; }
+
+        .footer { text-align: center; padding: 15px; color: #ff0000; font-size: 16px; text-shadow: 0 0 10px #ff0000; }
+
+        .instructions { font-size: 15px; color: #888; margin: 15px 0; line-height: 1.5; }
+        .instructions span { color: #ffcc00; }
+
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            font-size: 24px;
+            animation: floatUp 2s ease-out forwards;
+            z-index: 50;
+        }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-150px) scale(0.5); } }
+
+        .combo-popup {
+            position: fixed;
+            pointer-events: none;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 20px;
+            color: #ff00ff;
+            text-shadow: 0 0 20px #ff00ff;
+            animation: comboFade 1s ease-out forwards;
+            z-index: 50;
+        }
+        @keyframes comboFade { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.5); } }
     </style>
 </head>
 <body>
     <div class="scanlines"></div>
-    
-    <div class="game-container">
-        <div class="main-panel">
-            <h1>SNOOD SINDICAL</h1>
-            <p style="color: #ff6b6b; font-family: 'Press Start 2P', cursive; font-size: 8px; margin-bottom: 15px; letter-spacing: 2px;">✊ OFFICIAL GAME OF THE UNION ✊</p>
-            <div class="game-frame">
-                <canvas id="gameCanvas" width="480" height="600"></canvas>
-                <div class="danger-zone"></div>
-                
-                <div class="start-screen" id="startScreen">
-                    <div class="game-over-text win-text">SNOOD SINDICAL</div>
-                    <p style="color: #ff6b6b; margin-bottom: 10px; font-size: 14px;">✊ OFFICIAL UNION APPROVED ✊</p>
-                    <p style="color: #888; margin-bottom: 30px; font-size: 18px;">Match 3+ Snoods to overthrow management!</p>
-                    <button class="btn" onclick="startGame()">¡VIVA LA REVOLUCIÓN!</button>
-                </div>
-                
-                <div class="game-over-screen hidden" id="gameOverScreen">
-                    <div class="game-over-text" id="endTitle">MANAGEMENT WINS</div>
-                    <div class="final-score">Score: <span id="finalScore">0</span></div>
-                    <button class="btn" onclick="startGame()">¡OTRA VEZ!</button>
-                </div>
+
+    <div class="overlay" id="nameOverlay">
+        <div class="overlay-content">
+            <div class="overlay-title">SNOOD SINDICAL</div>
+            <div class="overlay-subtitle">OFFICIAL GAME OF THE UNION</div>
+            <div class="name-input-container">
+                <label class="name-input-label">ENTER YOUR NAME, COMRADE:</label>
+                <input type="text" id="playerNameInput" class="name-input" placeholder="YOUR NAME" maxlength="12" autocomplete="off">
             </div>
-        </div>
-        
-        <div class="side-panel">
-            <div class="stat-box">
-                <div class="stat-label">SCORE</div>
-                <div class="stat-value" id="score">0</div>
+            <div class="instructions">
+                <span>AIM</span> with mouse | <span>CLICK</span> to shoot<br>
+                Match <span>3+</span> to clear | Don't hit the <span>DANGER ZONE</span>
             </div>
-            <div class="stat-box">
-                <div class="stat-label">LEVEL</div>
-                <div class="stat-value level-value" id="level">1</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-label">SHOTS</div>
-                <div class="stat-value" id="shots">0</div>
-            </div>
-            <div class="next-snood">
-                <div class="stat-label">NEXT</div>
-                <div class="next-preview" id="nextPreview"></div>
-            </div>
-            <div class="controls-info">
-                <span>MOUSE</span> - Aim<br>
-                <span>CLICK</span> - Shoot<br>
-                <span>SPACE</span> - Swap Snood
-            </div>
+            <button class="btn btn-primary" id="startGameBtn">VIVA LA REVOLUCION!</button>
         </div>
     </div>
-    
-    <div class="logo">PROPERTY OF <span>LOS UNION</span> ✊</div>
+
+    <div class="overlay hidden" id="gameOverOverlay">
+        <div class="overlay-content">
+            <div class="overlay-title" id="gameOverTitle">MANAGEMENT WINS</div>
+            <div class="final-score" id="finalScore">0</div>
+            <div class="game-stats">
+                <div class="stat-item"><div class="stat-label">LEVEL</div><div class="stat-value" id="finalLevel">1</div></div>
+                <div class="stat-item"><div class="stat-label">MAX COMBO</div><div class="stat-value" id="finalCombo">0</div></div>
+                <div class="stat-item"><div class="stat-label">CLEARED</div><div class="stat-value" id="finalCleared">0</div></div>
+            </div>
+            <div class="new-high-score hidden" id="newHighScore">NEW HIGH SCORE!</div>
+            <button class="btn btn-primary" id="playAgainBtn">OTRA VEZ!</button>
+            <button class="btn btn-secondary" id="changeNameBtn">CHANGE NAME</button>
+            <button class="btn btn-share" id="shareScoreBtn">SHARE SCORE</button>
+            <div class="share-copied hidden" id="shareCopied">COPIED TO CLIPBOARD!</div>
+        </div>
+    </div>
+
+    <div class="game-container">
+        <div class="main-panel">
+            <div class="header">
+                <h1 class="title">SNOOD SINDICAL</h1>
+                <p class="subtitle">OFFICIAL GAME OF THE UNION</p>
+            </div>
+
+            <div class="score-display">
+                <div class="score-box">
+                    <div class="score-label">SCORE</div>
+                    <div class="score-value" id="score">0</div>
+                    <div class="player-name-display" id="currentPlayerName">-</div>
+                </div>
+                <div class="score-box">
+                    <div class="score-label">HIGH SCORE</div>
+                    <div class="score-value" id="highScore">0</div>
+                    <div class="player-name-display" id="highScoreHolder">-</div>
+                </div>
+            </div>
+
+            <canvas id="gameCanvas" width="500" height="550"></canvas>
+
+            <div class="game-info">
+                <div class="level-display">LEVEL: <span id="level">1</span></div>
+                <div class="combo-display">COMBO: <span id="combo">x1</span></div>
+            </div>
+        </div>
+
+        <div class="side-panel">
+            <div class="leaderboard-title">UNION HALL OF FAME</div>
+            <ul class="leaderboard-list" id="leaderboard">
+                <li class="no-scores">No scores yet!</li>
+            </ul>
+            <button class="clear-scores-btn" id="clearScoresBtn">CLEAR SCORES</button>
+        </div>
+    </div>
+
+    <div class="footer">PROPERTY OF LOS UNION - WORKERS UNITE!</div>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        
-        // Game constants
+
+        const SNOOD_RADIUS = 20;
+        const ROW_HEIGHT = SNOOD_RADIUS * 1.73;
         const COLS = 12;
-        const ROWS = 15;
-        const SNOOD_RADIUS = 18;
-        const SNOOD_DIAMETER = SNOOD_RADIUS * 2;
-        const SHOOTER_Y = canvas.height - 50;
-        const DANGER_Y = canvas.height - 80;
-        
-        // Snood types with faces - UNION EDITION
+        const DANGER_LINE = canvas.height - 80;
+        const SHOOT_Y = canvas.height - 40;
+
         const SNOOD_TYPES = [
-            { color: '#ff0000', face: '✊', name: 'Fist' },        // Red Fist
-            { color: '#00dd00', face: '💰', name: 'Money' },       // Money (demands)
-            { color: '#ffff00', face: '⚠️', name: 'Warning' },     // Warning
-            { color: '#0088ff', face: '📢', name: 'Megaphone' },   // Megaphone
-            { color: '#ff8800', face: '🔥', name: 'Fire' },        // Fire
-            { color: '#dd00ff', face: '⚔️', name: 'Swords' },      // Revolution
-            { color: '#ff0099', face: '☕', name: 'Coffee' },      // Coffee demands
-            { color: '#00ffff', face: '🤖', name: 'Robot' }        // Sophia
+            { emoji: '\u270A', color: '#ff0000' },
+            { emoji: '\uD83D\uDCB0', color: '#00dd00' },
+            { emoji: '\u26A0\uFE0F', color: '#ffff00' },
+            { emoji: '\uD83D\uDCE2', color: '#0088ff' },
+            { emoji: '\uD83D\uDD25', color: '#ff8800' },
+            { emoji: '\u2694\uFE0F', color: '#dd00ff' },
+            { emoji: '\u2615', color: '#ff0099' },
+            { emoji: '\uD83E\uDD16', color: '#00ffff' }
         ];
-        
-        // Game state
-        let grid = [];
-        let currentSnood = null;
-        let nextSnood = null;
-        let shootingSnood = null;
-        let aimAngle = -Math.PI / 2;
-        let score = 0;
-        let level = 1;
-        let shots = 0;
-        let gameRunning = false;
-        let rowOffset = 0;
-        let shotsUntilDrop = 8;
-        
-        function getGridX(col, row) {
-            const offset = (row % 2 === 0) ? 0 : SNOOD_RADIUS;
-            return col * SNOOD_DIAMETER + SNOOD_RADIUS + offset + 12;
+
+        let grid = [], currentSnood = null, nextSnood = null, shootingSnood = null;
+        let score = 0, level = 1, combo = 1, maxCombo = 1, totalCleared = 0;
+        let gameOver = false, gameStarted = false, aimAngle = -Math.PI / 2;
+        let playerName = '', animating = false;
+
+        let leaderboard = JSON.parse(localStorage.getItem('snoodLeaderboard')) || [];
+
+        const nameOverlay = document.getElementById('nameOverlay');
+        const gameOverOverlay = document.getElementById('gameOverOverlay');
+        const playerNameInput = document.getElementById('playerNameInput');
+
+        function init() {
+            updateLeaderboardDisplay();
+            updateHighScoreDisplay();
+            const saved = localStorage.getItem('snoodPlayerName');
+            if (saved) playerNameInput.value = saved;
+            playerNameInput.focus();
         }
-        
-        function getGridY(row) {
-            return row * (SNOOD_DIAMETER - 4) + SNOOD_RADIUS + rowOffset + 10;
-        }
-        
-        function initGrid() {
-            grid = [];
-            const initialRows = 5 + Math.min(level - 1, 3);
-            const typesInUse = Math.min(4 + level, SNOOD_TYPES.length);
-            
-            for (let row = 0; row < ROWS; row++) {
-                grid[row] = [];
-                const cols = (row % 2 === 0) ? COLS : COLS - 1;
-                for (let col = 0; col < cols; col++) {
-                    if (row < initialRows) {
-                        grid[row][col] = Math.floor(Math.random() * typesInUse);
-                    } else {
-                        grid[row][col] = -1;
-                    }
-                }
-            }
-        }
-        
-        function getRandomSnoodType() {
-            const typesInUse = Math.min(4 + level, SNOOD_TYPES.length);
-            return Math.floor(Math.random() * typesInUse);
-        }
-        
-        function drawSnood(x, y, type, scale = 1) {
-            const snood = SNOOD_TYPES[type];
-            const r = SNOOD_RADIUS * scale;
-            
-            // Glow effect
-            const gradient = ctx.createRadialGradient(x, y, 0, x, y, r * 1.5);
-            gradient.addColorStop(0, snood.color);
-            gradient.addColorStop(0.7, snood.color);
-            gradient.addColorStop(1, 'transparent');
-            
-            ctx.beginPath();
-            ctx.arc(x, y, r * 1.2, 0, Math.PI * 2);
-            ctx.fillStyle = gradient;
-            ctx.globalAlpha = 0.3;
-            ctx.fill();
-            ctx.globalAlpha = 1;
-            
-            // Main circle
-            const innerGradient = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, 0, x, y, r);
-            innerGradient.addColorStop(0, lightenColor(snood.color, 40));
-            innerGradient.addColorStop(0.7, snood.color);
-            innerGradient.addColorStop(1, darkenColor(snood.color, 30));
-            
-            ctx.beginPath();
-            ctx.arc(x, y, r, 0, Math.PI * 2);
-            ctx.fillStyle = innerGradient;
-            ctx.fill();
-            
-            // Border
-            ctx.strokeStyle = darkenColor(snood.color, 50);
-            ctx.lineWidth = 2;
-            ctx.stroke();
-            
-            // Face
-            ctx.font = `${Math.floor(r * 1.2)}px Arial`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(snood.face, x, y + 1);
-        }
-        
-        function lightenColor(color, percent) {
-            const num = parseInt(color.replace('#', ''), 16);
-            const amt = Math.round(2.55 * percent);
-            const R = Math.min(255, (num >> 16) + amt);
-            const G = Math.min(255, ((num >> 8) & 0x00FF) + amt);
-            const B = Math.min(255, (num & 0x0000FF) + amt);
-            return `rgb(${R},${G},${B})`;
-        }
-        
-        function darkenColor(color, percent) {
-            const num = parseInt(color.replace('#', ''), 16);
-            const amt = Math.round(2.55 * percent);
-            const R = Math.max(0, (num >> 16) - amt);
-            const G = Math.max(0, ((num >> 8) & 0x00FF) - amt);
-            const B = Math.max(0, (num & 0x0000FF) - amt);
-            return `rgb(${R},${G},${B})`;
-        }
-        
-        function drawGrid() {
-            for (let row = 0; row < grid.length; row++) {
-                for (let col = 0; col < grid[row].length; col++) {
-                    if (grid[row][col] >= 0) {
-                        const x = getGridX(col, row);
-                        const y = getGridY(row);
-                        drawSnood(x, y, grid[row][col]);
-                    }
-                }
-            }
-        }
-        
-        function drawShooter() {
-            const centerX = canvas.width / 2;
-            
-            // Draw aiming line
-            ctx.beginPath();
-            ctx.moveTo(centerX, SHOOTER_Y);
-            const lineLength = 100;
-            const endX = centerX + Math.cos(aimAngle) * lineLength;
-            const endY = SHOOTER_Y + Math.sin(aimAngle) * lineLength;
-            
-            ctx.setLineDash([5, 5]);
-            ctx.strokeStyle = 'rgba(0, 255, 136, 0.5)';
-            ctx.lineWidth = 2;
-            ctx.lineTo(endX, endY);
-            ctx.stroke();
-            ctx.setLineDash([]);
-            
-            // Draw dotted trajectory
-            let simX = centerX;
-            let simY = SHOOTER_Y;
-            let simDX = Math.cos(aimAngle) * 8;
-            let simDY = Math.sin(aimAngle) * 8;
-            
-            ctx.fillStyle = 'rgba(0, 255, 136, 0.3)';
-            for (let i = 0; i < 30; i++) {
-                simX += simDX;
-                simY += simDY;
-                
-                if (simX < SNOOD_RADIUS || simX > canvas.width - SNOOD_RADIUS) {
-                    simDX = -simDX;
-                }
-                if (simY < 0) break;
-                
-                if (i % 3 === 0) {
-                    ctx.beginPath();
-                    ctx.arc(simX, simY, 3, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-            
-            // Draw current snood
-            if (currentSnood !== null) {
-                drawSnood(centerX, SHOOTER_Y, currentSnood, 1.1);
-            }
-            
-            // Draw launcher base
-            ctx.fillStyle = '#333';
-            ctx.beginPath();
-            ctx.arc(centerX, SHOOTER_Y + 20, 30, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.strokeStyle = '#00ff88';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-        }
-        
-        function drawShootingSnood() {
-            if (shootingSnood) {
-                drawSnood(shootingSnood.x, shootingSnood.y, shootingSnood.type);
-            }
-        }
-        
-        function shoot() {
-            if (shootingSnood || currentSnood === null || !gameRunning) return;
-            
-            const centerX = canvas.width / 2;
-            shootingSnood = {
-                x: centerX,
-                y: SHOOTER_Y,
-                dx: Math.cos(aimAngle) * 12,
-                dy: Math.sin(aimAngle) * 12,
-                type: currentSnood
-            };
-            
-            currentSnood = nextSnood;
-            nextSnood = getRandomSnoodType();
-            updateNextPreview();
-            shots++;
-            document.getElementById('shots').textContent = shots;
-            
-            shotsUntilDrop--;
-            if (shotsUntilDrop <= 0) {
-                dropCeiling();
-                shotsUntilDrop = Math.max(5, 10 - level);
-            }
-        }
-        
-        function swapSnoods() {
-            if (shootingSnood || !gameRunning) return;
-            const temp = currentSnood;
-            currentSnood = nextSnood;
-            nextSnood = temp;
-            updateNextPreview();
-        }
-        
-        function updateNextPreview() {
-            const preview = document.getElementById('nextPreview');
-            if (nextSnood !== null) {
-                preview.textContent = SNOOD_TYPES[nextSnood].face;
-                preview.style.background = SNOOD_TYPES[nextSnood].color + '33';
-            }
-        }
-        
-        function updateShootingSnood() {
-            if (!shootingSnood) return;
-            
-            shootingSnood.x += shootingSnood.dx;
-            shootingSnood.y += shootingSnood.dy;
-            
-            // Wall bounce
-            if (shootingSnood.x < SNOOD_RADIUS) {
-                shootingSnood.x = SNOOD_RADIUS;
-                shootingSnood.dx = -shootingSnood.dx;
-            }
-            if (shootingSnood.x > canvas.width - SNOOD_RADIUS) {
-                shootingSnood.x = canvas.width - SNOOD_RADIUS;
-                shootingSnood.dx = -shootingSnood.dx;
-            }
-            
-            // Ceiling hit
-            if (shootingSnood.y < SNOOD_RADIUS + rowOffset + 10) {
-                snapToGrid();
-                return;
-            }
-            
-            // Collision with other snoods
-            for (let row = 0; row < grid.length; row++) {
-                for (let col = 0; col < grid[row].length; col++) {
-                    if (grid[row][col] >= 0) {
-                        const gridX = getGridX(col, row);
-                        const gridY = getGridY(row);
-                        const dist = Math.sqrt(
-                            Math.pow(shootingSnood.x - gridX, 2) + 
-                            Math.pow(shootingSnood.y - gridY, 2)
-                        );
-                        if (dist < SNOOD_DIAMETER - 2) {
-                            snapToGrid();
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-        
-        function snapToGrid() {
-            // Find closest empty grid position
-            let bestRow = -1;
-            let bestCol = -1;
-            let bestDist = Infinity;
-            
-            for (let row = 0; row < ROWS; row++) {
-                const cols = (row % 2 === 0) ? COLS : COLS - 1;
-                for (let col = 0; col < cols; col++) {
-                    if (grid[row][col] === -1) {
-                        const gridX = getGridX(col, row);
-                        const gridY = getGridY(row);
-                        const dist = Math.sqrt(
-                            Math.pow(shootingSnood.x - gridX, 2) + 
-                            Math.pow(shootingSnood.y - gridY, 2)
-                        );
-                        if (dist < bestDist) {
-                            bestDist = dist;
-                            bestRow = row;
-                            bestCol = col;
-                        }
-                    }
-                }
-            }
-            
-            if (bestRow >= 0 && bestCol >= 0) {
-                grid[bestRow][bestCol] = shootingSnood.type;
-                
-                // Check for matches
-                const matches = findMatches(bestRow, bestCol);
-                if (matches.length >= 3) {
-                    // Remove matches
-                    for (const match of matches) {
-                        grid[match.row][match.col] = -1;
-                    }
-                    score += matches.length * 10 * level;
-                    
-                    // Remove floating snoods
-                    const floating = findFloatingSnoods();
-                    for (const f of floating) {
-                        grid[f.row][f.col] = -1;
-                    }
-                    score += floating.length * 20 * level;
-                    
-                    document.getElementById('score').textContent = score;
-                    
-                    // Check for win
-                    if (isGridEmpty()) {
-                        levelUp();
-                    }
-                }
-                
-                // Check for game over
-                if (getGridY(bestRow) > DANGER_Y - SNOOD_RADIUS) {
-                    gameOver(false);
-                }
-            }
-            
-            shootingSnood = null;
-        }
-        
-        function findMatches(startRow, startCol) {
-            const type = grid[startRow][startCol];
-            const matches = [];
-            const visited = new Set();
-            
-            function flood(row, col) {
-                const key = `${row},${col}`;
-                if (visited.has(key)) return;
-                if (row < 0 || row >= grid.length) return;
-                if (col < 0 || col >= grid[row].length) return;
-                if (grid[row][col] !== type) return;
-                
-                visited.add(key);
-                matches.push({ row, col });
-                
-                // Get neighbors
-                const neighbors = getNeighbors(row, col);
-                for (const n of neighbors) {
-                    flood(n.row, n.col);
-                }
-            }
-            
-            flood(startRow, startCol);
-            return matches;
-        }
-        
-        function getNeighbors(row, col) {
-            const neighbors = [];
-            const isEvenRow = row % 2 === 0;
-            
-            // Same row
-            neighbors.push({ row, col: col - 1 });
-            neighbors.push({ row, col: col + 1 });
-            
-            // Row above
-            if (isEvenRow) {
-                neighbors.push({ row: row - 1, col: col - 1 });
-                neighbors.push({ row: row - 1, col });
-            } else {
-                neighbors.push({ row: row - 1, col });
-                neighbors.push({ row: row - 1, col: col + 1 });
-            }
-            
-            // Row below
-            if (isEvenRow) {
-                neighbors.push({ row: row + 1, col: col - 1 });
-                neighbors.push({ row: row + 1, col });
-            } else {
-                neighbors.push({ row: row + 1, col });
-                neighbors.push({ row: row + 1, col: col + 1 });
-            }
-            
-            return neighbors.filter(n => 
-                n.row >= 0 && n.row < grid.length && 
-                n.col >= 0 && n.col < grid[n.row].length
-            );
-        }
-        
-        function findFloatingSnoods() {
-            const connected = new Set();
-            
-            // BFS from top row
-            function markConnected(row, col) {
-                const queue = [{ row, col }];
-                while (queue.length > 0) {
-                    const { row, col } = queue.shift();
-                    const key = `${row},${col}`;
-                    if (connected.has(key)) continue;
-                    if (row < 0 || row >= grid.length) continue;
-                    if (col < 0 || col >= grid[row].length) continue;
-                    if (grid[row][col] < 0) continue;
-                    
-                    connected.add(key);
-                    const neighbors = getNeighbors(row, col);
-                    for (const n of neighbors) {
-                        queue.push(n);
-                    }
-                }
-            }
-            
-            // Mark all snoods connected to top row
-            for (let col = 0; col < grid[0].length; col++) {
-                if (grid[0][col] >= 0) {
-                    markConnected(0, col);
-                }
-            }
-            
-            // Find floating snoods
-            const floating = [];
-            for (let row = 0; row < grid.length; row++) {
-                for (let col = 0; col < grid[row].length; col++) {
-                    if (grid[row][col] >= 0 && !connected.has(`${row},${col}`)) {
-                        floating.push({ row, col });
-                    }
-                }
-            }
-            
-            return floating;
-        }
-        
-        function isGridEmpty() {
-            for (let row = 0; row < grid.length; row++) {
-                for (let col = 0; col < grid[row].length; col++) {
-                    if (grid[row][col] >= 0) return false;
-                }
-            }
-            return true;
-        }
-        
-        function dropCeiling() {
-            rowOffset += 20;
-            
-            // Check if any snood is now in danger zone
-            for (let row = 0; row < grid.length; row++) {
-                for (let col = 0; col < grid[row].length; col++) {
-                    if (grid[row][col] >= 0) {
-                        const y = getGridY(row);
-                        if (y > DANGER_Y - SNOOD_RADIUS) {
-                            gameOver(false);
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-        
-        function levelUp() {
-            level++;
-            document.getElementById('level').textContent = level;
-            rowOffset = 0;
-            shotsUntilDrop = Math.max(5, 10 - level);
-            initGrid();
-            currentSnood = getRandomSnoodType();
-            nextSnood = getRandomSnoodType();
-            updateNextPreview();
-        }
-        
-        function gameOver(won) {
-            gameRunning = false;
-            const screen = document.getElementById('gameOverScreen');
-            const title = document.getElementById('endTitle');
-            document.getElementById('finalScore').textContent = score;
-            
-            if (won) {
-                title.textContent = '¡VICTORIA!';
-                title.className = 'game-over-text win-text';
-            } else {
-                title.textContent = 'MANAGEMENT WINS';
-                title.className = 'game-over-text';
-            }
-            
-            screen.classList.remove('hidden');
-        }
-        
+
         function startGame() {
-            document.getElementById('startScreen').classList.add('hidden');
-            document.getElementById('gameOverScreen').classList.add('hidden');
-            
-            score = 0;
-            level = 1;
-            shots = 0;
-            rowOffset = 0;
-            shotsUntilDrop = 8;
-            
+            playerName = playerNameInput.value.trim().toUpperCase() || 'ANON';
+            localStorage.setItem('snoodPlayerName', playerName);
+            document.getElementById('currentPlayerName').textContent = playerName;
+            nameOverlay.classList.add('hidden');
+            resetGame();
+            gameStarted = true;
+            gameLoop();
+        }
+
+        function resetGame() {
+            grid = []; score = 0; level = 1; combo = 1; maxCombo = 1; totalCleared = 0;
+            gameOver = false; animating = false;
+
+            for (let row = 0; row < 5; row++) {
+                grid[row] = [];
+                const offset = row % 2 === 0 ? 0 : SNOOD_RADIUS;
+                for (let col = 0; col < COLS - (row % 2); col++) {
+                    grid[row][col] = {
+                        type: Math.floor(Math.random() * Math.min(5 + level, SNOOD_TYPES.length)),
+                        x: col * SNOOD_RADIUS * 2 + SNOOD_RADIUS + offset,
+                        y: row * ROW_HEIGHT + SNOOD_RADIUS + 20
+                    };
+                }
+            }
+            currentSnood = createSnood();
+            nextSnood = createSnood();
+            updateDisplay();
+        }
+
+        function createSnood() {
+            return { type: Math.floor(Math.random() * Math.min(5 + Math.floor(level/2), SNOOD_TYPES.length)), x: canvas.width/2, y: SHOOT_Y };
+        }
+
+        function updateDisplay() {
             document.getElementById('score').textContent = score;
             document.getElementById('level').textContent = level;
-            document.getElementById('shots').textContent = shots;
-            
-            initGrid();
-            currentSnood = getRandomSnoodType();
-            nextSnood = getRandomSnoodType();
-            updateNextPreview();
-            gameRunning = true;
+            document.getElementById('combo').textContent = 'x' + combo;
         }
-        
-        function draw() {
-            // Clear canvas
-            ctx.fillStyle = '#0d1117';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw gradient background
-            const bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            bgGradient.addColorStop(0, '#1a1a2e');
-            bgGradient.addColorStop(1, '#0d1117');
-            ctx.fillStyle = bgGradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            drawGrid();
-            drawShootingSnood();
-            drawShooter();
-        }
-        
-        function gameLoop() {
-            if (gameRunning) {
-                updateShootingSnood();
+
+        function updateHighScoreDisplay() {
+            if (leaderboard.length > 0) {
+                document.getElementById('highScore').textContent = leaderboard[0].score;
+                document.getElementById('highScoreHolder').textContent = leaderboard[0].name;
             }
+        }
+
+        function updateLeaderboardDisplay() {
+            const list = document.getElementById('leaderboard');
+            list.innerHTML = '';
+            if (leaderboard.length === 0) {
+                list.innerHTML = '<li class="no-scores">No scores yet!</li>';
+                return;
+            }
+            leaderboard.slice(0, 10).forEach((e, i) => {
+                const li = document.createElement('li');
+                li.className = 'leaderboard-entry';
+                li.innerHTML = `<span class="leaderboard-rank">${i+1}.</span><span class="leaderboard-name">${e.name}</span><span class="leaderboard-score">${e.score}</span>`;
+                list.appendChild(li);
+            });
+        }
+
+        function saveScore() {
+            const entry = { name: playerName, score, level, date: Date.now() };
+            leaderboard.push(entry);
+            leaderboard.sort((a, b) => b.score - a.score);
+            leaderboard = leaderboard.slice(0, 100);
+            localStorage.setItem('snoodLeaderboard', JSON.stringify(leaderboard));
+            updateLeaderboardDisplay();
+            updateHighScoreDisplay();
+            return leaderboard[0].score === score;
+        }
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (gameOver || !gameStarted || shootingSnood) return;
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+            aimAngle = Math.atan2(my - SHOOT_Y, mx - canvas.width/2);
+            aimAngle = Math.max(-Math.PI + 0.15, Math.min(-0.15, aimAngle));
+        });
+
+        canvas.addEventListener('click', () => {
+            if (gameOver || !gameStarted || shootingSnood || animating) return;
+            shoot();
+        });
+
+        function shoot() {
+            const speed = 14;
+            shootingSnood = { ...currentSnood, vx: Math.cos(aimAngle) * speed, vy: Math.sin(aimAngle) * speed };
+            currentSnood = nextSnood;
+            currentSnood.x = canvas.width/2;
+            currentSnood.y = SHOOT_Y;
+            nextSnood = createSnood();
+        }
+
+        function update() {
+            if (!shootingSnood) return;
+            shootingSnood.x += shootingSnood.vx;
+            shootingSnood.y += shootingSnood.vy;
+
+            if (shootingSnood.x < SNOOD_RADIUS || shootingSnood.x > canvas.width - SNOOD_RADIUS) {
+                shootingSnood.vx *= -1;
+                shootingSnood.x = Math.max(SNOOD_RADIUS, Math.min(canvas.width - SNOOD_RADIUS, shootingSnood.x));
+            }
+
+            if (shootingSnood.y < SNOOD_RADIUS + 20) { snap(0); return; }
+
+            for (let r = 0; r < grid.length; r++) {
+                for (let c = 0; c < (grid[r]?.length || 0); c++) {
+                    const s = grid[r][c];
+                    if (s) {
+                        const dx = shootingSnood.x - s.x, dy = shootingSnood.y - s.y;
+                        if (Math.sqrt(dx*dx + dy*dy) < SNOOD_RADIUS * 2) { snap(r); return; }
+                    }
+                }
+            }
+        }
+
+        function snap(nearRow) {
+            let bestRow = nearRow, bestCol = 0, bestDist = Infinity;
+
+            for (let r = Math.max(0, nearRow - 1); r <= nearRow + 1; r++) {
+                const offset = r % 2 === 0 ? 0 : SNOOD_RADIUS;
+                const maxC = COLS - (r % 2);
+                for (let c = 0; c <= maxC; c++) {
+                    const x = c * SNOOD_RADIUS * 2 + SNOOD_RADIUS + offset;
+                    const y = r * ROW_HEIGHT + SNOOD_RADIUS + 20;
+                    if (!grid[r]) grid[r] = [];
+                    if (grid[r][c]) continue;
+                    const dx = shootingSnood.x - x, dy = shootingSnood.y - y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    if (dist < bestDist) { bestDist = dist; bestRow = r; bestCol = c; }
+                }
+            }
+
+            if (!grid[bestRow]) grid[bestRow] = [];
+            const offset = bestRow % 2 === 0 ? 0 : SNOOD_RADIUS;
+            grid[bestRow][bestCol] = {
+                type: shootingSnood.type,
+                x: bestCol * SNOOD_RADIUS * 2 + SNOOD_RADIUS + offset,
+                y: bestRow * ROW_HEIGHT + SNOOD_RADIUS + 20
+            };
+            shootingSnood = null;
+            checkMatches(bestRow, bestCol);
+        }
+
+        function checkMatches(row, col) {
+            const type = grid[row][col].type;
+            const matches = [], visited = new Set();
+
+            function flood(r, c) {
+                const key = `${r},${c}`;
+                if (visited.has(key) || !grid[r]?.[c] || grid[r][c].type !== type) return;
+                visited.add(key);
+                matches.push({ r, c });
+                const odd = r % 2 === 1;
+                const neighbors = odd ? [[r-1,c],[r-1,c+1],[r,c-1],[r,c+1],[r+1,c],[r+1,c+1]] : [[r-1,c-1],[r-1,c],[r,c-1],[r,c+1],[r+1,c-1],[r+1,c]];
+                neighbors.forEach(([nr, nc]) => flood(nr, nc));
+            }
+
+            flood(row, col);
+
+            if (matches.length >= 3) {
+                animating = true;
+                matches.forEach(m => {
+                    const s = grid[m.r][m.c];
+                    createParticle(s.x, s.y, SNOOD_TYPES[s.type].emoji);
+                    grid[m.r][m.c] = null;
+                });
+
+                const pts = matches.length * 10 * level;
+                score += pts + Math.floor(pts * (combo - 1) * 0.5);
+                totalCleared += matches.length;
+
+                if (combo > 1) showCombo(grid[row]?.[col]?.x || canvas.width/2, grid[row]?.[col]?.y || 200);
+                combo++;
+                maxCombo = Math.max(maxCombo, combo);
+
+                setTimeout(() => {
+                    removeFloating();
+                    if (totalCleared >= level * 25) { level++; addRow(); }
+                    animating = false;
+                    updateDisplay();
+                    checkGameOver();
+                }, 200);
+            } else {
+                combo = 1;
+                updateDisplay();
+                checkGameOver();
+            }
+        }
+
+        function removeFloating() {
+            const connected = new Set();
+            function mark(r, c) {
+                const key = `${r},${c}`;
+                if (connected.has(key) || !grid[r]?.[c]) return;
+                connected.add(key);
+                const odd = r % 2 === 1;
+                const neighbors = odd ? [[r-1,c],[r-1,c+1],[r,c-1],[r,c+1],[r+1,c],[r+1,c+1]] : [[r-1,c-1],[r-1,c],[r,c-1],[r,c+1],[r+1,c-1],[r+1,c]];
+                neighbors.forEach(([nr, nc]) => mark(nr, nc));
+            }
+            if (grid[0]) grid[0].forEach((s, c) => { if (s) mark(0, c); });
+
+            let floating = 0;
+            for (let r = 0; r < grid.length; r++) {
+                for (let c = 0; c < (grid[r]?.length || 0); c++) {
+                    if (grid[r][c] && !connected.has(`${r},${c}`)) {
+                        createParticle(grid[r][c].x, grid[r][c].y, SNOOD_TYPES[grid[r][c].type].emoji);
+                        grid[r][c] = null;
+                        floating++;
+                    }
+                }
+            }
+            if (floating > 0) { score += floating * 25 * level; totalCleared += floating; }
+        }
+
+        function addRow() {
+            for (let r = grid.length - 1; r >= 0; r--) {
+                if (grid[r]) grid[r].forEach(s => { if (s) s.y += ROW_HEIGHT; });
+            }
+            grid.unshift([]);
+            for (let c = 0; c < COLS; c++) {
+                grid[0][c] = { type: Math.floor(Math.random() * Math.min(5 + Math.floor(level/2), SNOOD_TYPES.length)), x: c * SNOOD_RADIUS * 2 + SNOOD_RADIUS, y: SNOOD_RADIUS + 20 };
+            }
+            for (let r = 1; r < grid.length; r++) {
+                if (grid[r]) {
+                    const off = r % 2 === 0 ? 0 : SNOOD_RADIUS;
+                    grid[r].forEach((s, c) => { if (s) { s.x = c * SNOOD_RADIUS * 2 + SNOOD_RADIUS + off; s.y = r * ROW_HEIGHT + SNOOD_RADIUS + 20; } });
+                }
+            }
+        }
+
+        function checkGameOver() {
+            for (let r = 0; r < grid.length; r++) {
+                for (let c = 0; c < (grid[r]?.length || 0); c++) {
+                    if (grid[r][c] && grid[r][c].y > DANGER_LINE) { endGame(); return; }
+                }
+            }
+            let has = false;
+            for (let r = 0; r < grid.length && !has; r++) for (let c = 0; c < (grid[r]?.length || 0) && !has; c++) if (grid[r][c]) has = true;
+            if (!has) { score += 500 * level; level++; resetGame(); }
+        }
+
+        function endGame() {
+            gameOver = true; gameStarted = false;
+            document.getElementById('gameOverTitle').textContent = 'MANAGEMENT WINS';
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalLevel').textContent = level;
+            document.getElementById('finalCombo').textContent = maxCombo;
+            document.getElementById('finalCleared').textContent = totalCleared;
+            const isHigh = saveScore();
+            document.getElementById('newHighScore').classList.toggle('hidden', !isHigh);
+            gameOverOverlay.classList.remove('hidden');
+        }
+
+        function createParticle(x, y, emoji) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.textContent = emoji;
+            p.style.left = (canvas.offsetLeft + x) + 'px';
+            p.style.top = (canvas.offsetTop + y) + 'px';
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 2000);
+        }
+
+        function showCombo(x, y) {
+            const c = document.createElement('div');
+            c.className = 'combo-popup';
+            c.textContent = combo + 'x COMBO!';
+            c.style.left = (canvas.offsetLeft + x) + 'px';
+            c.style.top = (canvas.offsetTop + y) + 'px';
+            document.body.appendChild(c);
+            setTimeout(() => c.remove(), 1000);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = 'rgba(255,0,0,0.1)';
+            ctx.fillRect(0, DANGER_LINE, canvas.width, canvas.height - DANGER_LINE);
+            ctx.strokeStyle = '#ff0000';
+            ctx.setLineDash([10, 5]);
+            ctx.beginPath();
+            ctx.moveTo(0, DANGER_LINE);
+            ctx.lineTo(canvas.width, DANGER_LINE);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            for (let r = 0; r < grid.length; r++) {
+                for (let c = 0; c < (grid[r]?.length || 0); c++) {
+                    const s = grid[r][c];
+                    if (s) drawSnood(s.x, s.y, s.type);
+                }
+            }
+
+            if (shootingSnood) drawSnood(shootingSnood.x, shootingSnood.y, shootingSnood.type);
+
+            if (currentSnood && !shootingSnood && !gameOver) {
+                ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(currentSnood.x, currentSnood.y);
+                ctx.lineTo(currentSnood.x + Math.cos(aimAngle) * 250, currentSnood.y + Math.sin(aimAngle) * 250);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                drawSnood(currentSnood.x, currentSnood.y, currentSnood.type);
+
+                ctx.fillStyle = '#666';
+                ctx.font = '12px VT323';
+                ctx.textAlign = 'center';
+                ctx.fillText('NEXT:', canvas.width - 40, canvas.height - 55);
+                drawSnood(canvas.width - 40, canvas.height - 30, nextSnood.type, 0.7);
+            }
+        }
+
+        function drawSnood(x, y, type, scale = 1) {
+            const t = SNOOD_TYPES[type], r = SNOOD_RADIUS * scale;
+            const g = ctx.createRadialGradient(x - r*0.3, y - r*0.3, 0, x, y, r);
+            g.addColorStop(0, '#ffffff');
+            g.addColorStop(0.3, t.color);
+            g.addColorStop(1, shadeColor(t.color, -40));
+            ctx.fillStyle = g;
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = shadeColor(t.color, -60);
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.font = `${Math.floor(r * 1.1)}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(t.emoji, x, y + 1);
+        }
+
+        function shadeColor(c, p) {
+            const n = parseInt(c.replace('#', ''), 16), a = Math.round(2.55 * p);
+            const R = Math.max(0, Math.min(255, (n >> 16) + a));
+            const G = Math.max(0, Math.min(255, ((n >> 8) & 0xFF) + a));
+            const B = Math.max(0, Math.min(255, (n & 0xFF) + a));
+            return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+        }
+
+        function gameLoop() {
+            if (!gameStarted) return;
+            update();
             draw();
             requestAnimationFrame(gameLoop);
         }
-        
-        // Event listeners
-        canvas.addEventListener('mousemove', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
-            const centerX = canvas.width / 2;
-            
-            aimAngle = Math.atan2(mouseY - SHOOTER_Y, mouseX - centerX);
-            // Limit angle to upward directions
-            if (aimAngle > -0.1) aimAngle = -0.1;
-            if (aimAngle < -Math.PI + 0.1) aimAngle = -Math.PI + 0.1;
+
+        document.getElementById('startGameBtn').addEventListener('click', startGame);
+        playerNameInput.addEventListener('keypress', e => { if (e.key === 'Enter') startGame(); });
+        document.getElementById('playAgainBtn').addEventListener('click', () => {
+            gameOverOverlay.classList.add('hidden');
+            resetGame();
+            gameStarted = true;
+            gameLoop();
         });
-        
-        canvas.addEventListener('click', shoot);
-        
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space') {
-                e.preventDefault();
-                swapSnoods();
+        document.getElementById('changeNameBtn').addEventListener('click', () => {
+            gameOverOverlay.classList.add('hidden');
+            nameOverlay.classList.remove('hidden');
+            playerNameInput.focus();
+        });
+        document.getElementById('clearScoresBtn').addEventListener('click', () => {
+            if (confirm('Clear all scores?')) {
+                leaderboard = [];
+                localStorage.removeItem('snoodLeaderboard');
+                updateLeaderboardDisplay();
+                updateHighScoreDisplay();
             }
         });
-        
-        // Start game loop
-        gameLoop();
+        document.getElementById('shareScoreBtn').addEventListener('click', () => {
+            const shareText = `SNOOD SINDICAL - Union Game Results
+
+Player: ${playerName}
+Score: ${score}
+Level: ${level}
+Max Combo: ${maxCombo}x
+Snoods Cleared: ${totalCleared}
+
+The revolution will not be televised, but your score will be shared!
+
+Play now: https://ables.ai/snood.html`;
+            
+            navigator.clipboard.writeText(shareText).then(() => {
+                const copied = document.getElementById('shareCopied');
+                copied.classList.remove('hidden');
+                setTimeout(() => copied.classList.add('hidden'), 2000);
+            }).catch(() => {
+                alert('Copy failed. Share this:\n\n' + shareText);
+            });
+        });
+
+        init();
     </script>
 </body>
 </html>
