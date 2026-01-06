@@ -466,230 +466,17 @@
             100% { transform: translateX(350%); }
         }
 
-        /* GTA Game Styles */
-        .gta-game-wrapper {
-            margin-top: 24px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .gta-container {
-            background: #1a1a1a;
-            border-radius: 12px;
-            padding: 16px;
-            border: 1px solid #333;
-        }
-
-        .gta-label {
-            font-size: 12px;
-            color: #888;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-align: center;
-        }
-
-        #gtaCanvas {
-            background: #2d4a2d;
-            border-radius: 8px;
-            display: block;
-            margin: 0 auto;
-            image-rendering: pixelated;
-        }
-
-        .gta-controls {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 12px;
-            font-size: 11px;
-            color: #666;
-        }
-
-        .gta-stats {
-            display: flex;
-            gap: 12px;
-        }
-
-        #gtaScore, #gtaWanted {
-            color: var(--accent);
-            font-weight: 600;
-        }
-
-        #gtaWanted {
-            color: #ef4444;
-        }
-
-        body.dark-theme .gta-container {
-            background: #1a1a1a;
-            border-color: #333;
-        }
-
-        body:not(.dark-theme) .gta-container {
-            background: #f5f5f5;
-            border-color: #ddd;
-        }
-
-        body:not(.dark-theme) .gta-label,
-        body:not(.dark-theme) .gta-controls {
-            color: #666;
-        }
-
-        /* Game Button in Header */
+        /* Hank Bank Game Button */
         .game-btn {
             display: flex;
             align-items: center;
             gap: 6px;
             padding: 8px 14px;
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-            border: none;
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
+            color: #d4af37;
+            border: 2px solid #d4af37;
             border-radius: 8px;
             font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .game-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
-        }
-
-        /* GTA Modal */
-        .gta-modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.85);
-            z-index: 2000;
-            backdrop-filter: blur(4px);
-        }
-
-        .gta-modal-overlay.active {
-            display: block;
-        }
-
-        .gta-modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
-            border-radius: 16px;
-            padding: 0;
-            z-index: 2001;
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.7), 0 0 60px rgba(239, 68, 68, 0.3);
-            border: 2px solid #ef4444;
-            overflow: hidden;
-        }
-
-        .gta-modal.active {
-            display: block;
-            animation: gtaModalPop 0.3s ease-out;
-        }
-
-        @keyframes gtaModalPop {
-            from { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
-            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-        }
-
-        .gta-modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 20px;
-            background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-        }
-
-        .gta-modal-header h3 {
-            margin: 0;
-            font-size: 20px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 2px 2px 0 #000;
-        }
-
-        .gta-modal-stats {
-            display: flex;
-            gap: 16px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .gta-modal-stats span {
-            background: rgba(0,0,0,0.4);
-            padding: 6px 14px;
-            border-radius: 4px;
-            font-family: monospace;
-        }
-
-        .gta-modal-close {
-            background: rgba(0,0,0,0.4);
-            border: none;
-            color: white;
-            width: 32px;
-            height: 32px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.2s;
-        }
-
-        .gta-modal-close:hover {
-            background: rgba(0,0,0,0.6);
-        }
-
-        .gta-modal-body {
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            background: #0a0a0a;
-        }
-
-        #gtaModalCanvas {
-            background: #2d4a2d;
-            border-radius: 4px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.3);
-            image-rendering: pixelated;
-        }
-
-        .gta-modal-footer {
-            padding: 16px 20px;
-            background: #1a1a1a;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid #333;
-        }
-
-        .gta-modal-controls {
-            display: flex;
-            gap: 20px;
-            font-size: 12px;
-            color: #888;
-            font-family: monospace;
-        }
-
-        .gta-modal-controls span {
-            background: #222;
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-
-        .gta-restart-btn {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 4px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
@@ -697,32 +484,13 @@
             letter-spacing: 1px;
         }
 
-        .gta-restart-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
+        .game-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+            background: linear-gradient(135deg, #2d5a87 0%, #3d6a97 100%);
         }
 
-        .wanted-stars {
-            color: #fbbf24;
-            font-size: 16px;
-            letter-spacing: 2px;
-        }
-
-        /* Game Buttons Container */
-        .game-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .game-btn.snood-btn {
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-        }
-
-        .game-btn.snood-btn:hover {
-            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
-        }
-
-        /* Snood Modal */
+        /* Hank Bank Snood Modal */
         .snood-modal-overlay {
             display: none;
             position: fixed;
@@ -730,7 +498,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.85);
             z-index: 2000;
             backdrop-filter: blur(4px);
         }
@@ -745,12 +513,12 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            background: linear-gradient(180deg, #1e3a5f 0%, #0f1d2f 100%);
             border-radius: 16px;
             padding: 0;
             z-index: 2001;
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5), 0 0 40px rgba(139, 92, 246, 0.3);
-            border: 1px solid #333;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6), 0 0 60px rgba(212, 175, 55, 0.2);
+            border: 3px solid #d4af37;
             overflow: hidden;
         }
 
@@ -769,88 +537,99 @@
             align-items: center;
             justify-content: space-between;
             padding: 16px 20px;
-            background: linear-gradient(90deg, #7c3aed 0%, #8b5cf6 100%);
-            color: white;
+            background: linear-gradient(90deg, #1e3a5f 0%, #2d5a87 100%);
+            color: #d4af37;
+            border-bottom: 2px solid #d4af37;
         }
 
         .snood-modal-header h3 {
             margin: 0;
-            font-size: 18px;
-            font-weight: 600;
+            font-size: 20px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 1px 1px 0 #000;
         }
 
         .snood-modal-stats {
             display: flex;
             gap: 16px;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .snood-modal-stats span {
-            background: rgba(255,255,255,0.2);
-            padding: 4px 12px;
-            border-radius: 20px;
+            background: rgba(212, 175, 55, 0.2);
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1px solid #d4af37;
+            color: #d4af37;
         }
 
         .snood-modal-close {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
+            background: rgba(212, 175, 55, 0.2);
+            border: 1px solid #d4af37;
+            color: #d4af37;
             width: 32px;
             height: 32px;
-            border-radius: 50%;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 16px;
             transition: all 0.2s;
         }
 
         .snood-modal-close:hover {
-            background: rgba(255,255,255,0.3);
-            transform: rotate(90deg);
+            background: rgba(212, 175, 55, 0.4);
         }
 
         .snood-modal-body {
             padding: 20px;
             display: flex;
             justify-content: center;
+            background: #0a1520;
         }
 
         #snoodModalCanvas {
-            background: linear-gradient(180deg, #0f0f1a 0%, #1a1a2e 100%);
+            background: linear-gradient(180deg, #152535 0%, #0a1520 100%);
             border-radius: 12px;
             cursor: crosshair;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.6), 0 0 20px rgba(212, 175, 55, 0.1);
+            border: 2px solid #2d5a87;
         }
 
         .snood-modal-footer {
             padding: 16px 20px;
-            background: rgba(0,0,0,0.3);
+            background: #0f1d2f;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-top: 2px solid #d4af37;
         }
 
         .snood-modal-controls {
             display: flex;
             gap: 16px;
             font-size: 12px;
-            color: #888;
+            color: #7a9cc6;
+            font-weight: 500;
         }
 
         .snood-restart-btn {
-            background: linear-gradient(135deg, #c9a227 0%, #d4af37 100%);
-            color: #000;
+            background: linear-gradient(135deg, #d4af37 0%, #b8962e 100%);
+            color: #1e3a5f;
             border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 600;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: 800;
             cursor: pointer;
             transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .snood-restart-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(201, 162, 39, 0.4);
+            box-shadow: 0 4px 16px rgba(212, 175, 55, 0.5);
         }
 
         /* Report Container (hidden until analysis complete) */
@@ -3429,23 +3208,13 @@
             <div class="header-info" id="reportDate">
                 <!-- Date will be filled dynamically -->
             </div>
-            <div class="game-buttons">
-                <button class="game-btn" onclick="toggleGTAModal()">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="8" width="18" height="10" rx="2"/>
-                        <circle cx="7" cy="15" r="2"/>
-                        <circle cx="17" cy="15" r="2"/>
-                    </svg>
-                    GTA
-                </button>
-                <button class="game-btn snood-btn" onclick="toggleSnoodModal()">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"/>
-                        <circle cx="12" cy="12" r="3"/>
-                    </svg>
-                    Snood
-                </button>
-            </div>
+            <button class="game-btn" onclick="toggleSnoodModal()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="8" r="5"/>
+                    <path d="M4 20c0-4 4-6 8-6s8 2 8 6"/>
+                </svg>
+                Bank with Hank
+            </button>
             <button class="settings-btn" onclick="openSettings()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
@@ -3530,38 +3299,13 @@
     </div>
 </div>
 
-<!-- GTA Game Modal -->
-<div class="gta-modal-overlay" id="gtaModalOverlay" onclick="closeGTAModal()"></div>
-<div class="gta-modal" id="gtaModal">
-    <div class="gta-modal-header">
-        <h3>Grand Theft Auto</h3>
-        <div class="gta-modal-stats">
-            <span id="gtaModalScore">$0</span>
-            <span class="wanted-stars" id="gtaModalWanted"></span>
-        </div>
-        <button class="gta-modal-close" onclick="closeGTAModal()">✕</button>
-    </div>
-    <div class="gta-modal-body">
-        <canvas id="gtaModalCanvas" width="600" height="450"></canvas>
-    </div>
-    <div class="gta-modal-footer">
-        <div class="gta-modal-controls">
-            <span>WASD / Arrows: Drive</span>
-            <span>Space: Brake</span>
-            <span>E: Enter/Exit Car</span>
-            <span>F: Shoot</span>
-        </div>
-        <button class="gta-restart-btn" onclick="restartGTAGame()">New Game</button>
-    </div>
-</div>
-
-<!-- Snood Game Modal -->
+<!-- Hank Bank Snood Game Modal -->
 <div class="snood-modal-overlay" id="snoodModalOverlay" onclick="closeSnoodModal()"></div>
 <div class="snood-modal" id="snoodModal">
     <div class="snood-modal-header">
-        <h3>Snood</h3>
+        <h3>Bank with Hank</h3>
         <div class="snood-modal-stats">
-            <span id="snoodModalScore">Score: 0</span>
+            <span id="snoodModalScore">$0</span>
             <span id="snoodModalLevel">Level: 1</span>
         </div>
         <button class="snood-modal-close" onclick="closeSnoodModal()">✕</button>
@@ -3573,9 +3317,9 @@
         <div class="snood-modal-controls">
             <span>Aim with mouse</span>
             <span>Click to shoot</span>
-            <span>Match 3+ colors</span>
+            <span>Match 3+ Hanks!</span>
         </div>
-        <button class="snood-restart-btn" onclick="restartSnoodGame()">New Game</button>
+        <button class="snood-restart-btn" onclick="restartSnoodGame()">Cash Out</button>
     </div>
 </div>
 
@@ -3623,20 +3367,6 @@
             <div class="upload-status" id="uploadStatus" style="display: none;">
                 <div class="upload-spinner"></div>
                 <span id="uploadStatusText">Analyzing statements...</span>
-            </div>
-        </div>
-        <!-- GTA Game Container (shows during analysis) -->
-        <div class="gta-game-wrapper" id="gtaGameWrapper" style="display: none;">
-            <div class="gta-container">
-                <div class="gta-label">Play while you wait!</div>
-                <canvas id="gtaCanvas" width="320" height="240"></canvas>
-                <div class="gta-controls">
-                    <span>WASD to drive, Space to brake</span>
-                    <div class="gta-stats">
-                        <span id="gtaScore">$0</span>
-                        <span id="gtaWanted"></span>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -4567,7 +4297,6 @@
         const uploadStatus = document.getElementById('uploadStatus');
         const uploadStatusText = document.getElementById('uploadStatusText');
         const spinner = uploadStatus.querySelector('.upload-spinner');
-        const gtaWrapper = document.getElementById('gtaGameWrapper');
 
         uploadStatus.style.display = 'flex';
         uploadStatusText.textContent = message;
@@ -4575,30 +4304,15 @@
         if (isError) {
             spinner.style.display = 'none';
             uploadStatusText.style.color = 'var(--danger)';
-            // Hide game on error
-            if (gtaWrapper) {
-                gtaWrapper.style.display = 'none';
-                stopGTAGame();
-            }
         } else {
             spinner.style.display = 'block';
             uploadStatusText.style.color = 'var(--accent)';
-            // Show and start the game
-            if (gtaWrapper && gtaWrapper.style.display === 'none') {
-                gtaWrapper.style.display = 'flex';
-                initGTAGame();
-            }
         }
     }
 
     function hideUploadStatus() {
         const uploadStatus = document.getElementById('uploadStatus');
-        const gtaWrapper = document.getElementById('gtaGameWrapper');
         uploadStatus.style.display = 'none';
-        if (gtaWrapper) {
-            gtaWrapper.style.display = 'none';
-            stopGTAGame();
-        }
     }
 
     function fileToBase64(file) {
@@ -6336,48 +6050,105 @@ CRITICAL RULES:
     }
 
     // ============================================
-    // GTA 1 STYLE GAME ENGINE
+    // HANK BANK SNOOD GAME ENGINE
     // ============================================
-    let gtaGame = null;
-    let gtaModalGame = null;
+    let snoodModalGame = null;
 
-    function createGTAGame(canvasId, scoreId, wantedId, isModal = false) {
+    // Hank styles - different tie colors distinguish different "Hanks"
+    const HANK_STYLES = [
+        { tie: '#dc2626', name: 'Red Hank' },     // Red tie
+        { tie: '#d4af37', name: 'Gold Hank' },    // Gold tie
+        { tie: '#22c55e', name: 'Green Hank' },   // Green tie
+        { tie: '#3b82f6', name: 'Blue Hank' },    // Blue tie
+        { tie: '#a855f7', name: 'Purple Hank' },  // Purple tie
+        { tie: '#ec4899', name: 'Pink Hank' },    // Pink tie
+    ];
+
+    function createHankSnoodGame(canvasId, scoreId, levelId = null, isModal = false) {
         const canvas = document.getElementById(canvasId);
         if (!canvas) return null;
         const ctx = canvas.getContext('2d');
         const W = canvas.width, H = canvas.height;
-        const TILE = isModal ? 20 : 12;
+        const RADIUS = isModal ? 20 : 14;
 
-        // Game state
-        let player = { x: W/2, y: H/2, angle: 0, speed: 0, inCar: true, health: 100 };
-        let cars = [];
-        let cops = [];
-        let civilians = [];
-        let bullets = [];
-        let particles = [];
-        let buildings = [];
-        let roads = [];
-        let cash = 0;
-        let wanted = 0;
+        let bubbles = [];
+        let shooter = { x: W / 2, y: H - 35, angle: -Math.PI / 2, styleIdx: 0, nextStyleIdx: 1 };
+        let projectile = null;
+        let score = 0;
+        let level = 1;
+        let combo = 0;
         let gameLoop = null;
-        let keys = {};
-        let lastShot = 0;
-        let messages = [];
+        let particles = [];
+        let dollarSigns = [];
 
-        // Colors
-        const ROAD_COLOR = '#3a3a3a';
-        const SIDEWALK_COLOR = '#6b6b6b';
-        const GRASS_COLOR = '#2d5a2d';
-        const BUILDING_COLORS = ['#4a4a6a', '#5a4a4a', '#4a5a4a', '#6a5a4a', '#5a5a5a'];
-        const CAR_COLORS = ['#ef4444', '#3b82f6', '#22c55e', '#f59e0b', '#8b5cf6', '#ec4899', '#ffffff', '#1a1a1a'];
+        // Draw Hank head (cartoon businessman style)
+        function drawHank(x, y, styleIdx, scale = 1) {
+            const r = (RADIUS - 2) * scale;
+            const style = HANK_STYLES[styleIdx % HANK_STYLES.length];
 
-        function init() {
-            // Generate city grid
-            buildings = [];
-            roads = [];
+            ctx.save();
+            ctx.translate(x, y);
 
-            const blockSize = isModal ? 120 : 80;
-            const roadWidth = isModal ? 30 : 20;
+            // Background circle (suit color)
+            ctx.beginPath();
+            ctx.arc(0, 0, r, 0, Math.PI * 2);
+            const grad = ctx.createRadialGradient(-r * 0.2, -r * 0.2, 0, 0, 0, r);
+            grad.addColorStop(0, '#4a6fa5');
+            grad.addColorStop(1, '#1e3a5f');
+            ctx.fillStyle = grad;
+            ctx.fill();
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Face (skin tone)
+            ctx.beginPath();
+            ctx.arc(0, -r * 0.1, r * 0.6, 0, Math.PI * 2);
+            ctx.fillStyle = '#f5d0b0';
+            ctx.fill();
+
+            // Hair
+            ctx.beginPath();
+            ctx.ellipse(0, -r * 0.5, r * 0.5, r * 0.25, 0, 0, Math.PI * 2);
+            ctx.fillStyle = '#8b6914';
+            ctx.fill();
+
+            // Eyes
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.arc(-r * 0.2, -r * 0.15, r * 0.08, 0, Math.PI * 2);
+            ctx.arc(r * 0.2, -r * 0.15, r * 0.08, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Smile
+            ctx.beginPath();
+            ctx.arc(0, r * 0.05, r * 0.25, 0.1, Math.PI - 0.1);
+            ctx.strokeStyle = '#8b4513';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Tie
+            ctx.beginPath();
+            ctx.moveTo(0, r * 0.35);
+            ctx.lineTo(-r * 0.12, r * 0.5);
+            ctx.lineTo(0, r * 0.85);
+            ctx.lineTo(r * 0.12, r * 0.5);
+            ctx.closePath();
+            ctx.fillStyle = style.tie;
+            ctx.fill();
+
+            // Tie knot
+            ctx.beginPath();
+            ctx.arc(0, r * 0.4, r * 0.08, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        function initBubbles() {
+            bubbles = [];
+            const rows = isModal ? 6 + Math.floor(level / 2) : 5;
+            const colCount = isModal ? Math.floor((W - RADIUS) / (RADIUS * 2)) : 10;
 
             // Create road grid
             for (let x = roadWidth; x < W; x += blockSize) {
