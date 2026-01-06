@@ -5206,10 +5206,201 @@ Return ONLY the corrected JSON object - no explanations.`;
                         .filter(t => t.isTrueRevenue !== false)
                         .reduce((sum, t) => sum + (t.amount || 0), 0);
                 }
+
+                // Generate dailyBalances from transactions if not provided
+                if (!month.dailyBalances || month.dailyBalances.length === 0) {
+                    month.dailyBalances = generateDailyBalances(month);
+                }
             }
         }
 
+        // Generate expense categories from debits
+        if (!analysisResult.expenseCategories || analysisResult.expenseCategories.length === 0) {
+            analysisResult.expenseCategories = generateExpenseCategories(analysisResult.monthlySummary);
+        }
+
+        // Generate cash flow data from transactions
+        if (!analysisResult.cashFlowData || isEmptyCashFlowData(analysisResult.cashFlowData)) {
+            analysisResult.cashFlowData = generateCashFlowData(analysisResult.monthlySummary);
+        }
+
+        // Generate revenue sources from credits
+        if (!analysisResult.revenueSources || analysisResult.revenueSources.length === 0) {
+            analysisResult.revenueSources = generateRevenueSources(analysisResult.monthlySummary);
+        }
+
+        // Generate deposit distribution
+        if (!analysisResult.depositDistribution || analysisResult.depositDistribution.length === 0) {
+            analysisResult.depositDistribution = generateDepositDistribution(analysisResult.monthlySummary);
+        }
+
         return analysisResult;
+    }
+
+    function isEmptyCashFlowData(data) {
+        if (!data) return true;
+        const db = data.dailyBalances || [];
+        const wd = data.weeklyDeposits || [];
+        return db.length <= 1 && db[0] === 0 && wd.length <= 1 && wd[0] === 0;
+    }
+
+    function generateDailyBalances(month) {
+        const credits = month.credits || [];
+        const debits = month.debits || [];
+        const startBalance = month.startBalance || 0;
+
+        // Create a map of transactions by day
+        const dayTransactions = {};
+
+        credits.forEach(t => {
+            const day = parseInt(t.date?.split('/')[1] || t.date?.split('-')[2] || '1');
+            if (!dayTransactions[day]) dayTransactions[day] = { credits: 0, debits: 0 };
+            dayTransactions[day].credits += t.amount || 0;
+        });
+
+        debits.forEach(t => {
+            const day = parseInt(t.date?.split('/')[1] || t.date?.split('-')[2] || '1');
+            if (!dayTransactions[day]) dayTransactions[day] = { credits: 0, debits: 0 };
+            dayTransactions[day].debits += t.amount || 0;
+        });
+
+        // Generate daily balances for the month
+        const balances = [];
+        let runningBalance = startBalance;
+        for (let day = 1; day <= 31; day++) {
+            const dayTx = dayTransactions[day] || { credits: 0, debits: 0 };
+            runningBalance += dayTx.credits - dayTx.debits;
+            balances.push(Math.round(runningBalance * 100) / 100);
+        }
+
+        return balances;
+    }
+
+    function generateExpenseCategories(monthlySummary) {
+        const categoryTotals = {};
+
+        (monthlySummary || []).forEach(month => {
+            (month.debits || []).forEach(debit => {
+                const category = debit.category || categorizeExpense(debit.description || '');
+                if (!categoryTotals[category]) categoryTotals[category] = 0;
+                categoryTotals[category] += debit.amount || 0;
+            });
+        });
+
+        return Object.entries(categoryTotals)
+            .map(([name, amount]) => ({ name, amount: Math.round(amount * 100) / 100 }))
+            .sort((a, b) => b.amount - a.amount)
+            .slice(0, 10);
+    }
+
+    function categorizeExpense(description) {
+        const desc = description.toUpperCase();
+        if (desc.includes('RENT') || desc.includes('LEASE')) return 'Rent';
+        if (desc.includes('PAYROLL') || desc.includes('GUSTO') || desc.includes('ADP')) return 'Payroll';
+        if (desc.includes('INSURANCE') || desc.includes('INS ')) return 'Insurance';
+        if (desc.includes('UTILITY') || desc.includes('ELECTRIC') || desc.includes('GAS ') || desc.includes('WATER')) return 'Utilities';
+        if (desc.includes('LOAN') || desc.includes('SBA') || desc.includes('EIDL')) return 'Loan Payment';
+        if (desc.includes('MCA') || desc.includes('FUNDING') || desc.includes('CAPITAL')) return 'MCA Payment';
+        if (desc.includes('TAX') || desc.includes('IRS')) return 'Taxes';
+        if (desc.includes('SUPPLIES') || desc.includes('OFFICE')) return 'Supplies';
+        if (desc.includes('TRANSFER')) return 'Transfer';
+        return 'Operating';
+    }
+
+    function generateCashFlowData(monthlySummary) {
+        const allCredits = [];
+        const allDebits = [];
+
+        (monthlySummary || []).forEach(month => {
+            allCredits.push(...(month.credits || []));
+            allDebits.push(...(month.debits || []));
+        });
+
+        // Daily balances (use first month if available)
+        const firstMonth = monthlySummary?.[0];
+        const dailyBalances = firstMonth?.dailyBalances || generateDailyBalances(firstMonth || {});
+
+        // Weekly aggregations
+        const weeklyDeposits = [0, 0, 0, 0, 0];
+        const weeklyWithdrawals = [0, 0, 0, 0, 0];
+
+        allCredits.forEach(t => {
+            const day = parseInt(t.date?.split('/')[1] || t.date?.split('-')[2] || '1');
+            const week = Math.min(Math.floor((day - 1) / 7), 4);
+            weeklyDeposits[week] += t.amount || 0;
+        });
+
+        allDebits.forEach(t => {
+            const day = parseInt(t.date?.split('/')[1] || t.date?.split('-')[2] || '1');
+            const week = Math.min(Math.floor((day - 1) / 7), 4);
+            weeklyWithdrawals[week] += t.amount || 0;
+        });
+
+        // Day of week revenue
+        const dayOfWeekRevenue = [0, 0, 0, 0, 0, 0, 0];
+        allCredits.forEach(t => {
+            // Estimate day of week from date (simplified)
+            const day = parseInt(t.date?.split('/')[1] || t.date?.split('-')[2] || '1');
+            const dayOfWeek = day % 7;
+            dayOfWeekRevenue[dayOfWeek] += t.amount || 0;
+        });
+
+        return {
+            dailyBalances: dailyBalances.map(b => Math.round(b)),
+            weeklyDeposits: weeklyDeposits.map(d => Math.round(d)),
+            weeklyWithdrawals: weeklyWithdrawals.map(w => Math.round(w)),
+            dayOfWeekRevenue: dayOfWeekRevenue.map(r => Math.round(r))
+        };
+    }
+
+    function generateRevenueSources(monthlySummary) {
+        const sourceTotals = {};
+
+        (monthlySummary || []).forEach(month => {
+            (month.credits || []).forEach(credit => {
+                const source = credit.category || categorizeRevenue(credit.description || '');
+                if (!sourceTotals[source]) sourceTotals[source] = 0;
+                sourceTotals[source] += credit.amount || 0;
+            });
+        });
+
+        return Object.entries(sourceTotals)
+            .map(([name, amount]) => ({ name, amount: Math.round(amount * 100) / 100 }))
+            .sort((a, b) => b.amount - a.amount)
+            .slice(0, 8);
+    }
+
+    function categorizeRevenue(description) {
+        const desc = description.toUpperCase();
+        if (desc.includes('SQUARE') || desc.includes('STRIPE') || desc.includes('CLOVER') || desc.includes('TOAST')) return 'Merchant Processing';
+        if (desc.includes('ZELLE') || desc.includes('VENMO') || desc.includes('PAYPAL')) return 'Digital Payments';
+        if (desc.includes('DEPOSIT') && desc.includes('CHECK')) return 'Check Deposits';
+        if (desc.includes('WIRE')) return 'Wire Transfer';
+        if (desc.includes('ACH') && desc.includes('CREDIT')) return 'ACH Credits';
+        if (desc.includes('TRANSFER')) return 'Internal Transfer';
+        if (desc.includes('REFUND') || desc.includes('RETURN')) return 'Refunds';
+        return 'Customer Payments';
+    }
+
+    function generateDepositDistribution(monthlySummary) {
+        const ranges = [
+            { name: '$0-$500', min: 0, max: 500, count: 0 },
+            { name: '$500-$1K', min: 500, max: 1000, count: 0 },
+            { name: '$1K-$2.5K', min: 1000, max: 2500, count: 0 },
+            { name: '$2.5K-$5K', min: 2500, max: 5000, count: 0 },
+            { name: '$5K-$10K', min: 5000, max: 10000, count: 0 },
+            { name: '$10K+', min: 10000, max: Infinity, count: 0 }
+        ];
+
+        (monthlySummary || []).forEach(month => {
+            (month.credits || []).forEach(credit => {
+                const amount = credit.amount || 0;
+                const range = ranges.find(r => amount >= r.min && amount < r.max);
+                if (range) range.count++;
+            });
+        });
+
+        return ranges.map(r => ({ name: r.name, count: r.count }));
     }
 
     // Legacy single-stage function (kept for fallback)
