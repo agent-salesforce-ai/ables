@@ -5244,13 +5244,13 @@ WIRE OUT, OWNER DRAW, DISTRIBUTION, SHAREHOLDER, PERSONAL TRANSFER
 
 CRITICAL: Extract EVERY transaction. Calculate True Revenue by excluding non-operational deposits. Return valid JSON only.`;
 
-    // Single document extraction using two-stage pipeline (faster)
+    // Single document extraction using two-stage pipeline
     async function callGeminiAPISingle(apiKey, file) {
         const selectedModel = getSelectedModel();
 
-        // Use Flash for everything - much faster, still accurate
+        // Flash for OCR (just text extraction), Pro for analysis (needs accuracy)
         const ocrModel = 'gemini-2.5-flash';
-        const analysisModel = 'gemini-2.5-flash';
+        const analysisModel = selectedModel.includes('flash') ? selectedModel : 'gemini-2.5-pro';
 
         // Reset correction attempts for new analysis
         correctionAttempts = 0;
@@ -5272,12 +5272,13 @@ CRITICAL: Extract EVERY transaction. Calculate True Revenue by excluding non-ope
         // Transform new schema to existing schema for compatibility
         const transformed = transformToLegacySchema(analysisResult, markdownResult);
 
-        // Skip Stage 3 verification for speed - trust the analysis
-        transformed._reconciliationStatus = 'SKIPPED';
+        // Stage 3: Quick verification (1 attempt only for speed)
+        const verified = await runStage3Verification(apiKey, analysisModel, transformed, markdownResult);
 
-        console.log('=== PIPELINE COMPLETE (Fast Mode) ===');
+        console.log('=== PIPELINE COMPLETE ===');
+        console.log('Reconciliation status:', verified._reconciliationStatus || 'UNKNOWN');
 
-        return transformed;
+        return verified;
     }
 
     // Stage 1: OCR - Pure text extraction
@@ -5482,7 +5483,7 @@ Return ONLY the corrected JSON object - no explanations.`;
     }
 
     // Stage 3: Verification and Self-Correction
-    const MAX_CORRECTIONS = 3;
+    const MAX_CORRECTIONS = 1; // Reduced from 3 for speed
     let correctionAttempts = 0;
 
     async function runStage3Verification(apiKey, model, analysisResult, markdownText) {
