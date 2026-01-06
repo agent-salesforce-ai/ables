@@ -5248,9 +5248,9 @@ CRITICAL: Extract EVERY transaction. Calculate True Revenue by excluding non-ope
     async function callGeminiAPISingle(apiKey, file) {
         const selectedModel = getSelectedModel();
 
-        // Flash for OCR (just text extraction), Pro for analysis (needs accuracy)
+        // Flash for OCR (just text extraction), Gemini 3 Pro for analysis (best accuracy)
         const ocrModel = 'gemini-2.5-flash';
-        const analysisModel = selectedModel.includes('flash') ? selectedModel : 'gemini-2.5-pro';
+        const analysisModel = 'gemini-3-pro-preview';
 
         // Reset correction attempts for new analysis
         correctionAttempts = 0;
