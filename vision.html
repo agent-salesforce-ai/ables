@@ -4329,11 +4329,8 @@
                 });
             }
 
-            // Process based on parser mode with progressive loading
+            // Process based on parser mode
             let response;
-
-            // Show report container early with loading state
-            showProgressiveReport();
 
             if (parserMode === 'moneythumb') {
                 // MoneyThumb only
@@ -4342,8 +4339,8 @@
                 // Compare both parsers
                 response = await processWithComparison(apiKey, fileContents);
             } else {
-                // Gemini (default) - with progressive callbacks
-                response = await processWithGemini(apiKey, fileContents, updateProgressiveReport);
+                // Gemini (default)
+                response = await processWithGemini(apiKey, fileContents);
             }
 
             showUploadStatus('Generating report...');
@@ -4353,22 +4350,21 @@
             // Parse and render the final report
             analysisData = response;
             renderReport(response);
-            hideProgressiveLoadingIndicators();
 
             // Complete!
             setProcessingProgress(100);
             stopProcessingTimer();
             hideUploadStatus();
 
-            // Hide upload section (report already visible)
+            // Hide upload section, show report
             document.getElementById('uploadSection').style.display = 'none';
+            document.getElementById('reportContainer').classList.add('visible');
 
         } catch (error) {
             console.error('Analysis error:', error);
             stopProcessingTimer();
             showError(`Analysis failed: ${error.message}`);
             hideUploadStatus();
-            hideProgressiveReport();
         }
     }
 
@@ -4457,7 +4453,7 @@
         }
     }
 
-    async function processWithGemini(apiKey, fileContents, progressCallback) {
+    async function processWithGemini(apiKey, fileContents) {
         const totalFiles = fileContents.length;
 
         // Start timer and reset UI
@@ -4465,27 +4461,23 @@
         startProcessingTimer();
         setProcessingStage('ocr');
         setProcessingProgress(5);
-        if (progressCallback) progressCallback('ocr', null);
 
         if (fileContents.length === 1) {
             // Single document - process normally
             showUploadStatus('Analyzing document with Gemini Vision OCR...');
             updateProcessingStatus('Extracting text from document...', 'OCR in progress');
             setProcessingProgress(15);
-            if (progressCallback) progressCallback('ocr', null);
 
             try {
                 setProcessingStage('analysis');
                 setProcessingProgress(30);
                 updateProcessingStatus('AI analyzing transactions...', 'Identifying deposits and withdrawals');
-                if (progressCallback) progressCallback('analysis', null);
 
                 const response = await callGeminiAPISingle(apiKey, fileContents[0]);
 
                 setProcessingStage('verify');
                 setProcessingProgress(70);
                 updateProcessingStatus('Verifying calculations...', 'Cross-checking totals');
-                if (progressCallback) progressCallback('verify', response);
 
                 if (!response || !response.monthlySummary) {
                     throw new Error('Invalid response from API - missing monthlySummary');
@@ -4494,7 +4486,6 @@
                 setProcessingStage('report');
                 setProcessingProgress(90);
                 updateProcessingStatus('Building report...', 'Almost done');
-                if (progressCallback) progressCallback('report', response);
 
                 return response;
             } catch (singleDocError) {
@@ -4587,14 +4578,12 @@
             setProcessingProgress(75);
             showUploadStatus('Merging results from all documents...');
             updateProcessingStatus('Verifying all calculations...', 'Cross-checking totals');
-            if (progressCallback) progressCallback('verify', null);
 
             const merged = mergeDocumentResults(allResults);
 
             setProcessingStage('report');
             setProcessingProgress(90);
             updateProcessingStatus('Building report...', 'Almost done');
-            if (progressCallback) progressCallback('report', merged);
 
             return merged;
         }
