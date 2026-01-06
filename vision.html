@@ -4859,11 +4859,14 @@ WIRE OUT, OWNER DRAW, DISTRIBUTION, SHAREHOLDER, PERSONAL TRANSFER
 
 CRITICAL: Extract EVERY transaction. Calculate True Revenue by excluding non-operational deposits. Return valid JSON only.`;
 
-    // Single document extraction using two-stage pipeline
+    // Single document extraction using three-stage pipeline
     async function callGeminiAPISingle(apiKey, file) {
         const selectedModel = getSelectedModel();
         // Don't use agent models for OCR - use standard Gemini
         const model = selectedModel.startsWith('agent:') ? 'gemini-3-pro-preview' : selectedModel;
+
+        // Reset correction attempts for new analysis
+        correctionAttempts = 0;
 
         console.log('=== STAGE 1: OCR (Image → Markdown) ===');
         updateUploadStatus('Stage 1: Extracting text from image...', false);
@@ -4874,14 +4877,22 @@ CRITICAL: Extract EVERY transaction. Calculate True Revenue by excluding non-ope
         console.log('Stage 1 output preview:', markdownResult.substring(0, 500));
 
         console.log('=== STAGE 2: Analysis (Markdown → JSON) ===');
-        updateUploadStatus('Stage 2: Analyzing transactions...', false);
+        updateUploadStatus('Stage 2: Analyzing transactions & True Revenue...', false);
 
         // Stage 2: Analysis - Parse markdown and extract structured data
         const analysisResult = await callGeminiStage2Analysis(apiKey, model, markdownResult);
         console.log('Stage 2 complete. Result:', analysisResult);
 
         // Transform new schema to existing schema for compatibility
-        return transformToLegacySchema(analysisResult, markdownResult);
+        const transformed = transformToLegacySchema(analysisResult, markdownResult);
+
+        // Stage 3: Verification and Self-Correction
+        const verified = await runStage3Verification(apiKey, model, transformed, markdownResult);
+
+        console.log('=== PIPELINE COMPLETE ===');
+        console.log('Reconciliation status:', verified._reconciliationStatus || 'UNKNOWN');
+
+        return verified;
     }
 
     // Stage 1: OCR - Pure text extraction
@@ -4995,6 +5006,96 @@ CRITICAL: Extract EVERY transaction. Calculate True Revenue by excluding non-ope
             }
             throw error;
         }
+    }
+
+    // Stage 3: Self-correction prompt for reconciliation errors
+    function getSelfCorrectionPrompt(discrepancy, markdownText, previousAnalysis) {
+        return `RECONCILIATION ERROR DETECTED
+
+The calculated total credits ($${previousAnalysis.monthlySummary?.[0]?.trueCredits?.toFixed(2) || '0.00'}) do not match the bank's printed total deposits ($${previousAnalysis.monthlySummary?.[0]?.totalCredits?.toFixed(2) || '0.00'}).
+
+Discrepancy: $${Math.abs(discrepancy).toFixed(2)}
+
+TASK: Review the original Markdown transcription below and find the missing or misread transaction(s).
+
+Common causes:
+1. Missed a transaction near a page break
+2. Misread a digit (OCR error: 0/O, 1/l, 5/S)
+3. Incorrectly classified a credit as a debit
+4. Missed a deposit that spans multiple lines
+
+ORIGINAL MARKDOWN:
+${markdownText}
+
+PREVIOUS ANALYSIS (first 2000 chars):
+${JSON.stringify(previousAnalysis, null, 2).substring(0, 2000)}
+
+INSTRUCTIONS:
+1. Find the missing/incorrect $${Math.abs(discrepancy).toFixed(2)}
+2. Update the transactions array with the correction
+3. Recalculate all totals
+4. Return the corrected JSON using the same schema as before
+
+Return ONLY the corrected JSON object - no explanations.`;
+    }
+
+    // Stage 3: Verification and Self-Correction
+    const MAX_CORRECTIONS = 3;
+    let correctionAttempts = 0;
+
+    async function runStage3Verification(apiKey, model, analysisResult, markdownText) {
+        console.log('=== STAGE 3: Verification ===');
+        updateUploadStatus('Stage 3: Verifying reconciliation...', false);
+
+        const months = analysisResult.monthlySummary || [];
+        if (months.length === 0) return analysisResult;
+
+        // Calculate total discrepancy
+        let totalBankDeposits = 0;
+        let totalCalcCredits = 0;
+
+        for (const month of months) {
+            const bankDep = month.bankTotals?.totalDeposits || month.totalCredits || 0;
+            const calcCred = month.calculatedTotals?.totalCredits || month.trueCredits || 0;
+            totalBankDeposits += bankDep;
+            totalCalcCredits += calcCred;
+        }
+
+        const discrepancy = totalBankDeposits - totalCalcCredits;
+        console.log(`Reconciliation check: Bank=$${totalBankDeposits.toFixed(2)}, Calc=$${totalCalcCredits.toFixed(2)}, Diff=$${discrepancy.toFixed(2)}`);
+
+        // If discrepancy is small (<$1), we're good
+        if (Math.abs(discrepancy) <= 1.00) {
+            console.log('Reconciliation VERIFIED');
+            analysisResult._reconciliationStatus = 'VERIFIED';
+            return analysisResult;
+        }
+
+        // If discrepancy exists and we haven't exceeded correction attempts
+        if (correctionAttempts < MAX_CORRECTIONS) {
+            correctionAttempts++;
+            console.log(`Reconciliation MISMATCH: $${discrepancy.toFixed(2)} - attempting correction (${correctionAttempts}/${MAX_CORRECTIONS})`);
+            updateUploadStatus(`Stage 3: Correcting discrepancy ($${Math.abs(discrepancy).toFixed(2)}) - attempt ${correctionAttempts}/${MAX_CORRECTIONS}...`, false);
+
+            try {
+                const correctionPrompt = getSelfCorrectionPrompt(discrepancy, markdownText, analysisResult);
+                const correctedResponse = await callGeminiStage2Analysis(apiKey, model, correctionPrompt.replace(STAGE2_ANALYSIS_PROMPT, ''));
+
+                if (correctedResponse) {
+                    // Transform and recursively verify
+                    const transformed = transformToLegacySchema(correctedResponse, markdownText);
+                    return await runStage3Verification(apiKey, model, transformed, markdownText);
+                }
+            } catch (error) {
+                console.error('Self-correction failed:', error.message);
+            }
+        }
+
+        // If we've exceeded attempts or correction failed
+        console.log(`Reconciliation FAILED after ${correctionAttempts} attempts`);
+        analysisResult._reconciliationStatus = 'MISMATCH';
+        analysisResult._reconciliationDiscrepancy = discrepancy;
+        return analysisResult;
     }
 
     // Transform new two-stage schema to legacy schema for UI compatibility
