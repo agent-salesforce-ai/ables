@@ -466,7 +466,70 @@
             100% { transform: translateX(350%); }
         }
 
-        /* Hank Bank Game Button */
+        /* Snood Game Styles */
+        .snood-game-wrapper {
+            margin-top: 24px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .snood-container {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #333;
+        }
+
+        .snood-label {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        #snoodCanvas {
+            background: linear-gradient(180deg, #1e1e2e 0%, #0d0d15 100%);
+            border-radius: 8px;
+            cursor: crosshair;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .snood-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        #snoodScore {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        body.dark-theme .snood-container {
+            background: #1a1a1a;
+            border-color: #333;
+        }
+
+        body:not(.dark-theme) .snood-container {
+            background: #f5f5f5;
+            border-color: #ddd;
+        }
+
+        body:not(.dark-theme) #snoodCanvas {
+            background: linear-gradient(180deg, #e8e8f0 0%, #d0d0e0 100%);
+        }
+
+        body:not(.dark-theme) .snood-label,
+        body:not(.dark-theme) .snood-controls {
+            color: #666;
+        }
+
+        /* Game Button in Header - Hank Bank Theme */
         .game-btn {
             display: flex;
             align-items: center;
@@ -481,7 +544,7 @@
             cursor: pointer;
             transition: all 0.2s;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
 
         .game-btn:hover {
@@ -524,10 +587,10 @@
 
         .snood-modal.active {
             display: block;
-            animation: snoodModalPop 0.3s ease-out;
+            animation: modalPop 0.3s ease-out;
         }
 
-        @keyframes snoodModalPop {
+        @keyframes modalPop {
             from { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
             to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
         }
@@ -548,7 +611,6 @@
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 2px;
-            text-shadow: 1px 1px 0 #000;
         }
 
         .snood-modal-stats {
@@ -563,7 +625,6 @@
             padding: 6px 14px;
             border-radius: 6px;
             border: 1px solid #d4af37;
-            color: #d4af37;
         }
 
         .snood-modal-close {
@@ -622,14 +683,14 @@
             border-radius: 6px;
             font-weight: 800;
             cursor: pointer;
-            transition: all 0.2s;
             text-transform: uppercase;
             letter-spacing: 1px;
+            transition: all 0.2s;
         }
 
         .snood-restart-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(212, 175, 55, 0.5);
+            box-shadow: 0 4px 12px rgba(201, 162, 39, 0.4);
         }
 
         /* Report Container (hidden until analysis complete) */
@@ -3369,6 +3430,17 @@
                 <span id="uploadStatusText">Analyzing statements...</span>
             </div>
         </div>
+        <!-- Snood Game Container (shows during analysis) -->
+        <div class="snood-game-wrapper" id="snoodGameWrapper" style="display: none;">
+            <div class="snood-container">
+                <div class="snood-label">Play while you wait!</div>
+                <canvas id="snoodCanvas" width="280" height="320"></canvas>
+                <div class="snood-controls">
+                    <span>Move mouse to aim, click to shoot</span>
+                    <span id="snoodScore">Score: 0</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Hidden API Key Input (used by JS) -->
@@ -4297,6 +4369,7 @@
         const uploadStatus = document.getElementById('uploadStatus');
         const uploadStatusText = document.getElementById('uploadStatusText');
         const spinner = uploadStatus.querySelector('.upload-spinner');
+        const snoodWrapper = document.getElementById('snoodGameWrapper');
 
         uploadStatus.style.display = 'flex';
         uploadStatusText.textContent = message;
@@ -4304,15 +4377,30 @@
         if (isError) {
             spinner.style.display = 'none';
             uploadStatusText.style.color = 'var(--danger)';
+            // Hide game on error
+            if (snoodWrapper) {
+                snoodWrapper.style.display = 'none';
+                stopSnoodGame();
+            }
         } else {
             spinner.style.display = 'block';
             uploadStatusText.style.color = 'var(--accent)';
+            // Show and start the game
+            if (snoodWrapper && snoodWrapper.style.display === 'none') {
+                snoodWrapper.style.display = 'flex';
+                initSnoodGame();
+            }
         }
     }
 
     function hideUploadStatus() {
         const uploadStatus = document.getElementById('uploadStatus');
+        const snoodWrapper = document.getElementById('snoodGameWrapper');
         uploadStatus.style.display = 'none';
+        if (snoodWrapper) {
+            snoodWrapper.style.display = 'none';
+            stopSnoodGame();
+        }
     }
 
     function fileToBase64(file) {
@@ -6050,742 +6138,9 @@ CRITICAL RULES:
     }
 
     // ============================================
-    // HANK BANK SNOOD GAME ENGINE
+    // SNOOD GAME ENGINE (Enhanced)
     // ============================================
-    let snoodModalGame = null;
-
-    // Hank styles - different tie colors distinguish different "Hanks"
-    const HANK_STYLES = [
-        { tie: '#dc2626', name: 'Red Hank' },     // Red tie
-        { tie: '#d4af37', name: 'Gold Hank' },    // Gold tie
-        { tie: '#22c55e', name: 'Green Hank' },   // Green tie
-        { tie: '#3b82f6', name: 'Blue Hank' },    // Blue tie
-        { tie: '#a855f7', name: 'Purple Hank' },  // Purple tie
-        { tie: '#ec4899', name: 'Pink Hank' },    // Pink tie
-    ];
-
-    function createHankSnoodGame(canvasId, scoreId, levelId = null, isModal = false) {
-        const canvas = document.getElementById(canvasId);
-        if (!canvas) return null;
-        const ctx = canvas.getContext('2d');
-        const W = canvas.width, H = canvas.height;
-        const RADIUS = isModal ? 20 : 14;
-
-        let bubbles = [];
-        let shooter = { x: W / 2, y: H - 35, angle: -Math.PI / 2, styleIdx: 0, nextStyleIdx: 1 };
-        let projectile = null;
-        let score = 0;
-        let level = 1;
-        let combo = 0;
-        let gameLoop = null;
-        let particles = [];
-        let dollarSigns = [];
-
-        // Draw Hank head (cartoon businessman style)
-        function drawHank(x, y, styleIdx, scale = 1) {
-            const r = (RADIUS - 2) * scale;
-            const style = HANK_STYLES[styleIdx % HANK_STYLES.length];
-
-            ctx.save();
-            ctx.translate(x, y);
-
-            // Background circle (suit color)
-            ctx.beginPath();
-            ctx.arc(0, 0, r, 0, Math.PI * 2);
-            const grad = ctx.createRadialGradient(-r * 0.2, -r * 0.2, 0, 0, 0, r);
-            grad.addColorStop(0, '#4a6fa5');
-            grad.addColorStop(1, '#1e3a5f');
-            ctx.fillStyle = grad;
-            ctx.fill();
-            ctx.strokeStyle = '#d4af37';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-
-            // Face (skin tone)
-            ctx.beginPath();
-            ctx.arc(0, -r * 0.1, r * 0.6, 0, Math.PI * 2);
-            ctx.fillStyle = '#f5d0b0';
-            ctx.fill();
-
-            // Hair
-            ctx.beginPath();
-            ctx.ellipse(0, -r * 0.5, r * 0.5, r * 0.25, 0, 0, Math.PI * 2);
-            ctx.fillStyle = '#8b6914';
-            ctx.fill();
-
-            // Eyes
-            ctx.fillStyle = '#000';
-            ctx.beginPath();
-            ctx.arc(-r * 0.2, -r * 0.15, r * 0.08, 0, Math.PI * 2);
-            ctx.arc(r * 0.2, -r * 0.15, r * 0.08, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Smile
-            ctx.beginPath();
-            ctx.arc(0, r * 0.05, r * 0.25, 0.1, Math.PI - 0.1);
-            ctx.strokeStyle = '#8b4513';
-            ctx.lineWidth = 1.5;
-            ctx.stroke();
-
-            // Tie
-            ctx.beginPath();
-            ctx.moveTo(0, r * 0.35);
-            ctx.lineTo(-r * 0.12, r * 0.5);
-            ctx.lineTo(0, r * 0.85);
-            ctx.lineTo(r * 0.12, r * 0.5);
-            ctx.closePath();
-            ctx.fillStyle = style.tie;
-            ctx.fill();
-
-            // Tie knot
-            ctx.beginPath();
-            ctx.arc(0, r * 0.4, r * 0.08, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.restore();
-        }
-
-        function initBubbles() {
-            bubbles = [];
-            const rows = isModal ? 6 + Math.floor(level / 2) : 5;
-            const colCount = isModal ? Math.floor((W - RADIUS) / (RADIUS * 2)) : 10;
-
-            // Create road grid
-            for (let x = roadWidth; x < W; x += blockSize) {
-                roads.push({ x: x - roadWidth/2, y: 0, w: roadWidth, h: H, vertical: true });
-            }
-            for (let y = roadWidth; y < H; y += blockSize) {
-                roads.push({ x: 0, y: y - roadWidth/2, w: W, h: roadWidth, vertical: false });
-            }
-
-            // Create buildings in blocks
-            for (let bx = roadWidth; bx < W - blockSize/2; bx += blockSize) {
-                for (let by = roadWidth; by < H - blockSize/2; by += blockSize) {
-                    const bw = blockSize - roadWidth - 10;
-                    const bh = blockSize - roadWidth - 10;
-                    if (Math.random() > 0.2) {
-                        buildings.push({
-                            x: bx + 5,
-                            y: by + 5,
-                            w: bw,
-                            h: bh,
-                            color: BUILDING_COLORS[Math.floor(Math.random() * BUILDING_COLORS.length)],
-                            windows: Math.random() > 0.3
-                        });
-                    }
-                }
-            }
-
-            // Spawn player car on a road
-            player = { x: W/2, y: H/2, angle: 0, speed: 0, inCar: true, health: 100, carColor: '#ef4444' };
-
-            // Spawn other cars
-            cars = [];
-            for (let i = 0; i < (isModal ? 8 : 4); i++) {
-                spawnCar();
-            }
-
-            // Spawn civilians
-            civilians = [];
-            for (let i = 0; i < (isModal ? 12 : 6); i++) {
-                spawnCivilian();
-            }
-
-            cops = [];
-            bullets = [];
-            particles = [];
-            messages = [];
-            cash = 0;
-            wanted = 0;
-            updateUI();
-        }
-
-        function spawnCar() {
-            const road = roads[Math.floor(Math.random() * roads.length)];
-            cars.push({
-                x: road.vertical ? road.x + road.w/2 : Math.random() * W,
-                y: road.vertical ? Math.random() * H : road.y + road.h/2,
-                angle: road.vertical ? (Math.random() > 0.5 ? 0 : Math.PI) : (Math.random() > 0.5 ? Math.PI/2 : -Math.PI/2),
-                speed: 1 + Math.random() * 2,
-                color: CAR_COLORS[Math.floor(Math.random() * CAR_COLORS.length)],
-                ai: true
-            });
-        }
-
-        function spawnCivilian() {
-            civilians.push({
-                x: Math.random() * W,
-                y: Math.random() * H,
-                angle: Math.random() * Math.PI * 2,
-                speed: 0.5 + Math.random() * 0.5,
-                color: `hsl(${Math.random()*360}, 60%, 50%)`,
-                panic: false
-            });
-        }
-
-        function spawnCop() {
-            const edge = Math.floor(Math.random() * 4);
-            let x, y, angle;
-            if (edge === 0) { x = 0; y = Math.random() * H; angle = 0; }
-            else if (edge === 1) { x = W; y = Math.random() * H; angle = Math.PI; }
-            else if (edge === 2) { x = Math.random() * W; y = 0; angle = Math.PI/2; }
-            else { x = Math.random() * W; y = H; angle = -Math.PI/2; }
-
-            cops.push({
-                x, y, angle,
-                speed: 3,
-                chasing: true
-            });
-        }
-
-        function createExplosion(x, y) {
-            for (let i = 0; i < 20; i++) {
-                particles.push({
-                    x, y,
-                    vx: (Math.random() - 0.5) * 10,
-                    vy: (Math.random() - 0.5) * 10,
-                    color: Math.random() > 0.5 ? '#ff6600' : '#ffcc00',
-                    life: 30 + Math.random() * 20,
-                    size: 3 + Math.random() * 4
-                });
-            }
-        }
-
-        function showMessage(text) {
-            messages.push({ text, life: 120 });
-        }
-
-        function drawCar(x, y, angle, color, isPlayer = false) {
-            ctx.save();
-            ctx.translate(x, y);
-            ctx.rotate(angle + Math.PI/2);
-
-            const carW = isModal ? 14 : 8;
-            const carH = isModal ? 24 : 14;
-
-            // Shadow
-            ctx.fillStyle = 'rgba(0,0,0,0.3)';
-            ctx.fillRect(-carW/2 + 2, -carH/2 + 2, carW, carH);
-
-            // Car body
-            ctx.fillStyle = color;
-            ctx.fillRect(-carW/2, -carH/2, carW, carH);
-
-            // Windshield
-            ctx.fillStyle = '#87ceeb';
-            ctx.fillRect(-carW/2 + 2, -carH/2 + 2, carW - 4, carH/3);
-
-            // Rear window
-            ctx.fillRect(-carW/2 + 2, carH/2 - carH/4, carW - 4, carH/5);
-
-            // Headlights
-            ctx.fillStyle = '#ffff00';
-            ctx.fillRect(-carW/2, -carH/2, 2, 3);
-            ctx.fillRect(carW/2 - 2, -carH/2, 2, 3);
-
-            // Taillights
-            ctx.fillStyle = '#ff0000';
-            ctx.fillRect(-carW/2, carH/2 - 3, 2, 3);
-            ctx.fillRect(carW/2 - 2, carH/2 - 3, 2, 3);
-
-            ctx.restore();
-        }
-
-        function drawCopCar(x, y, angle) {
-            ctx.save();
-            ctx.translate(x, y);
-            ctx.rotate(angle + Math.PI/2);
-
-            const carW = isModal ? 14 : 8;
-            const carH = isModal ? 24 : 14;
-
-            // Car body (black and white)
-            ctx.fillStyle = '#1a1a1a';
-            ctx.fillRect(-carW/2, -carH/2, carW, carH/2);
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(-carW/2, 0, carW, carH/2);
-
-            // Lights on top
-            ctx.fillStyle = Date.now() % 400 < 200 ? '#ff0000' : '#0000ff';
-            ctx.fillRect(-carW/4, -2, carW/2, 4);
-
-            ctx.restore();
-        }
-
-        function drawPerson(x, y, color, isPanic = false) {
-            ctx.save();
-            ctx.translate(x, y);
-
-            const size = isModal ? 6 : 4;
-
-            // Body
-            ctx.fillStyle = color;
-            ctx.beginPath();
-            ctx.arc(0, 0, size, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Head
-            ctx.fillStyle = '#ffdbac';
-            ctx.beginPath();
-            ctx.arc(0, -size/2, size/2, 0, Math.PI * 2);
-            ctx.fill();
-
-            if (isPanic) {
-                ctx.fillStyle = '#ff0000';
-                ctx.font = `${isModal ? 10 : 6}px sans-serif`;
-                ctx.fillText('!', -2, -size - 2);
-            }
-
-            ctx.restore();
-        }
-
-        function draw() {
-            // Clear with grass
-            ctx.fillStyle = GRASS_COLOR;
-            ctx.fillRect(0, 0, W, H);
-
-            // Draw roads
-            roads.forEach(road => {
-                ctx.fillStyle = ROAD_COLOR;
-                ctx.fillRect(road.x, road.y, road.w, road.h);
-
-                // Road markings
-                ctx.fillStyle = '#ffff00';
-                if (road.vertical) {
-                    for (let y = 0; y < H; y += 20) {
-                        ctx.fillRect(road.x + road.w/2 - 1, y, 2, 10);
-                    }
-                } else {
-                    for (let x = 0; x < W; x += 20) {
-                        ctx.fillRect(x, road.y + road.h/2 - 1, 10, 2);
-                    }
-                }
-            });
-
-            // Draw buildings
-            buildings.forEach(b => {
-                // Shadow
-                ctx.fillStyle = 'rgba(0,0,0,0.3)';
-                ctx.fillRect(b.x + 3, b.y + 3, b.w, b.h);
-
-                // Building
-                ctx.fillStyle = b.color;
-                ctx.fillRect(b.x, b.y, b.w, b.h);
-
-                // Windows
-                if (b.windows) {
-                    ctx.fillStyle = Math.random() > 0.7 ? '#ffff88' : '#333333';
-                    const winSize = isModal ? 6 : 4;
-                    for (let wx = b.x + 4; wx < b.x + b.w - winSize; wx += winSize + 3) {
-                        for (let wy = b.y + 4; wy < b.y + b.h - winSize; wy += winSize + 3) {
-                            ctx.fillStyle = Math.random() > 0.6 ? '#ffff88' : '#333333';
-                            ctx.fillRect(wx, wy, winSize, winSize);
-                        }
-                    }
-                }
-            });
-
-            // Draw civilians
-            civilians.forEach(c => {
-                if (c.alive !== false) {
-                    drawPerson(c.x, c.y, c.color, c.panic);
-                }
-            });
-
-            // Draw other cars
-            cars.forEach(car => {
-                if (car.alive !== false) {
-                    drawCar(car.x, car.y, car.angle, car.color);
-                }
-            });
-
-            // Draw cops
-            cops.forEach(cop => {
-                drawCopCar(cop.x, cop.y, cop.angle);
-            });
-
-            // Draw player
-            if (player.inCar) {
-                drawCar(player.x, player.y, player.angle, player.carColor, true);
-            } else {
-                drawPerson(player.x, player.y, '#00ff00');
-            }
-
-            // Draw bullets
-            ctx.fillStyle = '#ffff00';
-            bullets.forEach(b => {
-                ctx.beginPath();
-                ctx.arc(b.x, b.y, 2, 0, Math.PI * 2);
-                ctx.fill();
-            });
-
-            // Draw particles
-            particles.forEach(p => {
-                ctx.globalAlpha = p.life / 50;
-                ctx.fillStyle = p.color;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fill();
-            });
-            ctx.globalAlpha = 1;
-
-            // Draw messages
-            ctx.fillStyle = '#ffffff';
-            ctx.font = `bold ${isModal ? 16 : 10}px sans-serif`;
-            ctx.textAlign = 'center';
-            messages.forEach((msg, i) => {
-                ctx.globalAlpha = Math.min(1, msg.life / 30);
-                ctx.fillText(msg.text, W/2, H/2 - 20 + i * 20);
-            });
-            ctx.globalAlpha = 1;
-            ctx.textAlign = 'left';
-
-            // Draw health bar (if on foot)
-            if (!player.inCar) {
-                ctx.fillStyle = '#333';
-                ctx.fillRect(10, 10, 50, 8);
-                ctx.fillStyle = player.health > 30 ? '#22c55e' : '#ef4444';
-                ctx.fillRect(10, 10, player.health / 2, 8);
-            }
-
-            // Draw wanted stars
-            if (isModal && wanted > 0) {
-                ctx.fillStyle = '#fbbf24';
-                ctx.font = 'bold 20px sans-serif';
-                ctx.fillText('★'.repeat(Math.min(wanted, 5)), W - 120, 25);
-            }
-        }
-
-        function update() {
-            const accel = isModal ? 0.15 : 0.1;
-            const maxSpeed = isModal ? 6 : 4;
-            const turnSpeed = isModal ? 0.06 : 0.05;
-            const friction = 0.98;
-            const brakeForce = 0.9;
-
-            // Player controls
-            if (player.inCar) {
-                if (keys['ArrowUp'] || keys['KeyW']) player.speed = Math.min(maxSpeed, player.speed + accel);
-                if (keys['ArrowDown'] || keys['KeyS']) player.speed = Math.max(-maxSpeed/2, player.speed - accel);
-                if (keys['Space']) player.speed *= brakeForce;
-
-                if (Math.abs(player.speed) > 0.1) {
-                    if (keys['ArrowLeft'] || keys['KeyA']) player.angle -= turnSpeed * (player.speed > 0 ? 1 : -1);
-                    if (keys['ArrowRight'] || keys['KeyD']) player.angle += turnSpeed * (player.speed > 0 ? 1 : -1);
-                }
-
-                player.speed *= friction;
-                player.x += Math.sin(player.angle) * player.speed;
-                player.y -= Math.cos(player.angle) * player.speed;
-            } else {
-                const walkSpeed = isModal ? 2 : 1.5;
-                if (keys['ArrowUp'] || keys['KeyW']) player.y -= walkSpeed;
-                if (keys['ArrowDown'] || keys['KeyS']) player.y += walkSpeed;
-                if (keys['ArrowLeft'] || keys['KeyA']) player.x -= walkSpeed;
-                if (keys['ArrowRight'] || keys['KeyD']) player.x += walkSpeed;
-            }
-
-            // Wrap around screen
-            if (player.x < 0) player.x = W;
-            if (player.x > W) player.x = 0;
-            if (player.y < 0) player.y = H;
-            if (player.y > H) player.y = 0;
-
-            // Check building collisions
-            buildings.forEach(b => {
-                if (player.x > b.x && player.x < b.x + b.w &&
-                    player.y > b.y && player.y < b.y + b.h) {
-                    player.speed *= -0.5;
-                    player.x -= Math.sin(player.angle) * 5;
-                    player.y += Math.cos(player.angle) * 5;
-                }
-            });
-
-            // Update AI cars
-            cars.forEach(car => {
-                if (car.alive === false) return;
-
-                car.x += Math.sin(car.angle) * car.speed;
-                car.y -= Math.cos(car.angle) * car.speed;
-
-                // Wrap
-                if (car.x < -20) car.x = W + 20;
-                if (car.x > W + 20) car.x = -20;
-                if (car.y < -20) car.y = H + 20;
-                if (car.y > H + 20) car.y = -20;
-
-                // Check collision with player
-                const dx = player.x - car.x;
-                const dy = player.y - car.y;
-                const dist = Math.sqrt(dx*dx + dy*dy);
-
-                if (dist < (isModal ? 20 : 12) && player.inCar && Math.abs(player.speed) > 2) {
-                    createExplosion(car.x, car.y);
-                    car.alive = false;
-                    cash += 100;
-                    wanted = Math.min(5, wanted + 1);
-                    showMessage('+$100 CAR DESTROYED!');
-                    updateUI();
-
-                    // Respawn car later
-                    setTimeout(spawnCar, 3000);
-                }
-            });
-
-            // Update civilians
-            civilians.forEach(c => {
-                if (c.alive === false) return;
-
-                // Check if player is near
-                const dx = player.x - c.x;
-                const dy = player.y - c.y;
-                const dist = Math.sqrt(dx*dx + dy*dy);
-
-                if (dist < 50 && player.inCar && Math.abs(player.speed) > 1) {
-                    c.panic = true;
-                    // Run away
-                    c.angle = Math.atan2(-dy, -dx) - Math.PI/2;
-                    c.speed = 2;
-                }
-
-                if (dist < (isModal ? 12 : 8) && player.inCar && Math.abs(player.speed) > 1.5) {
-                    createExplosion(c.x, c.y);
-                    c.alive = false;
-                    cash += 50;
-                    wanted = Math.min(5, wanted + 2);
-                    showMessage('+$50 WASTED!');
-                    updateUI();
-
-                    setTimeout(spawnCivilian, 5000);
-                }
-
-                c.x += Math.sin(c.angle) * c.speed;
-                c.y -= Math.cos(c.angle) * c.speed;
-
-                // Random direction change
-                if (Math.random() < 0.02 && !c.panic) {
-                    c.angle += (Math.random() - 0.5) * Math.PI;
-                }
-
-                // Keep on screen
-                if (c.x < 0 || c.x > W || c.y < 0 || c.y > H) {
-                    c.angle += Math.PI;
-                }
-
-                // Calm down
-                if (c.panic && Math.random() < 0.01) {
-                    c.panic = false;
-                    c.speed = 0.5;
-                }
-            });
-
-            // Update cops
-            cops.forEach(cop => {
-                // Chase player
-                const dx = player.x - cop.x;
-                const dy = player.y - cop.y;
-                const targetAngle = Math.atan2(dx, -dy);
-
-                let angleDiff = targetAngle - cop.angle;
-                while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
-                while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
-
-                cop.angle += Math.sign(angleDiff) * Math.min(Math.abs(angleDiff), 0.05);
-
-                cop.x += Math.sin(cop.angle) * cop.speed;
-                cop.y -= Math.cos(cop.angle) * cop.speed;
-
-                // Check if caught player
-                const dist = Math.sqrt(dx*dx + dy*dy);
-                if (dist < (isModal ? 25 : 15)) {
-                    if (player.inCar) {
-                        player.speed = 0;
-                        showMessage('BUSTED! -$500');
-                        cash = Math.max(0, cash - 500);
-                        wanted = 0;
-                        cops = [];
-                        updateUI();
-                    }
-                }
-            });
-
-            // Spawn cops based on wanted level
-            if (wanted > 0 && cops.length < wanted && Math.random() < 0.01) {
-                spawnCop();
-            }
-
-            // Update bullets
-            bullets = bullets.filter(b => {
-                b.x += b.vx;
-                b.y += b.vy;
-                b.life--;
-                return b.life > 0 && b.x > 0 && b.x < W && b.y > 0 && b.y < H;
-            });
-
-            // Update particles
-            particles = particles.filter(p => {
-                p.x += p.vx;
-                p.y += p.vy;
-                p.vy += 0.2;
-                p.vx *= 0.98;
-                p.life--;
-                return p.life > 0;
-            });
-
-            // Update messages
-            messages = messages.filter(m => {
-                m.life--;
-                return m.life > 0;
-            });
-
-            // Decay wanted level
-            if (wanted > 0 && Math.random() < 0.001) {
-                wanted--;
-                updateUI();
-            }
-        }
-
-        function updateUI() {
-            const scoreEl = document.getElementById(scoreId);
-            if (scoreEl) scoreEl.textContent = '$' + cash.toLocaleString();
-
-            const wantedEl = document.getElementById(wantedId);
-            if (wantedEl) wantedEl.textContent = wanted > 0 ? '★'.repeat(Math.min(wanted, 5)) : '';
-        }
-
-        function handleKeyDown(e) {
-            keys[e.code] = true;
-
-            // Enter/exit car
-            if (e.code === 'KeyE') {
-                if (player.inCar) {
-                    player.inCar = false;
-                    player.speed = 0;
-                    showMessage('ON FOOT');
-                } else {
-                    // Check for nearby car
-                    const nearCar = cars.find(c => {
-                        if (c.alive === false) return false;
-                        const dx = player.x - c.x;
-                        const dy = player.y - c.y;
-                        return Math.sqrt(dx*dx + dy*dy) < 30;
-                    });
-
-                    if (nearCar) {
-                        player.x = nearCar.x;
-                        player.y = nearCar.y;
-                        player.angle = nearCar.angle;
-                        player.carColor = nearCar.color;
-                        player.inCar = true;
-                        nearCar.alive = false;
-                        cash += 200;
-                        wanted = Math.min(5, wanted + 1);
-                        showMessage('+$200 CAR JACKED!');
-                        updateUI();
-                        setTimeout(spawnCar, 3000);
-                    }
-                }
-            }
-
-            // Shoot
-            if (e.code === 'KeyF' && !player.inCar) {
-                const now = Date.now();
-                if (now - lastShot > 200) {
-                    lastShot = now;
-                    bullets.push({
-                        x: player.x,
-                        y: player.y,
-                        vx: 0,
-                        vy: -8,
-                        life: 50
-                    });
-                    wanted = Math.min(5, wanted + 1);
-                    updateUI();
-                }
-            }
-
-            e.preventDefault();
-        }
-
-        function handleKeyUp(e) {
-            keys[e.code] = false;
-        }
-
-        // Add event listeners
-        window.addEventListener('keydown', handleKeyDown);
-        window.addEventListener('keyup', handleKeyUp);
-
-        // Focus canvas to receive key events
-        canvas.tabIndex = 1;
-        canvas.focus();
-
-        init();
-
-        gameLoop = setInterval(() => {
-            update();
-            draw();
-        }, 1000 / 60);
-
-        return {
-            stop: () => {
-                clearInterval(gameLoop);
-                window.removeEventListener('keydown', handleKeyDown);
-                window.removeEventListener('keyup', handleKeyUp);
-            },
-            restart: () => {
-                init();
-            }
-        };
-    }
-
-    // Mini game for loading screen
-    function initGTAGame() {
-        if (gtaGame) return;
-        gtaGame = createGTAGame('gtaCanvas', 'gtaScore', 'gtaWanted', false);
-    }
-
-    function stopGTAGame() {
-        if (gtaGame) {
-            gtaGame.stop();
-            gtaGame = null;
-        }
-    }
-
-    // Modal game functions
-    function toggleGTAModal() {
-        const overlay = document.getElementById('gtaModalOverlay');
-        const modal = document.getElementById('gtaModal');
-        const isOpen = modal.classList.contains('active');
-
-        if (isOpen) {
-            closeGTAModal();
-        } else {
-            overlay.classList.add('active');
-            modal.classList.add('active');
-            if (!gtaModalGame) {
-                gtaModalGame = createGTAGame('gtaModalCanvas', 'gtaModalScore', 'gtaModalWanted', true);
-            }
-        }
-    }
-
-    function closeGTAModal() {
-        document.getElementById('gtaModalOverlay').classList.remove('active');
-        document.getElementById('gtaModal').classList.remove('active');
-        if (gtaModalGame) {
-            gtaModalGame.stop();
-            gtaModalGame = null;
-        }
-    }
-
-    function restartGTAGame() {
-        if (gtaModalGame) {
-            gtaModalGame.restart();
-        }
-    }
-
-    // ============================================
-    // SNOOD GAME ENGINE
-    // ============================================
+    let snoodGame = null;
     let snoodModalGame = null;
 
     function createSnoodGame(canvasId, scoreId, levelId = null, isModal = false) {
@@ -7049,7 +6404,7 @@ CRITICAL RULES:
 
         function updateScore() {
             const scoreEl = document.getElementById(scoreId);
-            if (scoreEl) scoreEl.textContent = 'Score: ' + score;
+            if (scoreEl) scoreEl.textContent = '$' + score.toLocaleString();
         }
 
         function shoot() {
@@ -7103,7 +6458,20 @@ CRITICAL RULES:
         };
     }
 
-    // Snood Modal functions
+    // Mini game for loading screen
+    function initSnoodGame() {
+        if (snoodGame) return;
+        snoodGame = createSnoodGame('snoodCanvas', 'snoodScore', null, false);
+    }
+
+    function stopSnoodGame() {
+        if (snoodGame) {
+            snoodGame.stop();
+            snoodGame = null;
+        }
+    }
+
+    // Modal game functions
     function toggleSnoodModal() {
         const overlay = document.getElementById('snoodModalOverlay');
         const modal = document.getElementById('snoodModal');
