@@ -4502,18 +4502,23 @@
                 throw new Error(`Document processing failed: ${singleDocError.message}`);
             }
         } else {
-            // Multiple documents - process in PARALLEL for speed
-            showUploadStatus(`Analyzing ${totalFiles} documents in parallel...`);
-            updateProcessingStatus(`Processing ${totalFiles} documents...`, 'OCR extraction in progress');
+            // Multiple documents - process with STAGGERED start (1 second apart)
+            showUploadStatus(`Analyzing ${totalFiles} documents...`);
+            updateProcessingStatus(`Processing ${totalFiles} documents...`, 'Starting OCR extraction');
             setProcessingProgress(10);
 
             // Track completed documents and their results
             const completedDocs = [];
             let completedCount = 0;
 
-            // Create array of processing promises
+            // Create array of processing promises with staggered starts
             const processingPromises = fileContents.map((file, i) => {
                 return (async () => {
+                    // Stagger API calls by 1 second each to avoid rate limiting
+                    if (i > 0) {
+                        await new Promise(r => setTimeout(r, i * 1000));
+                    }
+
                     const maxRetries = 2;
                     let lastError = null;
                     const shortName = file.name.length > 30 ? file.name.substring(0, 27) + '...' : file.name;
@@ -4562,7 +4567,7 @@
                 })();
             });
 
-            // Wait for all to complete (parallel execution)
+            // Wait for all to complete (staggered parallel execution)
             const results = await Promise.all(processingPromises);
 
             // Collect successful results
