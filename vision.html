@@ -3192,19 +3192,66 @@
             </div>
         </div>
         <!-- Processing indicator (shows during analysis) -->
-        <div id="processingIndicator" style="display: none; text-align: center; padding: 40px 20px;">
-            <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 20px;">
-                <div class="processing-dot" style="width: 12px; height: 12px; background: var(--accent); border-radius: 50%; animation: pulse 1.4s ease-in-out infinite;"></div>
-                <div class="processing-dot" style="width: 12px; height: 12px; background: var(--accent); border-radius: 50%; animation: pulse 1.4s ease-in-out 0.2s infinite;"></div>
-                <div class="processing-dot" style="width: 12px; height: 12px; background: var(--accent); border-radius: 50%; animation: pulse 1.4s ease-in-out 0.4s infinite;"></div>
+        <div id="processingIndicator" style="display: none; text-align: center; padding: 30px 20px;">
+            <!-- Timer display -->
+            <div id="processingTimer" style="font-size: 32px; font-weight: 600; color: var(--accent); margin-bottom: 16px; font-variant-numeric: tabular-nums;">0:00</div>
+
+            <!-- Progress bar -->
+            <div style="max-width: 400px; margin: 0 auto 20px;">
+                <div style="background: var(--gray-200); border-radius: 8px; height: 8px; overflow: hidden;">
+                    <div id="processingProgressBar" style="background: linear-gradient(90deg, var(--accent), #10b981); height: 100%; width: 0%; transition: width 0.3s ease; border-radius: 8px;"></div>
+                </div>
+                <div id="processingPercent" style="font-size: 12px; color: var(--gray-500); margin-top: 6px;">0%</div>
             </div>
-            <div id="processingStatus" style="font-size: 14px; color: var(--gray-600);"></div>
-            <div id="processingDetails" style="font-size: 12px; color: var(--gray-400); margin-top: 8px;"></div>
+
+            <!-- Stage indicators -->
+            <div id="processingStages" style="display: flex; justify-content: center; gap: 24px; margin-bottom: 20px; flex-wrap: wrap;">
+                <div class="stage-item" id="stage-ocr" style="display: flex; align-items: center; gap: 6px; opacity: 0.4;">
+                    <div class="stage-dot" style="width: 10px; height: 10px; border-radius: 50%; background: var(--gray-300);"></div>
+                    <span style="font-size: 12px; color: var(--gray-600);">OCR Extraction</span>
+                </div>
+                <div class="stage-item" id="stage-analysis" style="display: flex; align-items: center; gap: 6px; opacity: 0.4;">
+                    <div class="stage-dot" style="width: 10px; height: 10px; border-radius: 50%; background: var(--gray-300);"></div>
+                    <span style="font-size: 12px; color: var(--gray-600);">AI Analysis</span>
+                </div>
+                <div class="stage-item" id="stage-verify" style="display: flex; align-items: center; gap: 6px; opacity: 0.4;">
+                    <div class="stage-dot" style="width: 10px; height: 10px; border-radius: 50%; background: var(--gray-300);"></div>
+                    <span style="font-size: 12px; color: var(--gray-600);">Verification</span>
+                </div>
+                <div class="stage-item" id="stage-report" style="display: flex; align-items: center; gap: 6px; opacity: 0.4;">
+                    <div class="stage-dot" style="width: 10px; height: 10px; border-radius: 50%; background: var(--gray-300);"></div>
+                    <span style="font-size: 12px; color: var(--gray-600);">Report</span>
+                </div>
+            </div>
+
+            <!-- Animated dots -->
+            <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 16px;">
+                <div class="processing-dot" style="width: 10px; height: 10px; background: var(--accent); border-radius: 50%; animation: pulse 1.4s ease-in-out infinite;"></div>
+                <div class="processing-dot" style="width: 10px; height: 10px; background: var(--accent); border-radius: 50%; animation: pulse 1.4s ease-in-out 0.2s infinite;"></div>
+                <div class="processing-dot" style="width: 10px; height: 10px; background: var(--accent); border-radius: 50%; animation: pulse 1.4s ease-in-out 0.4s infinite;"></div>
+            </div>
+
+            <!-- Status messages -->
+            <div id="processingStatus" style="font-size: 15px; font-weight: 500; color: var(--gray-700);"></div>
+            <div id="processingDetails" style="font-size: 13px; color: var(--gray-500); margin-top: 6px;"></div>
+
+            <!-- Document progress for multi-file -->
+            <div id="docProgress" style="display: none; margin-top: 16px; max-width: 400px; margin-left: auto; margin-right: auto;">
+                <div id="docProgressList" style="text-align: left; font-size: 12px; color: var(--gray-500);"></div>
+            </div>
         </div>
         <style>
             @keyframes pulse {
                 0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
                 40% { transform: scale(1.2); opacity: 1; }
+            }
+            .stage-item.active { opacity: 1 !important; }
+            .stage-item.active .stage-dot { background: var(--accent) !important; animation: stagePulse 1s ease-in-out infinite; }
+            .stage-item.complete .stage-dot { background: #10b981 !important; }
+            .stage-item.complete { opacity: 1 !important; }
+            @keyframes stagePulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.3); }
             }
         </style>
     </div>
@@ -4297,10 +4344,16 @@
             }
 
             showUploadStatus('Generating report...');
+            setProcessingProgress(95);
+            updateProcessingStatus('Rendering report...', 'Final step');
 
             // Parse and render the report (continues in existing code)
             analysisData = response;
             renderReport(response);
+
+            // Complete!
+            setProcessingProgress(100);
+            stopProcessingTimer();
             hideUploadStatus();
 
             // Show the report and hide upload section
@@ -4309,6 +4362,7 @@
 
         } catch (error) {
             console.error('Analysis error:', error);
+            stopProcessingTimer();
             showError(`Analysis failed: ${error.message}`);
             hideUploadStatus();
         }
@@ -4317,14 +4371,37 @@
     async function processWithGemini(apiKey, fileContents) {
         const totalFiles = fileContents.length;
 
+        // Start timer and reset UI
+        resetProcessingUI();
+        startProcessingTimer();
+        setProcessingStage('ocr');
+        setProcessingProgress(5);
+
         if (fileContents.length === 1) {
             // Single document - process normally
             showUploadStatus('Analyzing document with Gemini Vision OCR...');
+            updateProcessingStatus('Extracting text from document...', 'OCR in progress');
+            setProcessingProgress(15);
+
             try {
+                setProcessingStage('analysis');
+                setProcessingProgress(30);
+                updateProcessingStatus('AI analyzing transactions...', 'Identifying deposits and withdrawals');
+
                 const response = await callGeminiAPISingle(apiKey, fileContents[0]);
+
+                setProcessingStage('verify');
+                setProcessingProgress(70);
+                updateProcessingStatus('Verifying calculations...', 'Cross-checking totals');
+
                 if (!response || !response.monthlySummary) {
                     throw new Error('Invalid response from API - missing monthlySummary');
                 }
+
+                setProcessingStage('report');
+                setProcessingProgress(90);
+                updateProcessingStatus('Building report...', 'Almost done');
+
                 return response;
             } catch (singleDocError) {
                 console.error('Single document processing failed:', singleDocError);
@@ -4333,7 +4410,8 @@
         } else {
             // Multiple documents - process in PARALLEL for speed
             showUploadStatus(`Analyzing ${totalFiles} documents in parallel...`);
-            updateProcessingStatus(`Starting ${totalFiles} documents...`, 'OCR extraction beginning');
+            updateProcessingStatus(`Processing ${totalFiles} documents...`, 'OCR extraction in progress');
+            setProcessingProgress(10);
 
             // Track completed documents and their results
             const completedDocs = [];
@@ -4356,11 +4434,16 @@
                                 completedDocs.push({ name: shortName, month: docResult.monthlySummary[0]?.month || 'Unknown' });
 
                                 // Update progress with completed document names
-                                const completedNames = completedDocs.map(d => d.month).join(', ');
+                                const progressPct = 10 + (completedCount / totalFiles) * 60; // 10-70% for OCR
+                                setProcessingProgress(progressPct);
+                                updateDocProgress(completedDocs, totalFiles);
+
+                                if (completedCount === 1) setProcessingStage('analysis');
+
                                 showUploadStatus(`Processing documents... (${completedCount}/${totalFiles} complete)`);
                                 updateProcessingStatus(
                                     `${completedCount} of ${totalFiles} documents analyzed`,
-                                    `Completed: ${completedNames}`
+                                    `${totalFiles - completedCount} remaining`
                                 );
 
                                 return { success: true, result: docResult, index: i, name: shortName };
@@ -4400,9 +4483,19 @@
             }
 
             console.log(`Successfully processed ${allResults.length}/${totalFiles} documents`);
+
+            setProcessingStage('verify');
+            setProcessingProgress(75);
             showUploadStatus('Merging results from all documents...');
-            updateProcessingStatus('Finalizing report...', 'Combining all statement data');
-            return mergeDocumentResults(allResults);
+            updateProcessingStatus('Verifying all calculations...', 'Cross-checking totals');
+
+            const merged = mergeDocumentResults(allResults);
+
+            setProcessingStage('report');
+            setProcessingProgress(90);
+            updateProcessingStatus('Building report...', 'Almost done');
+
+            return merged;
         }
     }
 
@@ -4507,12 +4600,92 @@
         if (processingIndicator) processingIndicator.style.display = 'none';
     }
 
+    // Processing timer and progress tracking
+    let processingStartTime = null;
+    let processingTimerInterval = null;
+    let currentStage = null;
+
+    function startProcessingTimer() {
+        processingStartTime = Date.now();
+        const timerEl = document.getElementById('processingTimer');
+
+        // Update immediately
+        if (timerEl) timerEl.textContent = '0:00';
+
+        // Update every second
+        processingTimerInterval = setInterval(() => {
+            if (!processingStartTime) return;
+            const elapsed = Math.floor((Date.now() - processingStartTime) / 1000);
+            const mins = Math.floor(elapsed / 60);
+            const secs = elapsed % 60;
+            if (timerEl) timerEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+        }, 1000);
+    }
+
+    function stopProcessingTimer() {
+        if (processingTimerInterval) {
+            clearInterval(processingTimerInterval);
+            processingTimerInterval = null;
+        }
+        processingStartTime = null;
+    }
+
+    function setProcessingStage(stage) {
+        const stages = ['ocr', 'analysis', 'verify', 'report'];
+        const stageIndex = stages.indexOf(stage);
+
+        stages.forEach((s, i) => {
+            const el = document.getElementById(`stage-${s}`);
+            if (!el) return;
+
+            el.classList.remove('active', 'complete');
+            if (i < stageIndex) {
+                el.classList.add('complete');
+            } else if (i === stageIndex) {
+                el.classList.add('active');
+            }
+        });
+
+        currentStage = stage;
+    }
+
+    function setProcessingProgress(percent) {
+        const bar = document.getElementById('processingProgressBar');
+        const pct = document.getElementById('processingPercent');
+        if (bar) bar.style.width = `${Math.min(100, Math.max(0, percent))}%`;
+        if (pct) pct.textContent = `${Math.round(percent)}%`;
+    }
+
+    function resetProcessingUI() {
+        setProcessingProgress(0);
+        const stages = ['ocr', 'analysis', 'verify', 'report'];
+        stages.forEach(s => {
+            const el = document.getElementById(`stage-${s}`);
+            if (el) el.classList.remove('active', 'complete');
+        });
+        const docProgress = document.getElementById('docProgress');
+        if (docProgress) docProgress.style.display = 'none';
+        const timerEl = document.getElementById('processingTimer');
+        if (timerEl) timerEl.textContent = '0:00';
+    }
+
     // Update processing details for progressive feedback
     function updateProcessingStatus(status, details = '') {
         const statusEl = document.getElementById('processingStatus');
         const detailsEl = document.getElementById('processingDetails');
         if (statusEl) statusEl.textContent = status;
         if (detailsEl) detailsEl.textContent = details;
+    }
+
+    function updateDocProgress(docs, total) {
+        const docProgress = document.getElementById('docProgress');
+        const docList = document.getElementById('docProgressList');
+        if (!docProgress || !docList) return;
+
+        docProgress.style.display = 'block';
+        docList.innerHTML = docs.map(d =>
+            `<div style="margin: 4px 0;"><span style="color: #10b981;">✓</span> ${d.name} ${d.month ? `(${d.month})` : ''}</div>`
+        ).join('');
     }
 
     function fileToBase64(file) {
