@@ -4416,113 +4416,73 @@
     }
 
     async function callGeminiAPI(apiKey, files) {
-        const prompt = `You are a PRECISION OCR EXTRACTION SYSTEM for bank statement analysis. Your PRIMARY job is to READ and EXTRACT exact numbers from the document images.
+        const prompt = `You are a bank statement OCR system. Extract EXACT figures from the document images.
 
-═══════════════════════════════════════════════════════════════════════════════
-                         STEP 1: OCR EXTRACTION (MOST IMPORTANT)
-═══════════════════════════════════════════════════════════════════════════════
+## PRIORITY 1: USE THE BANK'S PRINTED TOTALS
 
-READ THE BANK STATEMENT CAREFULLY. Look for these key sections:
+Look at the ACCOUNT SUMMARY section (usually page 1, near top). Copy these numbers EXACTLY:
 
-1. ACCOUNT SUMMARY SECTION (usually at top or first page):
-   - Beginning/Opening Balance: READ THIS EXACT NUMBER
-   - Ending/Closing Balance: READ THIS EXACT NUMBER
-   - Total Deposits/Credits: READ THIS EXACT NUMBER
-   - Total Withdrawals/Debits: READ THIS EXACT NUMBER
-   - Number of Deposits: READ THIS EXACT COUNT
-   - Number of Withdrawals: READ THIS EXACT COUNT
+| Statement Label | JSON Field |
+|----------------|------------|
+| "Beginning Balance" / "Opening Balance" | startBalance |
+| "Ending Balance" / "Closing Balance" | endBalance |
+| "Total Deposits" / "Total Credits" | totalCredits |
+| "Total Withdrawals" / "Total Debits" | totalDebits |
+| "Number of Deposits" / "X Items" | creditCount |
+| "Number of Withdrawals" / "X Items" | debitCount |
+| "Average Daily Balance" | avgBalance |
+| "Low Balance" / "Minimum Balance" | minBalance |
 
-2. TRANSACTION LISTING (the detailed table):
-   - Read EVERY row: Date | Description | Amount | Balance
-   - Deposits/Credits are usually in a separate column or marked with + or CR
-   - Withdrawals/Debits are usually negative or marked with - or DR
-   - Extract the RUNNING BALANCE column to find daily balances
+NEVER manually add transactions. Use the bank's printed totals.
 
-3. STATEMENT INFO:
-   - Account holder name (business name)
-   - Bank name
-   - Account number (last 4 digits)
-   - Statement period dates
+## PRIORITY 2: EXTRACT ALL TRANSACTIONS
 
-═══════════════════════════════════════════════════════════════════════════════
-                         STEP 2: USE THE BANK'S NUMBERS
-═══════════════════════════════════════════════════════════════════════════════
+Read the transaction table. For each row:
+- date: As shown (e.g., "01/15")
+- description: EXACT text (e.g., "ACH CREDIT SQUARE INC DES:SETTLEMENT")
+- amount: Numeric only (1234.56, not "$1,234.56")
 
-CRITICAL: Banks calculate totals correctly. ALWAYS USE THE BANK'S PRINTED TOTALS:
-- If statement says "Total Deposits: $45,231.67" → use 45231.67 for totalCredits
-- If statement says "Total Withdrawals: $43,892.45" → use 43892.45 for totalDebits
-- If statement says "Beginning Balance: $5,432.10" → use 5432.10 for startBalance
-- If statement says "Ending Balance: $6,771.32" → use 6771.32 for endBalance
-- If statement says "Average Daily Balance: $4,521.00" → use 4521.00 for avgBalance
+DEPOSITS (credits array): ACH credits, wire IN, deposits, card settlements (Square/Stripe/PayPal)
+WITHDRAWALS (debits array): ACH debits, wire OUT, checks, debit card, fees, payments
 
-DO NOT manually add up transactions - the bank's totals are authoritative.
+## PRIORITY 3: DETECT MCA/LOANS
 
-═══════════════════════════════════════════════════════════════════════════════
-                         STEP 3: TRANSACTION EXTRACTION
-═══════════════════════════════════════════════════════════════════════════════
+Look for recurring ACH debits matching MCA patterns:
+- Daily debits $50-$1000 to same recipient
+- Weekly debits $200-$5000 to same recipient
+- Keywords: LIBERTAS, YELLOWSTONE, CREDIBLY, ONDECK, KAPITUS, CAN CAPITAL, RAPID, FUNDBOX, BLUEVINE, PAYPAL WC, SQUARE CAPITAL, FORWARD, CLEARCO, FORA, RELIANT, PEARL, KALAMATA, EVEREST, GREENBOX
 
-For EACH transaction, extract:
-- date: Exact date as shown (e.g., "12/15" or "Dec 15")
-- description: EXACT text from statement (e.g., "ACH CREDIT SQUARE INC SETTLEMENT")
-- amount: EXACT dollar amount as a number (e.g., 1234.56, not "$1,234.56")
+## PRIORITY 4: OWNER DRAWS
 
-DEPOSITS/CREDITS include:
-- ACH Credits, Wire Transfers In, Mobile Deposits, ATM Deposits
-- Card processing settlements (Square, Stripe, PayPal, etc.)
-- Customer payments, refunds received
+Count debits with keywords: OWNER, DRAW, WIRE OUT, TRANSFER TO SAVINGS, [OWNER NAME]
+Calculate: ownerDrawTotal / totalDebits * 100 = ownerDrawRatio
 
-WITHDRAWALS/DEBITS include:
-- ACH Debits, Wire Transfers Out, Checks, Debit Card purchases
-- Bill payments, loan payments, fees
-- Owner draws, payroll, vendor payments
-
-═══════════════════════════════════════════════════════════════════════════════
-                         STEP 4: MATH VERIFICATION
-═══════════════════════════════════════════════════════════════════════════════
-
-BEFORE RETURNING, VERIFY:
-✓ endBalance = startBalance + totalCredits - totalDebits (within $10 tolerance for fees)
-✓ creditCount = actual number of deposit transactions you extracted
-✓ debitCount = actual number of withdrawal transactions you extracted
-✓ Sum of credits array amounts ≈ totalCredits
-✓ Sum of debits array amounts ≈ totalDebits
-
-If math doesn't check out, RE-READ the statement more carefully.
-
-═══════════════════════════════════════════════════════════════════════════════
-                         OUTPUT FORMAT (JSON ONLY)
-═══════════════════════════════════════════════════════════════════════════════
-
-Return ONLY valid JSON (no markdown, no code blocks, no explanation). ALL numbers must be numeric types, not strings.
+## OUTPUT FORMAT (JSON ONLY - NO MARKDOWN)
 
 {
     "businessInfo": {
-        "name": "EXTRACTED business name",
-        "bankName": "EXTRACTED bank name",
-        "accountNumber": "****XXXX format",
-        "industry": "Inferred from transaction descriptions",
-        "statementPeriod": "MMM-MMM YYYY format",
+        "name": "Business name from statement",
+        "bankName": "Bank name",
+        "accountNumber": "****XXXX",
+        "industry": "Inferred from transactions",
+        "statementPeriod": "MMM YYYY or MMM-MMM YYYY",
         "totalDays": 30
     },
-    "monthlySummary": [
-        {
-            "month": "MMM YYYY",
-            "totalCredits": 0,
-            "trueCredits": 0,
-            "creditCount": 0,
-            "totalDebits": 0,
-            "trueDebits": 0,
-            "debitCount": 0,
-            "startBalance": 0,
-            "endBalance": 0,
-            "avgBalance": 0,
-            "minBalance": 0,
-            "nsfCount": 0,
-            "overdraftCount": 0,
-            "credits": [{"date": "MMM DD", "description": "EXACT TEXT", "amount": 0}],
-            "debits": [{"date": "MMM DD", "description": "EXACT TEXT", "amount": 0}]
-        }
-    ],
+    "monthlySummary": [{
+        "month": "MMM YYYY",
+        "totalCredits": 0,
+        "creditCount": 0,
+        "totalDebits": 0,
+        "debitCount": 0,
+        "startBalance": 0,
+        "endBalance": 0,
+        "avgBalance": 0,
+        "minBalance": 0,
+        "nsfCount": 0,
+        "overdraftCount": 0,
+        "credits": [{"date": "MM/DD", "description": "EXACT TEXT", "amount": 0}],
+        "debits": [{"date": "MM/DD", "description": "EXACT TEXT", "amount": 0}]
+    }],
     "riskIndicators": {
         "nsfCount": 0,
         "overdraftCount": 0,
@@ -4534,94 +4494,26 @@ Return ONLY valid JSON (no markdown, no code blocks, no explanation). ALL number
         "netMargin": 0
     },
     "mcaAnalysis": {
-        "positionsFound": [],
-        "lendersScanned": ["Credibly", "Libertas", "Yellowstone", "Fora Financial", "OnDeck", "Kabbage", "BlueVine", "Rapid Finance", "Square Capital", "PayPal Working Capital", "Amazon Lending", "Fundbox", "Kapitus", "CAN Capital", "Forward Financing"],
+        "positionsFound": [{
+            "lenderName": "Lender name",
+            "name": "ACH description",
+            "frequency": "Daily/Weekly",
+            "amount": 0,
+            "estimatedBalance": 0,
+            "confidence": "High/Medium/Low",
+            "totalPaymentsSeen": 0
+        }],
         "totalMonthlyPayments": 0
     },
-    "revenueSources": [{"name": "Category", "amount": 0, "percentage": 0}],
-    "expenseCategories": [{"name": "Category", "amount": 0, "percentage": 0}],
-    "cashFlowData": {
-        "dailyBalances": [],
-        "weeklyDeposits": [],
-        "weeklyWithdrawals": [],
-        "dayOfWeekRevenue": [0, 0, 0, 0, 0, 0, 0]
-    },
-    "depositDistribution": {
-        "ranges": ["$0-50", "$51-100", "$101-200", "$201-500", "$500+"],
-        "counts": [0, 0, 0, 0, 0]
-    },
-    "underwritingScore": {
-        "overall": 0,
-        "recommendation": "Approve/Manual Review/Decline",
-        "tier": 1,
-        "criteria": [
-            {"name": "Minimum Monthly Revenue ($5,000)", "passed": true, "value": "$0"},
-            {"name": "Minimum Average Balance ($250)", "passed": true, "value": "$0"},
-            {"name": "Maximum NSF Count (3)", "passed": true, "value": "0"},
-            {"name": "No Negative Balance Days", "passed": true, "value": "0 days"},
-            {"name": "Deposit Consistency (Min 20/mo)", "passed": true, "value": "0"},
-            {"name": "No Existing MCA Stacking", "passed": true, "value": "None"},
-            {"name": "Positive Net Cash Flow", "passed": true, "value": "$0"},
-            {"name": "Owner Draw Ratio (<50%)", "passed": true, "value": "0%"}
-        ]
-    },
-    "recommendedPosition": {
-        "amount": 0,
-        "rangeMin": 0,
-        "rangeMax": 0,
-        "factorRate": 1.35,
-        "paybackAmount": 0,
-        "dailyPayment": 0,
-        "termDays": 120
-    },
-    "paymentCapacity": {
-        "maxDaily10Pct": 0,
-        "maxDaily15Pct": 0,
-        "maxWeekly": 0,
-        "recommendedHoldback": 12,
-        "dailyRevenue": 0
-    },
-    "benchmarks": {
-        "businessScores": [50, 50, 50, 50, 50, 50],
-        "industryAvg": [60, 60, 60, 60, 60, 60],
-        "percentiles": [50, 50, 50, 50, 50]
-    }
+    "dailyBalances": []
 }
 
-═══════════════════════════════════════════════════════════════════════════════
-                         MCA DETECTION
-═══════════════════════════════════════════════════════════════════════════════
+## MATH VERIFICATION
 
-Scan ALL recurring ACH debits for MCA patterns:
-- Daily payments $50-$1000: Typical MCA pattern
-- Weekly payments $250-$5000: Weekly MCA pattern
-- Keywords: Libertas, Yellowstone, Credibly, OnDeck, Kapitus, CAN Capital, Rapid Finance, Fundbox, BlueVine, PayPal WC, Square Capital, Amazon, Kabbage, Forward, Clearco, Fora, Reliant, Pearl Capital, Kalamata, Everest, Greenbox
+Before responding, verify: endBalance = startBalance + totalCredits - totalDebits (±$10)
+If it doesn't match, re-read the statement.
 
-For each MCA found, add to positionsFound:
-{
-    "lenderName": "Best guess lender name",
-    "name": "EXACT ACH description",
-    "frequency": "Daily/Weekly",
-    "amount": 150,
-    "estimatedBalance": 15000,
-    "estimatedPayoffDate": "MMM YYYY",
-    "confidence": "High/Medium/Low",
-    "firstSeen": "Date",
-    "totalPaymentsSeen": 22
-}
-
-═══════════════════════════════════════════════════════════════════════════════
-                         FINAL CHECKLIST
-═══════════════════════════════════════════════════════════════════════════════
-
-Before returning JSON:
-[ ] All numbers are from the ACTUAL statement, not made up
-[ ] Used bank's printed totals where available
-[ ] endBalance = startBalance + totalCredits - totalDebits (±$10)
-[ ] creditCount matches number of items in credits array
-[ ] debitCount matches number of items in debits array
-[ ] All amounts are numbers, not strings
-[ ] JSON is valid with no markdown formatting`;
+CRITICAL: Return ONLY valid JSON. No markdown code blocks. All numbers as numeric types.`;
 
         // Build the parts array for Gemini
         const parts = [{ text: prompt }];
@@ -4836,83 +4728,54 @@ Before returning JSON:
 
     // Single document extraction - more focused prompt for ONE statement
     async function callGeminiAPISingle(apiKey, file) {
-        const prompt = `You are a PRECISION BANK STATEMENT OCR SYSTEM. Your job is to extract EXACT figures from this ONE bank statement document.
+        const prompt = `Extract data from this bank statement. Use the BANK'S PRINTED TOTALS from the summary section.
 
-╔═══════════════════════════════════════════════════════════════════════════════╗
-║                    STEP 1: LOCATE KEY NUMBERS ON THE STATEMENT                 ║
-╚═══════════════════════════════════════════════════════════════════════════════╝
+## STEP 1: COPY BANK'S SUMMARY NUMBERS
 
-FIND THE SUMMARY SECTION (usually on page 1, near top). Look for these EXACT labels and copy the numbers:
+Find the Account Summary (usually page 1). Copy these EXACTLY as printed:
+- Beginning/Opening Balance → startBalance
+- Ending/Closing Balance → endBalance
+- Total Deposits/Credits → totalCredits
+- Total Withdrawals/Debits → totalDebits
+- Number of Deposits → creditCount
+- Number of Withdrawals → debitCount
+- Average Daily Balance → avgBalance
+- Low/Minimum Balance → minBalance
 
-□ "Beginning Balance" or "Opening Balance" or "Previous Balance" → startBalance
-□ "Ending Balance" or "Closing Balance" or "New Balance" → endBalance
-□ "Total Deposits" or "Total Credits" or "Deposits/Credits" → totalCredits
-□ "Total Withdrawals" or "Total Debits" or "Checks/Debits" → totalDebits
-□ "Number of Deposits" or "Deposits: X items" → creditCount
-□ "Number of Withdrawals" or "Withdrawals: X items" → debitCount
-□ "Average Daily Balance" or "Average Ledger Balance" → avgBalance
-□ "Low Balance" or "Minimum Balance" → minBalance
+Convert: "$45,231.67" → 45231.67 (numeric only)
 
-COPY THESE NUMBERS EXACTLY AS PRINTED. For example:
-- If it says "$45,231.67" → use 45231.67
-- If it says "12 items" → use 12
-- If it says "-$500.00" → use 500.00 (as positive number)
+## STEP 2: EXTRACT TRANSACTIONS
 
-╔═══════════════════════════════════════════════════════════════════════════════╗
-║                    STEP 2: EXTRACT ALL TRANSACTIONS                            ║
-╚═══════════════════════════════════════════════════════════════════════════════╝
+For each transaction row:
+- date: "01/15" or "Jan 15"
+- description: EXACT text
+- amount: numeric (1234.56)
 
-Read the transaction table. For EACH row, extract:
-- Date (as shown, e.g., "01/15" or "Jan 15")
-- Description (EXACT text, e.g., "ACH CREDIT SQUARE INC DES:SETTLEMENT")
-- Amount (the dollar amount as a number)
+CREDITS: ACH credits, wire IN, deposits, card settlements
+DEBITS: ACH debits, wire OUT, checks, fees, payments
 
-DEPOSITS/CREDITS go in the "credits" array:
-- Look for positive amounts, "CR", or amounts in a "Deposits" column
-- Include: ACH credits, wire transfers IN, mobile deposits, card settlements
+## STEP 3: COUNT NSF/OVERDRAFTS
 
-WITHDRAWALS/DEBITS go in the "debits" array:
-- Look for negative amounts, "DR", or amounts in a "Withdrawals" column
-- Include: ACH debits, wire transfers OUT, checks, debit card, fees
+Count transactions containing: NSF, OVERDRAFT, OD FEE, RETURNED ITEM, INSUFFICIENT
 
-╔═══════════════════════════════════════════════════════════════════════════════╗
-║                    STEP 3: VERIFY BEFORE RESPONDING                            ║
-╚═══════════════════════════════════════════════════════════════════════════════╝
+## STEP 4: DETECT MCA PAYMENTS
 
-CHECK YOUR MATH:
-✓ endBalance = startBalance + totalCredits - totalDebits (±$1 tolerance)
-✓ creditCount = number of items in your credits array
-✓ debitCount = number of items in your debits array
+Look for recurring daily/weekly ACH debits to: LIBERTAS, YELLOWSTONE, CREDIBLY, ONDECK, KAPITUS, CAN CAPITAL, RAPID, FUNDBOX, BLUEVINE, FORWARD, CLEARCO, FORA, RELIANT, PEARL, KALAMATA
 
-If the math doesn't work, RE-READ the statement. The bank's numbers are correct.
-
-╔═══════════════════════════════════════════════════════════════════════════════╗
-║                    STEP 4: DETECT MCA/LOAN PAYMENTS                            ║
-╚═══════════════════════════════════════════════════════════════════════════════╝
-
-Scan debits for MCA patterns:
-- Daily ACH debits of $50-$1000 to same recipient
-- Weekly ACH debits of $200-$5000 to same recipient
-- Keywords: LIBERTAS, YELLOWSTONE, CREDIBLY, ONDECK, KAPITUS, CAN CAPITAL, RAPID, FUNDBOX, BLUEVINE, PAYPAL WC, SQUARE CAPITAL, FORWARD, CLEARCO, FORA, RELIANT, PEARL, KALAMATA, EVEREST, GREENBOX
-
-╔═══════════════════════════════════════════════════════════════════════════════╗
-║                    OUTPUT: JSON ONLY (NO MARKDOWN, NO EXPLANATION)             ║
-╚═══════════════════════════════════════════════════════════════════════════════╝
+## OUTPUT (JSON ONLY)
 
 {
     "businessInfo": {
-        "name": "EXACT business name from statement",
-        "bankName": "EXACT bank name",
-        "accountNumber": "****XXXX (last 4 digits)",
-        "statementPeriod": "Month YYYY"
+        "name": "Business name",
+        "bankName": "Bank name",
+        "accountNumber": "****XXXX",
+        "statementPeriod": "MMM YYYY"
     },
     "monthlySummary": [{
         "month": "MMM YYYY",
         "totalCredits": 0,
-        "trueCredits": 0,
         "creditCount": 0,
         "totalDebits": 0,
-        "trueDebits": 0,
         "debitCount": 0,
         "startBalance": 0,
         "endBalance": 0,
@@ -4920,8 +4783,8 @@ Scan debits for MCA patterns:
         "minBalance": 0,
         "nsfCount": 0,
         "overdraftCount": 0,
-        "credits": [{"date": "MM/DD", "description": "EXACT TEXT FROM STATEMENT", "amount": 0}],
-        "debits": [{"date": "MM/DD", "description": "EXACT TEXT FROM STATEMENT", "amount": 0}]
+        "credits": [{"date": "MM/DD", "description": "TEXT", "amount": 0}],
+        "debits": [{"date": "MM/DD", "description": "TEXT", "amount": 0}]
     }],
     "riskIndicators": {
         "nsfCount": 0,
@@ -4938,11 +4801,8 @@ Scan debits for MCA patterns:
     "dailyBalances": []
 }
 
-CRITICAL RULES:
-1. ALL numbers must be NUMERIC (not strings) - e.g., 45231.67 not "$45,231.67"
-2. Use the BANK'S PRINTED TOTALS - do not manually add transactions
-3. Include EVERY transaction you can read from the statement
-4. Return ONLY valid JSON - no markdown code blocks, no explanations`;
+VERIFY: endBalance = startBalance + totalCredits - totalDebits (±$10)
+Return ONLY valid JSON. No markdown. All numbers numeric.`;
 
         const selectedModel = getSelectedModel();
 
@@ -5121,9 +4981,25 @@ CRITICAL RULES:
         merged.mcaAnalysis.positionsFound = Array.from(mcaPositions.values());
         merged.riskIndicators.mcaFound = merged.mcaAnalysis.positionsFound.length;
 
-        // Calculate totals
+        // Calculate trueCredits/trueDebits from transaction arrays and totals
         let totalCredits = 0, totalDebits = 0, totalCreditCount = 0, totalDebitCount = 0;
         for (const month of allMonths) {
+            // Calculate true values from transaction arrays
+            const trueCredits = (month.credits || []).reduce((sum, t) => sum + (t.amount || 0), 0);
+            const trueDebits = (month.debits || []).reduce((sum, t) => sum + (t.amount || 0), 0);
+            const trueCreditCount = (month.credits || []).length;
+            const trueDebitCount = (month.debits || []).length;
+
+            // Store calculated values
+            month.trueCredits = Math.round(trueCredits * 100) / 100;
+            month.trueDebits = Math.round(trueDebits * 100) / 100;
+
+            // Use bank's totals if available, fall back to calculated
+            month.totalCredits = month.totalCredits || trueCredits;
+            month.totalDebits = month.totalDebits || trueDebits;
+            month.creditCount = month.creditCount || trueCreditCount;
+            month.debitCount = month.debitCount || trueDebitCount;
+
             totalCredits += month.totalCredits || 0;
             totalDebits += month.totalDebits || 0;
             totalCreditCount += month.creditCount || 0;
@@ -5139,8 +5015,22 @@ CRITICAL RULES:
             ? Math.round(((totalCredits - totalDebits) / totalCredits) * 100 * 10) / 10
             : 0;
 
-        // Calculate owner draw ratio (estimate wire transfers as 30% of debits)
-        merged.riskIndicators.ownerDrawRatio = 30;
+        // Calculate owner draw ratio from actual transactions
+        let ownerDrawTotal = 0;
+        for (const month of allMonths) {
+            for (const debit of (month.debits || [])) {
+                const desc = (debit.description || '').toUpperCase();
+                if (desc.includes('OWNER') || desc.includes('DRAW') ||
+                    desc.includes('WIRE OUT') || desc.includes('WIRE TRANSFER OUT') ||
+                    desc.includes('TRANSFER TO SAVINGS') || desc.includes('PERSONAL') ||
+                    desc.includes('DISTRIBUTION')) {
+                    ownerDrawTotal += debit.amount || 0;
+                }
+            }
+        }
+        merged.riskIndicators.ownerDrawRatio = totalDebits > 0
+            ? Math.round((ownerDrawTotal / totalDebits) * 100)
+            : 0;
 
         // Update statement period
         if (allMonths.length > 0) {
@@ -6843,70 +6733,48 @@ CRITICAL RULES:
 
         try {
             // Build verification prompt with the data
-            const verifyPrompt = `You are a FINANCIAL DATA AUDITOR. Verify the mathematical accuracy of this bank statement analysis.
+            const verifyPrompt = `Verify mathematical accuracy of this bank statement analysis. Return JSON only.
 
-╔═══════════════════════════════════════════════════════════════════════════════╗
-║                           DATA TO VERIFY                                       ║
-╚═══════════════════════════════════════════════════════════════════════════════╝
-
+DATA:
 ${JSON.stringify(analysisData, null, 2)}
 
-╔═══════════════════════════════════════════════════════════════════════════════╗
-║                    VERIFICATION CHECKS TO PERFORM                              ║
-╚═══════════════════════════════════════════════════════════════════════════════╝
+CHECKS FOR EACH MONTH:
 
-For EACH month in monthlySummary, verify:
+1. BALANCE EQUATION: endBalance = startBalance + totalCredits - totalDebits
+   PASS if within $10, WARNING if within $100, FAIL if more
 
-1. BALANCE EQUATION CHECK:
-   endBalance = startBalance + totalCredits - totalDebits
-   → Calculate: startBalance + totalCredits - totalDebits = ?
-   → Compare to endBalance
-   → PASS if within $10, FAIL if difference > $100, WARNING otherwise
+2. TRANSACTION ARRAY SUMS:
+   - trueCredits should equal sum of credits array amounts
+   - trueDebits should equal sum of debits array amounts
+   PASS if exact match, WARNING if within 1%, FAIL otherwise
 
-2. TRANSACTION COUNT CHECK:
-   → Count items in credits array, compare to creditCount
-   → Count items in debits array, compare to debitCount
-   → PASS if counts match, WARNING if close, FAIL if very different
+3. TRANSACTION COUNTS:
+   - creditCount should match credits array length
+   - debitCount should match debits array length
+   PASS if match, FAIL if different
 
-3. CREDITS SUM CHECK:
-   → Add up all amounts in credits array
-   → Compare to totalCredits
-   → PASS if within 1%, WARNING if within 5%, FAIL otherwise
-
-4. DEBITS SUM CHECK:
-   → Add up all amounts in debits array
-   → Compare to totalDebits
-   → PASS if within 1%, WARNING if within 5%, FAIL otherwise
+4. BANK vs CALCULATED TOTALS:
+   - Compare totalCredits (bank's number) vs trueCredits (calculated)
+   - Compare totalDebits (bank's number) vs trueDebits (calculated)
+   PASS if within 1%, WARNING if within 5%, FAIL otherwise
 
 5. BALANCE REASONABILITY:
-   → avgBalance should be between minBalance and max(startBalance, endBalance)
-   → minBalance should be <= both startBalance and endBalance
-   → PASS if reasonable, FAIL if impossible values
+   - minBalance <= startBalance and endBalance
+   - avgBalance between minBalance and max(startBalance, endBalance)
+   PASS if reasonable, FAIL if impossible
 
-6. PERCENTAGES CHECK:
-   → Revenue source percentages should sum to ~100%
-   → Expense category percentages should sum to ~100%
-   → PASS if 95-105%, WARNING if 90-110%, FAIL otherwise
+6. UNDERWRITING SCORE: Verify criteria pass/fail matches values
 
-7. UNDERWRITING SCORE CHECK:
-   → Verify each criterion's passed/failed status matches the value shown
-   → Check if overall score calculation is reasonable
-
-╔═══════════════════════════════════════════════════════════════════════════════╗
-║                    OUTPUT FORMAT (JSON ONLY)                                   ║
-╚═══════════════════════════════════════════════════════════════════════════════╝
-
-Return ONLY this JSON structure:
-
+OUTPUT (JSON ONLY):
 {
-    "overallStatus": "pass",
+    "overallStatus": "pass|warning|fail",
     "checks": [
-        {"name": "Balance Equation", "status": "pass", "note": "startBalance ($X) + credits ($Y) - debits ($Z) = $W, matches endBalance ($W)"},
-        {"name": "Transaction Counts", "status": "pass", "note": "Credits: X items (expected X), Debits: Y items (expected Y)"},
-        {"name": "Credits Sum", "status": "pass", "note": "Sum of credits array: $X, totalCredits: $Y, difference: $Z"},
-        {"name": "Debits Sum", "status": "pass", "note": "Sum of debits array: $X, totalDebits: $Y, difference: $Z"},
-        {"name": "Balance Reasonability", "status": "pass", "note": "avgBalance $X is between minBalance $Y and max balance $Z"},
-        {"name": "Percentages", "status": "pass", "note": "Revenue sources sum to X%, Expenses sum to Y%"},
+        {"name": "Balance Equation", "status": "pass", "note": "$X + $Y - $Z = $W vs endBalance $W"},
+        {"name": "Credits Array Sum", "status": "pass", "note": "Sum: $X, trueCredits: $X"},
+        {"name": "Debits Array Sum", "status": "pass", "note": "Sum: $X, trueDebits: $X"},
+        {"name": "Transaction Counts", "status": "pass", "note": "Credits: X (expected X), Debits: Y (expected Y)"},
+        {"name": "Bank vs Calculated", "status": "pass", "note": "totalCredits $X vs trueCredits $Y (diff: $Z)"},
+        {"name": "Balance Reasonability", "status": "pass", "note": "avgBalance $X, minBalance $Y, maxBalance $Z"},
         {"name": "Underwriting Score", "status": "pass", "note": "X of 8 criteria passed, score of Y% is correct"}
     ],
     "summary": "All mathematical checks passed. Data appears accurate.",
@@ -6924,7 +6792,11 @@ RULES:
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    contents: [{ parts: [{ text: verifyPrompt }] }]
+                    contents: [{ parts: [{ text: verifyPrompt }] }],
+                    generationConfig: {
+                        temperature: 0.1,
+                        maxOutputTokens: 4096
+                    }
                 })
             });
 
