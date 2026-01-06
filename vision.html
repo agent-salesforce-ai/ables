@@ -3357,6 +3357,30 @@
                 Best for comprehensive bank statement analysis with high accuracy.
             </div>
         </div>
+        <div class="settings-section">
+            <div class="settings-section-title">MoneyThumb PDFInsights (Optional)</div>
+            <div class="settings-label">License Code</div>
+            <div class="settings-label-desc">Professional bank statement parsing for comparison & validation</div>
+            <div class="settings-input-row">
+                <input type="password" class="settings-input" id="moneyThumbKey" placeholder="Enter your MoneyThumb license code">
+                <button class="settings-save-btn" onclick="saveMoneyThumbKey()">Save</button>
+            </div>
+            <div class="settings-saved" id="moneyThumbSaved">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
+                MoneyThumb key saved
+            </div>
+            <div class="settings-label" style="margin-top: 12px;">Parser Mode</div>
+            <select class="settings-select" id="parserModeSelect" onchange="saveParserMode()">
+                <option value="gemini">Gemini Only (Default)</option>
+                <option value="moneythumb">MoneyThumb Only</option>
+                <option value="compare">Compare Both (Side-by-Side)</option>
+            </select>
+            <div class="model-description" id="parserModeDescription">
+                Use Gemini AI for bank statement analysis.
+            </div>
+        </div>
     </div>
     <div class="settings-footer">
         <button class="settings-done-btn" onclick="saveApiKey()">Save & Close</button>
@@ -4051,6 +4075,12 @@
         const savedModel = localStorage.getItem('geminiModel') || 'gemini-3-pro-preview';
         document.getElementById('modelSelect').value = savedModel;
         updateModelDescription(savedModel);
+        // Load MoneyThumb settings
+        const mtKey = localStorage.getItem('moneyThumbKey') || '';
+        document.getElementById('moneyThumbKey').value = mtKey;
+        const parserMode = localStorage.getItem('parserMode') || 'gemini';
+        document.getElementById('parserModeSelect').value = parserMode;
+        updateParserModeDescription(parserMode);
     }
 
     const modelDescriptions = {
@@ -4097,6 +4127,187 @@
         // Always close settings panel
         document.getElementById('settingsOverlay').classList.remove('active');
         document.getElementById('settingsPanel').classList.remove('active');
+    }
+
+    // MoneyThumb Functions
+    function saveMoneyThumbKey() {
+        try {
+            const key = document.getElementById('moneyThumbKey').value.trim();
+            localStorage.setItem('moneyThumbKey', key);
+            const savedEl = document.getElementById('moneyThumbSaved');
+            savedEl.style.display = 'flex';
+            setTimeout(() => { savedEl.style.display = 'none'; }, 2000);
+        } catch(e) {
+            console.error('MoneyThumb save error:', e);
+        }
+    }
+
+    function saveParserMode() {
+        const mode = document.getElementById('parserModeSelect').value;
+        localStorage.setItem('parserMode', mode);
+        updateParserModeDescription(mode);
+    }
+
+    const parserModeDescriptions = {
+        'gemini': 'Use Gemini AI for bank statement analysis.',
+        'moneythumb': 'Use MoneyThumb PDFInsights for professional parsing.',
+        'compare': 'Run both parsers and compare results side-by-side.'
+    };
+
+    function updateParserModeDescription(mode) {
+        const desc = parserModeDescriptions[mode] || 'Select a parser mode.';
+        document.getElementById('parserModeDescription').textContent = desc;
+    }
+
+    function getParserMode() {
+        return localStorage.getItem('parserMode') || 'gemini';
+    }
+
+    function getMoneyThumbKey() {
+        return localStorage.getItem('moneyThumbKey') || '';
+    }
+
+    // MoneyThumb API Integration
+    async function callMoneyThumbAPI(file) {
+        const licenseKey = getMoneyThumbKey();
+        if (!licenseKey) {
+            throw new Error('MoneyThumb license key not configured');
+        }
+
+        showUploadStatus('Processing with MoneyThumb PDFInsights...');
+
+        // Convert file to base64 for API
+        const base64Data = await fileToBase64(file);
+
+        // MoneyThumb API endpoint
+        const apiUrl = 'https://insights.moneythumb.com/api/v1.5/uploadpdfs';
+
+        const formData = new FormData();
+        formData.append('pdf-filename', file.file || file);
+        formData.append('appnumber', 'ABLES-Vision');
+        formData.append('appid', Date.now().toString());
+        formData.append('accounttype', 'Bank');
+        formData.append('includescorecard', 'true');
+        formData.append('includetransactions', 'true');
+        formData.append('includebalance', 'true');
+        formData.append('format', 'jsonobject');
+        formData.append('readUSdates', 'true');
+        formData.append('writeUSdates', 'true');
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${licenseKey}`
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`MoneyThumb API error: ${response.status} - ${errorText}`);
+            }
+
+            const result = await response.json();
+            console.log('MoneyThumb result:', result);
+
+            // Transform MoneyThumb response to our schema
+            return transformMoneyThumbResponse(result);
+        } catch (error) {
+            console.error('MoneyThumb API error:', error);
+            throw error;
+        }
+    }
+
+    async function fileToBase64(fileObj) {
+        const file = fileObj.file || fileObj;
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function transformMoneyThumbResponse(mtResult) {
+        // Transform MoneyThumb response to ABLES schema
+        const scorecard = mtResult.scorecard || {};
+        const transactions = mtResult.transactions || [];
+        const balance = mtResult.balance || {};
+
+        // Extract credits and debits from transactions
+        const credits = [];
+        const debits = [];
+
+        transactions.forEach(tx => {
+            const amount = Math.abs(parseFloat(tx.amount) || 0);
+            const transaction = {
+                date: tx.date || '',
+                description: tx.description || tx.memo || '',
+                amount: amount,
+                category: tx.category || 'Unknown'
+            };
+
+            if (parseFloat(tx.amount) >= 0 || tx.type === 'credit' || tx.type === 'deposit') {
+                transaction.isTrueRevenue = !isNonRevenue(transaction.description);
+                credits.push(transaction);
+            } else {
+                debits.push(transaction);
+            }
+        });
+
+        const totalCredits = credits.reduce((sum, t) => sum + t.amount, 0);
+        const totalDebits = debits.reduce((sum, t) => sum + t.amount, 0);
+        const trueRevenue = credits.filter(c => c.isTrueRevenue).reduce((sum, t) => sum + t.amount, 0);
+
+        return {
+            _source: 'MoneyThumb',
+            businessInfo: {
+                name: scorecard.accountHolder || balance.accountName || 'Unknown',
+                bankName: scorecard.bankName || balance.bankName || 'Unknown',
+                accountNumber: scorecard.accountNumber || balance.accountNumber || '',
+                statementPeriod: `${balance.startDate || ''} - ${balance.endDate || ''}`
+            },
+            monthlySummary: [{
+                month: balance.statementMonth || 'Statement',
+                totalCredits: totalCredits,
+                totalDebits: totalDebits,
+                trueCredits: totalCredits,
+                trueDebits: totalDebits,
+                trueRevenue: trueRevenue,
+                creditCount: credits.length,
+                debitCount: debits.length,
+                startBalance: parseFloat(balance.beginningBalance) || 0,
+                endBalance: parseFloat(balance.endingBalance) || 0,
+                avgBalance: parseFloat(scorecard.avgDailyBalance) || 0,
+                minBalance: parseFloat(scorecard.minBalance) || 0,
+                nsfCount: parseInt(scorecard.nsfCount) || 0,
+                overdraftCount: parseInt(scorecard.overdraftCount) || 0,
+                credits: credits,
+                debits: debits
+            }],
+            riskIndicators: {
+                nsfCount: parseInt(scorecard.nsfCount) || 0,
+                overdraftCount: parseInt(scorecard.overdraftCount) || 0,
+                negativeDays: parseInt(scorecard.negativeDays) || 0,
+                lowBalanceDays: parseInt(scorecard.lowBalanceDays) || 0
+            },
+            mcaAnalysis: {
+                existingMCACount: parseInt(scorecard.mcaCount) || 0,
+                detectedMCAs: scorecard.mcaPayments || []
+            },
+            moneyThumbScore: scorecard.thumbprintScore || null
+        };
+    }
+
+    function isNonRevenue(description) {
+        const desc = description.toUpperCase();
+        const nonRevenueKeywords = [
+            'TRANSFER FROM', 'TRANSFER BETWEEN', 'LOAN', 'SBA', 'EIDL',
+            'ONDECK', 'KABBAGE', 'CREDIBLY', 'BLUEVINE', 'FUNDBOX',
+            'TAX REFUND', 'IRS TREAS', 'REVERSAL', 'NSF', 'OWNER'
+        ];
+        return nonRevenueKeywords.some(kw => desc.includes(kw));
     }
 
     function toggleTheme() {
@@ -4264,9 +4475,25 @@
     // Main Analysis Function
     async function analyzeDocuments() {
         const apiKey = document.getElementById('apiKey').value.trim();
+        const parserMode = getParserMode();
+        const mtKey = getMoneyThumbKey();
 
-        if (!apiKey || uploadedFiles.length === 0) {
-            showUploadStatus('Please configure API key in Settings');
+        // Check required keys based on parser mode
+        if (parserMode === 'gemini' && !apiKey) {
+            showUploadStatus('Please configure Gemini API key in Settings');
+            return;
+        }
+        if (parserMode === 'moneythumb' && !mtKey) {
+            showUploadStatus('Please configure MoneyThumb license key in Settings');
+            return;
+        }
+        if (parserMode === 'compare' && (!apiKey || !mtKey)) {
+            showUploadStatus('Please configure both Gemini and MoneyThumb keys in Settings for comparison');
+            return;
+        }
+
+        if (uploadedFiles.length === 0) {
+            showUploadStatus('Please upload bank statements first');
             return;
         }
 
@@ -4287,97 +4514,179 @@
                 fileContents.push({
                     name: file.name,
                     mimeType: file.type || 'application/pdf',
-                    data: base64
+                    data: base64,
+                    file: file
                 });
             }
 
-            // Process each document INDIVIDUALLY for maximum accuracy
+            // Process based on parser mode
             let response;
 
-            if (fileContents.length === 1) {
-                // Single document - process normally
-                showUploadStatus('Analyzing document with Gemini Vision OCR...');
-                try {
-                    response = await callGeminiAPISingle(apiKey, fileContents[0]);
-                    if (!response || !response.monthlySummary) {
-                        throw new Error('Invalid response from API - missing monthlySummary');
-                    }
-                } catch (singleDocError) {
-                    console.error('Single document processing failed:', singleDocError);
-                    throw new Error(`Document processing failed: ${singleDocError.message}`);
-                }
+            if (parserMode === 'moneythumb') {
+                // MoneyThumb only
+                response = await processWithMoneyThumb(fileContents);
+            } else if (parserMode === 'compare') {
+                // Compare both parsers
+                response = await processWithComparison(apiKey, fileContents);
             } else {
-                // Multiple documents - process each separately then merge
-                showUploadStatus(`Analyzing ${totalFiles} documents individually for accuracy...`);
-                const allResults = [];
-                let lastError = null;
-
-                for (let i = 0; i < fileContents.length; i++) {
-                    showUploadStatus(`OCR Extracting document ${i + 1} of ${totalFiles}: ${fileContents[i].name}...`);
-
-                    let retryCount = 0;
-                    const maxRetries = 2;
-                    let success = false;
-
-                    while (retryCount <= maxRetries && !success) {
-                        try {
-                            const docResult = await callGeminiAPISingle(apiKey, fileContents[i]);
-                            if (docResult && docResult.monthlySummary) {
-                                allResults.push(docResult);
-                                success = true;
-                                console.log(`Document ${i + 1} processed successfully`);
-                            } else {
-                                throw new Error('Invalid response structure');
-                            }
-                        } catch (error) {
-                            lastError = error;
-                            retryCount++;
-                            console.error(`Document ${i + 1} attempt ${retryCount} failed:`, error.message);
-                            if (retryCount <= maxRetries) {
-                                const waitTime = 2000 * retryCount;
-                                showUploadStatus(`Retry ${retryCount}/${maxRetries} for document ${i + 1}... (waiting ${waitTime/1000}s)`);
-                                await new Promise(r => setTimeout(r, waitTime));
-                            } else {
-                                console.error(`Failed to process document ${i + 1} after ${maxRetries} retries:`, error);
-                                // Continue with other documents
-                            }
-                        }
-                    }
-
-                    // Add delay between documents to avoid rate limiting
-                    if (i < fileContents.length - 1 && success) {
-                        showUploadStatus(`Document ${i + 1} complete. Preparing next document...`);
-                        await new Promise(r => setTimeout(r, 1000));
-                    }
-                }
-
-                if (allResults.length === 0) {
-                    throw new Error(`Failed to process any documents. Last error: ${lastError?.message || 'Unknown error'}`);
-                }
-
-                showUploadStatus('Merging results from all documents...');
-                response = mergeDocumentResults(allResults);
+                // Gemini (default)
+                response = await processWithGemini(apiKey, fileContents);
             }
 
             showUploadStatus('Generating report...');
 
-            // Parse and render the report
+            // Parse and render the report (continues in existing code)
             analysisData = response;
-            renderReport(analysisData);
-
-            // Hide upload, show report
-            document.getElementById('uploadSection').style.display = 'none';
-            document.getElementById('reportContainer').classList.add('visible');
+            renderReport(response);
             hideUploadStatus();
 
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-
         } catch (error) {
-            // Show error in upload status
-            showUploadStatus('Analysis failed: ' + error.message, true);
             console.error('Analysis error:', error);
+            showError(`Analysis failed: ${error.message}`);
+            hideUploadStatus();
         }
+    }
+
+    async function processWithGemini(apiKey, fileContents) {
+        const totalFiles = fileContents.length;
+
+        if (fileContents.length === 1) {
+            // Single document - process normally
+            showUploadStatus('Analyzing document with Gemini Vision OCR...');
+            try {
+                const response = await callGeminiAPISingle(apiKey, fileContents[0]);
+                if (!response || !response.monthlySummary) {
+                    throw new Error('Invalid response from API - missing monthlySummary');
+                }
+                return response;
+            } catch (singleDocError) {
+                console.error('Single document processing failed:', singleDocError);
+                throw new Error(`Document processing failed: ${singleDocError.message}`);
+            }
+        } else {
+            // Multiple documents - process each separately then merge
+            showUploadStatus(`Analyzing ${totalFiles} documents individually for accuracy...`);
+            const allResults = [];
+            let lastError = null;
+
+            for (let i = 0; i < fileContents.length; i++) {
+                showUploadStatus(`OCR Extracting document ${i + 1} of ${totalFiles}: ${fileContents[i].name}...`);
+
+                let retryCount = 0;
+                const maxRetries = 2;
+                let success = false;
+
+                while (retryCount <= maxRetries && !success) {
+                    try {
+                        const docResult = await callGeminiAPISingle(apiKey, fileContents[i]);
+                        if (docResult && docResult.monthlySummary) {
+                            allResults.push(docResult);
+                            success = true;
+                            console.log(`Document ${i + 1} processed successfully`);
+                        } else {
+                            throw new Error('Invalid response structure');
+                        }
+                    } catch (error) {
+                        lastError = error;
+                        retryCount++;
+                        console.error(`Document ${i + 1} attempt ${retryCount} failed:`, error.message);
+                        if (retryCount <= maxRetries) {
+                            const waitTime = 2000 * retryCount;
+                            showUploadStatus(`Retry ${retryCount}/${maxRetries} for document ${i + 1}... (waiting ${waitTime/1000}s)`);
+                            await new Promise(r => setTimeout(r, waitTime));
+                        } else {
+                            console.error(`Failed to process document ${i + 1} after ${maxRetries} retries:`, error);
+                        }
+                    }
+                }
+
+                if (i < fileContents.length - 1 && success) {
+                    showUploadStatus(`Document ${i + 1} complete. Preparing next document...`);
+                    await new Promise(r => setTimeout(r, 1000));
+                }
+            }
+
+            if (allResults.length === 0) {
+                throw new Error(`Failed to process any documents. Last error: ${lastError?.message || 'Unknown error'}`);
+            }
+
+            showUploadStatus('Merging results from all documents...');
+            return mergeDocumentResults(allResults);
+        }
+    }
+
+    async function processWithMoneyThumb(fileContents) {
+        showUploadStatus('Processing with MoneyThumb PDFInsights...');
+        const allResults = [];
+
+        for (let i = 0; i < fileContents.length; i++) {
+            showUploadStatus(`MoneyThumb: Processing document ${i + 1} of ${fileContents.length}...`);
+            try {
+                const result = await callMoneyThumbAPI(fileContents[i]);
+                if (result && result.monthlySummary) {
+                    allResults.push(result);
+                }
+            } catch (error) {
+                console.error(`MoneyThumb failed for document ${i + 1}:`, error);
+            }
+        }
+
+        if (allResults.length === 0) {
+            throw new Error('MoneyThumb failed to process any documents');
+        }
+
+        return allResults.length === 1 ? allResults[0] : mergeDocumentResults(allResults);
+    }
+
+    async function processWithComparison(apiKey, fileContents) {
+        showUploadStatus('Running comparison analysis (Gemini + MoneyThumb)...');
+
+        // Run both parsers
+        let geminiResult = null;
+        let moneyThumbResult = null;
+
+        try {
+            showUploadStatus('Comparison: Running Gemini analysis...');
+            geminiResult = await processWithGemini(apiKey, fileContents);
+            geminiResult._source = 'Gemini';
+        } catch (error) {
+            console.error('Gemini comparison failed:', error);
+        }
+
+        try {
+            showUploadStatus('Comparison: Running MoneyThumb analysis...');
+            moneyThumbResult = await processWithMoneyThumb(fileContents);
+            moneyThumbResult._source = 'MoneyThumb';
+        } catch (error) {
+            console.error('MoneyThumb comparison failed:', error);
+        }
+
+        if (!geminiResult && !moneyThumbResult) {
+            throw new Error('Both parsers failed');
+        }
+
+        // Use Gemini as primary, add comparison data
+        const result = geminiResult || moneyThumbResult;
+        result._comparison = {
+            gemini: geminiResult ? summarizeResult(geminiResult) : null,
+            moneyThumb: moneyThumbResult ? summarizeResult(moneyThumbResult) : null
+        };
+
+        return result;
+    }
+
+    function summarizeResult(result) {
+        const month = result.monthlySummary?.[0] || {};
+        return {
+            source: result._source,
+            totalCredits: month.totalCredits || 0,
+            totalDebits: month.totalDebits || 0,
+            trueRevenue: month.trueRevenue || 0,
+            creditCount: month.creditCount || 0,
+            debitCount: month.debitCount || 0,
+            startBalance: month.startBalance || 0,
+            endBalance: month.endBalance || 0
+        };
     }
 
     function showUploadStatus(message, isError = false) {
