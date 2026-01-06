@@ -4108,22 +4108,36 @@
 
                     let retryCount = 0;
                     const maxRetries = 2;
+                    let success = false;
 
-                    while (retryCount <= maxRetries) {
+                    while (retryCount <= maxRetries && !success) {
                         try {
                             const docResult = await callGeminiAPISingle(apiKey, fileContents[i]);
-                            allResults.push(docResult);
-                            break;
+                            if (docResult && docResult.monthlySummary) {
+                                allResults.push(docResult);
+                                success = true;
+                                console.log(`Document ${i + 1} processed successfully`);
+                            } else {
+                                throw new Error('Invalid response structure');
+                            }
                         } catch (error) {
                             retryCount++;
+                            console.error(`Document ${i + 1} attempt ${retryCount} failed:`, error.message);
                             if (retryCount <= maxRetries) {
-                                showUploadStatus(`Retry ${retryCount}/${maxRetries} for document ${i + 1}...`);
-                                await new Promise(r => setTimeout(r, 1500 * retryCount));
+                                const waitTime = 2000 * retryCount;
+                                showUploadStatus(`Retry ${retryCount}/${maxRetries} for document ${i + 1}... (waiting ${waitTime/1000}s)`);
+                                await new Promise(r => setTimeout(r, waitTime));
                             } else {
-                                console.error(`Failed to process document ${i + 1}:`, error);
+                                console.error(`Failed to process document ${i + 1} after ${maxRetries} retries:`, error);
                                 // Continue with other documents
                             }
                         }
+                    }
+
+                    // Add delay between documents to avoid rate limiting
+                    if (i < fileContents.length - 1 && success) {
+                        showUploadStatus(`Document ${i + 1} complete. Preparing next document...`);
+                        await new Promise(r => setTimeout(r, 1000));
                     }
                 }
 
@@ -4722,42 +4736,57 @@ CRITICAL RULES:
         // Don't use agent models for OCR - use standard Gemini
         const model = selectedModel.startsWith('agent:') ? 'gemini-3-pro-preview' : selectedModel;
 
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [
-                        { text: prompt },
-                        { inline_data: { mime_type: file.mimeType, data: file.data } }
-                    ]
-                }],
-                generationConfig: {
-                    temperature: 0.1,
-                    maxOutputTokens: 16384
-                }
-            })
-        });
+        // Create abort controller for timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minute timeout
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error?.message || 'API request failed');
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                signal: controller.signal,
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [
+                            { text: prompt },
+                            { inline_data: { mime_type: file.mimeType, data: file.data } }
+                        ]
+                    }],
+                    generationConfig: {
+                        temperature: 0.1,
+                        maxOutputTokens: 16384
+                    }
+                })
+            });
+
+            clearTimeout(timeoutId);
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error?.message || 'API request failed');
+            }
+
+            const data = await response.json();
+            const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+            if (!text) throw new Error('No response from API');
+
+            // Parse JSON
+            let jsonStr = text;
+            if (text.includes('```json')) {
+                jsonStr = text.split('```json')[1].split('```')[0];
+            } else if (text.includes('```')) {
+                jsonStr = text.split('```')[1].split('```')[0];
+            }
+
+            return JSON.parse(jsonStr.trim());
+        } catch (error) {
+            clearTimeout(timeoutId);
+            if (error.name === 'AbortError') {
+                throw new Error('Request timed out after 2 minutes');
+            }
+            throw error;
         }
-
-        const data = await response.json();
-        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-        if (!text) throw new Error('No response from API');
-
-        // Parse JSON
-        let jsonStr = text;
-        if (text.includes('```json')) {
-            jsonStr = text.split('```json')[1].split('```')[0];
-        } else if (text.includes('```')) {
-            jsonStr = text.split('```')[1].split('```')[0];
-        }
-
-        return JSON.parse(jsonStr.trim());
     }
 
     // Merge results from multiple documents into one report
