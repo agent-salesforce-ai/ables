@@ -466,6 +466,44 @@
             100% { transform: translateX(350%); }
         }
 
+        /* Snood Game Styles */
+        .snood-container {
+            margin-top: 32px;
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #333;
+        }
+
+        .snood-label {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #snoodCanvas {
+            background: linear-gradient(180deg, #1e1e2e 0%, #0d0d15 100%);
+            border-radius: 8px;
+            cursor: crosshair;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .snood-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        #snoodScore {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
         /* Report Container (hidden until analysis complete) */
         .report-container {
             display: none;
@@ -3138,6 +3176,15 @@
         <div class="loading-subtitle" id="loadingStatus">Preparing documents...</div>
         <div class="loading-progress">
             <div class="loading-progress-bar"></div>
+        </div>
+        <!-- Mini Snood Game -->
+        <div class="snood-container">
+            <div class="snood-label">Play while you wait!</div>
+            <canvas id="snoodCanvas" width="280" height="320"></canvas>
+            <div class="snood-controls">
+                <span>Click to shoot</span>
+                <span id="snoodScore">Score: 0</span>
+            </div>
         </div>
     </div>
 </div>
@@ -5815,6 +5862,250 @@ CRITICAL RULES:
 
     function showLoading(show) {
         document.getElementById('loadingOverlay').classList.toggle('active', show);
+        if (show) {
+            initSnoodGame();
+        } else {
+            stopSnoodGame();
+        }
+    }
+
+    // ============================================
+    // SNOOD MINI-GAME
+    // ============================================
+    let snoodGame = null;
+
+    function initSnoodGame() {
+        const canvas = document.getElementById('snoodCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const W = canvas.width, H = canvas.height;
+        const RADIUS = 14;
+        const COLORS = ['#c9a227', '#ef4444', '#22c55e', '#3b82f6', '#a855f7', '#ec4899'];
+
+        let bubbles = [];
+        let shooter = { x: W / 2, y: H - 25, angle: -Math.PI / 2, color: COLORS[0] };
+        let projectile = null;
+        let score = 0;
+        let gameLoop = null;
+
+        // Initialize grid of bubbles
+        function initBubbles() {
+            bubbles = [];
+            for (let row = 0; row < 5; row++) {
+                const offset = (row % 2) * RADIUS;
+                const cols = row % 2 === 0 ? 10 : 9;
+                for (let col = 0; col < cols; col++) {
+                    bubbles.push({
+                        x: offset + col * RADIUS * 2 + RADIUS,
+                        y: row * RADIUS * 1.7 + RADIUS + 10,
+                        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+                        alive: true
+                    });
+                }
+            }
+        }
+
+        function drawBubble(x, y, color, isShooter = false) {
+            ctx.beginPath();
+            ctx.arc(x, y, RADIUS - 1, 0, Math.PI * 2);
+            const grad = ctx.createRadialGradient(x - 4, y - 4, 0, x, y, RADIUS);
+            grad.addColorStop(0, '#ffffff44');
+            grad.addColorStop(0.3, color);
+            grad.addColorStop(1, color + '99');
+            ctx.fillStyle = grad;
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff22';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, W, H);
+
+            // Draw bubbles
+            bubbles.forEach(b => {
+                if (b.alive) drawBubble(b.x, b.y, b.color);
+            });
+
+            // Draw aim line
+            ctx.beginPath();
+            ctx.moveTo(shooter.x, shooter.y);
+            ctx.lineTo(
+                shooter.x + Math.cos(shooter.angle) * 60,
+                shooter.y + Math.sin(shooter.angle) * 60
+            );
+            ctx.strokeStyle = '#ffffff33';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw shooter
+            drawBubble(shooter.x, shooter.y, shooter.color, true);
+
+            // Draw projectile
+            if (projectile) {
+                drawBubble(projectile.x, projectile.y, projectile.color);
+            }
+        }
+
+        function update() {
+            if (projectile) {
+                projectile.x += projectile.vx;
+                projectile.y += projectile.vy;
+
+                // Wall bounce
+                if (projectile.x < RADIUS || projectile.x > W - RADIUS) {
+                    projectile.vx *= -1;
+                }
+
+                // Hit top
+                if (projectile.y < RADIUS) {
+                    snapToGrid(projectile);
+                    projectile = null;
+                    shooter.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+                    return;
+                }
+
+                // Hit bubble
+                for (const b of bubbles) {
+                    if (!b.alive) continue;
+                    const dx = projectile.x - b.x;
+                    const dy = projectile.y - b.y;
+                    if (Math.sqrt(dx * dx + dy * dy) < RADIUS * 1.8) {
+                        snapToGrid(projectile);
+                        checkMatches(projectile.color);
+                        projectile = null;
+                        shooter.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+                        return;
+                    }
+                }
+            }
+        }
+
+        function snapToGrid(p) {
+            const row = Math.round((p.y - RADIUS - 10) / (RADIUS * 1.7));
+            const offset = (row % 2) * RADIUS;
+            const col = Math.round((p.x - offset - RADIUS) / (RADIUS * 2));
+            bubbles.push({
+                x: offset + col * RADIUS * 2 + RADIUS,
+                y: row * RADIUS * 1.7 + RADIUS + 10,
+                color: p.color,
+                alive: true
+            });
+        }
+
+        function checkMatches(color) {
+            // Simple match check - remove same color neighbors
+            const toRemove = [];
+            const lastBubble = bubbles[bubbles.length - 1];
+
+            function findConnected(bubble, found = new Set()) {
+                if (found.has(bubble)) return found;
+                found.add(bubble);
+                bubbles.forEach(b => {
+                    if (!b.alive || b.color !== color || found.has(b)) return;
+                    const dx = bubble.x - b.x;
+                    const dy = bubble.y - b.y;
+                    if (Math.sqrt(dx * dx + dy * dy) < RADIUS * 2.5) {
+                        findConnected(b, found);
+                    }
+                });
+                return found;
+            }
+
+            const connected = findConnected(lastBubble);
+            if (connected.size >= 3) {
+                connected.forEach(b => {
+                    b.alive = false;
+                    score += 10;
+                });
+                document.getElementById('snoodScore').textContent = 'Score: ' + score;
+            }
+
+            // Check for floating bubbles and remove them
+            removeFloating();
+        }
+
+        function removeFloating() {
+            const attached = new Set();
+
+            // Find all bubbles attached to top
+            function markAttached(bubble) {
+                if (attached.has(bubble)) return;
+                attached.add(bubble);
+                bubbles.forEach(b => {
+                    if (!b.alive || attached.has(b)) return;
+                    const dx = bubble.x - b.x;
+                    const dy = bubble.y - b.y;
+                    if (Math.sqrt(dx * dx + dy * dy) < RADIUS * 2.5) {
+                        markAttached(b);
+                    }
+                });
+            }
+
+            // Start from top row bubbles
+            bubbles.forEach(b => {
+                if (b.alive && b.y < RADIUS * 2 + 15) {
+                    markAttached(b);
+                }
+            });
+
+            // Remove floating bubbles
+            bubbles.forEach(b => {
+                if (b.alive && !attached.has(b)) {
+                    b.alive = false;
+                    score += 20;
+                }
+            });
+            document.getElementById('snoodScore').textContent = 'Score: ' + score;
+        }
+
+        function shoot() {
+            if (projectile) return;
+            projectile = {
+                x: shooter.x,
+                y: shooter.y,
+                vx: Math.cos(shooter.angle) * 8,
+                vy: Math.sin(shooter.angle) * 8,
+                color: shooter.color
+            };
+        }
+
+        function handleMouse(e) {
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+            shooter.angle = Math.atan2(my - shooter.y, mx - shooter.x);
+            // Limit angle to upward
+            if (shooter.angle > -0.2) shooter.angle = -0.2;
+            if (shooter.angle < -Math.PI + 0.2) shooter.angle = -Math.PI + 0.2;
+        }
+
+        canvas.addEventListener('mousemove', handleMouse);
+        canvas.addEventListener('click', shoot);
+
+        initBubbles();
+
+        gameLoop = setInterval(() => {
+            update();
+            draw();
+        }, 1000 / 60);
+
+        snoodGame = {
+            stop: () => {
+                clearInterval(gameLoop);
+                canvas.removeEventListener('mousemove', handleMouse);
+                canvas.removeEventListener('click', shoot);
+            }
+        };
+    }
+
+    function stopSnoodGame() {
+        if (snoodGame) {
+            snoodGame.stop();
+            snoodGame = null;
+        }
     }
 
     function updateLoadingStatus(text) {
