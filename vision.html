@@ -5190,6 +5190,49 @@ Return ONLY valid JSON. No markdown. All numbers numeric.`;
         data.paymentCapacity = data.paymentCapacity || {};
         data.benchmarks = data.benchmarks || { businessScores: [], industryAvg: [], percentiles: [] };
 
+        // Calculate trueCredits/trueDebits for each month if not present
+        let totalCredits = 0, totalDebits = 0, ownerDrawTotal = 0;
+        for (const month of data.monthlySummary) {
+            // Calculate true values from transaction arrays
+            const credits = month.credits || [];
+            const debits = month.debits || [];
+
+            if (!month.trueCredits || month.trueCredits === 0) {
+                month.trueCredits = credits.reduce((sum, t) => sum + (t.amount || 0), 0);
+                month.trueCredits = Math.round(month.trueCredits * 100) / 100;
+            }
+            if (!month.trueDebits || month.trueDebits === 0) {
+                month.trueDebits = debits.reduce((sum, t) => sum + (t.amount || 0), 0);
+                month.trueDebits = Math.round(month.trueDebits * 100) / 100;
+            }
+
+            totalCredits += month.totalCredits || month.trueCredits || 0;
+            totalDebits += month.totalDebits || month.trueDebits || 0;
+
+            // Calculate owner draws from transactions
+            for (const debit of debits) {
+                const desc = (debit.description || '').toUpperCase();
+                if (desc.includes('OWNER') || desc.includes('DRAW') ||
+                    desc.includes('WIRE OUT') || desc.includes('WIRE TRANSFER OUT') ||
+                    desc.includes('TRANSFER TO SAVINGS') || desc.includes('PERSONAL') ||
+                    desc.includes('DISTRIBUTION')) {
+                    ownerDrawTotal += debit.amount || 0;
+                }
+            }
+        }
+
+        // Calculate netMargin and ownerDrawRatio if not present
+        if (typeof data.riskIndicators.netMargin !== 'number' || isNaN(data.riskIndicators.netMargin)) {
+            data.riskIndicators.netMargin = totalCredits > 0
+                ? Math.round(((totalCredits - totalDebits) / totalCredits) * 100 * 10) / 10
+                : 0;
+        }
+        if (typeof data.riskIndicators.ownerDrawRatio !== 'number' || isNaN(data.riskIndicators.ownerDrawRatio)) {
+            data.riskIndicators.ownerDrawRatio = totalDebits > 0
+                ? Math.round((ownerDrawTotal / totalDebits) * 100)
+                : 0;
+        }
+
         // Ensure arrays have data
         if (!data.cashFlowData.dailyBalances || data.cashFlowData.dailyBalances.length === 0) {
             data.cashFlowData.dailyBalances = [0];
@@ -5392,17 +5435,27 @@ Return ONLY valid JSON. No markdown. All numbers numeric.`;
     }
 
     function renderRiskIndicators(data) {
-        const risk = data.riskIndicators;
+        const risk = data.riskIndicators || {};
+
+        // Ensure all values have defaults
+        const nsfCount = risk.nsfCount || 0;
+        const overdraftCount = risk.overdraftCount || 0;
+        const negativeDays = risk.negativeDays || 0;
+        const lowBalanceDays = risk.lowBalanceDays || 0;
+        const mcaFound = risk.mcaFound || 0;
+        const achReturns = risk.achReturns || 0;
+        const ownerDrawRatio = typeof risk.ownerDrawRatio === 'number' ? risk.ownerDrawRatio : 0;
+        const netMargin = typeof risk.netMargin === 'number' ? risk.netMargin : 0;
 
         const indicators = [
-            { label: 'NSF Items', value: risk.nsfCount, good: risk.nsfCount === 0 },
-            { label: 'Overdrafts', value: risk.overdraftCount, good: risk.overdraftCount === 0 },
-            { label: 'Neg Days', value: risk.negativeDays, good: risk.negativeDays === 0 },
-            { label: 'Low Bal Days', value: risk.lowBalanceDays, good: risk.lowBalanceDays <= 2, warn: risk.lowBalanceDays > 2 && risk.lowBalanceDays <= 5 },
-            { label: 'MCA Found', value: risk.mcaFound, good: risk.mcaFound === 0 },
-            { label: 'ACH Returns', value: risk.achReturns, good: risk.achReturns === 0 },
-            { label: 'Owner Draw', value: risk.ownerDrawRatio + '%', good: risk.ownerDrawRatio < 50, neutral: true },
-            { label: 'Net Margin', value: risk.netMargin + '%', good: risk.netMargin > 0, warn: risk.netMargin < 0 }
+            { label: 'NSF Items', value: nsfCount, good: nsfCount === 0 },
+            { label: 'Overdrafts', value: overdraftCount, good: overdraftCount === 0 },
+            { label: 'Neg Days', value: negativeDays, good: negativeDays === 0 },
+            { label: 'Low Bal Days', value: lowBalanceDays, good: lowBalanceDays <= 2, warn: lowBalanceDays > 2 && lowBalanceDays <= 5 },
+            { label: 'MCA Found', value: mcaFound, good: mcaFound === 0 },
+            { label: 'ACH Returns', value: achReturns, good: achReturns === 0 },
+            { label: 'Owner Draw', value: ownerDrawRatio + '%', good: ownerDrawRatio < 50, neutral: true },
+            { label: 'Net Margin', value: netMargin + '%', good: netMargin > 0, warn: netMargin < 0 }
         ];
 
         document.getElementById('riskStrip').innerHTML = indicators.map(ind => {
@@ -6787,8 +6840,11 @@ RULES:
 - Show actual numbers in the "note" field so user can verify
 - List specific discrepancies found in the discrepancies array`;
 
-            // Use standard Gemini 3 Pro API for verification
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent?key=${apiKey}`, {
+            // Use selected model for verification (fall back to gemini-2.5-flash for text-only)
+            const selectedModel = getSelectedModel();
+            const verifyModel = selectedModel.startsWith('agent:') ? 'gemini-2.5-flash' : selectedModel;
+
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${verifyModel}:generateContent?key=${apiKey}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -6807,7 +6863,7 @@ RULES:
                     status: response.status,
                     statusText: response.statusText,
                     error: errorData,
-                    model: 'gemini-3-pro-preview'
+                    model: verifyModel
                 });
                 throw new Error(`Verification API Error (${response.status}): ${errorMsg}`);
             }
