@@ -4883,7 +4883,7 @@ CRITICAL: Extract EVERY transaction. Calculate True Revenue by excluding non-ope
         correctionAttempts = 0;
 
         console.log('=== STAGE 1: OCR (Image → Markdown) ===');
-        updateUploadStatus('Stage 1: Extracting text from image...', false);
+        showUploadStatus('Stage 1: Extracting text from image...');
 
         // Stage 1: OCR - Convert image to markdown
         const markdownResult = await callGeminiStage1OCR(apiKey, model, file);
@@ -4891,7 +4891,7 @@ CRITICAL: Extract EVERY transaction. Calculate True Revenue by excluding non-ope
         console.log('Stage 1 output preview:', markdownResult.substring(0, 500));
 
         console.log('=== STAGE 2: Analysis (Markdown → JSON) ===');
-        updateUploadStatus('Stage 2: Analyzing transactions & True Revenue...', false);
+        showUploadStatus('Stage 2: Analyzing transactions & True Revenue...');
 
         // Stage 2: Analysis - Parse markdown and extract structured data
         const analysisResult = await callGeminiStage2Analysis(apiKey, model, markdownResult);
@@ -5116,7 +5116,7 @@ Return ONLY the corrected JSON object - no explanations.`;
 
     async function runStage3Verification(apiKey, model, analysisResult, markdownText) {
         console.log('=== STAGE 3: Verification ===');
-        updateUploadStatus('Stage 3: Verifying reconciliation...', false);
+        showUploadStatus('Stage 3: Verifying reconciliation...');
 
         const months = analysisResult.monthlySummary || [];
         if (months.length === 0) return analysisResult;
@@ -5146,7 +5146,7 @@ Return ONLY the corrected JSON object - no explanations.`;
         if (correctionAttempts < MAX_CORRECTIONS) {
             correctionAttempts++;
             console.log(`Reconciliation MISMATCH: $${discrepancy.toFixed(2)} - attempting correction (${correctionAttempts}/${MAX_CORRECTIONS})`);
-            updateUploadStatus(`Stage 3: Correcting discrepancy ($${Math.abs(discrepancy).toFixed(2)}) - attempt ${correctionAttempts}/${MAX_CORRECTIONS}...`, false);
+            showUploadStatus(`Stage 3: Correcting discrepancy ($${Math.abs(discrepancy).toFixed(2)}) - attempt ${correctionAttempts}/${MAX_CORRECTIONS}...`);
 
             try {
                 const correctionPrompt = getSelfCorrectionPrompt(discrepancy, markdownText, analysisResult);
