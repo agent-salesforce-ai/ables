@@ -3563,17 +3563,18 @@
                         <thead>
                             <tr>
                                 <th rowspan="2" style="vertical-align: bottom;">Month</th>
-                                <th colspan="3" class="col-group credits">Credits</th>
+                                <th colspan="4" class="col-group credits">Credits</th>
                                 <th colspan="3" class="col-group debits">Debits</th>
                                 <th colspan="4" class="col-group balances">Balances</th>
                                 <th colspan="2" class="col-group debits">Issues</th>
                             </tr>
                             <tr>
-                                <th>Total</th>
-                                <th>True</th>
+                                <th>Bank Total</th>
+                                <th>Calculated</th>
+                                <th style="color: var(--success); font-weight: 600;">True Rev</th>
                                 <th>#</th>
-                                <th>Total</th>
-                                <th>True</th>
+                                <th>Bank Total</th>
+                                <th>Calculated</th>
                                 <th>#</th>
                                 <th>Start</th>
                                 <th>End</th>
@@ -4710,8 +4711,337 @@ CRITICAL: Extract EVERY transaction. Return valid JSON only (no markdown).`;
         }
     }
 
-    // Single document extraction - more focused prompt for ONE statement
+    // ========================================
+    // TWO-STAGE PIPELINE
+    // Stage 1: OCR - Convert image to markdown (pure extraction)
+    // Stage 2: Analysis - Parse markdown, categorize, calculate True Revenue
+    // ========================================
+
+    // Stage 1: OCR Prompt - Create a "Digital Twin" of the bank statement
+    const STAGE1_OCR_PROMPT = `You are a specialized OCR engine for financial documents. Create a faithful text representation of this bank statement.
+
+**Instructions:**
+1. **Transcribe All Text:** Extract every piece of text visible, including headers, footers, account info.
+2. **Preserve Structure:**
+   - Use Markdown tables for transaction listings: | Date | Description | Amount | Balance |
+   - Preserve the exact order of transactions as they appear
+   - Do NOT merge, summarize, or skip any rows
+3. **Account Summary Section:** Copy all printed totals exactly as shown:
+   - Beginning Balance, Ending Balance
+   - Total Deposits, Total Withdrawals
+   - Number of Deposits, Number of Withdrawals
+   - Average Daily Balance, Minimum Balance
+4. **No Interpretation:** Do not calculate, reformat dates, or correct spelling. Pure extraction only.
+
+**Output Format:**
+Return ONLY Markdown text. No JSON. No introductory text. Start with the account information.
+
+Example output structure:
+\`\`\`
+## Account Information
+- Account Holder: BUSINESS NAME LLC
+- Bank: CHASE BANK
+- Account: ****1234
+- Statement Period: December 1 - December 31, 2025
+
+## Account Summary
+- Beginning Balance: $15,234.56
+- Ending Balance: $18,456.78
+- Total Deposits: $52,345.00 (25 items)
+- Total Withdrawals: $49,122.78 (87 items)
+- Average Daily Balance: $16,500.00
+- Minimum Balance: $8,234.00
+
+## Transaction Detail
+
+| Date | Description | Withdrawals | Deposits | Balance |
+|------|-------------|-------------|----------|---------|
+| 12/01 | Beginning Balance | | | 15,234.56 |
+| 12/01 | ACH CREDIT STRIPE | | 3,456.78 | 18,691.34 |
+| 12/01 | ACH DEBIT RENT PAYMENT | 5,000.00 | | 13,691.34 |
+| 12/02 | WIRE TRANSFER IN CLIENT ABC | | 8,500.00 | 22,191.34 |
+...continue for ALL transactions...
+\`\`\``;
+
+    // Stage 2: Analysis Prompt - Parse markdown and extract structured data
+    const STAGE2_ANALYSIS_PROMPT = `You are a Senior MCA Underwriter analyzing a digitized bank statement to determine True Revenue and risk profile.
+
+**Input:** Markdown transcription of a bank statement.
+
+**Core Objective:** Generate JSON with reconciled monthly summary and risk assessment. Distinguish "Total Deposits" (gross) from "True Revenue" (operational income).
+
+**True Revenue Logic - EXCLUDE these from True Revenue:**
+- Internal transfers (TRANSFER FROM SAVINGS, TRANSFER BETWEEN ACCOUNTS)
+- Loan proceeds (LOAN DEPOSIT, SBA LOAN, LINE OF CREDIT)
+- MCA/Lender funding (ONDECK, KABBAGE, CREDIBLY, BLUEVINE, FUNDBOX funding)
+- Tax refunds (IRS TREAS, TAX REFUND)
+- Reversed fees, owner injections, NSF reversals
+
+**True Revenue Logic - INCLUDE:**
+- Customer payments, merchant processor settlements (STRIPE, SQUARE, CLOVER, TOAST)
+- Wire transfers from clients, check deposits from customers
+- ACH credits from customers/vendors
+
+**Reconciliation (CRITICAL):**
+1. Extract bank's printed "Total Deposits" and "Total Withdrawals" from summary
+2. Sum the individual transactions you categorize
+3. Compare: If calculated_total != bank_printed_total, set reconciliation_status to "MISMATCH"
+
+**MCA Detection - Look for recurring daily/weekly ACH debits to:**
+LIBERTAS, YELLOWSTONE, CREDIBLY, ONDECK, KAPITUS, RAPID, FUNDBOX, BLUEVINE, FORWARD, FORA, CAN CAPITAL, MERCHANT CASH, DAILY ACH
+
+**Owner Draw Detection:**
+WIRE OUT, OWNER DRAW, DISTRIBUTION, SHAREHOLDER, PERSONAL TRANSFER
+
+**JSON Output (strict schema, no markdown wrapper):**
+{
+    "businessInfo": {
+        "name": "Business Name",
+        "bankName": "Bank Name",
+        "accountNumber": "****1234",
+        "statementPeriod": "Dec 2025"
+    },
+    "monthlySummary": [{
+        "month": "Dec 2025",
+        "bankTotals": {
+            "totalDeposits": 52345.00,
+            "totalWithdrawals": 49122.78,
+            "depositCount": 25,
+            "withdrawalCount": 87
+        },
+        "calculatedTotals": {
+            "totalCredits": 52345.00,
+            "totalDebits": 49122.78,
+            "trueRevenue": 48500.00,
+            "excludedDeposits": 3845.00
+        },
+        "reconciliationStatus": "MATCH",
+        "discrepancyAmount": 0,
+        "startBalance": 15234.56,
+        "endBalance": 18456.78,
+        "avgBalance": 16500.00,
+        "minBalance": 8234.00,
+        "nsfCount": 0,
+        "overdraftCount": 0,
+        "credits": [
+            {"date": "12/01", "description": "ACH CREDIT STRIPE", "amount": 3456.78, "isTrueRevenue": true, "category": "Merchant Processing"},
+            {"date": "12/02", "description": "TRANSFER FROM SAVINGS", "amount": 2000.00, "isTrueRevenue": false, "category": "Internal Transfer"}
+        ],
+        "debits": [
+            {"date": "12/01", "description": "ACH DEBIT RENT", "amount": 5000.00, "category": "Rent"},
+            {"date": "12/01", "description": "ACH DEBIT LIBERTAS FUNDING", "amount": 450.00, "category": "MCA Payment"}
+        ]
+    }],
+    "riskIndicators": {
+        "nsfCount": 0,
+        "overdraftCount": 0,
+        "negativeDays": 0,
+        "lowBalanceDays": 0,
+        "mcaFound": 1,
+        "achReturns": 0,
+        "ownerDrawRatio": 15,
+        "netMargin": 7
+    },
+    "mcaAnalysis": {
+        "positionsFound": [
+            {"lender": "Libertas", "dailyPayment": 450, "frequency": "daily", "estimatedBalance": 13500}
+        ],
+        "totalMonthlyPayments": 9900
+    },
+    "trueRevenueBreakdown": {
+        "merchantProcessing": 35000,
+        "wireTransfers": 8500,
+        "checkDeposits": 5000,
+        "excludedTransfers": 2000,
+        "excludedLoans": 1845
+    }
+}
+
+CRITICAL: Extract EVERY transaction. Calculate True Revenue by excluding non-operational deposits. Return valid JSON only.`;
+
+    // Single document extraction using two-stage pipeline
     async function callGeminiAPISingle(apiKey, file) {
+        const selectedModel = getSelectedModel();
+        // Don't use agent models for OCR - use standard Gemini
+        const model = selectedModel.startsWith('agent:') ? 'gemini-3-pro-preview' : selectedModel;
+
+        console.log('=== STAGE 1: OCR (Image → Markdown) ===');
+        updateUploadStatus('Stage 1: Extracting text from image...', false);
+
+        // Stage 1: OCR - Convert image to markdown
+        const markdownResult = await callGeminiStage1OCR(apiKey, model, file);
+        console.log('Stage 1 complete. Markdown length:', markdownResult.length);
+        console.log('Stage 1 output preview:', markdownResult.substring(0, 500));
+
+        console.log('=== STAGE 2: Analysis (Markdown → JSON) ===');
+        updateUploadStatus('Stage 2: Analyzing transactions...', false);
+
+        // Stage 2: Analysis - Parse markdown and extract structured data
+        const analysisResult = await callGeminiStage2Analysis(apiKey, model, markdownResult);
+        console.log('Stage 2 complete. Result:', analysisResult);
+
+        // Transform new schema to existing schema for compatibility
+        return transformToLegacySchema(analysisResult, markdownResult);
+    }
+
+    // Stage 1: OCR - Pure text extraction
+    async function callGeminiStage1OCR(apiKey, model, file) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 120000);
+
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                signal: controller.signal,
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [
+                            { text: STAGE1_OCR_PROMPT },
+                            { inline_data: { mime_type: file.mimeType, data: file.data } }
+                        ]
+                    }],
+                    generationConfig: {
+                        temperature: 0.0,  // Zero temperature for consistent OCR
+                        maxOutputTokens: 32768  // Large output for full transaction list
+                    }
+                })
+            });
+
+            clearTimeout(timeoutId);
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(`Stage 1 OCR Error (${response.status}): ${errorData.error?.message || response.statusText}`);
+            }
+
+            const data = await response.json();
+
+            if (data.promptFeedback?.blockReason) {
+                throw new Error(`Content blocked in Stage 1: ${data.promptFeedback.blockReason}`);
+            }
+
+            const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!text) {
+                const finishReason = data.candidates?.[0]?.finishReason;
+                throw new Error(`Stage 1 returned no text. Reason: ${finishReason || 'unknown'}`);
+            }
+
+            return text;
+        } catch (error) {
+            clearTimeout(timeoutId);
+            if (error.name === 'AbortError') {
+                throw new Error('Stage 1 OCR timed out after 2 minutes');
+            }
+            throw error;
+        }
+    }
+
+    // Stage 2: Analysis - Parse markdown and extract structured JSON
+    async function callGeminiStage2Analysis(apiKey, model, markdownText) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 120000);
+
+        const fullPrompt = STAGE2_ANALYSIS_PROMPT + '\n\n--- BANK STATEMENT TEXT ---\n\n' + markdownText;
+
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                signal: controller.signal,
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{ text: fullPrompt }]
+                    }],
+                    generationConfig: {
+                        temperature: 0.1,  // Low temperature for consistent analysis
+                        maxOutputTokens: 32768
+                    }
+                })
+            });
+
+            clearTimeout(timeoutId);
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(`Stage 2 Analysis Error (${response.status}): ${errorData.error?.message || response.statusText}`);
+            }
+
+            const data = await response.json();
+
+            if (data.promptFeedback?.blockReason) {
+                throw new Error(`Content blocked in Stage 2: ${data.promptFeedback.blockReason}`);
+            }
+
+            const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!text) {
+                const finishReason = data.candidates?.[0]?.finishReason;
+                throw new Error(`Stage 2 returned no text. Reason: ${finishReason || 'unknown'}`);
+            }
+
+            // Parse JSON from response
+            let jsonStr = text;
+            if (text.includes('```json')) {
+                jsonStr = text.split('```json')[1].split('```')[0];
+            } else if (text.includes('```')) {
+                jsonStr = text.split('```')[1].split('```')[0];
+            }
+
+            return JSON.parse(jsonStr.trim());
+        } catch (error) {
+            clearTimeout(timeoutId);
+            if (error.name === 'AbortError') {
+                throw new Error('Stage 2 Analysis timed out after 2 minutes');
+            }
+            throw error;
+        }
+    }
+
+    // Transform new two-stage schema to legacy schema for UI compatibility
+    function transformToLegacySchema(analysisResult, markdownText) {
+        // Store the raw markdown for debugging/display
+        analysisResult._rawMarkdown = markdownText;
+
+        // Transform monthlySummary to legacy format
+        if (analysisResult.monthlySummary) {
+            for (const month of analysisResult.monthlySummary) {
+                // Map new bankTotals/calculatedTotals to legacy flat structure
+                if (month.bankTotals) {
+                    month.totalCredits = month.bankTotals.totalDeposits || month.totalCredits || 0;
+                    month.totalDebits = month.bankTotals.totalWithdrawals || month.totalDebits || 0;
+                    month.creditCount = month.bankTotals.depositCount || month.creditCount || 0;
+                    month.debitCount = month.bankTotals.withdrawalCount || month.debitCount || 0;
+                }
+
+                if (month.calculatedTotals) {
+                    month.trueCredits = month.calculatedTotals.totalCredits || 0;
+                    month.trueDebits = month.calculatedTotals.totalDebits || 0;
+                    month.trueRevenue = month.calculatedTotals.trueRevenue || 0;
+                    month.excludedDeposits = month.calculatedTotals.excludedDeposits || 0;
+                }
+
+                // Calculate trueCredits/trueDebits from transaction arrays if not provided
+                if (!month.trueCredits || month.trueCredits === 0) {
+                    month.trueCredits = (month.credits || []).reduce((sum, t) => sum + (t.amount || 0), 0);
+                }
+                if (!month.trueDebits || month.trueDebits === 0) {
+                    month.trueDebits = (month.debits || []).reduce((sum, t) => sum + (t.amount || 0), 0);
+                }
+
+                // Calculate trueRevenue if not provided (sum of credits where isTrueRevenue === true)
+                if (!month.trueRevenue || month.trueRevenue === 0) {
+                    month.trueRevenue = (month.credits || [])
+                        .filter(t => t.isTrueRevenue !== false)
+                        .reduce((sum, t) => sum + (t.amount || 0), 0);
+                }
+            }
+        }
+
+        return analysisResult;
+    }
+
+    // Legacy single-stage function (kept for fallback)
+    async function callGeminiAPISingleLegacy(apiKey, file) {
         const prompt = `Extract ALL data from this bank statement image.
 
 ## STEP 1: SUMMARY SECTION (from Account Summary box)
@@ -5338,14 +5668,26 @@ CRITICAL: Include EVERY transaction from the statement in credits/debits arrays.
             const nsfCount = row.nsfCount || 0;
             const odCount = row.overdraftCount || 0;
 
+            // Calculate true revenue from credits marked as isTrueRevenue
+            const trueRevenue = row.trueRevenue || (row.credits || [])
+                .filter(t => t.isTrueRevenue !== false)
+                .reduce((sum, t) => sum + (t.amount || 0), 0);
+
+            // Reconciliation status indicator
+            const calcCredits = row.trueCredits || 0;
+            const bankCredits = row.totalCredits || 0;
+            const creditDiff = Math.abs(calcCredits - bankCredits);
+            const creditMatch = creditDiff < 1 ? '✓' : creditDiff < bankCredits * 0.01 ? '~' : '⚠';
+
             return `
             <tr>
                 <td>${row.month || '--'}</td>
-                <td class="text-success ${hasCredits ? 'clickable' : ''}" ${hasCredits ? `onclick="showTransactions(${idx}, 'credits')"` : ''}>${formatCurrency(row.totalCredits || 0)}${creditTrend}</td>
-                <td class="text-success ${hasCredits ? 'clickable' : ''}" ${hasCredits ? `onclick="showTransactions(${idx}, 'credits')"` : ''}>${formatCurrency(row.trueCredits || 0)}</td>
+                <td class="text-success ${hasCredits ? 'clickable' : ''}" ${hasCredits ? `onclick="showTransactions(${idx}, 'credits')"` : ''} title="Bank's printed total">${formatCurrency(row.totalCredits || 0)}${creditTrend}</td>
+                <td class="text-success ${hasCredits ? 'clickable' : ''}" ${hasCredits ? `onclick="showTransactions(${idx}, 'credits')"` : ''} title="Sum of extracted transactions ${creditMatch}">${formatCurrency(row.trueCredits || 0)}</td>
+                <td class="text-success" style="font-weight: 600;" title="True operational revenue (excludes transfers, loans)">${formatCurrency(trueRevenue)}</td>
                 <td class="${hasCredits ? 'clickable' : ''}" ${hasCredits ? `onclick="showTransactions(${idx}, 'credits')"` : ''}>${row.creditCount || 0}</td>
-                <td class="text-danger ${hasDebits ? 'clickable' : ''}" ${hasDebits ? `onclick="showTransactions(${idx}, 'debits')"` : ''}>${formatCurrency(row.totalDebits || 0)}${debitTrend}</td>
-                <td class="text-danger ${hasDebits ? 'clickable' : ''}" ${hasDebits ? `onclick="showTransactions(${idx}, 'debits')"` : ''}>${formatCurrency(row.trueDebits || 0)}</td>
+                <td class="text-danger ${hasDebits ? 'clickable' : ''}" ${hasDebits ? `onclick="showTransactions(${idx}, 'debits')"` : ''} title="Bank's printed total">${formatCurrency(row.totalDebits || 0)}${debitTrend}</td>
+                <td class="text-danger ${hasDebits ? 'clickable' : ''}" ${hasDebits ? `onclick="showTransactions(${idx}, 'debits')"` : ''} title="Sum of extracted transactions">${formatCurrency(row.trueDebits || 0)}</td>
                 <td class="${hasDebits ? 'clickable' : ''}" ${hasDebits ? `onclick="showTransactions(${idx}, 'debits')"` : ''}>${row.debitCount || 0}</td>
                 <td>${formatCurrency(row.startBalance || 0)}</td>
                 <td>${formatCurrency(row.endBalance || 0)}</td>
@@ -5357,17 +5699,25 @@ CRITICAL: Include EVERY transaction from the statement in credits/debits arrays.
         `}).join('');
 
         // Calculate totals
-        const totals = data.monthlySummary.reduce((acc, row) => ({
-            totalCredits: acc.totalCredits + (row.totalCredits || 0),
-            trueCredits: acc.trueCredits + (row.trueCredits || 0),
-            creditCount: acc.creditCount + (row.creditCount || 0),
-            totalDebits: acc.totalDebits + (row.totalDebits || 0),
-            trueDebits: acc.trueDebits + (row.trueDebits || 0),
-            debitCount: acc.debitCount + (row.debitCount || 0),
-            avgBalanceSum: acc.avgBalanceSum + (row.avgBalance || 0),
-            nsfCount: acc.nsfCount + (row.nsfCount || 0),
-            overdraftCount: acc.overdraftCount + (row.overdraftCount || 0)
-        }), { totalCredits: 0, trueCredits: 0, creditCount: 0, totalDebits: 0, trueDebits: 0, debitCount: 0, avgBalanceSum: 0, nsfCount: 0, overdraftCount: 0 });
+        const totals = data.monthlySummary.reduce((acc, row) => {
+            // Calculate true revenue for this month
+            const monthTrueRevenue = row.trueRevenue || (row.credits || [])
+                .filter(t => t.isTrueRevenue !== false)
+                .reduce((sum, t) => sum + (t.amount || 0), 0);
+
+            return {
+                totalCredits: acc.totalCredits + (row.totalCredits || 0),
+                trueCredits: acc.trueCredits + (row.trueCredits || 0),
+                trueRevenue: acc.trueRevenue + monthTrueRevenue,
+                creditCount: acc.creditCount + (row.creditCount || 0),
+                totalDebits: acc.totalDebits + (row.totalDebits || 0),
+                trueDebits: acc.trueDebits + (row.trueDebits || 0),
+                debitCount: acc.debitCount + (row.debitCount || 0),
+                avgBalanceSum: acc.avgBalanceSum + (row.avgBalance || 0),
+                nsfCount: acc.nsfCount + (row.nsfCount || 0),
+                overdraftCount: acc.overdraftCount + (row.overdraftCount || 0)
+            };
+        }, { totalCredits: 0, trueCredits: 0, trueRevenue: 0, creditCount: 0, totalDebits: 0, trueDebits: 0, debitCount: 0, avgBalanceSum: 0, nsfCount: 0, overdraftCount: 0 });
 
         const first = data.monthlySummary[0] || {};
         const last = data.monthlySummary[data.monthlySummary.length - 1] || {};
@@ -5378,6 +5728,7 @@ CRITICAL: Include EVERY transaction from the statement in credits/debits arrays.
         const averages = {
             totalCredits: numMonths > 0 ? Math.round(totals.totalCredits / numMonths) : 0,
             trueCredits: numMonths > 0 ? Math.round(totals.trueCredits / numMonths) : 0,
+            trueRevenue: numMonths > 0 ? Math.round(totals.trueRevenue / numMonths) : 0,
             creditCount: numMonths > 0 ? Math.round(totals.creditCount / numMonths) : 0,
             totalDebits: numMonths > 0 ? Math.round(totals.totalDebits / numMonths) : 0,
             trueDebits: numMonths > 0 ? Math.round(totals.trueDebits / numMonths) : 0,
@@ -5389,6 +5740,7 @@ CRITICAL: Include EVERY transaction from the statement in credits/debits arrays.
                 <td>TOTALS</td>
                 <td>${formatCurrency(totals.totalCredits)}</td>
                 <td>${formatCurrency(totals.trueCredits)}</td>
+                <td class="text-success" style="font-weight: 600;">${formatCurrency(totals.trueRevenue)}</td>
                 <td>${totals.creditCount}</td>
                 <td>${formatCurrency(totals.totalDebits)}</td>
                 <td>${formatCurrency(totals.trueDebits)}</td>
@@ -5404,6 +5756,7 @@ CRITICAL: Include EVERY transaction from the statement in credits/debits arrays.
                 <td>AVERAGES</td>
                 <td>${formatCurrency(averages.totalCredits)}</td>
                 <td>${formatCurrency(averages.trueCredits)}</td>
+                <td class="text-success" style="font-weight: 600;">${formatCurrency(averages.trueRevenue)}</td>
                 <td>${averages.creditCount}</td>
                 <td>${formatCurrency(averages.totalDebits)}</td>
                 <td>${formatCurrency(averages.trueDebits)}</td>
@@ -5431,6 +5784,41 @@ CRITICAL: Include EVERY transaction from the statement in credits/debits arrays.
         const ownerDrawRatio = typeof risk.ownerDrawRatio === 'number' ? risk.ownerDrawRatio : 0;
         const netMargin = typeof risk.netMargin === 'number' ? risk.netMargin : 0;
 
+        // Calculate reconciliation status from monthly data
+        let reconciliationStatus = 'MATCH';
+        let reconciliationPct = 100;
+        if (data.monthlySummary && data.monthlySummary.length > 0) {
+            let totalBankCredits = 0;
+            let totalCalcCredits = 0;
+            for (const month of data.monthlySummary) {
+                totalBankCredits += month.totalCredits || 0;
+                totalCalcCredits += month.trueCredits || 0;
+            }
+            if (totalBankCredits > 0) {
+                reconciliationPct = Math.round((totalCalcCredits / totalBankCredits) * 100);
+                if (reconciliationPct >= 99) reconciliationStatus = 'MATCH';
+                else if (reconciliationPct >= 95) reconciliationStatus = 'CLOSE';
+                else reconciliationStatus = 'MISMATCH';
+            }
+        }
+
+        // Calculate True Revenue ratio
+        let trueRevRatio = 100;
+        if (data.monthlySummary && data.monthlySummary.length > 0) {
+            let totalCredits = 0;
+            let totalTrueRev = 0;
+            for (const month of data.monthlySummary) {
+                totalCredits += month.trueCredits || 0;
+                const monthTrueRev = month.trueRevenue || (month.credits || [])
+                    .filter(t => t.isTrueRevenue !== false)
+                    .reduce((sum, t) => sum + (t.amount || 0), 0);
+                totalTrueRev += monthTrueRev;
+            }
+            if (totalCredits > 0) {
+                trueRevRatio = Math.round((totalTrueRev / totalCredits) * 100);
+            }
+        }
+
         const indicators = [
             { label: 'NSF Items', value: nsfCount, good: nsfCount === 0 },
             { label: 'Overdrafts', value: overdraftCount, good: overdraftCount === 0 },
@@ -5439,7 +5827,9 @@ CRITICAL: Include EVERY transaction from the statement in credits/debits arrays.
             { label: 'MCA Found', value: mcaFound, good: mcaFound === 0 },
             { label: 'ACH Returns', value: achReturns, good: achReturns === 0 },
             { label: 'Owner Draw', value: ownerDrawRatio + '%', good: ownerDrawRatio < 50, neutral: true },
-            { label: 'Net Margin', value: netMargin + '%', good: netMargin > 0, warn: netMargin < 0 }
+            { label: 'Net Margin', value: netMargin + '%', good: netMargin > 0, warn: netMargin < 0 },
+            { label: 'Reconciled', value: reconciliationPct + '%', good: reconciliationStatus === 'MATCH', warn: reconciliationStatus === 'CLOSE' },
+            { label: 'True Rev %', value: trueRevRatio + '%', good: trueRevRatio >= 90, warn: trueRevRatio >= 70 && trueRevRatio < 90, neutral: trueRevRatio < 70 }
         ];
 
         document.getElementById('riskStrip').innerHTML = indicators.map(ind => {
