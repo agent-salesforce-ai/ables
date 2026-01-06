@@ -466,21 +466,21 @@
             100% { transform: translateX(350%); }
         }
 
-        /* Snood Game Styles */
-        .snood-game-wrapper {
+        /* GTA Game Styles */
+        .gta-game-wrapper {
             margin-top: 24px;
             display: flex;
             justify-content: center;
         }
 
-        .snood-container {
+        .gta-container {
             background: #1a1a1a;
             border-radius: 12px;
             padding: 16px;
             border: 1px solid #333;
         }
 
-        .snood-label {
+        .gta-label {
             font-size: 12px;
             color: #888;
             margin-bottom: 12px;
@@ -489,15 +489,15 @@
             text-align: center;
         }
 
-        #snoodCanvas {
-            background: linear-gradient(180deg, #1e1e2e 0%, #0d0d15 100%);
+        #gtaCanvas {
+            background: #2d4a2d;
             border-radius: 8px;
-            cursor: crosshair;
             display: block;
             margin: 0 auto;
+            image-rendering: pixelated;
         }
 
-        .snood-controls {
+        .gta-controls {
             display: flex;
             justify-content: space-between;
             margin-top: 12px;
@@ -505,27 +505,32 @@
             color: #666;
         }
 
-        #snoodScore {
+        .gta-stats {
+            display: flex;
+            gap: 12px;
+        }
+
+        #gtaScore, #gtaWanted {
             color: var(--accent);
             font-weight: 600;
         }
 
-        body.dark-theme .snood-container {
+        #gtaWanted {
+            color: #ef4444;
+        }
+
+        body.dark-theme .gta-container {
             background: #1a1a1a;
             border-color: #333;
         }
 
-        body:not(.dark-theme) .snood-container {
+        body:not(.dark-theme) .gta-container {
             background: #f5f5f5;
             border-color: #ddd;
         }
 
-        body:not(.dark-theme) #snoodCanvas {
-            background: linear-gradient(180deg, #e8e8f0 0%, #d0d0e0 100%);
-        }
-
-        body:not(.dark-theme) .snood-label,
-        body:not(.dark-theme) .snood-controls {
+        body:not(.dark-theme) .gta-label,
+        body:not(.dark-theme) .gta-controls {
             color: #666;
         }
 
@@ -535,7 +540,7 @@
             align-items: center;
             gap: 6px;
             padding: 8px 14px;
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             color: white;
             border: none;
             border-radius: 8px;
@@ -543,142 +548,164 @@
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .game-btn:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
         }
 
-        /* Snood Modal */
-        .snood-modal-overlay {
+        /* GTA Modal */
+        .gta-modal-overlay {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.85);
             z-index: 2000;
             backdrop-filter: blur(4px);
         }
 
-        .snood-modal-overlay.active {
+        .gta-modal-overlay.active {
             display: block;
         }
 
-        .snood-modal {
+        .gta-modal {
             display: none;
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
             border-radius: 16px;
             padding: 0;
             z-index: 2001;
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5), 0 0 40px rgba(139, 92, 246, 0.3);
-            border: 1px solid #333;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.7), 0 0 60px rgba(239, 68, 68, 0.3);
+            border: 2px solid #ef4444;
             overflow: hidden;
         }
 
-        .snood-modal.active {
+        .gta-modal.active {
             display: block;
-            animation: modalPop 0.3s ease-out;
+            animation: gtaModalPop 0.3s ease-out;
         }
 
-        @keyframes modalPop {
+        @keyframes gtaModalPop {
             from { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
             to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
         }
 
-        .snood-modal-header {
+        .gta-modal-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 16px 20px;
-            background: linear-gradient(90deg, #7c3aed 0%, #8b5cf6 100%);
+            background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
             color: white;
         }
 
-        .snood-modal-header h3 {
+        .gta-modal-header h3 {
             margin: 0;
-            font-size: 18px;
-            font-weight: 600;
+            font-size: 20px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 0 #000;
         }
 
-        .snood-modal-stats {
+        .gta-modal-stats {
             display: flex;
             gap: 16px;
             font-size: 14px;
             font-weight: 600;
         }
 
-        .snood-modal-stats span {
-            background: rgba(255,255,255,0.2);
-            padding: 4px 12px;
-            border-radius: 20px;
+        .gta-modal-stats span {
+            background: rgba(0,0,0,0.4);
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-family: monospace;
         }
 
-        .snood-modal-close {
-            background: rgba(255,255,255,0.2);
+        .gta-modal-close {
+            background: rgba(0,0,0,0.4);
             border: none;
             color: white;
             width: 32px;
             height: 32px;
-            border-radius: 50%;
+            border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
             transition: all 0.2s;
         }
 
-        .snood-modal-close:hover {
-            background: rgba(255,255,255,0.3);
-            transform: rotate(90deg);
+        .gta-modal-close:hover {
+            background: rgba(0,0,0,0.6);
         }
 
-        .snood-modal-body {
+        .gta-modal-body {
             padding: 20px;
             display: flex;
             justify-content: center;
+            background: #0a0a0a;
         }
 
-        #snoodModalCanvas {
-            background: linear-gradient(180deg, #0f0f1a 0%, #1a1a2e 100%);
-            border-radius: 12px;
-            cursor: crosshair;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+        #gtaModalCanvas {
+            background: #2d4a2d;
+            border-radius: 4px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.3);
+            image-rendering: pixelated;
         }
 
-        .snood-modal-footer {
+        .gta-modal-footer {
             padding: 16px 20px;
-            background: rgba(0,0,0,0.3);
+            background: #1a1a1a;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-top: 1px solid #333;
         }
 
-        .snood-modal-controls {
+        .gta-modal-controls {
             display: flex;
-            gap: 16px;
+            gap: 20px;
             font-size: 12px;
             color: #888;
+            font-family: monospace;
         }
 
-        .snood-restart-btn {
-            background: linear-gradient(135deg, #c9a227 0%, #d4af37 100%);
-            color: #000;
+        .gta-modal-controls span {
+            background: #222;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .gta-restart-btn {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 600;
+            padding: 10px 24px;
+            border-radius: 4px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .snood-restart-btn:hover {
+        .gta-restart-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(201, 162, 39, 0.4);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
+        }
+
+        .wanted-stars {
+            color: #fbbf24;
+            font-size: 16px;
+            letter-spacing: 2px;
         }
 
         /* Report Container (hidden until analysis complete) */
@@ -3257,12 +3284,13 @@
             <div class="header-info" id="reportDate">
                 <!-- Date will be filled dynamically -->
             </div>
-            <button class="game-btn" onclick="toggleSnoodModal()">
+            <button class="game-btn" onclick="toggleGTAModal()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"/>
-                    <circle cx="12" cy="12" r="3"/>
+                    <rect x="3" y="8" width="18" height="10" rx="2"/>
+                    <circle cx="7" cy="15" r="2"/>
+                    <circle cx="17" cy="15" r="2"/>
                 </svg>
-                Play Snood
+                Play GTA
             </button>
             <button class="settings-btn" onclick="openSettings()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -3348,27 +3376,28 @@
     </div>
 </div>
 
-<!-- Snood Game Modal -->
-<div class="snood-modal-overlay" id="snoodModalOverlay" onclick="closeSnoodModal()"></div>
-<div class="snood-modal" id="snoodModal">
-    <div class="snood-modal-header">
-        <h3>🎮 Snood</h3>
-        <div class="snood-modal-stats">
-            <span id="snoodModalScore">Score: 0</span>
-            <span id="snoodModalLevel">Level: 1</span>
+<!-- GTA Game Modal -->
+<div class="gta-modal-overlay" id="gtaModalOverlay" onclick="closeGTAModal()"></div>
+<div class="gta-modal" id="gtaModal">
+    <div class="gta-modal-header">
+        <h3>Grand Theft Auto</h3>
+        <div class="gta-modal-stats">
+            <span id="gtaModalScore">$0</span>
+            <span class="wanted-stars" id="gtaModalWanted"></span>
         </div>
-        <button class="snood-modal-close" onclick="closeSnoodModal()">✕</button>
+        <button class="gta-modal-close" onclick="closeGTAModal()">✕</button>
     </div>
-    <div class="snood-modal-body">
-        <canvas id="snoodModalCanvas" width="400" height="500"></canvas>
+    <div class="gta-modal-body">
+        <canvas id="gtaModalCanvas" width="600" height="450"></canvas>
     </div>
-    <div class="snood-modal-footer">
-        <div class="snood-modal-controls">
-            <span>🎯 Aim with mouse</span>
-            <span>🖱️ Click to shoot</span>
-            <span>💥 Match 3+ colors</span>
+    <div class="gta-modal-footer">
+        <div class="gta-modal-controls">
+            <span>WASD / Arrows: Drive</span>
+            <span>Space: Brake</span>
+            <span>E: Enter/Exit Car</span>
+            <span>F: Shoot</span>
         </div>
-        <button class="snood-restart-btn" onclick="restartSnoodGame()">🔄 New Game</button>
+        <button class="gta-restart-btn" onclick="restartGTAGame()">New Game</button>
     </div>
 </div>
 
@@ -3418,14 +3447,17 @@
                 <span id="uploadStatusText">Analyzing statements...</span>
             </div>
         </div>
-        <!-- Snood Game Container (shows during analysis) -->
-        <div class="snood-game-wrapper" id="snoodGameWrapper" style="display: none;">
-            <div class="snood-container">
-                <div class="snood-label">Play while you wait!</div>
-                <canvas id="snoodCanvas" width="280" height="320"></canvas>
-                <div class="snood-controls">
-                    <span>Move mouse to aim, click to shoot</span>
-                    <span id="snoodScore">Score: 0</span>
+        <!-- GTA Game Container (shows during analysis) -->
+        <div class="gta-game-wrapper" id="gtaGameWrapper" style="display: none;">
+            <div class="gta-container">
+                <div class="gta-label">Play while you wait!</div>
+                <canvas id="gtaCanvas" width="320" height="240"></canvas>
+                <div class="gta-controls">
+                    <span>WASD to drive, Space to brake</span>
+                    <div class="gta-stats">
+                        <span id="gtaScore">$0</span>
+                        <span id="gtaWanted"></span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -4357,7 +4389,7 @@
         const uploadStatus = document.getElementById('uploadStatus');
         const uploadStatusText = document.getElementById('uploadStatusText');
         const spinner = uploadStatus.querySelector('.upload-spinner');
-        const snoodWrapper = document.getElementById('snoodGameWrapper');
+        const gtaWrapper = document.getElementById('gtaGameWrapper');
 
         uploadStatus.style.display = 'flex';
         uploadStatusText.textContent = message;
@@ -4366,28 +4398,28 @@
             spinner.style.display = 'none';
             uploadStatusText.style.color = 'var(--danger)';
             // Hide game on error
-            if (snoodWrapper) {
-                snoodWrapper.style.display = 'none';
-                stopSnoodGame();
+            if (gtaWrapper) {
+                gtaWrapper.style.display = 'none';
+                stopGTAGame();
             }
         } else {
             spinner.style.display = 'block';
             uploadStatusText.style.color = 'var(--accent)';
             // Show and start the game
-            if (snoodWrapper && snoodWrapper.style.display === 'none') {
-                snoodWrapper.style.display = 'flex';
-                initSnoodGame();
+            if (gtaWrapper && gtaWrapper.style.display === 'none') {
+                gtaWrapper.style.display = 'flex';
+                initGTAGame();
             }
         }
     }
 
     function hideUploadStatus() {
         const uploadStatus = document.getElementById('uploadStatus');
-        const snoodWrapper = document.getElementById('snoodGameWrapper');
+        const gtaWrapper = document.getElementById('gtaGameWrapper');
         uploadStatus.style.display = 'none';
-        if (snoodWrapper) {
-            snoodWrapper.style.display = 'none';
-            stopSnoodGame();
+        if (gtaWrapper) {
+            gtaWrapper.style.display = 'none';
+            stopGTAGame();
         }
     }
 
@@ -6126,299 +6158,619 @@ CRITICAL RULES:
     }
 
     // ============================================
-    // SNOOD GAME ENGINE (Enhanced)
+    // GTA 1 STYLE GAME ENGINE
     // ============================================
-    let snoodGame = null;
-    let snoodModalGame = null;
+    let gtaGame = null;
+    let gtaModalGame = null;
 
-    function createSnoodGame(canvasId, scoreId, levelId = null, isModal = false) {
+    function createGTAGame(canvasId, scoreId, wantedId, isModal = false) {
         const canvas = document.getElementById(canvasId);
         if (!canvas) return null;
         const ctx = canvas.getContext('2d');
         const W = canvas.width, H = canvas.height;
-        const RADIUS = isModal ? 18 : 14;
-        const COLORS = ['#c9a227', '#ef4444', '#22c55e', '#3b82f6', '#a855f7', '#ec4899', '#06b6d4', '#f97316'];
+        const TILE = isModal ? 20 : 12;
 
-        let bubbles = [];
-        let shooter = { x: W / 2, y: H - 30, angle: -Math.PI / 2, color: COLORS[0], nextColor: COLORS[1] };
-        let projectile = null;
-        let score = 0;
-        let level = 1;
-        let combo = 0;
-        let gameLoop = null;
+        // Game state
+        let player = { x: W/2, y: H/2, angle: 0, speed: 0, inCar: true, health: 100 };
+        let cars = [];
+        let cops = [];
+        let civilians = [];
+        let bullets = [];
         let particles = [];
+        let buildings = [];
+        let roads = [];
+        let cash = 0;
+        let wanted = 0;
+        let gameLoop = null;
+        let keys = {};
+        let lastShot = 0;
+        let messages = [];
 
-        function initBubbles() {
-            bubbles = [];
-            const rows = isModal ? 6 + Math.floor(level / 2) : 5;
-            const colCount = isModal ? Math.floor((W - RADIUS) / (RADIUS * 2)) : 10;
-            for (let row = 0; row < rows; row++) {
-                const offset = (row % 2) * RADIUS;
-                const cols = row % 2 === 0 ? colCount : colCount - 1;
-                for (let col = 0; col < cols; col++) {
-                    bubbles.push({
-                        x: offset + col * RADIUS * 2 + RADIUS,
-                        y: row * RADIUS * 1.7 + RADIUS + 10,
-                        color: COLORS[Math.floor(Math.random() * (Math.min(4 + level, COLORS.length)))],
-                        alive: true
-                    });
+        // Colors
+        const ROAD_COLOR = '#3a3a3a';
+        const SIDEWALK_COLOR = '#6b6b6b';
+        const GRASS_COLOR = '#2d5a2d';
+        const BUILDING_COLORS = ['#4a4a6a', '#5a4a4a', '#4a5a4a', '#6a5a4a', '#5a5a5a'];
+        const CAR_COLORS = ['#ef4444', '#3b82f6', '#22c55e', '#f59e0b', '#8b5cf6', '#ec4899', '#ffffff', '#1a1a1a'];
+
+        function init() {
+            // Generate city grid
+            buildings = [];
+            roads = [];
+
+            const blockSize = isModal ? 120 : 80;
+            const roadWidth = isModal ? 30 : 20;
+
+            // Create road grid
+            for (let x = roadWidth; x < W; x += blockSize) {
+                roads.push({ x: x - roadWidth/2, y: 0, w: roadWidth, h: H, vertical: true });
+            }
+            for (let y = roadWidth; y < H; y += blockSize) {
+                roads.push({ x: 0, y: y - roadWidth/2, w: W, h: roadWidth, vertical: false });
+            }
+
+            // Create buildings in blocks
+            for (let bx = roadWidth; bx < W - blockSize/2; bx += blockSize) {
+                for (let by = roadWidth; by < H - blockSize/2; by += blockSize) {
+                    const bw = blockSize - roadWidth - 10;
+                    const bh = blockSize - roadWidth - 10;
+                    if (Math.random() > 0.2) {
+                        buildings.push({
+                            x: bx + 5,
+                            y: by + 5,
+                            w: bw,
+                            h: bh,
+                            color: BUILDING_COLORS[Math.floor(Math.random() * BUILDING_COLORS.length)],
+                            windows: Math.random() > 0.3
+                        });
+                    }
                 }
             }
+
+            // Spawn player car on a road
+            player = { x: W/2, y: H/2, angle: 0, speed: 0, inCar: true, health: 100, carColor: '#ef4444' };
+
+            // Spawn other cars
+            cars = [];
+            for (let i = 0; i < (isModal ? 8 : 4); i++) {
+                spawnCar();
+            }
+
+            // Spawn civilians
+            civilians = [];
+            for (let i = 0; i < (isModal ? 12 : 6); i++) {
+                spawnCivilian();
+            }
+
+            cops = [];
+            bullets = [];
+            particles = [];
+            messages = [];
+            cash = 0;
+            wanted = 0;
+            updateUI();
         }
 
-        function createParticle(x, y, color) {
-            for (let i = 0; i < 8; i++) {
+        function spawnCar() {
+            const road = roads[Math.floor(Math.random() * roads.length)];
+            cars.push({
+                x: road.vertical ? road.x + road.w/2 : Math.random() * W,
+                y: road.vertical ? Math.random() * H : road.y + road.h/2,
+                angle: road.vertical ? (Math.random() > 0.5 ? 0 : Math.PI) : (Math.random() > 0.5 ? Math.PI/2 : -Math.PI/2),
+                speed: 1 + Math.random() * 2,
+                color: CAR_COLORS[Math.floor(Math.random() * CAR_COLORS.length)],
+                ai: true
+            });
+        }
+
+        function spawnCivilian() {
+            civilians.push({
+                x: Math.random() * W,
+                y: Math.random() * H,
+                angle: Math.random() * Math.PI * 2,
+                speed: 0.5 + Math.random() * 0.5,
+                color: `hsl(${Math.random()*360}, 60%, 50%)`,
+                panic: false
+            });
+        }
+
+        function spawnCop() {
+            const edge = Math.floor(Math.random() * 4);
+            let x, y, angle;
+            if (edge === 0) { x = 0; y = Math.random() * H; angle = 0; }
+            else if (edge === 1) { x = W; y = Math.random() * H; angle = Math.PI; }
+            else if (edge === 2) { x = Math.random() * W; y = 0; angle = Math.PI/2; }
+            else { x = Math.random() * W; y = H; angle = -Math.PI/2; }
+
+            cops.push({
+                x, y, angle,
+                speed: 3,
+                chasing: true
+            });
+        }
+
+        function createExplosion(x, y) {
+            for (let i = 0; i < 20; i++) {
                 particles.push({
-                    x, y, color,
-                    vx: (Math.random() - 0.5) * 8,
-                    vy: (Math.random() - 0.5) * 8,
-                    life: 30
+                    x, y,
+                    vx: (Math.random() - 0.5) * 10,
+                    vy: (Math.random() - 0.5) * 10,
+                    color: Math.random() > 0.5 ? '#ff6600' : '#ffcc00',
+                    life: 30 + Math.random() * 20,
+                    size: 3 + Math.random() * 4
                 });
             }
         }
 
-        function drawBubble(x, y, color, scale = 1) {
-            const r = (RADIUS - 1) * scale;
+        function showMessage(text) {
+            messages.push({ text, life: 120 });
+        }
+
+        function drawCar(x, y, angle, color, isPlayer = false) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angle + Math.PI/2);
+
+            const carW = isModal ? 14 : 8;
+            const carH = isModal ? 24 : 14;
+
+            // Shadow
+            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            ctx.fillRect(-carW/2 + 2, -carH/2 + 2, carW, carH);
+
+            // Car body
+            ctx.fillStyle = color;
+            ctx.fillRect(-carW/2, -carH/2, carW, carH);
+
+            // Windshield
+            ctx.fillStyle = '#87ceeb';
+            ctx.fillRect(-carW/2 + 2, -carH/2 + 2, carW - 4, carH/3);
+
+            // Rear window
+            ctx.fillRect(-carW/2 + 2, carH/2 - carH/4, carW - 4, carH/5);
+
+            // Headlights
+            ctx.fillStyle = '#ffff00';
+            ctx.fillRect(-carW/2, -carH/2, 2, 3);
+            ctx.fillRect(carW/2 - 2, -carH/2, 2, 3);
+
+            // Taillights
+            ctx.fillStyle = '#ff0000';
+            ctx.fillRect(-carW/2, carH/2 - 3, 2, 3);
+            ctx.fillRect(carW/2 - 2, carH/2 - 3, 2, 3);
+
+            ctx.restore();
+        }
+
+        function drawCopCar(x, y, angle) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angle + Math.PI/2);
+
+            const carW = isModal ? 14 : 8;
+            const carH = isModal ? 24 : 14;
+
+            // Car body (black and white)
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(-carW/2, -carH/2, carW, carH/2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(-carW/2, 0, carW, carH/2);
+
+            // Lights on top
+            ctx.fillStyle = Date.now() % 400 < 200 ? '#ff0000' : '#0000ff';
+            ctx.fillRect(-carW/4, -2, carW/2, 4);
+
+            ctx.restore();
+        }
+
+        function drawPerson(x, y, color, isPanic = false) {
+            ctx.save();
+            ctx.translate(x, y);
+
+            const size = isModal ? 6 : 4;
+
+            // Body
+            ctx.fillStyle = color;
             ctx.beginPath();
-            ctx.arc(x, y, r, 0, Math.PI * 2);
-            const grad = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, 0, x, y, r);
-            grad.addColorStop(0, '#ffffff66');
-            grad.addColorStop(0.3, color);
-            grad.addColorStop(1, color + '88');
-            ctx.fillStyle = grad;
+            ctx.arc(0, 0, size, 0, Math.PI * 2);
             ctx.fill();
-            ctx.strokeStyle = '#ffffff33';
-            ctx.lineWidth = 2;
-            ctx.stroke();
+
+            // Head
+            ctx.fillStyle = '#ffdbac';
+            ctx.beginPath();
+            ctx.arc(0, -size/2, size/2, 0, Math.PI * 2);
+            ctx.fill();
+
+            if (isPanic) {
+                ctx.fillStyle = '#ff0000';
+                ctx.font = `${isModal ? 10 : 6}px sans-serif`;
+                ctx.fillText('!', -2, -size - 2);
+            }
+
+            ctx.restore();
         }
 
         function draw() {
-            ctx.clearRect(0, 0, W, H);
+            // Clear with grass
+            ctx.fillStyle = GRASS_COLOR;
+            ctx.fillRect(0, 0, W, H);
+
+            // Draw roads
+            roads.forEach(road => {
+                ctx.fillStyle = ROAD_COLOR;
+                ctx.fillRect(road.x, road.y, road.w, road.h);
+
+                // Road markings
+                ctx.fillStyle = '#ffff00';
+                if (road.vertical) {
+                    for (let y = 0; y < H; y += 20) {
+                        ctx.fillRect(road.x + road.w/2 - 1, y, 2, 10);
+                    }
+                } else {
+                    for (let x = 0; x < W; x += 20) {
+                        ctx.fillRect(x, road.y + road.h/2 - 1, 10, 2);
+                    }
+                }
+            });
+
+            // Draw buildings
+            buildings.forEach(b => {
+                // Shadow
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.fillRect(b.x + 3, b.y + 3, b.w, b.h);
+
+                // Building
+                ctx.fillStyle = b.color;
+                ctx.fillRect(b.x, b.y, b.w, b.h);
+
+                // Windows
+                if (b.windows) {
+                    ctx.fillStyle = Math.random() > 0.7 ? '#ffff88' : '#333333';
+                    const winSize = isModal ? 6 : 4;
+                    for (let wx = b.x + 4; wx < b.x + b.w - winSize; wx += winSize + 3) {
+                        for (let wy = b.y + 4; wy < b.y + b.h - winSize; wy += winSize + 3) {
+                            ctx.fillStyle = Math.random() > 0.6 ? '#ffff88' : '#333333';
+                            ctx.fillRect(wx, wy, winSize, winSize);
+                        }
+                    }
+                }
+            });
+
+            // Draw civilians
+            civilians.forEach(c => {
+                if (c.alive !== false) {
+                    drawPerson(c.x, c.y, c.color, c.panic);
+                }
+            });
+
+            // Draw other cars
+            cars.forEach(car => {
+                if (car.alive !== false) {
+                    drawCar(car.x, car.y, car.angle, car.color);
+                }
+            });
+
+            // Draw cops
+            cops.forEach(cop => {
+                drawCopCar(cop.x, cop.y, cop.angle);
+            });
+
+            // Draw player
+            if (player.inCar) {
+                drawCar(player.x, player.y, player.angle, player.carColor, true);
+            } else {
+                drawPerson(player.x, player.y, '#00ff00');
+            }
+
+            // Draw bullets
+            ctx.fillStyle = '#ffff00';
+            bullets.forEach(b => {
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, 2, 0, Math.PI * 2);
+                ctx.fill();
+            });
 
             // Draw particles
             particles.forEach(p => {
-                ctx.globalAlpha = p.life / 30;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                ctx.globalAlpha = p.life / 50;
                 ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                 ctx.fill();
             });
             ctx.globalAlpha = 1;
 
-            // Draw bubbles
-            bubbles.forEach(b => {
-                if (b.alive) drawBubble(b.x, b.y, b.color);
+            // Draw messages
+            ctx.fillStyle = '#ffffff';
+            ctx.font = `bold ${isModal ? 16 : 10}px sans-serif`;
+            ctx.textAlign = 'center';
+            messages.forEach((msg, i) => {
+                ctx.globalAlpha = Math.min(1, msg.life / 30);
+                ctx.fillText(msg.text, W/2, H/2 - 20 + i * 20);
             });
+            ctx.globalAlpha = 1;
+            ctx.textAlign = 'left';
 
-            // Draw aim line with trajectory preview
-            ctx.beginPath();
-            ctx.moveTo(shooter.x, shooter.y);
-            let previewX = shooter.x, previewY = shooter.y;
-            let previewVx = Math.cos(shooter.angle) * 10;
-            let previewVy = Math.sin(shooter.angle) * 10;
-            for (let i = 0; i < 15; i++) {
-                previewX += previewVx;
-                previewY += previewVy;
-                if (previewX < RADIUS || previewX > W - RADIUS) previewVx *= -1;
-                if (previewY < RADIUS) break;
-                if (i % 2 === 0) {
-                    ctx.lineTo(previewX, previewY);
-                } else {
-                    ctx.moveTo(previewX, previewY);
-                }
-            }
-            ctx.strokeStyle = '#ffffff44';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-
-            // Draw shooter base
-            ctx.beginPath();
-            ctx.arc(shooter.x, shooter.y + 15, 30, Math.PI, 0);
-            ctx.fillStyle = '#333';
-            ctx.fill();
-
-            // Draw next bubble preview
-            drawBubble(shooter.x + 35, shooter.y + 10, shooter.nextColor, 0.6);
-            ctx.fillStyle = '#666';
-            ctx.font = '10px sans-serif';
-            ctx.fillText('NEXT', shooter.x + 25, shooter.y + 25);
-
-            // Draw shooter bubble
-            drawBubble(shooter.x, shooter.y, shooter.color);
-
-            // Draw projectile
-            if (projectile) {
-                drawBubble(projectile.x, projectile.y, projectile.color);
+            // Draw health bar (if on foot)
+            if (!player.inCar) {
+                ctx.fillStyle = '#333';
+                ctx.fillRect(10, 10, 50, 8);
+                ctx.fillStyle = player.health > 30 ? '#22c55e' : '#ef4444';
+                ctx.fillRect(10, 10, player.health / 2, 8);
             }
 
-            // Draw combo text
-            if (combo > 1) {
-                ctx.fillStyle = '#c9a227';
-                ctx.font = 'bold 24px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText(`${combo}x COMBO!`, W / 2, H / 2);
-                ctx.textAlign = 'left';
+            // Draw wanted stars
+            if (isModal && wanted > 0) {
+                ctx.fillStyle = '#fbbf24';
+                ctx.font = 'bold 20px sans-serif';
+                ctx.fillText('★'.repeat(Math.min(wanted, 5)), W - 120, 25);
             }
         }
 
         function update() {
+            const accel = isModal ? 0.15 : 0.1;
+            const maxSpeed = isModal ? 6 : 4;
+            const turnSpeed = isModal ? 0.06 : 0.05;
+            const friction = 0.98;
+            const brakeForce = 0.9;
+
+            // Player controls
+            if (player.inCar) {
+                if (keys['ArrowUp'] || keys['KeyW']) player.speed = Math.min(maxSpeed, player.speed + accel);
+                if (keys['ArrowDown'] || keys['KeyS']) player.speed = Math.max(-maxSpeed/2, player.speed - accel);
+                if (keys['Space']) player.speed *= brakeForce;
+
+                if (Math.abs(player.speed) > 0.1) {
+                    if (keys['ArrowLeft'] || keys['KeyA']) player.angle -= turnSpeed * (player.speed > 0 ? 1 : -1);
+                    if (keys['ArrowRight'] || keys['KeyD']) player.angle += turnSpeed * (player.speed > 0 ? 1 : -1);
+                }
+
+                player.speed *= friction;
+                player.x += Math.sin(player.angle) * player.speed;
+                player.y -= Math.cos(player.angle) * player.speed;
+            } else {
+                const walkSpeed = isModal ? 2 : 1.5;
+                if (keys['ArrowUp'] || keys['KeyW']) player.y -= walkSpeed;
+                if (keys['ArrowDown'] || keys['KeyS']) player.y += walkSpeed;
+                if (keys['ArrowLeft'] || keys['KeyA']) player.x -= walkSpeed;
+                if (keys['ArrowRight'] || keys['KeyD']) player.x += walkSpeed;
+            }
+
+            // Wrap around screen
+            if (player.x < 0) player.x = W;
+            if (player.x > W) player.x = 0;
+            if (player.y < 0) player.y = H;
+            if (player.y > H) player.y = 0;
+
+            // Check building collisions
+            buildings.forEach(b => {
+                if (player.x > b.x && player.x < b.x + b.w &&
+                    player.y > b.y && player.y < b.y + b.h) {
+                    player.speed *= -0.5;
+                    player.x -= Math.sin(player.angle) * 5;
+                    player.y += Math.cos(player.angle) * 5;
+                }
+            });
+
+            // Update AI cars
+            cars.forEach(car => {
+                if (car.alive === false) return;
+
+                car.x += Math.sin(car.angle) * car.speed;
+                car.y -= Math.cos(car.angle) * car.speed;
+
+                // Wrap
+                if (car.x < -20) car.x = W + 20;
+                if (car.x > W + 20) car.x = -20;
+                if (car.y < -20) car.y = H + 20;
+                if (car.y > H + 20) car.y = -20;
+
+                // Check collision with player
+                const dx = player.x - car.x;
+                const dy = player.y - car.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+
+                if (dist < (isModal ? 20 : 12) && player.inCar && Math.abs(player.speed) > 2) {
+                    createExplosion(car.x, car.y);
+                    car.alive = false;
+                    cash += 100;
+                    wanted = Math.min(5, wanted + 1);
+                    showMessage('+$100 CAR DESTROYED!');
+                    updateUI();
+
+                    // Respawn car later
+                    setTimeout(spawnCar, 3000);
+                }
+            });
+
+            // Update civilians
+            civilians.forEach(c => {
+                if (c.alive === false) return;
+
+                // Check if player is near
+                const dx = player.x - c.x;
+                const dy = player.y - c.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+
+                if (dist < 50 && player.inCar && Math.abs(player.speed) > 1) {
+                    c.panic = true;
+                    // Run away
+                    c.angle = Math.atan2(-dy, -dx) - Math.PI/2;
+                    c.speed = 2;
+                }
+
+                if (dist < (isModal ? 12 : 8) && player.inCar && Math.abs(player.speed) > 1.5) {
+                    createExplosion(c.x, c.y);
+                    c.alive = false;
+                    cash += 50;
+                    wanted = Math.min(5, wanted + 2);
+                    showMessage('+$50 WASTED!');
+                    updateUI();
+
+                    setTimeout(spawnCivilian, 5000);
+                }
+
+                c.x += Math.sin(c.angle) * c.speed;
+                c.y -= Math.cos(c.angle) * c.speed;
+
+                // Random direction change
+                if (Math.random() < 0.02 && !c.panic) {
+                    c.angle += (Math.random() - 0.5) * Math.PI;
+                }
+
+                // Keep on screen
+                if (c.x < 0 || c.x > W || c.y < 0 || c.y > H) {
+                    c.angle += Math.PI;
+                }
+
+                // Calm down
+                if (c.panic && Math.random() < 0.01) {
+                    c.panic = false;
+                    c.speed = 0.5;
+                }
+            });
+
+            // Update cops
+            cops.forEach(cop => {
+                // Chase player
+                const dx = player.x - cop.x;
+                const dy = player.y - cop.y;
+                const targetAngle = Math.atan2(dx, -dy);
+
+                let angleDiff = targetAngle - cop.angle;
+                while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+                while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+
+                cop.angle += Math.sign(angleDiff) * Math.min(Math.abs(angleDiff), 0.05);
+
+                cop.x += Math.sin(cop.angle) * cop.speed;
+                cop.y -= Math.cos(cop.angle) * cop.speed;
+
+                // Check if caught player
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist < (isModal ? 25 : 15)) {
+                    if (player.inCar) {
+                        player.speed = 0;
+                        showMessage('BUSTED! -$500');
+                        cash = Math.max(0, cash - 500);
+                        wanted = 0;
+                        cops = [];
+                        updateUI();
+                    }
+                }
+            });
+
+            // Spawn cops based on wanted level
+            if (wanted > 0 && cops.length < wanted && Math.random() < 0.01) {
+                spawnCop();
+            }
+
+            // Update bullets
+            bullets = bullets.filter(b => {
+                b.x += b.vx;
+                b.y += b.vy;
+                b.life--;
+                return b.life > 0 && b.x > 0 && b.x < W && b.y > 0 && b.y < H;
+            });
+
             // Update particles
             particles = particles.filter(p => {
                 p.x += p.vx;
                 p.y += p.vy;
-                p.vy += 0.3;
+                p.vy += 0.2;
+                p.vx *= 0.98;
                 p.life--;
                 return p.life > 0;
             });
 
-            if (projectile) {
-                projectile.x += projectile.vx;
-                projectile.y += projectile.vy;
-
-                if (projectile.x < RADIUS || projectile.x > W - RADIUS) {
-                    projectile.vx *= -1;
-                }
-
-                if (projectile.y < RADIUS) {
-                    snapToGrid(projectile);
-                    projectile = null;
-                    advanceShooter();
-                    return;
-                }
-
-                for (const b of bubbles) {
-                    if (!b.alive) continue;
-                    const dx = projectile.x - b.x;
-                    const dy = projectile.y - b.y;
-                    if (Math.sqrt(dx * dx + dy * dy) < RADIUS * 1.8) {
-                        snapToGrid(projectile);
-                        checkMatches(projectile.color);
-                        projectile = null;
-                        advanceShooter();
-                        return;
-                    }
-                }
-            }
-
-            // Check win condition
-            if (bubbles.filter(b => b.alive).length === 0) {
-                level++;
-                if (levelId) document.getElementById(levelId).textContent = 'Level: ' + level;
-                initBubbles();
-            }
-        }
-
-        function advanceShooter() {
-            shooter.color = shooter.nextColor;
-            shooter.nextColor = COLORS[Math.floor(Math.random() * Math.min(4 + level, COLORS.length))];
-            combo = 0;
-        }
-
-        function snapToGrid(p) {
-            const row = Math.max(0, Math.round((p.y - RADIUS - 10) / (RADIUS * 1.7)));
-            const offset = (row % 2) * RADIUS;
-            const col = Math.round((p.x - offset - RADIUS) / (RADIUS * 2));
-            bubbles.push({
-                x: Math.max(RADIUS, Math.min(W - RADIUS, offset + col * RADIUS * 2 + RADIUS)),
-                y: row * RADIUS * 1.7 + RADIUS + 10,
-                color: p.color,
-                alive: true
-            });
-        }
-
-        function checkMatches(color) {
-            const lastBubble = bubbles[bubbles.length - 1];
-
-            function findConnected(bubble, found = new Set()) {
-                if (found.has(bubble)) return found;
-                found.add(bubble);
-                bubbles.forEach(b => {
-                    if (!b.alive || b.color !== color || found.has(b)) return;
-                    const dx = bubble.x - b.x;
-                    const dy = bubble.y - b.y;
-                    if (Math.sqrt(dx * dx + dy * dy) < RADIUS * 2.5) {
-                        findConnected(b, found);
-                    }
-                });
-                return found;
-            }
-
-            const connected = findConnected(lastBubble);
-            if (connected.size >= 3) {
-                combo++;
-                connected.forEach(b => {
-                    createParticle(b.x, b.y, b.color);
-                    b.alive = false;
-                    score += 10 * combo;
-                });
-                updateScore();
-                removeFloating();
-            }
-        }
-
-        function removeFloating() {
-            const attached = new Set();
-
-            function markAttached(bubble) {
-                if (attached.has(bubble)) return;
-                attached.add(bubble);
-                bubbles.forEach(b => {
-                    if (!b.alive || attached.has(b)) return;
-                    const dx = bubble.x - b.x;
-                    const dy = bubble.y - b.y;
-                    if (Math.sqrt(dx * dx + dy * dy) < RADIUS * 2.5) {
-                        markAttached(b);
-                    }
-                });
-            }
-
-            bubbles.forEach(b => {
-                if (b.alive && b.y < RADIUS * 2 + 15) {
-                    markAttached(b);
-                }
+            // Update messages
+            messages = messages.filter(m => {
+                m.life--;
+                return m.life > 0;
             });
 
-            let floatCount = 0;
-            bubbles.forEach(b => {
-                if (b.alive && !attached.has(b)) {
-                    createParticle(b.x, b.y, b.color);
-                    b.alive = false;
-                    floatCount++;
-                    score += 25 * combo;
-                }
-            });
-            if (floatCount > 0) updateScore();
+            // Decay wanted level
+            if (wanted > 0 && Math.random() < 0.001) {
+                wanted--;
+                updateUI();
+            }
         }
 
-        function updateScore() {
+        function updateUI() {
             const scoreEl = document.getElementById(scoreId);
-            if (scoreEl) scoreEl.textContent = 'Score: ' + score;
+            if (scoreEl) scoreEl.textContent = '$' + cash.toLocaleString();
+
+            const wantedEl = document.getElementById(wantedId);
+            if (wantedEl) wantedEl.textContent = wanted > 0 ? '★'.repeat(Math.min(wanted, 5)) : '';
         }
 
-        function shoot() {
-            if (projectile) return;
-            projectile = {
-                x: shooter.x,
-                y: shooter.y,
-                vx: Math.cos(shooter.angle) * (isModal ? 12 : 8),
-                vy: Math.sin(shooter.angle) * (isModal ? 12 : 8),
-                color: shooter.color
-            };
+        function handleKeyDown(e) {
+            keys[e.code] = true;
+
+            // Enter/exit car
+            if (e.code === 'KeyE') {
+                if (player.inCar) {
+                    player.inCar = false;
+                    player.speed = 0;
+                    showMessage('ON FOOT');
+                } else {
+                    // Check for nearby car
+                    const nearCar = cars.find(c => {
+                        if (c.alive === false) return false;
+                        const dx = player.x - c.x;
+                        const dy = player.y - c.y;
+                        return Math.sqrt(dx*dx + dy*dy) < 30;
+                    });
+
+                    if (nearCar) {
+                        player.x = nearCar.x;
+                        player.y = nearCar.y;
+                        player.angle = nearCar.angle;
+                        player.carColor = nearCar.color;
+                        player.inCar = true;
+                        nearCar.alive = false;
+                        cash += 200;
+                        wanted = Math.min(5, wanted + 1);
+                        showMessage('+$200 CAR JACKED!');
+                        updateUI();
+                        setTimeout(spawnCar, 3000);
+                    }
+                }
+            }
+
+            // Shoot
+            if (e.code === 'KeyF' && !player.inCar) {
+                const now = Date.now();
+                if (now - lastShot > 200) {
+                    lastShot = now;
+                    bullets.push({
+                        x: player.x,
+                        y: player.y,
+                        vx: 0,
+                        vy: -8,
+                        life: 50
+                    });
+                    wanted = Math.min(5, wanted + 1);
+                    updateUI();
+                }
+            }
+
+            e.preventDefault();
         }
 
-        function handleMouse(e) {
-            const rect = canvas.getBoundingClientRect();
-            const mx = e.clientX - rect.left;
-            const my = e.clientY - rect.top;
-            shooter.angle = Math.atan2(my - shooter.y, mx - shooter.x);
-            if (shooter.angle > -0.15) shooter.angle = -0.15;
-            if (shooter.angle < -Math.PI + 0.15) shooter.angle = -Math.PI + 0.15;
+        function handleKeyUp(e) {
+            keys[e.code] = false;
         }
 
-        canvas.addEventListener('mousemove', handleMouse);
-        canvas.addEventListener('click', shoot);
+        // Add event listeners
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
 
-        initBubbles();
+        // Focus canvas to receive key events
+        canvas.tabIndex = 1;
+        canvas.focus();
+
+        init();
 
         gameLoop = setInterval(() => {
             update();
@@ -6428,66 +6780,57 @@ CRITICAL RULES:
         return {
             stop: () => {
                 clearInterval(gameLoop);
-                canvas.removeEventListener('mousemove', handleMouse);
-                canvas.removeEventListener('click', shoot);
+                window.removeEventListener('keydown', handleKeyDown);
+                window.removeEventListener('keyup', handleKeyUp);
             },
             restart: () => {
-                score = 0;
-                level = 1;
-                combo = 0;
-                particles = [];
-                projectile = null;
-                shooter.color = COLORS[0];
-                shooter.nextColor = COLORS[1];
-                updateScore();
-                if (levelId) document.getElementById(levelId).textContent = 'Level: 1';
-                initBubbles();
+                init();
             }
         };
     }
 
     // Mini game for loading screen
-    function initSnoodGame() {
-        if (snoodGame) return;
-        snoodGame = createSnoodGame('snoodCanvas', 'snoodScore', null, false);
+    function initGTAGame() {
+        if (gtaGame) return;
+        gtaGame = createGTAGame('gtaCanvas', 'gtaScore', 'gtaWanted', false);
     }
 
-    function stopSnoodGame() {
-        if (snoodGame) {
-            snoodGame.stop();
-            snoodGame = null;
+    function stopGTAGame() {
+        if (gtaGame) {
+            gtaGame.stop();
+            gtaGame = null;
         }
     }
 
     // Modal game functions
-    function toggleSnoodModal() {
-        const overlay = document.getElementById('snoodModalOverlay');
-        const modal = document.getElementById('snoodModal');
+    function toggleGTAModal() {
+        const overlay = document.getElementById('gtaModalOverlay');
+        const modal = document.getElementById('gtaModal');
         const isOpen = modal.classList.contains('active');
 
         if (isOpen) {
-            closeSnoodModal();
+            closeGTAModal();
         } else {
             overlay.classList.add('active');
             modal.classList.add('active');
-            if (!snoodModalGame) {
-                snoodModalGame = createSnoodGame('snoodModalCanvas', 'snoodModalScore', 'snoodModalLevel', true);
+            if (!gtaModalGame) {
+                gtaModalGame = createGTAGame('gtaModalCanvas', 'gtaModalScore', 'gtaModalWanted', true);
             }
         }
     }
 
-    function closeSnoodModal() {
-        document.getElementById('snoodModalOverlay').classList.remove('active');
-        document.getElementById('snoodModal').classList.remove('active');
-        if (snoodModalGame) {
-            snoodModalGame.stop();
-            snoodModalGame = null;
+    function closeGTAModal() {
+        document.getElementById('gtaModalOverlay').classList.remove('active');
+        document.getElementById('gtaModal').classList.remove('active');
+        if (gtaModalGame) {
+            gtaModalGame.stop();
+            gtaModalGame = null;
         }
     }
 
-    function restartSnoodGame() {
-        if (snoodModalGame) {
-            snoodModalGame.restart();
+    function restartGTAGame() {
+        if (gtaModalGame) {
+            gtaModalGame.restart();
         }
     }
 
