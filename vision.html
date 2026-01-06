@@ -5061,7 +5061,7 @@ CRITICAL RULES:
         data.expenseCategories = data.expenseCategories || [];
         data.cashFlowData = data.cashFlowData || {};
         data.depositDistribution = data.depositDistribution || { ranges: [], counts: [] };
-        data.underwritingScore = data.underwritingScore || { criteria: [] };
+        data.underwritingScore = data.underwritingScore || { overall: 0, recommendation: 'Manual Review', tier: 2, criteria: [] };
         data.recommendedPosition = data.recommendedPosition || {};
         data.paymentCapacity = data.paymentCapacity || {};
         data.benchmarks = data.benchmarks || { businessScores: [], industryAvg: [], percentiles: [] };
@@ -5122,11 +5122,12 @@ CRITICAL RULES:
         document.getElementById('overallScore').textContent = score.overall;
 
         const statusPill = document.getElementById('statusPill');
-        statusPill.textContent = score.recommendation;
+        const recommendation = score.recommendation || 'Manual Review';
+        statusPill.textContent = recommendation;
         statusPill.className = 'status-pill';
-        if (score.recommendation.toLowerCase().includes('approve')) {
+        if (recommendation.toLowerCase().includes('approve')) {
             statusPill.classList.add('approve');
-        } else if (score.recommendation.toLowerCase().includes('decline')) {
+        } else if (recommendation.toLowerCase().includes('decline')) {
             statusPill.classList.add('decline');
         } else {
             statusPill.classList.add('review');
@@ -5509,10 +5510,10 @@ CRITICAL RULES:
 
         // Fixed vs Variable Chart
         destroyChart('fixedVarChart');
-        const expenses = data.expenseCategories;
-        const variableAmt = expenses.find(e => e.name.toLowerCase().includes('owner') || e.name.toLowerCase().includes('draw'))?.amount || 0;
-        const fixedAmt = expenses.find(e => e.name.toLowerCase().includes('fee'))?.amount || 0;
-        const operatingAmt = expenses.reduce((sum, e) => sum + e.amount, 0) - variableAmt - fixedAmt;
+        const expenses = data.expenseCategories || [];
+        const variableAmt = expenses.find(e => (e.name || '').toLowerCase().includes('owner') || (e.name || '').toLowerCase().includes('draw'))?.amount || 0;
+        const fixedAmt = expenses.find(e => (e.name || '').toLowerCase().includes('fee'))?.amount || 0;
+        const operatingAmt = expenses.reduce((sum, e) => sum + (e.amount || 0), 0) - variableAmt - fixedAmt;
 
         chartInstances['fixedVarChart'] = new Chart(document.getElementById('fixedVarChart'), {
             type: 'doughnut',
