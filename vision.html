@@ -5244,50 +5244,46 @@ WIRE OUT, OWNER DRAW, DISTRIBUTION, SHAREHOLDER, PERSONAL TRANSFER
 
 CRITICAL: Extract EVERY transaction. Calculate True Revenue by excluding non-operational deposits. Return valid JSON only.`;
 
-    // Single document extraction using three-stage pipeline
+    // Single document extraction using two-stage pipeline (faster)
     async function callGeminiAPISingle(apiKey, file) {
         const selectedModel = getSelectedModel();
-        // Use Gemini 3 Flash for OCR (faster than Pro, less thinking overhead)
-        // Use selected model for analysis
-        const ocrModel = 'gemini-3-flash-preview';
-        const analysisModel = selectedModel.startsWith('agent:') ? 'gemini-2.5-pro' : selectedModel;
+
+        // Use Flash for everything - much faster, still accurate
+        const ocrModel = 'gemini-2.5-flash';
+        const analysisModel = 'gemini-2.5-flash';
 
         // Reset correction attempts for new analysis
         correctionAttempts = 0;
 
         console.log('=== STAGE 1: OCR (Image → Markdown) ===');
         console.log('Using OCR model:', ocrModel);
-        showUploadStatus('Stage 1: Extracting text from image...');
 
-        // Stage 1: OCR - Convert image to markdown (use fast model)
+        // Stage 1: OCR - Convert image to markdown
         const markdownResult = await callGeminiStage1OCR(apiKey, ocrModel, file);
         console.log('Stage 1 complete. Markdown length:', markdownResult.length);
-        console.log('Stage 1 output preview:', markdownResult.substring(0, 500));
 
         console.log('=== STAGE 2: Analysis (Markdown → JSON) ===');
         console.log('Using analysis model:', analysisModel);
-        showUploadStatus('Stage 2: Analyzing transactions & True Revenue...');
 
         // Stage 2: Analysis - Parse markdown and extract structured data
         const analysisResult = await callGeminiStage2Analysis(apiKey, analysisModel, markdownResult);
-        console.log('Stage 2 complete. Result:', analysisResult);
+        console.log('Stage 2 complete.');
 
         // Transform new schema to existing schema for compatibility
         const transformed = transformToLegacySchema(analysisResult, markdownResult);
 
-        // Stage 3: Verification and Self-Correction
-        const verified = await runStage3Verification(apiKey, analysisModel, transformed, markdownResult);
+        // Skip Stage 3 verification for speed - trust the analysis
+        transformed._reconciliationStatus = 'SKIPPED';
 
-        console.log('=== PIPELINE COMPLETE ===');
-        console.log('Reconciliation status:', verified._reconciliationStatus || 'UNKNOWN');
+        console.log('=== PIPELINE COMPLETE (Fast Mode) ===');
 
-        return verified;
+        return transformed;
     }
 
     // Stage 1: OCR - Pure text extraction
     async function callGeminiStage1OCR(apiKey, model, file) {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minute timeout for accuracy
+        const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minute timeout
 
         try {
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
@@ -5340,7 +5336,7 @@ CRITICAL: Extract EVERY transaction. Calculate True Revenue by excluding non-ope
     // Stage 2: Analysis - Parse markdown and extract structured JSON
     async function callGeminiStage2Analysis(apiKey, model, markdownText) {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minute timeout for accuracy
+        const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minute timeout
 
         const fullPrompt = STAGE2_ANALYSIS_PROMPT + '\n\n--- BANK STATEMENT TEXT ---\n\n' + markdownText;
 
@@ -5400,7 +5396,7 @@ CRITICAL: Extract EVERY transaction. Calculate True Revenue by excluding non-ope
     // Direct API call for self-correction (no prepended system prompt)
     async function callGeminiDirectPrompt(apiKey, model, prompt) {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minute timeout for accuracy
+        const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minute timeout
 
         try {
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
@@ -5863,7 +5859,7 @@ CRITICAL: Include EVERY transaction from the statement in credits/debits arrays.
 
         // Create abort controller for timeout
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minute timeout for accuracy
+        const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minute timeout
 
         try {
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
