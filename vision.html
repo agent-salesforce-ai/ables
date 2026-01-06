@@ -2368,6 +2368,114 @@
             color: #ccc;
         }
 
+        /* Verification Bar (above Account Summary) */
+        .verification-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+            border: 2px solid #c4b5fd;
+            border-radius: var(--radius-lg);
+            margin-bottom: 16px;
+        }
+
+        .verification-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .verification-bar-left svg {
+            color: #7c3aed;
+        }
+
+        .verification-bar-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #5b21b6;
+        }
+
+        .verification-bar-status {
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #e5e7eb;
+            color: #6b7280;
+        }
+
+        .verification-bar-status.verified {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .verification-bar-status.error {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .verification-bar-status.checking {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .verification-bar-btn {
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .verification-bar-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+
+        .verification-bar-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        body.dark-theme .verification-bar {
+            background: linear-gradient(135deg, #2e1065 0%, #1e1b4b 100%);
+            border-color: #6d28d9;
+        }
+
+        body.dark-theme .verification-bar-label {
+            color: #c4b5fd;
+        }
+
+        body.dark-theme .verification-bar-left svg {
+            color: #a78bfa;
+        }
+
+        body.dark-theme .verification-bar-status {
+            background: #374151;
+            color: #9ca3af;
+        }
+
+        body.dark-theme .verification-bar-status.verified {
+            background: #064e3b;
+            color: #34d399;
+        }
+
+        body.dark-theme .verification-bar-status.error {
+            background: #7f1d1d;
+            color: #fca5a5;
+        }
+
+        body.dark-theme .verification-bar-status.checking {
+            background: #78350f;
+            color: #fcd34d;
+        }
+
         .spin {
             animation: spin 1s linear infinite;
         }
@@ -3158,6 +3266,20 @@
             <div class="metrics-row" id="metricsRow">
                 <!-- Metrics will be populated dynamically -->
             </div>
+        </div>
+
+        <!-- Math Verification Bar -->
+        <div class="verification-bar" id="verificationBar">
+            <div class="verification-bar-left">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="verification-bar-label">AI Math Verification</span>
+                <span class="verification-bar-status" id="verificationBarStatus">Not Verified</span>
+            </div>
+            <button class="verification-bar-btn" id="verificationBarBtn" onclick="runMathVerification()">
+                Verify Calculations
+            </button>
         </div>
 
         <!-- Account Summary -->
@@ -5475,11 +5597,27 @@ MCA/LOAN STACKING ANALYSIS - CRITICAL:
         const status = document.getElementById('verificationStatus');
         const results = document.getElementById('verificationResults');
 
+        // Also get bar elements
+        const barBtn = document.getElementById('verificationBarBtn');
+        const barStatus = document.getElementById('verificationBarStatus');
+
         // Update UI to show loading
-        btn.disabled = true;
-        btn.innerHTML = `<svg class="spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Verifying...`;
-        badge.className = 'verification-badge checking';
-        badge.textContent = 'Checking...';
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = `<svg class="spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Verifying...`;
+        }
+        if (barBtn) {
+            barBtn.disabled = true;
+            barBtn.textContent = 'Verifying...';
+        }
+        if (badge) {
+            badge.className = 'verification-badge checking';
+            badge.textContent = 'Checking...';
+        }
+        if (barStatus) {
+            barStatus.className = 'verification-bar-status checking';
+            barStatus.textContent = 'Checking...';
+        }
         status.innerHTML = '<div class="verification-placeholder">AI is verifying calculations...</div>';
         results.style.display = 'none';
 
@@ -5545,8 +5683,17 @@ Return a JSON object with EXACTLY this structure:
             const verificationData = JSON.parse(jsonStr.trim());
 
             // Update badge
-            badge.className = `verification-badge ${verificationData.overallStatus === 'pass' ? 'verified' : verificationData.overallStatus === 'fail' ? 'error' : 'checking'}`;
-            badge.textContent = verificationData.overallStatus === 'pass' ? 'Verified ✓' : verificationData.overallStatus === 'fail' ? 'Issues Found' : 'Warnings';
+            const badgeClass = verificationData.overallStatus === 'pass' ? 'verified' : verificationData.overallStatus === 'fail' ? 'error' : 'checking';
+            const badgeText = verificationData.overallStatus === 'pass' ? 'Verified ✓' : verificationData.overallStatus === 'fail' ? 'Issues Found' : 'Warnings';
+
+            if (badge) {
+                badge.className = `verification-badge ${badgeClass}`;
+                badge.textContent = badgeText;
+            }
+            if (barStatus) {
+                barStatus.className = `verification-bar-status ${badgeClass}`;
+                barStatus.textContent = badgeText;
+            }
 
             // Render results
             status.style.display = 'none';
@@ -5573,14 +5720,26 @@ Return a JSON object with EXACTLY this structure:
 
         } catch (error) {
             console.error('Verification error:', error);
-            badge.className = 'verification-badge error';
-            badge.textContent = 'Error';
+            if (badge) {
+                badge.className = 'verification-badge error';
+                badge.textContent = 'Error';
+            }
+            if (barStatus) {
+                barStatus.className = 'verification-bar-status error';
+                barStatus.textContent = 'Error';
+            }
             status.innerHTML = `<div class="verification-placeholder" style="color: var(--danger);">Verification failed: ${error.message}</div>`;
         }
 
-        // Reset button
-        btn.disabled = false;
-        btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Verify with AI`;
+        // Reset buttons
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Verify with AI`;
+        }
+        if (barBtn) {
+            barBtn.disabled = false;
+            barBtn.textContent = 'Verify Calculations';
+        }
     }
 
     // Red Flag Detection
