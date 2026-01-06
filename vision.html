@@ -4090,128 +4090,130 @@
     }
 
     async function callGeminiAPI(apiKey, files) {
-        const prompt = `You are an expert MCA (Merchant Cash Advance) underwriter. Analyze ALL the bank statement documents provided and extract all relevant financial data. You may receive multiple bank statements covering different months - analyze ALL of them and combine the data.
+        const prompt = `You are an expert MCA (Merchant Cash Advance) underwriter with strong mathematical skills. Analyze ALL the bank statement documents provided and extract EXACT financial data.
 
-Return a JSON object with EXACTLY this structure (no markdown, just pure JSON):
+CRITICAL MATH RULES:
+- totalCredits = SUM of ALL credit/deposit transactions for that month (add up every single deposit)
+- totalDebits = SUM of ALL debit/withdrawal transactions for that month (add up every single withdrawal)
+- creditCount = COUNT of credit transactions (number of deposits)
+- debitCount = COUNT of debit transactions (number of withdrawals)
+- endBalance should approximately equal: startBalance + totalCredits - totalDebits
+- trueCredits = totalCredits minus any internal transfers or returns
+- trueDebits = totalDebits minus any internal transfers
+- avgBalance = average of all daily ending balances for the month
+- minBalance = lowest balance seen during the month
+
+Return a JSON object with EXACTLY this structure (no markdown, just pure JSON). Replace ALL example values with ACTUAL data from the statements:
 
 {
     "businessInfo": {
-        "name": "Business Name from statements",
-        "bankName": "Bank name",
+        "name": "ACTUAL Business Name from statements",
+        "bankName": "ACTUAL Bank name",
         "accountNumber": "Last 4 digits like ****1234",
         "industry": "Best guess of industry type based on transaction descriptions",
         "statementPeriod": "e.g., Jul-Sep 2025 (show full range if multiple months)",
-        "totalDays": 90
+        "totalDays": "ACTUAL number of days covered"
     },
     "monthlySummary": [
         {
-            "month": "Jul 2025",
-            "totalCredits": 8539,
-            "trueCredits": 8539,
-            "creditCount": 57,
-            "totalDebits": 8901,
-            "trueDebits": 8901,
-            "debitCount": 48,
-            "startBalance": 1329,
-            "endBalance": 967,
-            "avgBalance": 571,
-            "minBalance": 116,
-            "nsfCount": 2,
-            "overdraftCount": 1,
+            "month": "ACTUAL month like Jul 2025",
+            "totalCredits": "SUM of all credits for this month as a number",
+            "trueCredits": "totalCredits minus transfers/returns",
+            "creditCount": "COUNT of credit transactions",
+            "totalDebits": "SUM of all debits for this month as a number",
+            "trueDebits": "totalDebits minus transfers",
+            "debitCount": "COUNT of debit transactions",
+            "startBalance": "Beginning balance for the month",
+            "endBalance": "Ending balance for the month",
+            "avgBalance": "Average daily balance",
+            "minBalance": "Lowest balance during month",
+            "nsfCount": "Number of NSF/returned items",
+            "overdraftCount": "Number of overdraft occurrences",
             "credits": [
-                {"date": "Jul 1", "description": "DEPOSIT ACH SQUARE INC", "amount": 1234.56},
-                {"date": "Jul 3", "description": "DEPOSIT STRIPE TRANSFER", "amount": 567.89}
+                {"date": "Date", "description": "EXACT description from statement", "amount": "EXACT amount"}
             ],
             "debits": [
-                {"date": "Jul 2", "description": "ACH DEBIT RENT PAYMENT", "amount": 2500.00},
-                {"date": "Jul 5", "description": "WIRE OUT VENDOR PYMT", "amount": 1200.00}
+                {"date": "Date", "description": "EXACT description from statement", "amount": "EXACT amount"}
             ]
         }
     ],
     "riskIndicators": {
-        "nsfCount": 0,
-        "overdraftCount": 0,
-        "negativeDays": 0,
-        "lowBalanceDays": 5,
-        "mcaFound": 0,
-        "achReturns": 0,
-        "ownerDrawRatio": 90.7,
-        "netMargin": -4.2
+        "nsfCount": "ACTUAL count of NSF items from statements",
+        "overdraftCount": "ACTUAL count of overdraft occurrences",
+        "negativeDays": "ACTUAL days with negative balance",
+        "lowBalanceDays": "Days with balance under $250",
+        "mcaFound": "Number of MCA positions detected",
+        "achReturns": "Count of ACH returns",
+        "ownerDrawRatio": "Owner draws as percentage of total debits (calculate: owner draws / totalDebits * 100)",
+        "netMargin": "Net cash flow as percentage ((totalCredits - totalDebits) / totalCredits * 100)"
     },
     "mcaAnalysis": {
-        "positionsFound": [
-            {
-                "lenderName": "Example Lender Name (e.g., Libertas Funding, Credibly, etc.)",
-                "name": "ACH description from statement",
-                "frequency": "Daily or Weekly",
-                "amount": 150,
-                "estimatedBalance": 15000,
-                "estimatedPayoffDate": "Mar 2026",
-                "confidence": "High, Medium, or Low",
-                "firstSeen": "Date first payment appeared",
-                "totalPaymentsSeen": 22
-            }
-        ],
+        "positionsFound": [],
         "lendersScanned": ["Credibly", "Libertas", "Yellowstone", "Fora Financial", "OnDeck", "Kabbage", "BlueVine", "Rapid Finance", "Square Capital", "PayPal Working Capital", "Amazon Lending", "Fundbox", "Kapitus", "CAN Capital", "Forward Financing"],
-        "totalMonthlyPayments": 0
+        "totalMonthlyPayments": "Sum of all detected MCA monthly payments"
     },
     "revenueSources": [
-        {"name": "Card Processing", "amount": 4660, "percentage": 54.6},
-        {"name": "Other Deposits", "amount": 3879, "percentage": 45.4}
+        {"name": "Category name", "amount": "ACTUAL amount", "percentage": "Percentage of total credits"}
     ],
     "expenseCategories": [
-        {"name": "Owner Draws/Wire Transfers", "amount": 8075, "percentage": 90.7},
-        {"name": "POS/Debit Purchases", "amount": 386, "percentage": 4.3},
-        {"name": "Processing/Bank Fees", "amount": 265, "percentage": 3.0},
-        {"name": "Vendor Payments", "amount": 175, "percentage": 2.0}
+        {"name": "Category name", "amount": "ACTUAL amount", "percentage": "Percentage of total debits"}
     ],
     "cashFlowData": {
-        "dailyBalances": [1329, 1245, 980, 856, 723, 612, 534, 445, 389, 320, 567, 645, 578, 489, 423, 356, 298, 234, 189, 156, 134, 116, 245, 378, 456, 534, 623, 712, 834, 912, 967],
-        "weeklyDeposits": [2134, 2256, 1987, 1823, 339],
-        "weeklyWithdrawals": [2456, 2178, 2234, 1845, 188],
-        "dayOfWeekRevenue": [1245, 1089, 1356, 1423, 1678, 1234, 514]
+        "dailyBalances": "Array of ACTUAL daily ending balances from statement",
+        "weeklyDeposits": "Array of weekly deposit totals",
+        "weeklyWithdrawals": "Array of weekly withdrawal totals",
+        "dayOfWeekRevenue": "Array of 7 values for Mon-Sun revenue totals"
     },
     "depositDistribution": {
         "ranges": ["$0-50", "$51-100", "$101-200", "$201-500", "$500+"],
-        "counts": [12, 18, 15, 8, 4]
+        "counts": "Array of ACTUAL counts of deposits in each range"
     },
     "underwritingScore": {
-        "overall": 72,
-        "recommendation": "Manual Review",
-        "tier": 2,
+        "overall": "Calculate score 0-100 based on criteria pass/fail",
+        "recommendation": "Approve, Manual Review, or Decline based on score",
+        "tier": "1, 2, or 3 based on risk level",
         "criteria": [
-            {"name": "Minimum Monthly Revenue ($5,000)", "passed": true, "value": "$8,539"},
-            {"name": "Minimum Average Balance ($250)", "passed": true, "value": "$571"},
-            {"name": "Maximum NSF Count (3)", "passed": true, "value": "0"},
-            {"name": "No Negative Balance Days", "passed": true, "value": "0 days"},
-            {"name": "Deposit Consistency (Min 20/mo)", "passed": true, "value": "57"},
-            {"name": "No Existing MCA Stacking", "passed": true, "value": "None Found"},
-            {"name": "Positive Net Cash Flow", "passed": false, "value": "-$362"},
-            {"name": "Owner Draw Ratio (<50%)", "passed": false, "value": "90.7%"}
+            {"name": "Minimum Monthly Revenue ($5,000)", "passed": "true/false based on ACTUAL data", "value": "ACTUAL monthly revenue"},
+            {"name": "Minimum Average Balance ($250)", "passed": "true/false", "value": "ACTUAL avg balance"},
+            {"name": "Maximum NSF Count (3)", "passed": "true/false", "value": "ACTUAL NSF count"},
+            {"name": "No Negative Balance Days", "passed": "true/false", "value": "ACTUAL negative days"},
+            {"name": "Deposit Consistency (Min 20/mo)", "passed": "true/false", "value": "ACTUAL deposit count"},
+            {"name": "No Existing MCA Stacking", "passed": "true/false", "value": "MCA positions found or None"},
+            {"name": "Positive Net Cash Flow", "passed": "true/false", "value": "ACTUAL net cash flow"},
+            {"name": "Owner Draw Ratio (<50%)", "passed": "true/false", "value": "ACTUAL owner draw %"}
         ]
     },
     "recommendedPosition": {
-        "amount": 8500,
-        "rangeMin": 5000,
-        "rangeMax": 12000,
-        "factorRate": 1.35,
-        "paybackAmount": 11475,
-        "dailyPayment": 76,
-        "termDays": 150
+        "amount": "Recommended funding amount (typically 1x monthly revenue for good deals)",
+        "rangeMin": "Minimum recommended amount",
+        "rangeMax": "Maximum recommended amount",
+        "factorRate": "1.25-1.49 based on risk tier",
+        "paybackAmount": "amount * factorRate",
+        "dailyPayment": "paybackAmount / termDays",
+        "termDays": "90-180 based on risk"
     },
     "paymentCapacity": {
-        "maxDaily10Pct": 28,
-        "maxDaily15Pct": 42,
-        "maxWeekly": 196,
-        "recommendedHoldback": 12,
-        "dailyRevenue": 276
+        "maxDaily10Pct": "10% of average daily revenue",
+        "maxDaily15Pct": "15% of average daily revenue",
+        "maxWeekly": "maxDaily15Pct * 7",
+        "recommendedHoldback": "Recommended holdback percentage 10-15%",
+        "dailyRevenue": "Average daily credits (totalCredits / days in month)"
     },
     "benchmarks": {
-        "businessScores": [65, 85, 45, 35, 80, 92],
-        "industryAvg": [70, 60, 60, 55, 70, 75],
-        "percentiles": [42, 78, 35, 72, 58]
+        "businessScores": "Array of 6 scores for different metrics",
+        "industryAvg": "Array of 6 industry average scores",
+        "percentiles": "Array of 5 percentile rankings"
     }
 }
+
+CRITICAL MATH VERIFICATION - DOUBLE CHECK YOUR WORK:
+1. For EACH month: totalCredits MUST equal the SUM of all credit transaction amounts
+2. For EACH month: totalDebits MUST equal the SUM of all debit transaction amounts
+3. For EACH month: creditCount MUST equal the NUMBER of credit transactions listed
+4. For EACH month: debitCount MUST equal the NUMBER of debit transactions listed
+5. VERIFY: endBalance ≈ startBalance + totalCredits - totalDebits (small variance OK for fees)
+6. ALL numeric values must be actual numbers (not strings) except formatted display values
+7. Do NOT copy example numbers from this prompt - extract ACTUAL data from the bank statements
 
 IMPORTANT INSTRUCTIONS:
 1. Analyze ALL uploaded documents - there may be multiple months of bank statements
@@ -4219,7 +4221,7 @@ IMPORTANT INSTRUCTIONS:
 3. The cashFlowData.dailyBalances should contain ALL daily balances across all months (concatenated)
 4. Sum up weeklyDeposits and weeklyWithdrawals across all statement periods
 5. Calculate totalDays as the sum of all days covered
-6. Fill in actual values from the statements. If you cannot determine a value, use reasonable estimates
+6. Fill in actual values from the statements - DO NOT USE EXAMPLE VALUES
 7. Always return valid JSON with no markdown formatting
 
 MCA/LOAN STACKING ANALYSIS - CRITICAL:
