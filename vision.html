@@ -4673,16 +4673,34 @@ Before returning JSON:
         }
 
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error?.message || 'API request failed');
+            const errorData = await response.json().catch(() => ({}));
+            const errorMsg = errorData.error?.message || `API request failed with status ${response.status}`;
+            console.error('Gemini API Error:', {
+                status: response.status,
+                statusText: response.statusText,
+                error: errorData,
+                model: selectedModel,
+                isAgent: selectedModel.startsWith('agent:')
+            });
+            throw new Error(`Gemini API Error (${response.status}): ${errorMsg}`);
         }
 
         const data = await response.json();
 
+        // Check for safety/content blocking
+        if (data.promptFeedback?.blockReason) {
+            throw new Error(`Content blocked by Gemini: ${data.promptFeedback.blockReason}`);
+        }
+
         // Extract text from response
         const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
         if (!text) {
-            throw new Error('No response from Gemini API');
+            console.error('Empty Gemini response:', data);
+            const finishReason = data.candidates?.[0]?.finishReason;
+            if (finishReason && finishReason !== 'STOP') {
+                throw new Error(`Gemini returned no text. Reason: ${finishReason}`);
+            }
+            throw new Error('No response from Gemini API - empty content returned');
         }
 
         // Parse JSON from response (handle markdown code blocks)
@@ -4957,14 +4975,35 @@ CRITICAL RULES:
             clearTimeout(timeoutId);
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error?.message || 'API request failed');
+                const errorData = await response.json().catch(() => ({}));
+                const errorMsg = errorData.error?.message || `API request failed with status ${response.status}`;
+                console.error('Gemini API Error:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    error: errorData,
+                    model: model,
+                    endpoint: `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`
+                });
+                throw new Error(`Gemini API Error (${response.status}): ${errorMsg}`);
             }
 
             const data = await response.json();
+
+            // Check for blocked content or safety issues
+            if (data.promptFeedback?.blockReason) {
+                throw new Error(`Content blocked: ${data.promptFeedback.blockReason}`);
+            }
+
             const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
-            if (!text) throw new Error('No response from API');
+            if (!text) {
+                console.error('Empty API response:', data);
+                const finishReason = data.candidates?.[0]?.finishReason;
+                if (finishReason && finishReason !== 'STOP') {
+                    throw new Error(`API returned no text. Finish reason: ${finishReason}`);
+                }
+                throw new Error('No response from API - the model returned empty content');
+            }
 
             // Parse JSON
             let jsonStr = text;
@@ -6890,13 +6929,34 @@ RULES:
             });
 
             if (!response.ok) {
-                throw new Error('Verification API request failed');
+                const errorData = await response.json().catch(() => ({}));
+                const errorMsg = errorData.error?.message || `Verification API request failed with status ${response.status}`;
+                console.error('Verification API Error:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    error: errorData,
+                    model: 'gemini-3-pro-preview'
+                });
+                throw new Error(`Verification API Error (${response.status}): ${errorMsg}`);
             }
 
             const data = await response.json();
+
+            // Check for blocked content
+            if (data.promptFeedback?.blockReason) {
+                throw new Error(`Verification blocked: ${data.promptFeedback.blockReason}`);
+            }
+
             const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
-            if (!text) throw new Error('No response from verification API');
+            if (!text) {
+                console.error('Empty verification response:', data);
+                const finishReason = data.candidates?.[0]?.finishReason;
+                if (finishReason && finishReason !== 'STOP') {
+                    throw new Error(`Verification returned no text. Finish reason: ${finishReason}`);
+                }
+                throw new Error('No response from verification API - model returned empty content');
+            }
 
             // Parse JSON
             let jsonStr = text;
