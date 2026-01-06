@@ -4332,6 +4332,9 @@
             // Process based on parser mode
             let response;
 
+            // Ensure report is hidden during loading
+            document.getElementById('reportContainer').classList.remove('visible');
+
             if (parserMode === 'moneythumb') {
                 // MoneyThumb only
                 response = await processWithMoneyThumb(fileContents);
