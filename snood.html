@@ -724,14 +724,11 @@
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Danger zone with animated glow
-            const dangerPulse = 0.1 + Math.sin(Date.now() / 300) * 0.05;
-            ctx.fillStyle = `rgba(255,0,0,${dangerPulse})`;
+            // Simple danger zone
+            ctx.fillStyle = 'rgba(255,0,0,0.08)';
             ctx.fillRect(0, DANGER_LINE, canvas.width, canvas.height - DANGER_LINE);
             
-            // Danger line with glow effect
-            ctx.shadowColor = '#ff0000';
-            ctx.shadowBlur = 10;
+            // Danger line
             ctx.strokeStyle = '#ff0000';
             ctx.lineWidth = 2;
             ctx.setLineDash([10, 5]);
@@ -740,270 +737,114 @@
             ctx.lineTo(canvas.width, DANGER_LINE);
             ctx.stroke();
             ctx.setLineDash([]);
-            ctx.shadowBlur = 0;
 
-            // Draw grid snoods
+            // Draw grid snoods using cached sprites
             for (let r = 0; r < grid.length; r++) {
                 for (let c = 0; c < (grid[r]?.length || 0); c++) {
                     const s = grid[r][c];
-                    if (s) drawSnood(s.x, s.y, s.type);
+                    if (s) drawCachedSnood(s.x, s.y, s.type);
                 }
             }
 
-            if (shootingSnood) drawSnood(shootingSnood.x, shootingSnood.y, shootingSnood.type, 1, true);
+            if (shootingSnood) drawCachedSnood(shootingSnood.x, shootingSnood.y, shootingSnood.type);
 
             if (currentSnood && !shootingSnood && !gameOver) {
-                // Draw launcher base platform
-                drawLauncherBase();
+                // Simple launcher base
+                drawSimpleLauncher(currentSnood.x, currentSnood.y, aimAngle);
                 
-                // Draw aim trajectory with dots
-                drawAimTrajectory(currentSnood.x, currentSnood.y, aimAngle);
+                // Simple aim line
+                ctx.strokeStyle = 'rgba(0,255,170,0.5)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([8, 8]);
+                ctx.beginPath();
+                ctx.moveTo(currentSnood.x, currentSnood.y);
+                ctx.lineTo(currentSnood.x + Math.cos(aimAngle) * 300, currentSnood.y + Math.sin(aimAngle) * 300);
+                ctx.stroke();
+                ctx.setLineDash([]);
                 
-                // Draw launcher cannon
-                drawLauncherCannon(currentSnood.x, currentSnood.y, aimAngle);
-                
-                // Draw current snood in launcher
-                drawSnood(currentSnood.x, currentSnood.y, currentSnood.type, 1, true);
+                // Current snood
+                drawCachedSnood(currentSnood.x, currentSnood.y, currentSnood.type);
 
                 // Next snood preview
                 ctx.fillStyle = '#888';
                 ctx.font = '14px VT323';
                 ctx.textAlign = 'center';
                 ctx.fillText('NEXT', canvas.width - 40, canvas.height - 60);
-                drawNextSnoodPreview(canvas.width - 40, canvas.height - 32, nextSnood.type);
+                drawCachedSnood(canvas.width - 40, canvas.height - 32, nextSnood.type, 0.7);
             }
         }
 
-        function drawLauncherBase() {
-            const baseY = canvas.height - 15;
-            const baseWidth = 120;
-            const baseHeight = 20;
-            const centerX = canvas.width / 2;
-            
-            // Platform shadow
-            ctx.fillStyle = 'rgba(0,0,0,0.5)';
-            ctx.beginPath();
-            ctx.ellipse(centerX, baseY + 5, baseWidth/2 + 5, 8, 0, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Metal platform base
-            const baseGrad = ctx.createLinearGradient(centerX - baseWidth/2, baseY - baseHeight, centerX + baseWidth/2, baseY);
-            baseGrad.addColorStop(0, '#2a2a3a');
-            baseGrad.addColorStop(0.3, '#4a4a5a');
-            baseGrad.addColorStop(0.5, '#5a5a6a');
-            baseGrad.addColorStop(0.7, '#4a4a5a');
-            baseGrad.addColorStop(1, '#2a2a3a');
-            
-            ctx.fillStyle = baseGrad;
-            ctx.beginPath();
-            ctx.moveTo(centerX - baseWidth/2, baseY);
-            ctx.lineTo(centerX - baseWidth/2 + 15, baseY - baseHeight);
-            ctx.lineTo(centerX + baseWidth/2 - 15, baseY - baseHeight);
-            ctx.lineTo(centerX + baseWidth/2, baseY);
-            ctx.closePath();
-            ctx.fill();
-            
-            // Platform edge highlight
-            ctx.strokeStyle = '#6a6a7a';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-            
-            // Decorative rivets
-            ctx.fillStyle = '#888';
-            for (let i = -2; i <= 2; i++) {
-                ctx.beginPath();
-                ctx.arc(centerX + i * 20, baseY - 8, 3, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        function drawLauncherCannon(x, y, angle) {
-            const cannonLength = 50;
-            const cannonWidth = 28;
+        function drawSimpleLauncher(x, y, angle) {
+            const len = 35, w = 20;
             
             ctx.save();
             ctx.translate(x, y);
             ctx.rotate(angle + Math.PI/2);
             
-            // Cannon shadow
-            ctx.fillStyle = 'rgba(0,0,0,0.3)';
-            ctx.beginPath();
-            ctx.ellipse(3, 0, cannonWidth/2 + 2, cannonWidth/2 + 2, 0, 0, Math.PI * 2);
-            ctx.fill();
+            // Barrel
+            ctx.fillStyle = '#4a4a5a';
+            ctx.fillRect(-w/2, -len, w, len);
             
-            // Cannon barrel gradient
-            const barrelGrad = ctx.createLinearGradient(-cannonWidth/2, 0, cannonWidth/2, 0);
-            barrelGrad.addColorStop(0, '#3a3a4a');
-            barrelGrad.addColorStop(0.2, '#5a5a6a');
-            barrelGrad.addColorStop(0.5, '#6a6a7a');
-            barrelGrad.addColorStop(0.8, '#5a5a6a');
-            barrelGrad.addColorStop(1, '#3a3a4a');
-            
-            // Main barrel
-            ctx.fillStyle = barrelGrad;
-            ctx.beginPath();
-            ctx.roundRect(-cannonWidth/2, -cannonLength + 10, cannonWidth, cannonLength, 5);
-            ctx.fill();
-            
-            // Barrel stripes/rings
-            ctx.strokeStyle = '#4a4a5a';
-            ctx.lineWidth = 3;
-            for (let i = 0; i < 3; i++) {
-                ctx.beginPath();
-                ctx.moveTo(-cannonWidth/2, -cannonLength + 20 + i * 12);
-                ctx.lineTo(cannonWidth/2, -cannonLength + 20 + i * 12);
-                ctx.stroke();
-            }
-            
-            // Cannon muzzle (opening)
-            const muzzleGrad = ctx.createRadialGradient(0, -cannonLength + 10, 0, 0, -cannonLength + 10, cannonWidth/2);
-            muzzleGrad.addColorStop(0, '#1a1a2a');
-            muzzleGrad.addColorStop(0.7, '#2a2a3a');
-            muzzleGrad.addColorStop(1, '#4a4a5a');
-            ctx.fillStyle = muzzleGrad;
-            ctx.beginPath();
-            ctx.ellipse(0, -cannonLength + 10, cannonWidth/2 - 2, 6, 0, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Base mounting ring
-            const ringGrad = ctx.createRadialGradient(0, 5, 0, 0, 5, 22);
-            ringGrad.addColorStop(0, '#5a5a6a');
-            ringGrad.addColorStop(0.5, '#4a4a5a');
-            ringGrad.addColorStop(1, '#3a3a4a');
-            ctx.fillStyle = ringGrad;
-            ctx.beginPath();
-            ctx.arc(0, 5, 22, 0, Math.PI * 2);
-            ctx.fill();
+            // Barrel outline
             ctx.strokeStyle = '#6a6a7a';
             ctx.lineWidth = 2;
-            ctx.stroke();
+            ctx.strokeRect(-w/2, -len, w, len);
             
-            // Inner ring highlight
-            ctx.strokeStyle = '#7a7a8a';
-            ctx.lineWidth = 1;
+            // Base circle
+            ctx.fillStyle = '#3a3a4a';
             ctx.beginPath();
             ctx.arc(0, 5, 18, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#5a5a6a';
             ctx.stroke();
             
             ctx.restore();
         }
 
-        function drawAimTrajectory(x, y, angle) {
-            const maxDist = 400;
-            const dotCount = 20;
-            const dotSpacing = maxDist / dotCount;
+        // Sprite cache for snoods
+        const snoodCache = new Map();
+        
+        function createSnoodSprite(type, scale = 1) {
+            const key = `${type}-${scale}`;
+            if (snoodCache.has(key)) return snoodCache.get(key);
             
-            for (let i = 1; i <= dotCount; i++) {
-                const dist = i * dotSpacing;
-                const dotX = x + Math.cos(angle) * dist;
-                const dotY = y + Math.sin(angle) * dist;
-                
-                // Stop if out of bounds
-                if (dotY < 0 || dotX < 0 || dotX > canvas.width) break;
-                
-                const alpha = 1 - (i / dotCount) * 0.8;
-                const size = 4 - (i / dotCount) * 2;
-                
-                // Glowing dot
-                ctx.shadowColor = '#00ffaa';
-                ctx.shadowBlur = 8;
-                ctx.fillStyle = `rgba(0, 255, 170, ${alpha})`;
-                ctx.beginPath();
-                ctx.arc(dotX, dotY, size, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.shadowBlur = 0;
-            }
-        }
-
-        function drawNextSnoodPreview(x, y, type) {
-            const t = SNOOD_TYPES[type], r = SNOOD_RADIUS * 0.7;
+            const t = SNOOD_TYPES[type], r = SNOOD_RADIUS * scale;
+            const size = Math.ceil(r * 2 + 4);
+            const offscreen = document.createElement('canvas');
+            offscreen.width = size;
+            offscreen.height = size;
+            const octx = offscreen.getContext('2d');
             
-            // Preview box
-            ctx.fillStyle = 'rgba(20,20,40,0.8)';
-            ctx.strokeStyle = '#444';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.roundRect(x - 25, y - 25, 50, 50, 8);
-            ctx.fill();
-            ctx.stroke();
+            const cx = size / 2, cy = size / 2;
             
-            // Snood with glow
-            ctx.shadowColor = t.color;
-            ctx.shadowBlur = 10;
-            
-            const g = ctx.createRadialGradient(x - r*0.3, y - r*0.3, 0, x, y, r);
+            // Main gradient
+            const g = octx.createRadialGradient(cx - r*0.3, cy - r*0.3, 0, cx, cy, r);
             g.addColorStop(0, '#ffffff');
             g.addColorStop(0.3, t.color);
             g.addColorStop(1, shadeColor(t.color, -40));
-            ctx.fillStyle = g;
-            ctx.beginPath();
-            ctx.arc(x, y, r, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.shadowBlur = 0;
+            octx.fillStyle = g;
+            octx.beginPath();
+            octx.arc(cx, cy, r, 0, Math.PI * 2);
+            octx.fill();
             
-            ctx.strokeStyle = shadeColor(t.color, -60);
-            ctx.lineWidth = 2;
-            ctx.stroke();
-            ctx.font = `${Math.floor(r * 1.1)}px Arial`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(t.emoji, x, y + 1);
-        }
-
-        function drawSnood(x, y, type, scale = 1, glow = false) {
-            const t = SNOOD_TYPES[type], r = SNOOD_RADIUS * scale;
+            // Border
+            octx.strokeStyle = shadeColor(t.color, -60);
+            octx.lineWidth = 2;
+            octx.stroke();
             
-            // Outer glow effect
-            if (glow) {
-                ctx.shadowColor = t.color;
-                ctx.shadowBlur = 15;
-            }
+            // Emoji
+            octx.font = `${Math.floor(r * 1.2)}px Arial`;
+            octx.textAlign = 'center';
+            octx.textBaseline = 'middle';
+            octx.fillText(t.emoji, cx, cy + 1);
             
-            // Main sphere gradient
-            const g = ctx.createRadialGradient(x - r*0.3, y - r*0.3, 0, x, y, r);
-            g.addColorStop(0, '#ffffff');
-            g.addColorStop(0.2, lightenColor(t.color, 30));
-            g.addColorStop(0.5, t.color);
-            g.addColorStop(1, shadeColor(t.color, -50));
-            ctx.fillStyle = g;
-            ctx.beginPath();
-            ctx.arc(x, y, r, 0, Math.PI * 2);
-            ctx.fill();
-            
-            ctx.shadowBlur = 0;
-            
-            // Outer ring
-            ctx.strokeStyle = shadeColor(t.color, -60);
-            ctx.lineWidth = 2 * scale;
-            ctx.stroke();
-            
-            // Inner highlight arc
-            ctx.strokeStyle = `rgba(255,255,255,0.4)`;
-            ctx.lineWidth = 2 * scale;
-            ctx.beginPath();
-            ctx.arc(x - r*0.2, y - r*0.2, r * 0.6, Math.PI * 1.2, Math.PI * 1.8);
-            ctx.stroke();
-            
-            // Emoji with slight shadow
-            ctx.shadowColor = 'rgba(0,0,0,0.5)';
-            ctx.shadowBlur = 2;
-            ctx.shadowOffsetX = 1;
-            ctx.shadowOffsetY = 1;
-            ctx.font = `${Math.floor(r * 1.2)}px Arial`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(t.emoji, x, y + 1);
-            ctx.shadowBlur = 0;
-            ctx.shadowOffsetX = 0;
-            ctx.shadowOffsetY = 0;
+            snoodCache.set(key, offscreen);
+            return offscreen;
         }
         
-        function lightenColor(c, p) {
-            const n = parseInt(c.replace('#', ''), 16);
-            const R = Math.min(255, (n >> 16) + p);
-            const G = Math.min(255, ((n >> 8) & 0xFF) + p);
-            const B = Math.min(255, (n & 0xFF) + p);
-            return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+        function drawCachedSnood(x, y, type, scale = 1) {
+            const sprite = createSnoodSprite(type, scale);
+            ctx.drawImage(sprite, x - sprite.width/2, y - sprite.height/2);
         }
 
         function shadeColor(c, p) {
