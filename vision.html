@@ -529,6 +529,158 @@
             color: #666;
         }
 
+        /* Game Button in Header */
+        .game-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .game-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+
+        /* Snood Modal */
+        .snood-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            backdrop-filter: blur(4px);
+        }
+
+        .snood-modal-overlay.active {
+            display: block;
+        }
+
+        .snood-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 16px;
+            padding: 0;
+            z-index: 2001;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5), 0 0 40px rgba(139, 92, 246, 0.3);
+            border: 1px solid #333;
+            overflow: hidden;
+        }
+
+        .snood-modal.active {
+            display: block;
+            animation: modalPop 0.3s ease-out;
+        }
+
+        @keyframes modalPop {
+            from { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
+            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .snood-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: linear-gradient(90deg, #7c3aed 0%, #8b5cf6 100%);
+            color: white;
+        }
+
+        .snood-modal-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .snood-modal-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .snood-modal-stats span {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .snood-modal-close {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .snood-modal-close:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+
+        .snood-modal-body {
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #snoodModalCanvas {
+            background: linear-gradient(180deg, #0f0f1a 0%, #1a1a2e 100%);
+            border-radius: 12px;
+            cursor: crosshair;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+        }
+
+        .snood-modal-footer {
+            padding: 16px 20px;
+            background: rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .snood-modal-controls {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .snood-restart-btn {
+            background: linear-gradient(135deg, #c9a227 0%, #d4af37 100%);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .snood-restart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(201, 162, 39, 0.4);
+        }
+
         /* Report Container (hidden until analysis complete) */
         .report-container {
             display: none;
@@ -3105,6 +3257,13 @@
             <div class="header-info" id="reportDate">
                 <!-- Date will be filled dynamically -->
             </div>
+            <button class="game-btn" onclick="toggleSnoodModal()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+                Play Snood
+            </button>
             <button class="settings-btn" onclick="openSettings()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
@@ -3186,6 +3345,30 @@
     </div>
     <div class="settings-footer">
         <button class="settings-done-btn" onclick="saveApiKey()">Save & Close</button>
+    </div>
+</div>
+
+<!-- Snood Game Modal -->
+<div class="snood-modal-overlay" id="snoodModalOverlay" onclick="closeSnoodModal()"></div>
+<div class="snood-modal" id="snoodModal">
+    <div class="snood-modal-header">
+        <h3>🎮 Snood</h3>
+        <div class="snood-modal-stats">
+            <span id="snoodModalScore">Score: 0</span>
+            <span id="snoodModalLevel">Level: 1</span>
+        </div>
+        <button class="snood-modal-close" onclick="closeSnoodModal()">✕</button>
+    </div>
+    <div class="snood-modal-body">
+        <canvas id="snoodModalCanvas" width="400" height="500"></canvas>
+    </div>
+    <div class="snood-modal-footer">
+        <div class="snood-modal-controls">
+            <span>🎯 Aim with mouse</span>
+            <span>🖱️ Click to shoot</span>
+            <span>💥 Match 3+ colors</span>
+        </div>
+        <button class="snood-restart-btn" onclick="restartSnoodGame()">🔄 New Game</button>
     </div>
 </div>
 
@@ -5943,104 +6126,166 @@ CRITICAL RULES:
     }
 
     // ============================================
-    // SNOOD MINI-GAME
+    // SNOOD GAME ENGINE (Enhanced)
     // ============================================
     let snoodGame = null;
+    let snoodModalGame = null;
 
-    function initSnoodGame() {
-        const canvas = document.getElementById('snoodCanvas');
-        if (!canvas) return;
+    function createSnoodGame(canvasId, scoreId, levelId = null, isModal = false) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return null;
         const ctx = canvas.getContext('2d');
         const W = canvas.width, H = canvas.height;
-        const RADIUS = 14;
-        const COLORS = ['#c9a227', '#ef4444', '#22c55e', '#3b82f6', '#a855f7', '#ec4899'];
+        const RADIUS = isModal ? 18 : 14;
+        const COLORS = ['#c9a227', '#ef4444', '#22c55e', '#3b82f6', '#a855f7', '#ec4899', '#06b6d4', '#f97316'];
 
         let bubbles = [];
-        let shooter = { x: W / 2, y: H - 25, angle: -Math.PI / 2, color: COLORS[0] };
+        let shooter = { x: W / 2, y: H - 30, angle: -Math.PI / 2, color: COLORS[0], nextColor: COLORS[1] };
         let projectile = null;
         let score = 0;
+        let level = 1;
+        let combo = 0;
         let gameLoop = null;
+        let particles = [];
 
-        // Initialize grid of bubbles
         function initBubbles() {
             bubbles = [];
-            for (let row = 0; row < 5; row++) {
+            const rows = isModal ? 6 + Math.floor(level / 2) : 5;
+            const colCount = isModal ? Math.floor((W - RADIUS) / (RADIUS * 2)) : 10;
+            for (let row = 0; row < rows; row++) {
                 const offset = (row % 2) * RADIUS;
-                const cols = row % 2 === 0 ? 10 : 9;
+                const cols = row % 2 === 0 ? colCount : colCount - 1;
                 for (let col = 0; col < cols; col++) {
                     bubbles.push({
                         x: offset + col * RADIUS * 2 + RADIUS,
                         y: row * RADIUS * 1.7 + RADIUS + 10,
-                        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+                        color: COLORS[Math.floor(Math.random() * (Math.min(4 + level, COLORS.length)))],
                         alive: true
                     });
                 }
             }
         }
 
-        function drawBubble(x, y, color, isShooter = false) {
+        function createParticle(x, y, color) {
+            for (let i = 0; i < 8; i++) {
+                particles.push({
+                    x, y, color,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: (Math.random() - 0.5) * 8,
+                    life: 30
+                });
+            }
+        }
+
+        function drawBubble(x, y, color, scale = 1) {
+            const r = (RADIUS - 1) * scale;
             ctx.beginPath();
-            ctx.arc(x, y, RADIUS - 1, 0, Math.PI * 2);
-            const grad = ctx.createRadialGradient(x - 4, y - 4, 0, x, y, RADIUS);
-            grad.addColorStop(0, '#ffffff44');
+            ctx.arc(x, y, r, 0, Math.PI * 2);
+            const grad = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, 0, x, y, r);
+            grad.addColorStop(0, '#ffffff66');
             grad.addColorStop(0.3, color);
-            grad.addColorStop(1, color + '99');
+            grad.addColorStop(1, color + '88');
             ctx.fillStyle = grad;
             ctx.fill();
-            ctx.strokeStyle = '#ffffff22';
-            ctx.lineWidth = 1;
+            ctx.strokeStyle = '#ffffff33';
+            ctx.lineWidth = 2;
             ctx.stroke();
         }
 
         function draw() {
             ctx.clearRect(0, 0, W, H);
 
+            // Draw particles
+            particles.forEach(p => {
+                ctx.globalAlpha = p.life / 30;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+            });
+            ctx.globalAlpha = 1;
+
             // Draw bubbles
             bubbles.forEach(b => {
                 if (b.alive) drawBubble(b.x, b.y, b.color);
             });
 
-            // Draw aim line
+            // Draw aim line with trajectory preview
             ctx.beginPath();
             ctx.moveTo(shooter.x, shooter.y);
-            ctx.lineTo(
-                shooter.x + Math.cos(shooter.angle) * 60,
-                shooter.y + Math.sin(shooter.angle) * 60
-            );
-            ctx.strokeStyle = '#ffffff33';
+            let previewX = shooter.x, previewY = shooter.y;
+            let previewVx = Math.cos(shooter.angle) * 10;
+            let previewVy = Math.sin(shooter.angle) * 10;
+            for (let i = 0; i < 15; i++) {
+                previewX += previewVx;
+                previewY += previewVy;
+                if (previewX < RADIUS || previewX > W - RADIUS) previewVx *= -1;
+                if (previewY < RADIUS) break;
+                if (i % 2 === 0) {
+                    ctx.lineTo(previewX, previewY);
+                } else {
+                    ctx.moveTo(previewX, previewY);
+                }
+            }
+            ctx.strokeStyle = '#ffffff44';
             ctx.lineWidth = 2;
-            ctx.setLineDash([5, 5]);
             ctx.stroke();
-            ctx.setLineDash([]);
 
-            // Draw shooter
-            drawBubble(shooter.x, shooter.y, shooter.color, true);
+            // Draw shooter base
+            ctx.beginPath();
+            ctx.arc(shooter.x, shooter.y + 15, 30, Math.PI, 0);
+            ctx.fillStyle = '#333';
+            ctx.fill();
+
+            // Draw next bubble preview
+            drawBubble(shooter.x + 35, shooter.y + 10, shooter.nextColor, 0.6);
+            ctx.fillStyle = '#666';
+            ctx.font = '10px sans-serif';
+            ctx.fillText('NEXT', shooter.x + 25, shooter.y + 25);
+
+            // Draw shooter bubble
+            drawBubble(shooter.x, shooter.y, shooter.color);
 
             // Draw projectile
             if (projectile) {
                 drawBubble(projectile.x, projectile.y, projectile.color);
             }
+
+            // Draw combo text
+            if (combo > 1) {
+                ctx.fillStyle = '#c9a227';
+                ctx.font = 'bold 24px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${combo}x COMBO!`, W / 2, H / 2);
+                ctx.textAlign = 'left';
+            }
         }
 
         function update() {
+            // Update particles
+            particles = particles.filter(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.3;
+                p.life--;
+                return p.life > 0;
+            });
+
             if (projectile) {
                 projectile.x += projectile.vx;
                 projectile.y += projectile.vy;
 
-                // Wall bounce
                 if (projectile.x < RADIUS || projectile.x > W - RADIUS) {
                     projectile.vx *= -1;
                 }
 
-                // Hit top
                 if (projectile.y < RADIUS) {
                     snapToGrid(projectile);
                     projectile = null;
-                    shooter.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+                    advanceShooter();
                     return;
                 }
 
-                // Hit bubble
                 for (const b of bubbles) {
                     if (!b.alive) continue;
                     const dx = projectile.x - b.x;
@@ -6049,19 +6294,32 @@ CRITICAL RULES:
                         snapToGrid(projectile);
                         checkMatches(projectile.color);
                         projectile = null;
-                        shooter.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+                        advanceShooter();
                         return;
                     }
                 }
             }
+
+            // Check win condition
+            if (bubbles.filter(b => b.alive).length === 0) {
+                level++;
+                if (levelId) document.getElementById(levelId).textContent = 'Level: ' + level;
+                initBubbles();
+            }
+        }
+
+        function advanceShooter() {
+            shooter.color = shooter.nextColor;
+            shooter.nextColor = COLORS[Math.floor(Math.random() * Math.min(4 + level, COLORS.length))];
+            combo = 0;
         }
 
         function snapToGrid(p) {
-            const row = Math.round((p.y - RADIUS - 10) / (RADIUS * 1.7));
+            const row = Math.max(0, Math.round((p.y - RADIUS - 10) / (RADIUS * 1.7)));
             const offset = (row % 2) * RADIUS;
             const col = Math.round((p.x - offset - RADIUS) / (RADIUS * 2));
             bubbles.push({
-                x: offset + col * RADIUS * 2 + RADIUS,
+                x: Math.max(RADIUS, Math.min(W - RADIUS, offset + col * RADIUS * 2 + RADIUS)),
                 y: row * RADIUS * 1.7 + RADIUS + 10,
                 color: p.color,
                 alive: true
@@ -6069,8 +6327,6 @@ CRITICAL RULES:
         }
 
         function checkMatches(color) {
-            // Simple match check - remove same color neighbors
-            const toRemove = [];
             const lastBubble = bubbles[bubbles.length - 1];
 
             function findConnected(bubble, found = new Set()) {
@@ -6089,21 +6345,20 @@ CRITICAL RULES:
 
             const connected = findConnected(lastBubble);
             if (connected.size >= 3) {
+                combo++;
                 connected.forEach(b => {
+                    createParticle(b.x, b.y, b.color);
                     b.alive = false;
-                    score += 10;
+                    score += 10 * combo;
                 });
-                document.getElementById('snoodScore').textContent = 'Score: ' + score;
+                updateScore();
+                removeFloating();
             }
-
-            // Check for floating bubbles and remove them
-            removeFloating();
         }
 
         function removeFloating() {
             const attached = new Set();
 
-            // Find all bubbles attached to top
             function markAttached(bubble) {
                 if (attached.has(bubble)) return;
                 attached.add(bubble);
@@ -6117,21 +6372,27 @@ CRITICAL RULES:
                 });
             }
 
-            // Start from top row bubbles
             bubbles.forEach(b => {
                 if (b.alive && b.y < RADIUS * 2 + 15) {
                     markAttached(b);
                 }
             });
 
-            // Remove floating bubbles
+            let floatCount = 0;
             bubbles.forEach(b => {
                 if (b.alive && !attached.has(b)) {
+                    createParticle(b.x, b.y, b.color);
                     b.alive = false;
-                    score += 20;
+                    floatCount++;
+                    score += 25 * combo;
                 }
             });
-            document.getElementById('snoodScore').textContent = 'Score: ' + score;
+            if (floatCount > 0) updateScore();
+        }
+
+        function updateScore() {
+            const scoreEl = document.getElementById(scoreId);
+            if (scoreEl) scoreEl.textContent = 'Score: ' + score;
         }
 
         function shoot() {
@@ -6139,8 +6400,8 @@ CRITICAL RULES:
             projectile = {
                 x: shooter.x,
                 y: shooter.y,
-                vx: Math.cos(shooter.angle) * 8,
-                vy: Math.sin(shooter.angle) * 8,
+                vx: Math.cos(shooter.angle) * (isModal ? 12 : 8),
+                vy: Math.sin(shooter.angle) * (isModal ? 12 : 8),
                 color: shooter.color
             };
         }
@@ -6150,9 +6411,8 @@ CRITICAL RULES:
             const mx = e.clientX - rect.left;
             const my = e.clientY - rect.top;
             shooter.angle = Math.atan2(my - shooter.y, mx - shooter.x);
-            // Limit angle to upward
-            if (shooter.angle > -0.2) shooter.angle = -0.2;
-            if (shooter.angle < -Math.PI + 0.2) shooter.angle = -Math.PI + 0.2;
+            if (shooter.angle > -0.15) shooter.angle = -0.15;
+            if (shooter.angle < -Math.PI + 0.15) shooter.angle = -Math.PI + 0.15;
         }
 
         canvas.addEventListener('mousemove', handleMouse);
@@ -6165,19 +6425,69 @@ CRITICAL RULES:
             draw();
         }, 1000 / 60);
 
-        snoodGame = {
+        return {
             stop: () => {
                 clearInterval(gameLoop);
                 canvas.removeEventListener('mousemove', handleMouse);
                 canvas.removeEventListener('click', shoot);
+            },
+            restart: () => {
+                score = 0;
+                level = 1;
+                combo = 0;
+                particles = [];
+                projectile = null;
+                shooter.color = COLORS[0];
+                shooter.nextColor = COLORS[1];
+                updateScore();
+                if (levelId) document.getElementById(levelId).textContent = 'Level: 1';
+                initBubbles();
             }
         };
+    }
+
+    // Mini game for loading screen
+    function initSnoodGame() {
+        if (snoodGame) return;
+        snoodGame = createSnoodGame('snoodCanvas', 'snoodScore', null, false);
     }
 
     function stopSnoodGame() {
         if (snoodGame) {
             snoodGame.stop();
             snoodGame = null;
+        }
+    }
+
+    // Modal game functions
+    function toggleSnoodModal() {
+        const overlay = document.getElementById('snoodModalOverlay');
+        const modal = document.getElementById('snoodModal');
+        const isOpen = modal.classList.contains('active');
+
+        if (isOpen) {
+            closeSnoodModal();
+        } else {
+            overlay.classList.add('active');
+            modal.classList.add('active');
+            if (!snoodModalGame) {
+                snoodModalGame = createSnoodGame('snoodModalCanvas', 'snoodModalScore', 'snoodModalLevel', true);
+            }
+        }
+    }
+
+    function closeSnoodModal() {
+        document.getElementById('snoodModalOverlay').classList.remove('active');
+        document.getElementById('snoodModal').classList.remove('active');
+        if (snoodModalGame) {
+            snoodModalGame.stop();
+            snoodModalGame = null;
+        }
+    }
+
+    function restartSnoodGame() {
+        if (snoodModalGame) {
+            snoodModalGame.restart();
         }
     }
 
