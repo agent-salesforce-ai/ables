@@ -3338,7 +3338,7 @@
             <div class="settings-label-desc">Choose the AI model for analysis</div>
             <select class="settings-select" id="modelSelect" onchange="saveModelSelection()">
                 <optgroup label="Gemini 3 (Latest)">
-                    <option value="gemini-3-pro-preview-11-2025">Gemini 3 Pro (Best Accuracy)</option>
+                    <option value="gemini-3-pro-preview">Gemini 3 Pro (Best Accuracy)</option>
                     <option value="gemini-3-flash-preview">Gemini 3 Flash (Faster)</option>
                 </optgroup>
                 <optgroup label="Gemini 2.5">
@@ -4048,13 +4048,13 @@
         const savedKey = localStorage.getItem('geminiApiKey') || '';
         document.getElementById('settingsApiKey').value = savedKey;
         // Load current model selection
-        const savedModel = localStorage.getItem('geminiModel') || 'gemini-3-pro-preview-11-2025';
+        const savedModel = localStorage.getItem('geminiModel') || 'gemini-3-pro-preview';
         document.getElementById('modelSelect').value = savedModel;
         updateModelDescription(savedModel);
     }
 
     const modelDescriptions = {
-        'gemini-3-pro-preview-11-2025': 'Best for comprehensive bank statement analysis with high accuracy. Recommended for detailed underwriting.',
+        'gemini-3-pro-preview': 'Best for comprehensive bank statement analysis with high accuracy. Recommended for detailed underwriting.',
         'gemini-3-flash-preview': 'Fast Gemini 3 model for quick analysis.',
         'gemini-2.5-pro-preview-05-06': 'Adaptive thinking model with extended reasoning capabilities.',
         'gemini-2.5-flash-preview-05-20': 'High volume processing with good accuracy.',
@@ -4075,7 +4075,7 @@
     }
 
     function getSelectedModel() {
-        return localStorage.getItem('geminiModel') || 'gemini-3-pro-preview-11-2025';
+        return localStorage.getItem('geminiModel') || 'gemini-3-pro-preview';
     }
 
     function closeSettings() {
@@ -4310,6 +4310,7 @@
                 // Multiple documents - process each separately then merge
                 showUploadStatus(`Analyzing ${totalFiles} documents individually for accuracy...`);
                 const allResults = [];
+                let lastError = null;
 
                 for (let i = 0; i < fileContents.length; i++) {
                     showUploadStatus(`OCR Extracting document ${i + 1} of ${totalFiles}: ${fileContents[i].name}...`);
@@ -4329,6 +4330,7 @@
                                 throw new Error('Invalid response structure');
                             }
                         } catch (error) {
+                            lastError = error;
                             retryCount++;
                             console.error(`Document ${i + 1} attempt ${retryCount} failed:`, error.message);
                             if (retryCount <= maxRetries) {
@@ -4350,7 +4352,7 @@
                 }
 
                 if (allResults.length === 0) {
-                    throw new Error('Failed to process any documents');
+                    throw new Error(`Failed to process any documents. Last error: ${lastError?.message || 'Unknown error'}`);
                 }
 
                 showUploadStatus('Merging results from all documents...');
@@ -4875,7 +4877,7 @@ CRITICAL: Extract EVERY transaction. Calculate True Revenue by excluding non-ope
     async function callGeminiAPISingle(apiKey, file) {
         const selectedModel = getSelectedModel();
         // Don't use agent models for OCR - use standard Gemini
-        const model = selectedModel.startsWith('agent:') ? 'gemini-3-pro-preview-11-2025' : selectedModel;
+        const model = selectedModel.startsWith('agent:') ? 'gemini-3-pro-preview' : selectedModel;
 
         // Reset correction attempts for new analysis
         correctionAttempts = 0;
