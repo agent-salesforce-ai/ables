@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SNOOD SINDICAL - Official Union Game</title>
+    <title>MSGA SNOOD - Dodge Ed's Dweebery!</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2a 50%, #0a1a2a 100%);
             min-height: 100vh;
@@ -16,478 +15,386 @@
             align-items: center;
             font-family: 'VT323', monospace;
             overflow-x: hidden;
+            user-select: none;
         }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: 
-                radial-gradient(ellipse at 20% 20%, rgba(255, 0, 0, 0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(255, 200, 0, 0.1) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: -1;
-        }
-
         .scanlines {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px);
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 1px, transparent 1px, transparent 2px);
             pointer-events: none;
             z-index: 1000;
         }
-
-        .game-container {
-            display: flex;
-            gap: 20px;
-            padding: 20px;
-            align-items: flex-start;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .main-panel { display: flex; flex-direction: column; align-items: center; }
-
-        .header { text-align: center; padding: 15px; }
-
+        .header { text-align: center; padding: 10px; }
         .title {
             font-family: 'Press Start 2P', cursive;
-            font-size: 24px;
-            color: #ff0000;
-            text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 3px 3px 0 #000;
-            margin-bottom: 5px;
-            animation: titlePulse 2s ease-in-out infinite;
+            font-size: 28px;
+            color: #bf0a30;
+            text-shadow: 0 0 10px #bf0a30, 0 0 20px #bf0a30, 3px 3px 0 #000;
+            animation: pulse 2s infinite;
         }
-
-        @keyframes titlePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
-
-        .subtitle {
-            font-size: 20px;
-            color: #ffcc00;
-            text-shadow: 0 0 10px #ffcc00;
-        }
-
-        .score-display {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 10px;
-        }
-
-        .score-box {
+        @keyframes pulse { 50% { text-shadow: 0 0 20px #bf0a30, 0 0 40px #bf0a30, 3px 3px 0 #000; } }
+        .subtitle { font-size: 18px; color: #ffd700; text-shadow: 0 0 10px #ffd700; margin-top: 5px; }
+        .game-wrapper { display: flex; gap: 20px; padding: 10px; flex-wrap: wrap; justify-content: center; align-items: flex-start; }
+        .hud { display: flex; justify-content: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+        .hud-box {
             background: linear-gradient(180deg, #1a1a2e 0%, #0d0d1a 100%);
-            border: 3px solid #ff0000;
-            border-radius: 10px;
-            padding: 12px 25px;
+            border: 2px solid #bf0a30;
+            border-radius: 8px;
+            padding: 6px 12px;
             text-align: center;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+            box-shadow: 0 0 15px rgba(191, 10, 48, 0.3);
+            min-width: 70px;
         }
-
-        .score-label { font-size: 16px; color: #888; }
-        .score-value {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 20px;
-            color: #00ff00;
-            text-shadow: 0 0 10px #00ff00;
-        }
-        .player-name-display { font-size: 14px; color: #ffcc00; margin-top: 3px; }
-
+        .hud-label { font-size: 11px; color: #888; }
+        .hud-value { font-family: 'Press Start 2P', cursive; font-size: 12px; color: #00ff00; text-shadow: 0 0 8px #00ff00; }
+        .hud-value.gold { color: #ffd700; text-shadow: 0 0 8px #ffd700; }
+        .hud-value.red { color: #ff4444; text-shadow: 0 0 8px #ff4444; }
+        .hud-value.cyan { color: #00ffff; text-shadow: 0 0 8px #00ffff; }
         #gameCanvas {
-            border: 4px solid #ff0000;
+            border: 4px solid #ffd700;
             border-radius: 10px;
-            box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
-            background: linear-gradient(180deg, #0d0d1a 0%, #1a0a1a 100%);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5), inset 0 0 50px rgba(0,0,0,0.5);
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a1a 100%);
             cursor: crosshair;
+            display: block;
         }
-
-        .game-info {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 500px;
-            margin-top: 10px;
-            padding: 0 10px;
-        }
-
-        .level-display { font-size: 18px; color: #ff8800; text-shadow: 0 0 10px #ff8800; }
-        .combo-display { font-size: 18px; color: #ff00ff; text-shadow: 0 0 10px #ff00ff; }
-
         .side-panel {
             background: linear-gradient(180deg, #1a1a2e 0%, #0d0d1a 100%);
-            border: 3px solid #ffcc00;
-            border-radius: 15px;
-            padding: 20px;
-            min-width: 260px;
-            box-shadow: 0 0 30px rgba(255, 200, 0, 0.3);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            padding: 15px;
+            min-width: 170px;
+            max-width: 190px;
         }
-
-        .leaderboard-title {
+        .panel-title {
             font-family: 'Press Start 2P', cursive;
-            font-size: 12px;
-            color: #ffcc00;
+            font-size: 9px;
+            color: #ffd700;
+            margin-bottom: 10px;
             text-align: center;
-            margin-bottom: 15px;
-            text-shadow: 0 0 10px #ffcc00;
+            border-bottom: 1px solid #333;
+            padding-bottom: 8px;
         }
-
-        .leaderboard-list { list-style: none; }
-
-        .leaderboard-entry {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 10px;
-            margin-bottom: 5px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 5px;
-            border-left: 3px solid transparent;
-        }
-
-        .leaderboard-entry:nth-child(1) { border-left-color: #ffd700; background: rgba(255, 215, 0, 0.15); }
-        .leaderboard-entry:nth-child(2) { border-left-color: #c0c0c0; background: rgba(192, 192, 192, 0.1); }
-        .leaderboard-entry:nth-child(3) { border-left-color: #cd7f32; background: rgba(205, 127, 50, 0.1); }
-
-        .leaderboard-rank { color: #888; font-size: 16px; min-width: 25px; }
-        .leaderboard-name { color: #fff; font-size: 16px; flex-grow: 1; margin-left: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100px; }
-        .leaderboard-score { color: #00ff00; font-family: 'Press Start 2P', cursive; font-size: 10px; }
-
-        .no-scores { color: #666; text-align: center; font-size: 14px; padding: 20px; }
-
-        .clear-scores-btn {
-            display: block;
-            width: 100%;
-            margin-top: 15px;
-            padding: 8px;
-            background: transparent;
-            border: 1px solid #ff4444;
-            color: #ff4444;
-            font-family: 'VT323', monospace;
+        .controls { font-size: 13px; color: #aaa; line-height: 1.7; }
+        .controls span { color: #ffd700; }
+        .leaderboard { margin-top: 12px; }
+        .lb-entry { display: flex; justify-content: space-between; padding: 3px 0; font-size: 11px; border-bottom: 1px solid #222; }
+        .lb-entry:nth-child(1) { color: #ffd700; }
+        .lb-entry:nth-child(2) { color: #c0c0c0; }
+        .lb-entry:nth-child(3) { color: #cd7f32; }
+        .powerups-section { margin-top: 12px; }
+        .powerup-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 12px; color: #888; }
+        .powerup-item.active { color: #00ff00; }
+        .powerup-icon-small { font-size: 16px; }
+        .combo-popup {
+            position: absolute;
+            font-family: 'Press Start 2P', cursive;
             font-size: 14px;
-            cursor: pointer;
-            border-radius: 5px;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700, 2px 2px 0 #000;
+            pointer-events: none;
+            animation: comboAnim 0.8s ease-out forwards;
+            white-space: nowrap;
         }
-        .clear-scores-btn:hover { background: #ff4444; color: #000; }
-
+        @keyframes comboAnim {
+            0% { transform: scale(0.5); opacity: 1; }
+            50% { transform: scale(1.2); }
+            100% { transform: translateY(-30px) scale(1); opacity: 0; }
+        }
         .overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.92);
+            background: rgba(0,0,0,0.92);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 100;
         }
         .overlay.hidden { display: none; }
-
         .overlay-content {
             background: linear-gradient(180deg, #1a1a2e 0%, #0d0d1a 100%);
-            border: 4px solid #ff0000;
+            border: 4px solid #ffd700;
             border-radius: 20px;
-            padding: 35px;
+            padding: 30px;
             text-align: center;
-            box-shadow: 0 0 50px rgba(255, 0, 0, 0.5);
-            max-width: 450px;
-            width: 90%;
+            max-width: 420px;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.3);
         }
-
-        .overlay-title {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 22px;
-            color: #ff0000;
-            margin-bottom: 15px;
-            text-shadow: 0 0 20px #ff0000;
-        }
-
-        .overlay-subtitle { font-size: 22px; color: #ffcc00; margin-bottom: 25px; }
-
-        .name-input-container { margin: 25px 0; }
-        .name-input-label { font-size: 18px; color: #fff; margin-bottom: 10px; display: block; }
-
+        .overlay-title { font-family: 'Press Start 2P', cursive; font-size: 20px; color: #bf0a30; margin-bottom: 15px; text-shadow: 0 0 20px #bf0a30; }
+        .overlay-text { font-size: 16px; color: #fff; margin-bottom: 10px; line-height: 1.5; }
         .name-input {
             background: #0a0a1a;
-            border: 3px solid #ffcc00;
-            border-radius: 10px;
-            padding: 12px 18px;
+            border: 2px solid #ffd700;
+            border-radius: 5px;
+            padding: 10px 18px;
             font-family: 'Press Start 2P', cursive;
-            font-size: 14px;
+            font-size: 11px;
             color: #00ff00;
             text-align: center;
-            width: 100%;
-            max-width: 280px;
             text-transform: uppercase;
+            width: 200px;
+            margin: 12px 0;
             outline: none;
         }
-        .name-input:focus { border-color: #00ff00; box-shadow: 0 0 20px rgba(0, 255, 0, 0.3); }
-        .name-input::placeholder { color: #444; }
-
+        .name-input:focus { box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
         .btn {
             font-family: 'Press Start 2P', cursive;
-            font-size: 14px;
-            padding: 18px 35px;
+            font-size: 10px;
+            padding: 12px 24px;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            margin: 8px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(180deg, #ff0000 0%, #aa0000 100%);
-            color: #fff;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5), 0 5px 0 #660000;
-        }
-        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 0 30px rgba(255, 0, 0, 0.7), 0 8px 0 #660000; }
-        .btn-primary:active { transform: translateY(2px); }
-
-        .btn-secondary {
-            background: linear-gradient(180deg, #333 0%, #111 100%);
-            color: #ffcc00;
-            border: 2px solid #ffcc00;
-        }
-        .btn-secondary:hover { background: linear-gradient(180deg, #ffcc00 0%, #ff8800 100%); color: #000; }
-
-        .btn-share {
-            background: linear-gradient(180deg, #00aa00 0%, #006600 100%);
-            color: #fff;
-            border: 2px solid #00ff00;
-        }
-        .btn-share:hover { background: linear-gradient(180deg, #00ff00 0%, #00aa00 100%); color: #000; }
-
-        .share-copied {
-            font-family: 'VT323', monospace;
-            font-size: 16px;
-            color: #00ff00;
-            margin-top: 10px;
-            animation: fadeInOut 2s ease-in-out forwards;
-        }
-        .share-copied.hidden { display: none; }
-        @keyframes fadeInOut { 0% { opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; } }
-
-        .final-score {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 42px;
-            color: #00ff00;
-            text-shadow: 0 0 30px #00ff00;
-            margin: 15px 0;
-        }
-
-        .game-stats { display: flex; justify-content: center; gap: 25px; margin: 15px 0; flex-wrap: wrap; }
-        .stat-item { text-align: center; }
-        .stat-label { font-size: 14px; color: #888; }
-        .stat-value { font-size: 20px; color: #ffcc00; }
-
-        .new-high-score {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 12px;
+            background: linear-gradient(180deg, #bf0a30 0%, #8b0000 100%);
             color: #ffd700;
-            animation: highScorePulse 0.5s ease-in-out infinite alternate;
-            margin-top: 10px;
+            border: 2px solid #ffd700;
+            transition: all 0.2s;
+            margin: 5px;
         }
-        @keyframes highScorePulse { from { opacity: 0.5; transform: scale(1); } to { opacity: 1; transform: scale(1.1); } }
-        .new-high-score.hidden { display: none; }
-
-        .footer { text-align: center; padding: 15px; color: #ff0000; font-size: 16px; text-shadow: 0 0 10px #ff0000; }
-
-        .instructions { font-size: 15px; color: #888; margin: 15px 0; line-height: 1.5; }
-        .instructions span { color: #ffcc00; }
-
-        .particle {
-            position: fixed;
-            pointer-events: none;
-            font-size: 24px;
-            animation: floatUp 2s ease-out forwards;
-            z-index: 50;
-        }
-        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-150px) scale(0.5); } }
-
-        .combo-popup {
-            position: fixed;
-            pointer-events: none;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 20px;
-            color: #ff00ff;
-            text-shadow: 0 0 20px #ff00ff;
-            animation: comboFade 1s ease-out forwards;
-            z-index: 50;
-        }
-        @keyframes comboFade { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.5); } }
+        .btn:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(255, 215, 0, 0.6); }
+        .btn:active { transform: scale(0.98); }
+        .stats-row { display: flex; justify-content: space-around; margin: 12px 0; flex-wrap: wrap; gap: 10px; }
+        .stat-item { text-align: center; min-width: 60px; }
+        .stat-value { font-family: 'Press Start 2P', cursive; font-size: 14px; color: #00ff00; }
+        .stat-label { font-size: 10px; color: #888; margin-top: 2px; }
+        .new-record { color: #ffd700; font-family: 'Press Start 2P', cursive; font-size: 9px; animation: pulse 0.5s infinite; margin-top: 8px; }
     </style>
 </head>
 <body>
     <div class="scanlines"></div>
+    <div class="header">
+        <div class="title">MSGA SNOOD</div>
+        <div class="subtitle">Make Speedboats Great Again!</div>
+    </div>
+    
+    <div class="hud">
+        <div class="hud-box"><div class="hud-label">SCORE</div><div class="hud-value" id="score">0</div></div>
+        <div class="hud-box"><div class="hud-label">LEVEL</div><div class="hud-value gold" id="level">1</div></div>
+        <div class="hud-box"><div class="hud-label">COMBO</div><div class="hud-value gold" id="combo">x1</div></div>
+        <div class="hud-box"><div class="hud-label">LIVES</div><div class="hud-value red" id="lives">3</div></div>
+        <div class="hud-box"><div class="hud-label">SHIELD</div><div class="hud-value cyan" id="shield">-</div></div>
+        <div class="hud-box"><div class="hud-label">DODGED</div><div class="hud-value" id="dodged">0</div></div>
+    </div>
+
+    <div class="game-wrapper">
+        <div style="position: relative;">
+            <canvas id="gameCanvas" width="520" height="620"></canvas>
+            <div id="comboContainer"></div>
+        </div>
+        <div class="side-panel">
+            <div class="panel-title">CONTROLS</div>
+            <div class="controls">
+                <span>A/D</span> Move<br>
+                <span>MOUSE</span> Aim<br>
+                <span>CLICK</span> Shoot<br>
+                <span>SPACE</span> Dash<br>
+            </div>
+            <div class="powerups-section">
+                <div class="panel-title">POWER-UPS</div>
+                <div class="powerup-item" id="pu-shield"><span class="powerup-icon-small">🛡</span> Shield</div>
+                <div class="powerup-item" id="pu-bomb"><span class="powerup-icon-small">💣</span> Row Bomb</div>
+                <div class="powerup-item" id="pu-slow"><span class="powerup-icon-small">🐌</span> Slow Ed</div>
+                <div class="powerup-item" id="pu-multi"><span class="powerup-icon-small">✨</span> Multi-Shot</div>
+            </div>
+            <div class="leaderboard">
+                <div class="panel-title">HIGH SCORES</div>
+                <div id="leaderboard"></div>
+            </div>
+        </div>
+    </div>
 
     <div class="overlay" id="nameOverlay">
         <div class="overlay-content">
-            <div class="overlay-title">SNOOD SINDICAL</div>
-            <div class="overlay-subtitle">OFFICIAL GAME OF THE UNION</div>
-            <div class="name-input-container">
-                <label class="name-input-label">ENTER YOUR NAME, COMRADE:</label>
-                <input type="text" id="playerNameInput" class="name-input" placeholder="YOUR NAME" maxlength="12" autocomplete="off">
+            <div class="overlay-title">MSGA SNOOD</div>
+            <div class="overlay-text">
+                Match <span style="color:#00ff00">3+ snoods</span> to clear!<br>
+                <span style="color:#ff4444">DODGE Ed's dweebery!</span><br>
+                Collect <span style="color:#00ffff">power-ups</span> to survive!
             </div>
-            <div class="instructions">
-                <span>AIM</span> with mouse | <span>CLICK</span> to shoot<br>
-                Match <span>3+</span> to clear | Don't hit the <span>DANGER ZONE</span>
-            </div>
-            <button class="btn btn-primary" id="startGameBtn">VIVA LA REVOLUCION!</button>
+            <input type="text" id="playerNameInput" class="name-input" placeholder="ENTER NAME" maxlength="10" autocomplete="off">
+            <br>
+            <button class="btn" onclick="startGame()">START</button>
         </div>
     </div>
 
     <div class="overlay hidden" id="gameOverOverlay">
         <div class="overlay-content">
-            <div class="overlay-title" id="gameOverTitle">MANAGEMENT WINS</div>
-            <div class="final-score" id="finalScore">0</div>
-            <div class="game-stats">
-                <div class="stat-item"><div class="stat-label">LEVEL</div><div class="stat-value" id="finalLevel">1</div></div>
-                <div class="stat-item"><div class="stat-label">MAX COMBO</div><div class="stat-value" id="finalCombo">0</div></div>
-                <div class="stat-item"><div class="stat-label">CLEARED</div><div class="stat-value" id="finalCleared">0</div></div>
+            <div class="overlay-title" id="gameOverTitle">GAME OVER</div>
+            <div class="stats-row">
+                <div class="stat-item"><div class="stat-value" id="finalScore">0</div><div class="stat-label">SCORE</div></div>
+                <div class="stat-item"><div class="stat-value" id="finalLevel">1</div><div class="stat-label">LEVEL</div></div>
+                <div class="stat-item"><div class="stat-value" id="finalDodged">0</div><div class="stat-label">DODGED</div></div>
+                <div class="stat-item"><div class="stat-value" id="finalCombo">1</div><div class="stat-label">BEST COMBO</div></div>
             </div>
-            <div class="new-high-score hidden" id="newHighScore">NEW HIGH SCORE!</div>
-            <button class="btn btn-primary" id="playAgainBtn">OTRA VEZ!</button>
-            <button class="btn btn-secondary" id="changeNameBtn">CHANGE NAME</button>
-            <button class="btn btn-share" id="shareScoreBtn">SHARE SCORE</button>
-            <div class="share-copied hidden" id="shareCopied">COPIED TO CLIPBOARD!</div>
+            <div id="newRecord" class="new-record" style="display:none">NEW HIGH SCORE!</div>
+            <button class="btn" onclick="restartGame()">RETRY</button>
         </div>
     </div>
-
-    <div class="game-container">
-        <div class="main-panel">
-            <div class="header">
-                <h1 class="title">SNOOD SINDICAL</h1>
-                <p class="subtitle">OFFICIAL GAME OF THE UNION</p>
-            </div>
-
-            <div class="score-display">
-                <div class="score-box">
-                    <div class="score-label">SCORE</div>
-                    <div class="score-value" id="score">0</div>
-                    <div class="player-name-display" id="currentPlayerName">-</div>
-                </div>
-                <div class="score-box">
-                    <div class="score-label">HIGH SCORE</div>
-                    <div class="score-value" id="highScore">0</div>
-                    <div class="player-name-display" id="highScoreHolder">-</div>
-                </div>
-            </div>
-
-            <canvas id="gameCanvas" width="500" height="550"></canvas>
-
-            <div class="game-info">
-                <div class="level-display">LEVEL: <span id="level">1</span></div>
-                <div class="combo-display">COMBO: <span id="combo">x1</span></div>
-            </div>
-        </div>
-
-        <div class="side-panel">
-            <div class="leaderboard-title">UNION HALL OF FAME</div>
-            <ul class="leaderboard-list" id="leaderboard">
-                <li class="no-scores">No scores yet!</li>
-            </ul>
-            <button class="clear-scores-btn" id="clearScoresBtn">CLEAR SCORES</button>
-        </div>
-    </div>
-
-    <div class="footer">PROPERTY OF LOS UNION - WORKERS UNITE!</div>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        
-        // Polyfill for roundRect
-        if (!ctx.roundRect) {
-            ctx.roundRect = function(x, y, w, h, r) {
-                if (w < 2 * r) r = w / 2;
-                if (h < 2 * r) r = h / 2;
-                this.beginPath();
-                this.moveTo(x + r, y);
-                this.arcTo(x + w, y, x + w, y + h, r);
-                this.arcTo(x + w, y + h, x, y + h, r);
-                this.arcTo(x, y + h, x, y, r);
-                this.arcTo(x, y, x + w, y, r);
-                this.closePath();
-                return this;
-            };
-        }
 
-        const SNOOD_RADIUS = 20;
+        // Audio
+        let audioCtx = null;
+        function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+        function playTone(freq, dur, type, vol) {
+            if (!audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type || 'square';
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(vol || 0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + dur);
+            } catch(e) {}
+        }
+        function sfxShoot() { playTone(440, 0.08, 'square', 0.06); }
+        function sfxPop() { playTone(600 + Math.random()*300, 0.12, 'sine', 0.08); }
+        function sfxCombo() { playTone(800, 0.08, 'square', 0.06); setTimeout(() => playTone(1000, 0.08, 'square', 0.06), 60); }
+        function sfxHit() { playTone(120, 0.25, 'sawtooth', 0.12); }
+        function sfxPowerup() { playTone(600, 0.1, 'sine', 0.08); playTone(900, 0.1, 'sine', 0.08); }
+        function sfxBomb() { playTone(100, 0.4, 'sawtooth', 0.15); }
+
+        // Constants
+        const SNOOD_RADIUS = 18;
         const ROW_HEIGHT = SNOOD_RADIUS * 1.73;
-        const COLS = 12;
-        const DANGER_LINE = canvas.height - 80;
-        const SHOOT_Y = canvas.height - 50;
+        const COLS = 13;
+        const SHOOT_Y = canvas.height - 55;
+        const DANGER_LINE = canvas.height - 95;
 
         const SNOOD_TYPES = [
-            { emoji: '\u270A', color: '#ff0000' },
-            { emoji: '\uD83D\uDCB0', color: '#00dd00' },
-            { emoji: '\u26A0\uFE0F', color: '#ffff00' },
-            { emoji: '\uD83D\uDCE2', color: '#0088ff' },
-            { emoji: '\uD83D\uDD25', color: '#ff8800' },
-            { emoji: '\u2694\uFE0F', color: '#dd00ff' },
-            { emoji: '\u2615', color: '#ff0099' },
-            { emoji: '\uD83E\uDD16', color: '#00ffff' }
+            { emoji: '🚤', color: '#00aaff', name: 'SPEEDBOAT' },
+            { emoji: '⭐', color: '#ffd700', name: 'STAR' },
+            { emoji: '🔥', color: '#ff4400', name: 'FIRE' },
+            { emoji: '💰', color: '#00cc00', name: 'MONEY' },
+            { emoji: '🦅', color: '#c49a6c', name: 'EAGLE' },
+            { emoji: '💎', color: '#00ffff', name: 'DIAMOND' },
+            { emoji: '🏆', color: '#ffaa00', name: 'TROPHY' },
         ];
 
-        let grid = [], currentSnood = null, nextSnood = null, shootingSnood = null;
-        let score = 0, level = 1, combo = 1, maxCombo = 1, totalCleared = 0;
-        let gameOver = false, gameStarted = false, aimAngle = -Math.PI / 2;
-        let playerName = '', animating = false;
-        
-        // Lateral movement
+        const ED_TYPES = [
+            { emoji: '🤓', color: '#555', speed: 1.0, size: 18, points: 5 },
+            { emoji: '📊', color: '#444', speed: 0.8, size: 20, points: 8 },
+            { emoji: '🥱', color: '#4a4a4a', speed: 1.2, size: 16, points: 4 },
+            { emoji: '💤', color: '#3a3a3a', speed: 0.6, size: 22, points: 10 },
+            { emoji: '📉', color: '#333', speed: 1.4, size: 15, points: 3 },
+        ];
+
+        const POWERUP_TYPES = [
+            { emoji: '🛡', color: '#00aaff', type: 'shield', name: 'Shield' },
+            { emoji: '💣', color: '#ff4444', type: 'bomb', name: 'Bomb' },
+            { emoji: '🐌', color: '#88ff88', type: 'slow', name: 'Slow' },
+            { emoji: '✨', color: '#ffff00', type: 'multi', name: 'Multi' },
+            { emoji: '❤️', color: '#ff0066', type: 'life', name: 'Life' },
+        ];
+
+        // Game state
+        let grid = [];
+        let currentSnood = null;
+        let nextSnood = null;
+        let shootingSnood = null;
+        let extraShots = [];
+        let score = 0;
+        let level = 1;
+        let lives = 3;
+        let combo = 1;
+        let maxCombo = 1;
+        let dodgedCount = 0;
+        let gameOver = false;
+        let gameStarted = false;
+        let aimAngle = -Math.PI / 2;
+        let playerName = '';
+        let animating = false;
         let launcherX = canvas.width / 2;
-        const LAUNCHER_SPEED = 8;
-        const keys = { left: false, right: false };
-        
-        // Keyboard controls
+        let fallingEds = [];
+        let fallingPowerups = [];
+        let particles = [];
+        let edSpawnTimer = 0;
+        let powerupSpawnTimer = 0;
+        let dashCooldown = 0;
+        let invincible = false;
+        let invincibleTimer = 0;
+        let shieldTimer = 0;
+        let slowTimer = 0;
+        let multiShot = false;
+        let multiShotTimer = 0;
+        let screenShake = 0;
+        let keys = { left: false, right: false };
+        let leaderboard = JSON.parse(localStorage.getItem('msgaSnoodLB3')) || [];
+
+        // Input
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = true;
-            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = true;
-            if (e.key === ' ' && gameStarted && !gameOver && !shootingSnood && !animating) {
+            if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') keys.left = true;
+            if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') keys.right = true;
+            if (e.key === ' ' && gameStarted && !gameOver && dashCooldown <= 0) {
                 e.preventDefault();
-                shoot();
+                const dir = keys.left ? -1 : (keys.right ? 1 : 0);
+                if (dir !== 0) {
+                    launcherX += dir * 85;
+                    launcherX = Math.max(35, Math.min(canvas.width - 35, launcherX));
+                    dashCooldown = 0.6;
+                    for (let i = 0; i < 8; i++) {
+                        particles.push({ x: launcherX - dir * 40, y: SHOOT_Y, vx: -dir * (2 + Math.random() * 3), vy: (Math.random() - 0.5) * 2, life: 0.3, color: '#00ffff', size: 4 });
+                    }
+                    playTone(350, 0.08, 'sine', 0.04);
+                }
             }
         });
         document.addEventListener('keyup', (e) => {
-            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = false;
-            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = false;
+            if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') keys.left = false;
+            if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') keys.right = false;
         });
-
-        let leaderboard = JSON.parse(localStorage.getItem('snoodLeaderboard')) || [];
-
-        const nameOverlay = document.getElementById('nameOverlay');
-        const gameOverOverlay = document.getElementById('gameOverOverlay');
-        const playerNameInput = document.getElementById('playerNameInput');
-
-        function init() {
-            updateLeaderboardDisplay();
-            updateHighScoreDisplay();
-            const saved = localStorage.getItem('snoodPlayerName');
-            if (saved) playerNameInput.value = saved;
-            playerNameInput.focus();
-        }
+        canvas.addEventListener('mousemove', (e) => {
+            if (gameOver || !gameStarted || shootingSnood) return;
+            const rect = canvas.getBoundingClientRect();
+            const mx = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const my = (e.clientY - rect.top) * (canvas.height / rect.height);
+            aimAngle = Math.atan2(my - SHOOT_Y, mx - launcherX);
+            aimAngle = Math.max(-Math.PI + 0.15, Math.min(-0.15, aimAngle));
+        });
+        canvas.addEventListener('click', () => {
+            initAudio();
+            if (gameOver || !gameStarted || shootingSnood || animating) return;
+            shoot();
+        });
+        canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
         function startGame() {
-            playerName = playerNameInput.value.trim().toUpperCase() || 'ANON';
-            localStorage.setItem('snoodPlayerName', playerName);
-            document.getElementById('currentPlayerName').textContent = playerName;
-            nameOverlay.classList.add('hidden');
+            initAudio();
+            playerName = document.getElementById('playerNameInput').value.trim().toUpperCase() || 'PATRIOT';
+            localStorage.setItem('msgaSnoodName', playerName);
+            document.getElementById('nameOverlay').classList.add('hidden');
             resetGame();
             gameStarted = true;
-            gameLoop();
+            lastTime = performance.now();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function restartGame() {
+            document.getElementById('gameOverOverlay').classList.add('hidden');
+            resetGame();
+            gameOver = false;
+            gameStarted = true;
         }
 
         function resetGame() {
-            grid = []; score = 0; level = 1; combo = 1; maxCombo = 1; totalCleared = 0;
-            gameOver = false; animating = false;
+            grid = [];
+            score = 0; level = 1; lives = 3; combo = 1; maxCombo = 1; dodgedCount = 0;
+            fallingEds = []; fallingPowerups = []; particles = []; extraShots = [];
             launcherX = canvas.width / 2;
-
+            edSpawnTimer = 0; powerupSpawnTimer = 0; dashCooldown = 0;
+            invincible = false; shieldTimer = 0; slowTimer = 0; multiShot = false; multiShotTimer = 0;
+            screenShake = 0;
+            
             for (let row = 0; row < 5; row++) {
                 grid[row] = [];
                 const offset = row % 2 === 0 ? 0 : SNOOD_RADIUS;
                 for (let col = 0; col < COLS - (row % 2); col++) {
-                    grid[row][col] = {
-                        type: Math.floor(Math.random() * Math.min(5 + level, SNOOD_TYPES.length)),
-                        x: col * SNOOD_RADIUS * 2 + SNOOD_RADIUS + offset,
-                        y: row * ROW_HEIGHT + SNOOD_RADIUS + 20
-                    };
+                    grid[row][col] = { type: Math.floor(Math.random() * 4), x: col * SNOOD_RADIUS * 2 + SNOOD_RADIUS + offset, y: row * ROW_HEIGHT + SNOOD_RADIUS + 25 };
                 }
             }
             currentSnood = createSnood();
@@ -496,564 +403,503 @@
         }
 
         function createSnood() {
-            return { type: Math.floor(Math.random() * Math.min(5 + Math.floor(level/2), SNOOD_TYPES.length)), x: launcherX, y: SHOOT_Y };
+            const maxTypes = Math.min(4 + Math.floor(level / 2), SNOOD_TYPES.length);
+            return { type: Math.floor(Math.random() * maxTypes), x: launcherX, y: SHOOT_Y };
         }
-
-        function updateDisplay() {
-            document.getElementById('score').textContent = score;
-            document.getElementById('level').textContent = level;
-            document.getElementById('combo').textContent = 'x' + combo;
-        }
-
-        function updateHighScoreDisplay() {
-            if (leaderboard.length > 0) {
-                document.getElementById('highScore').textContent = leaderboard[0].score;
-                document.getElementById('highScoreHolder').textContent = leaderboard[0].name;
-            }
-        }
-
-        function updateLeaderboardDisplay() {
-            const list = document.getElementById('leaderboard');
-            list.innerHTML = '';
-            if (leaderboard.length === 0) {
-                list.innerHTML = '<li class="no-scores">No scores yet!</li>';
-                return;
-            }
-            leaderboard.slice(0, 10).forEach((e, i) => {
-                const li = document.createElement('li');
-                li.className = 'leaderboard-entry';
-                li.innerHTML = `<span class="leaderboard-rank">${i+1}.</span><span class="leaderboard-name">${e.name}</span><span class="leaderboard-score">${e.score}</span>`;
-                list.appendChild(li);
-            });
-        }
-
-        function saveScore() {
-            const entry = { name: playerName, score, level, date: Date.now() };
-            leaderboard.push(entry);
-            leaderboard.sort((a, b) => b.score - a.score);
-            leaderboard = leaderboard.slice(0, 100);
-            localStorage.setItem('snoodLeaderboard', JSON.stringify(leaderboard));
-            updateLeaderboardDisplay();
-            updateHighScoreDisplay();
-            return leaderboard[0].score === score;
-        }
-
-        canvas.addEventListener('mousemove', (e) => {
-            if (gameOver || !gameStarted || shootingSnood) return;
-            const rect = canvas.getBoundingClientRect();
-            const mx = e.clientX - rect.left, my = e.clientY - rect.top;
-            aimAngle = Math.atan2(my - SHOOT_Y, mx - launcherX);
-            aimAngle = Math.max(-Math.PI + 0.15, Math.min(-0.15, aimAngle));
-        });
-
-        canvas.addEventListener('click', () => {
-            if (gameOver || !gameStarted || shootingSnood || animating) return;
-            shoot();
-        });
 
         function shoot() {
-            const speed = 14;
-            shootingSnood = { 
-                type: currentSnood.type, 
-                x: launcherX, 
-                y: SHOOT_Y,
-                vx: Math.cos(aimAngle) * speed, 
-                vy: Math.sin(aimAngle) * speed 
-            };
+            sfxShoot();
+            const speed = 15;
+            shootingSnood = { type: currentSnood.type, x: launcherX, y: SHOOT_Y, vx: Math.cos(aimAngle) * speed, vy: Math.sin(aimAngle) * speed };
+            
+            if (multiShot) {
+                extraShots.push({ type: currentSnood.type, x: launcherX, y: SHOOT_Y, vx: Math.cos(aimAngle - 0.15) * speed, vy: Math.sin(aimAngle - 0.15) * speed });
+                extraShots.push({ type: currentSnood.type, x: launcherX, y: SHOOT_Y, vx: Math.cos(aimAngle + 0.15) * speed, vy: Math.sin(aimAngle + 0.15) * speed });
+            }
+            
             currentSnood = nextSnood;
             currentSnood.x = launcherX;
             currentSnood.y = SHOOT_Y;
             nextSnood = createSnood();
         }
 
-        function updateLauncher() {
-            if (keys.left) launcherX = Math.max(SNOOD_RADIUS + 30, launcherX - LAUNCHER_SPEED);
-            if (keys.right) launcherX = Math.min(canvas.width - SNOOD_RADIUS - 30, launcherX + LAUNCHER_SPEED);
-            if (currentSnood && !shootingSnood) {
-                currentSnood.x = launcherX;
-            }
+        function spawnEd() {
+            const type = ED_TYPES[Math.floor(Math.random() * ED_TYPES.length)];
+            const speedMult = slowTimer > 0 ? 0.4 : (1 + (level - 1) * 0.15);
+            fallingEds.push({ x: 40 + Math.random() * (canvas.width - 80), y: -25, type: type, speed: (1 + Math.random() * 1.2) * type.speed * speedMult, rotation: 0, rotSpeed: (Math.random() - 0.5) * 5, wobble: Math.random() * Math.PI * 2, wobbleSpeed: 2 + Math.random() * 2 });
         }
 
-        function update() {
-            updateLauncher();
-            
-            if (!shootingSnood) return;
-            shootingSnood.x += shootingSnood.vx;
-            shootingSnood.y += shootingSnood.vy;
+        function spawnPowerup() {
+            const type = POWERUP_TYPES[Math.floor(Math.random() * POWERUP_TYPES.length)];
+            fallingPowerups.push({ x: 50 + Math.random() * (canvas.width - 100), y: -20, type: type, speed: 1.5 + Math.random(), rotation: 0 });
+        }
 
-            if (shootingSnood.x < SNOOD_RADIUS || shootingSnood.x > canvas.width - SNOOD_RADIUS) {
-                shootingSnood.vx *= -1;
-                shootingSnood.x = Math.max(SNOOD_RADIUS, Math.min(canvas.width - SNOOD_RADIUS, shootingSnood.x));
+        let lastTime = performance.now();
+
+        function gameLoop(time) {
+            const dt = Math.min((time - lastTime) / 1000, 0.1);
+            lastTime = time;
+            if (!gameOver) update(dt);
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function update(dt) {
+            if (keys.left) launcherX = Math.max(35, launcherX - 5.5);
+            if (keys.right) launcherX = Math.min(canvas.width - 35, launcherX + 5.5);
+            
+            dashCooldown = Math.max(0, dashCooldown - dt);
+            screenShake = Math.max(0, screenShake - dt * 10);
+            
+            if (shieldTimer > 0) shieldTimer -= dt;
+            if (slowTimer > 0) slowTimer -= dt;
+            if (multiShotTimer > 0) { multiShotTimer -= dt; if (multiShotTimer <= 0) multiShot = false; }
+
+            if (currentSnood && !shootingSnood) currentSnood.x = launcherX;
+
+            // Update shooting snood
+            if (shootingSnood) {
+                shootingSnood.x += shootingSnood.vx;
+                shootingSnood.y += shootingSnood.vy;
+                if (shootingSnood.x < SNOOD_RADIUS + 5) { shootingSnood.vx = Math.abs(shootingSnood.vx); shootingSnood.x = SNOOD_RADIUS + 5; }
+                if (shootingSnood.x > canvas.width - SNOOD_RADIUS - 5) { shootingSnood.vx = -Math.abs(shootingSnood.vx); shootingSnood.x = canvas.width - SNOOD_RADIUS - 5; }
+                if (shootingSnood.y < SNOOD_RADIUS + 25) { snap(0, shootingSnood); shootingSnood = null; }
+                else if (checkSnoodCollision(shootingSnood)) { shootingSnood = null; }
             }
 
-            if (shootingSnood.y < SNOOD_RADIUS + 20) { snap(0); return; }
+            // Update extra shots
+            for (let i = extraShots.length - 1; i >= 0; i--) {
+                const s = extraShots[i];
+                s.x += s.vx; s.y += s.vy;
+                if (s.x < SNOOD_RADIUS + 5 || s.x > canvas.width - SNOOD_RADIUS - 5) s.vx *= -1;
+                if (s.y < SNOOD_RADIUS + 25 || checkSnoodCollision(s)) { extraShots.splice(i, 1); }
+            }
 
+            // Spawn enemies
+            edSpawnTimer += dt;
+            const spawnRate = Math.max(0.35, 1.6 - level * 0.1);
+            if (edSpawnTimer > spawnRate) { edSpawnTimer = 0; spawnEd(); if (level >= 4 && Math.random() < 0.25) spawnEd(); }
+
+            // Spawn powerups
+            powerupSpawnTimer += dt;
+            if (powerupSpawnTimer > 8 + Math.random() * 5) { powerupSpawnTimer = 0; spawnPowerup(); }
+
+            // Update falling Eds
+            const edSpeed = slowTimer > 0 ? 0.4 : 1;
+            for (let i = fallingEds.length - 1; i >= 0; i--) {
+                const ed = fallingEds[i];
+                ed.y += ed.speed * 55 * dt * edSpeed;
+                ed.rotation += ed.rotSpeed * dt;
+                ed.wobble += ed.wobbleSpeed * dt;
+                ed.x += Math.sin(ed.wobble) * 0.4;
+
+                if (!invincible && shieldTimer <= 0) {
+                    const dx = launcherX - ed.x, dy = SHOOT_Y - ed.y;
+                    if (Math.sqrt(dx*dx + dy*dy) < SNOOD_RADIUS + ed.type.size - 5) {
+                        lives--;
+                        invincible = true;
+                        invincibleTimer = 1.5;
+                        screenShake = 7;
+                        sfxHit();
+                        for (let j = 0; j < 15; j++) { const a = (j/15)*Math.PI*2; particles.push({ x: launcherX, y: SHOOT_Y, vx: Math.cos(a)*(3+Math.random()*3), vy: Math.sin(a)*(3+Math.random()*3), life: 0.5, color: '#ff0000', size: 5 }); }
+                        fallingEds.splice(i, 1);
+                        combo = 1;
+                        if (lives <= 0) { endGame('ED GOT YOU!'); return; }
+                        continue;
+                    }
+                } else if (shieldTimer > 0) {
+                    const dx = launcherX - ed.x, dy = SHOOT_Y - ed.y;
+                    if (Math.sqrt(dx*dx + dy*dy) < 45) {
+                        for (let j = 0; j < 8; j++) particles.push({ x: ed.x, y: ed.y, vx: (Math.random()-0.5)*6, vy: (Math.random()-0.5)*6, life: 0.4, color: '#00aaff', size: 4 });
+                        fallingEds.splice(i, 1);
+                        score += ed.type.points * 2;
+                        continue;
+                    }
+                }
+                if (ed.y > canvas.height + 30) { fallingEds.splice(i, 1); dodgedCount++; score += ed.type.points * level; }
+            }
+
+            // Update powerups
+            for (let i = fallingPowerups.length - 1; i >= 0; i--) {
+                const p = fallingPowerups[i];
+                p.y += p.speed * 50 * dt;
+                p.rotation += 2 * dt;
+                const dx = launcherX - p.x, dy = SHOOT_Y - p.y;
+                if (Math.sqrt(dx*dx + dy*dy) < 40) {
+                    collectPowerup(p.type);
+                    fallingPowerups.splice(i, 1);
+                    continue;
+                }
+                if (p.y > canvas.height + 20) fallingPowerups.splice(i, 1);
+            }
+
+            if (invincible) { invincibleTimer -= dt; if (invincibleTimer <= 0) invincible = false; }
+
+            // Particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx; p.y += p.vy; p.vy += 0.12;
+                p.life -= dt;
+                if (p.life <= 0) particles.splice(i, 1);
+            }
+
+            updateDisplay();
+        }
+
+        function checkSnoodCollision(snood) {
             for (let r = 0; r < grid.length; r++) {
-                for (let c = 0; c < (grid[r]?.length || 0); c++) {
+                if (!grid[r]) continue;
+                for (let c = 0; c < grid[r].length; c++) {
                     const s = grid[r][c];
                     if (s) {
-                        const dx = shootingSnood.x - s.x, dy = shootingSnood.y - s.y;
-                        if (Math.sqrt(dx*dx + dy*dy) < SNOOD_RADIUS * 2) { snap(r); return; }
+                        const dx = snood.x - s.x, dy = snood.y - s.y;
+                        if (Math.sqrt(dx*dx + dy*dy) < SNOOD_RADIUS * 1.85) { snap(r, snood); return true; }
                     }
                 }
             }
+            return false;
         }
 
-        function snap(nearRow) {
-            let bestRow = nearRow, bestCol = 0, bestDist = Infinity;
+        function collectPowerup(type) {
+            sfxPowerup();
+            for (let i = 0; i < 12; i++) { const a = (i/12)*Math.PI*2; particles.push({ x: launcherX, y: SHOOT_Y, vx: Math.cos(a)*4, vy: Math.sin(a)*4, life: 0.5, color: type.color, size: 5 }); }
+            
+            switch(type.type) {
+                case 'shield': shieldTimer = 8; break;
+                case 'bomb': activateBomb(); break;
+                case 'slow': slowTimer = 6; break;
+                case 'multi': multiShot = true; multiShotTimer = 10; break;
+                case 'life': lives = Math.min(lives + 1, 5); break;
+            }
+            score += 50;
+        }
 
+        function activateBomb() {
+            sfxBomb();
+            screenShake = 5;
+            let maxRow = 0;
+            for (let r = 0; r < grid.length; r++) { if (grid[r]) for (let c = 0; c < grid[r].length; c++) if (grid[r][c]) maxRow = Math.max(maxRow, r); }
+            
+            if (grid[maxRow]) {
+                for (let c = 0; c < grid[maxRow].length; c++) {
+                    const s = grid[maxRow][c];
+                    if (s) {
+                        for (let j = 0; j < 6; j++) particles.push({ x: s.x, y: s.y, vx: (Math.random()-0.5)*8, vy: -Math.random()*5, life: 0.6, color: SNOOD_TYPES[s.type].color, size: 5 });
+                        grid[maxRow][c] = null;
+                        score += 15;
+                    }
+                }
+            }
+            setTimeout(() => removeFloating(), 100);
+        }
+
+        function snap(nearRow, snood) {
+            let bestRow = nearRow, bestCol = 0, bestDist = Infinity;
             for (let r = Math.max(0, nearRow - 1); r <= nearRow + 1; r++) {
                 const offset = r % 2 === 0 ? 0 : SNOOD_RADIUS;
                 const maxC = COLS - (r % 2);
-                for (let c = 0; c <= maxC; c++) {
+                for (let c = 0; c < maxC; c++) {
                     const x = c * SNOOD_RADIUS * 2 + SNOOD_RADIUS + offset;
-                    const y = r * ROW_HEIGHT + SNOOD_RADIUS + 20;
+                    const y = r * ROW_HEIGHT + SNOOD_RADIUS + 25;
                     if (!grid[r]) grid[r] = [];
                     if (grid[r][c]) continue;
-                    const dx = shootingSnood.x - x, dy = shootingSnood.y - y;
+                    const dx = snood.x - x, dy = snood.y - y;
                     const dist = Math.sqrt(dx*dx + dy*dy);
                     if (dist < bestDist) { bestDist = dist; bestRow = r; bestCol = c; }
                 }
             }
-
             if (!grid[bestRow]) grid[bestRow] = [];
             const offset = bestRow % 2 === 0 ? 0 : SNOOD_RADIUS;
-            grid[bestRow][bestCol] = {
-                type: shootingSnood.type,
-                x: bestCol * SNOOD_RADIUS * 2 + SNOOD_RADIUS + offset,
-                y: bestRow * ROW_HEIGHT + SNOOD_RADIUS + 20
-            };
-            shootingSnood = null;
+            grid[bestRow][bestCol] = { type: snood.type, x: bestCol * SNOOD_RADIUS * 2 + SNOOD_RADIUS + offset, y: bestRow * ROW_HEIGHT + SNOOD_RADIUS + 25 };
             checkMatches(bestRow, bestCol);
         }
 
         function checkMatches(row, col) {
+            if (!grid[row] || !grid[row][col]) { combo = 1; checkGameOver(); return; }
             const type = grid[row][col].type;
             const matches = [], visited = new Set();
-
             function flood(r, c) {
-                const key = `${r},${c}`;
-                if (visited.has(key) || !grid[r]?.[c] || grid[r][c].type !== type) return;
+                const key = r+','+c;
+                if (visited.has(key) || !grid[r] || !grid[r][c] || grid[r][c].type !== type) return;
                 visited.add(key);
                 matches.push({ r, c });
                 const odd = r % 2 === 1;
                 const neighbors = odd ? [[r-1,c],[r-1,c+1],[r,c-1],[r,c+1],[r+1,c],[r+1,c+1]] : [[r-1,c-1],[r-1,c],[r,c-1],[r,c+1],[r+1,c-1],[r+1,c]];
-                neighbors.forEach(([nr, nc]) => flood(nr, nc));
+                for (let n of neighbors) flood(n[0], n[1]);
             }
-
             flood(row, col);
 
             if (matches.length >= 3) {
                 animating = true;
-                matches.forEach(m => {
-                    const s = grid[m.r][m.c];
-                    createParticle(s.x, s.y, SNOOD_TYPES[s.type].emoji);
-                    grid[m.r][m.c] = null;
-                });
-
-                const pts = matches.length * 10 * level;
-                score += pts + Math.floor(pts * (combo - 1) * 0.5);
-                totalCleared += matches.length;
-
-                if (combo > 1) showCombo(grid[row]?.[col]?.x || canvas.width/2, grid[row]?.[col]?.y || 200);
+                for (let m of matches) {
+                    if (grid[m.r] && grid[m.r][m.c]) {
+                        const s = grid[m.r][m.c];
+                        sfxPop();
+                        for (let j = 0; j < 6; j++) { const a = Math.random()*Math.PI*2, sp = 2+Math.random()*3; particles.push({ x: s.x, y: s.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp-1, life: 0.4+Math.random()*0.2, color: SNOOD_TYPES[s.type].color, size: 4 }); }
+                        grid[m.r][m.c] = null;
+                    }
+                }
+                const pts = matches.length * 10 * level + Math.floor(matches.length * 10 * level * (combo-1) * 0.4);
+                score += pts;
+                if (combo > 1) { showCombo(matches[0].c * SNOOD_RADIUS * 2 + SNOOD_RADIUS, matches[0].r * ROW_HEIGHT + SNOOD_RADIUS + 25, combo, pts); sfxCombo(); }
                 combo++;
                 maxCombo = Math.max(maxCombo, combo);
+                setTimeout(() => { removeFloating(); if (checkWin()) { level++; addRows(); } animating = false; checkGameOver(); }, 150);
+            } else { combo = 1; checkGameOver(); }
+        }
 
-                setTimeout(() => {
-                    removeFloating();
-                    if (totalCleared >= level * 25) { level++; addRow(); }
-                    animating = false;
-                    updateDisplay();
-                    checkGameOver();
-                }, 200);
-            } else {
-                combo = 1;
-                updateDisplay();
-                checkGameOver();
-            }
+        function showCombo(x, y, c, pts) {
+            const popup = document.createElement('div');
+            popup.className = 'combo-popup';
+            popup.innerHTML = 'x'+c+' <span style="color:#0f0">+'+pts+'</span>';
+            const rect = canvas.getBoundingClientRect();
+            popup.style.left = (rect.left + x * rect.width / canvas.width - 40) + 'px';
+            popup.style.top = (rect.top + y * rect.height / canvas.height) + 'px';
+            document.body.appendChild(popup);
+            setTimeout(() => popup.remove(), 800);
         }
 
         function removeFloating() {
             const connected = new Set();
             function mark(r, c) {
-                const key = `${r},${c}`;
-                if (connected.has(key) || !grid[r]?.[c]) return;
+                const key = r+','+c;
+                if (connected.has(key) || !grid[r] || !grid[r][c]) return;
                 connected.add(key);
                 const odd = r % 2 === 1;
                 const neighbors = odd ? [[r-1,c],[r-1,c+1],[r,c-1],[r,c+1],[r+1,c],[r+1,c+1]] : [[r-1,c-1],[r-1,c],[r,c-1],[r,c+1],[r+1,c-1],[r+1,c]];
-                neighbors.forEach(([nr, nc]) => mark(nr, nc));
+                for (let n of neighbors) mark(n[0], n[1]);
             }
-            if (grid[0]) grid[0].forEach((s, c) => { if (s) mark(0, c); });
-
+            if (grid[0]) for (let c = 0; c < grid[0].length; c++) if (grid[0][c]) mark(0, c);
             let floating = 0;
             for (let r = 0; r < grid.length; r++) {
-                for (let c = 0; c < (grid[r]?.length || 0); c++) {
-                    if (grid[r][c] && !connected.has(`${r},${c}`)) {
-                        createParticle(grid[r][c].x, grid[r][c].y, SNOOD_TYPES[grid[r][c].type].emoji);
+                if (!grid[r]) continue;
+                for (let c = 0; c < grid[r].length; c++) {
+                    if (grid[r][c] && !connected.has(r+','+c)) {
+                        const s = grid[r][c];
+                        sfxPop();
+                        for (let j = 0; j < 5; j++) particles.push({ x: s.x, y: s.y, vx: (Math.random()-0.5)*4, vy: Math.random()*3, life: 0.5, color: SNOOD_TYPES[s.type].color, size: 5 });
                         grid[r][c] = null;
                         floating++;
                     }
                 }
             }
-            if (floating > 0) { score += floating * 25 * level; totalCleared += floating; }
+            if (floating > 0) score += floating * 20 * level;
         }
 
-        function addRow() {
-            for (let r = grid.length - 1; r >= 0; r--) {
-                if (grid[r]) grid[r].forEach(s => { if (s) s.y += ROW_HEIGHT; });
-            }
-            grid.unshift([]);
-            for (let c = 0; c < COLS; c++) {
-                grid[0][c] = { type: Math.floor(Math.random() * Math.min(5 + Math.floor(level/2), SNOOD_TYPES.length)), x: c * SNOOD_RADIUS * 2 + SNOOD_RADIUS, y: SNOOD_RADIUS + 20 };
-            }
-            for (let r = 1; r < grid.length; r++) {
-                if (grid[r]) {
-                    const off = r % 2 === 0 ? 0 : SNOOD_RADIUS;
-                    grid[r].forEach((s, c) => { if (s) { s.x = c * SNOOD_RADIUS * 2 + SNOOD_RADIUS + off; s.y = r * ROW_HEIGHT + SNOOD_RADIUS + 20; } });
-                }
+        function checkWin() { for (let r = 0; r < grid.length; r++) if (grid[r]) for (let c = 0; c < grid[r].length; c++) if (grid[r][c]) return false; return true; }
+
+        function addRows() {
+            const numRows = Math.min(3 + Math.floor(level / 3), 5);
+            const maxTypes = Math.min(4 + Math.floor(level / 2), SNOOD_TYPES.length);
+            for (let row = 0; row < numRows; row++) {
+                grid[row] = [];
+                const offset = row % 2 === 0 ? 0 : SNOOD_RADIUS;
+                for (let col = 0; col < COLS - (row % 2); col++) grid[row][col] = { type: Math.floor(Math.random() * maxTypes), x: col * SNOOD_RADIUS * 2 + SNOOD_RADIUS + offset, y: row * ROW_HEIGHT + SNOOD_RADIUS + 25 };
             }
         }
 
-        function checkGameOver() {
-            for (let r = 0; r < grid.length; r++) {
-                for (let c = 0; c < (grid[r]?.length || 0); c++) {
-                    if (grid[r][c] && grid[r][c].y > DANGER_LINE) { endGame(); return; }
-                }
-            }
-            let has = false;
-            for (let r = 0; r < grid.length && !has; r++) for (let c = 0; c < (grid[r]?.length || 0) && !has; c++) if (grid[r][c]) has = true;
-            if (!has) { score += 500 * level; level++; resetGame(); }
-        }
+        function checkGameOver() { for (let r = 0; r < grid.length; r++) if (grid[r]) for (let c = 0; c < grid[r].length; c++) if (grid[r][c] && grid[r][c].y > DANGER_LINE) { endGame('SNOODS TOO LOW!'); return; } }
 
-        function endGame() {
-            gameOver = true; gameStarted = false;
-            document.getElementById('gameOverTitle').textContent = 'MANAGEMENT WINS';
-            document.getElementById('finalScore').textContent = score;
+        function endGame(reason) {
+            gameOver = true;
+            document.getElementById('gameOverTitle').textContent = reason;
+            document.getElementById('finalScore').textContent = score.toLocaleString();
             document.getElementById('finalLevel').textContent = level;
-            document.getElementById('finalCombo').textContent = maxCombo;
-            document.getElementById('finalCleared').textContent = totalCleared;
-            const isHigh = saveScore();
-            document.getElementById('newHighScore').classList.toggle('hidden', !isHigh);
-            gameOverOverlay.classList.remove('hidden');
+            document.getElementById('finalDodged').textContent = dodgedCount;
+            document.getElementById('finalCombo').textContent = 'x' + maxCombo;
+            const isRecord = saveScore();
+            document.getElementById('newRecord').style.display = isRecord ? 'block' : 'none';
+            document.getElementById('gameOverOverlay').classList.remove('hidden');
         }
 
-        function createParticle(x, y, emoji) {
-            const p = document.createElement('div');
-            p.className = 'particle';
-            p.textContent = emoji;
-            p.style.left = (canvas.offsetLeft + x) + 'px';
-            p.style.top = (canvas.offsetTop + y) + 'px';
-            document.body.appendChild(p);
-            setTimeout(() => p.remove(), 2000);
+        function saveScore() {
+            leaderboard.push({ name: playerName, score, level, date: Date.now() });
+            leaderboard.sort((a, b) => b.score - a.score);
+            leaderboard = leaderboard.slice(0, 30);
+            localStorage.setItem('msgaSnoodLB3', JSON.stringify(leaderboard));
+            updateLeaderboard();
+            return leaderboard[0].score === score;
         }
 
-        function showCombo(x, y) {
-            const c = document.createElement('div');
-            c.className = 'combo-popup';
-            c.textContent = combo + 'x COMBO!';
-            c.style.left = (canvas.offsetLeft + x) + 'px';
-            c.style.top = (canvas.offsetTop + y) + 'px';
-            document.body.appendChild(c);
-            setTimeout(() => c.remove(), 1000);
+        function updateDisplay() {
+            document.getElementById('score').textContent = score.toLocaleString();
+            document.getElementById('level').textContent = level;
+            document.getElementById('combo').textContent = 'x' + combo;
+            document.getElementById('lives').textContent = lives;
+            document.getElementById('shield').textContent = shieldTimer > 0 ? Math.ceil(shieldTimer) + 's' : '-';
+            document.getElementById('dodged').textContent = dodgedCount;
+            document.getElementById('pu-shield').className = 'powerup-item' + (shieldTimer > 0 ? ' active' : '');
+            document.getElementById('pu-slow').className = 'powerup-item' + (slowTimer > 0 ? ' active' : '');
+            document.getElementById('pu-multi').className = 'powerup-item' + (multiShot ? ' active' : '');
         }
 
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        function updateLeaderboard() {
+            const el = document.getElementById('leaderboard');
+            if (leaderboard.length === 0) { el.innerHTML = '<div style="color:#666;font-size:11px;text-align:center">No scores</div>'; return; }
+            el.innerHTML = leaderboard.slice(0, 5).map((e, i) => '<div class="lb-entry"><span>'+(i+1)+'. '+e.name+'</span><span>'+e.score.toLocaleString()+'</span></div>').join('');
+        }
 
-            // Floor/platform area
-            ctx.fillStyle = 'rgba(30,20,40,0.9)';
-            ctx.fillRect(0, DANGER_LINE + 20, canvas.width, canvas.height - DANGER_LINE - 20);
-            
-            // Simple danger zone
-            ctx.fillStyle = 'rgba(255,0,0,0.08)';
-            ctx.fillRect(0, DANGER_LINE, canvas.width, 20);
-            
-            // Danger line
-            ctx.strokeStyle = '#ff0000';
+        function render() {
+            ctx.save();
+            if (screenShake > 0) ctx.translate((Math.random()-0.5)*screenShake, (Math.random()-0.5)*screenShake);
+
+            // BG
+            const grad = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 0, canvas.width/2, canvas.height/2, canvas.width);
+            grad.addColorStop(0, '#151525'); grad.addColorStop(1, '#0a0a12');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Grid
+            ctx.strokeStyle = 'rgba(255,215,0,0.04)';
+            for (let x = 0; x < canvas.width; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
+            for (let y = 0; y < canvas.height; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
+
+            // Danger
+            ctx.strokeStyle = 'rgba(255,50,50,0.5)';
             ctx.lineWidth = 2;
-            ctx.setLineDash([10, 5]);
-            ctx.beginPath();
-            ctx.moveTo(0, DANGER_LINE);
-            ctx.lineTo(canvas.width, DANGER_LINE);
-            ctx.stroke();
+            ctx.setLineDash([12, 6]);
+            ctx.beginPath(); ctx.moveTo(0, DANGER_LINE); ctx.lineTo(canvas.width, DANGER_LINE); ctx.stroke();
             ctx.setLineDash([]);
+            ctx.lineWidth = 1;
 
-            // Draw grid snoods using cached sprites
-            for (let r = 0; r < grid.length; r++) {
-                for (let c = 0; c < (grid[r]?.length || 0); c++) {
-                    const s = grid[r][c];
-                    if (s) drawCachedSnood(s.x, s.y, s.type);
-                }
+            // Snoods
+            for (let r = 0; r < grid.length; r++) if (grid[r]) for (let c = 0; c < grid[r].length; c++) { const s = grid[r][c]; if (s) drawSnood(s.x, s.y, s.type, 1); }
+
+            // Particles
+            for (let p of particles) { ctx.globalAlpha = Math.min(1, p.life * 2.5); ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.size * Math.min(1, p.life * 2), 0, Math.PI * 2); ctx.fill(); }
+            ctx.globalAlpha = 1;
+
+            // Falling Eds
+            for (let ed of fallingEds) {
+                ctx.save();
+                ctx.translate(ed.x, ed.y);
+                ctx.rotate(ed.rotation);
+                ctx.shadowColor = '#ff3333'; ctx.shadowBlur = 12;
+                ctx.fillStyle = ed.type.color;
+                ctx.beginPath(); ctx.arc(0, 0, ed.type.size, 0, Math.PI * 2); ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.font = ed.type.size + 'px Arial';
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(ed.type.emoji, 0, 1);
+                ctx.restore();
             }
 
-            if (shootingSnood) drawCachedSnood(shootingSnood.x, shootingSnood.y, shootingSnood.type);
+            // Falling powerups
+            for (let p of fallingPowerups) {
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rotation);
+                ctx.shadowColor = p.type.color; ctx.shadowBlur = 15;
+                ctx.fillStyle = p.type.color;
+                ctx.beginPath(); ctx.arc(0, 0, 16, 0, Math.PI * 2); ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+                ctx.font = '18px Arial';
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(p.type.emoji, 0, 1);
+                ctx.restore();
+            }
 
-            if (currentSnood && !shootingSnood && !gameOver) {
-                // Draw movement track
-                ctx.fillStyle = 'rgba(60,60,80,0.5)';
-                ctx.fillRect(30, SHOOT_Y + 25, canvas.width - 60, 8);
-                ctx.strokeStyle = '#555';
-                ctx.lineWidth = 1;
-                ctx.strokeRect(30, SHOOT_Y + 25, canvas.width - 60, 8);
-                
-                // Aim line with reflection preview
-                drawAimLine(launcherX, SHOOT_Y, aimAngle);
-                
-                // Draw blaster gun
-                drawBlasterGun(launcherX, SHOOT_Y, aimAngle);
-                
-                // Current snood in gun
-                drawCachedSnood(launcherX, SHOOT_Y - 5, currentSnood.type);
+            // Shooting
+            if (shootingSnood) {
+                ctx.globalAlpha = 0.3;
+                drawSnood(shootingSnood.x - shootingSnood.vx * 0.4, shootingSnood.y - shootingSnood.vy * 0.4, shootingSnood.type, 0.6);
+                ctx.globalAlpha = 1;
+                drawSnood(shootingSnood.x, shootingSnood.y, shootingSnood.type, 1);
+            }
+            for (let s of extraShots) drawSnood(s.x, s.y, s.type, 0.85);
 
-                // Next snood preview box
-                ctx.fillStyle = 'rgba(20,20,40,0.9)';
-                ctx.strokeStyle = '#ffcc00';
+            // Aim
+            if (!shootingSnood && currentSnood && !animating && !gameOver) {
+                ctx.strokeStyle = 'rgba(255,215,0,0.4)';
                 ctx.lineWidth = 2;
+                ctx.setLineDash([6, 6]);
                 ctx.beginPath();
-                ctx.roundRect(canvas.width - 65, canvas.height - 75, 55, 65, 8);
-                ctx.fill();
+                ctx.moveTo(launcherX, SHOOT_Y);
+                let px = launcherX, py = SHOOT_Y, vx = Math.cos(aimAngle), vy = Math.sin(aimAngle);
+                for (let i = 0; i < 160; i++) { px += vx * 2; py += vy * 2; if (px < SNOOD_RADIUS + 5 || px > canvas.width - SNOOD_RADIUS - 5) vx *= -1; if (py < 30) break; }
+                ctx.lineTo(px, py);
                 ctx.stroke();
-                
-                ctx.fillStyle = '#ffcc00';
-                ctx.font = 'bold 12px VT323';
-                ctx.textAlign = 'center';
-                ctx.fillText('NEXT', canvas.width - 37, canvas.height - 58);
-                drawCachedSnood(canvas.width - 37, canvas.height - 30, nextSnood.type, 0.8);
-                
-                // Controls hint
-                ctx.fillStyle = 'rgba(150,150,150,0.7)';
-                ctx.font = '14px VT323';
-                ctx.textAlign = 'left';
-                ctx.fillText('A/D or ARROWS: Move', 10, canvas.height - 10);
-                ctx.fillText('CLICK or SPACE: Fire', 10, canvas.height - 25);
+                ctx.setLineDash([]);
+                ctx.lineWidth = 1;
             }
-            
-            // Game over overlay
-            if (gameOver) {
-                ctx.fillStyle = 'rgba(0,0,0,0.5)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Shield aura
+            if (shieldTimer > 0) {
+                ctx.strokeStyle = 'rgba(0,170,255,' + (0.4 + Math.sin(Date.now()/100)*0.2) + ')';
+                ctx.lineWidth = 3;
+                ctx.beginPath(); ctx.arc(launcherX, SHOOT_Y, 38, 0, Math.PI * 2); ctx.stroke();
+                ctx.lineWidth = 1;
             }
-        }
-        
-        function drawAimLine(x, y, angle) {
-            // Main aim line
-            ctx.strokeStyle = 'rgba(0,255,170,0.6)';
-            ctx.lineWidth = 2;
-            ctx.setLineDash([8, 8]);
-            
-            let lineX = x, lineY = y;
-            let dx = Math.cos(angle), dy = Math.sin(angle);
-            
-            ctx.beginPath();
-            ctx.moveTo(x, y);
-            
-            // Trace line with wall bounces
-            for (let i = 0; i < 500; i++) {
-                lineX += dx;
-                lineY += dy;
-                
-                // Wall bounce
-                if (lineX < SNOOD_RADIUS || lineX > canvas.width - SNOOD_RADIUS) {
-                    dx *= -1;
-                    ctx.lineTo(lineX, lineY);
-                    ctx.stroke();
-                    ctx.strokeStyle = 'rgba(0,255,170,0.3)';
-                    ctx.beginPath();
-                    ctx.moveTo(lineX, lineY);
-                }
-                
-                if (lineY < 30) break;
+
+            // Launcher
+            ctx.save();
+            ctx.translate(launcherX, SHOOT_Y + 20);
+            if (invincible && Math.floor(Date.now()/80) % 2 === 0) ctx.globalAlpha = 0.4;
+            ctx.fillStyle = '#222';
+            ctx.fillRect(-28, 0, 56, 12);
+            ctx.fillStyle = '#bf0a30';
+            ctx.fillRect(-24, 3, 48, 6);
+            ctx.save();
+            ctx.rotate(aimAngle + Math.PI/2);
+            const cg = ctx.createLinearGradient(-7, 0, 7, 0);
+            cg.addColorStop(0, '#ffdd44'); cg.addColorStop(0.5, '#ffd700'); cg.addColorStop(1, '#cc9900');
+            ctx.fillStyle = cg;
+            ctx.fillRect(-7, -28, 14, 32);
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(-5, -30, 10, 4);
+            ctx.restore();
+            ctx.restore();
+            ctx.globalAlpha = 1;
+
+            // Current snood
+            if (currentSnood && !shootingSnood) drawSnood(launcherX, SHOOT_Y, currentSnood.type, 1);
+
+            // Next
+            if (nextSnood) {
+                ctx.fillStyle = '#666'; ctx.font = '10px VT323'; ctx.textAlign = 'center';
+                ctx.fillText('NEXT', 32, canvas.height - 55);
+                drawSnood(32, canvas.height - 30, nextSnood.type, 0.6);
             }
-            ctx.lineTo(lineX, lineY);
-            ctx.stroke();
-            ctx.setLineDash([]);
+
+            // Dash bar
+            ctx.fillStyle = '#333';
+            ctx.fillRect(canvas.width - 80, canvas.height - 20, 70, 10);
+            ctx.fillStyle = dashCooldown > 0 ? '#005555' : '#00aaaa';
+            ctx.fillRect(canvas.width - 78, canvas.height - 18, 66 * (1 - dashCooldown/0.6), 6);
+            ctx.fillStyle = dashCooldown > 0 ? '#555' : '#0ff';
+            ctx.font = '9px VT323'; ctx.textAlign = 'right';
+            ctx.fillText('DASH', canvas.width - 12, canvas.height - 11);
+
+            ctx.restore();
         }
 
-        function drawBlasterGun(x, y, angle) {
+        function drawSnood(x, y, type, scale) {
+            const t = SNOOD_TYPES[type], r = SNOOD_RADIUS * scale;
             ctx.save();
             ctx.translate(x, y);
-            ctx.rotate(angle + Math.PI/2);
-            
-            // Gun body (main housing)
-            const grad = ctx.createLinearGradient(-18, 0, 18, 0);
-            grad.addColorStop(0, '#2a2a3a');
-            grad.addColorStop(0.3, '#4a4a6a');
-            grad.addColorStop(0.5, '#5a5a7a');
-            grad.addColorStop(0.7, '#4a4a6a');
-            grad.addColorStop(1, '#2a2a3a');
-            
-            // Back housing
-            ctx.fillStyle = grad;
-            ctx.beginPath();
-            ctx.roundRect(-18, -5, 36, 35, 5);
-            ctx.fill();
-            ctx.strokeStyle = '#6a6a8a';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-            
-            // Barrel
-            ctx.fillStyle = '#3a3a4a';
-            ctx.beginPath();
-            ctx.roundRect(-12, -45, 24, 45, 3);
-            ctx.fill();
-            ctx.strokeStyle = '#5a5a6a';
-            ctx.stroke();
-            
-            // Barrel stripes
-            ctx.fillStyle = '#2a2a3a';
-            ctx.fillRect(-12, -35, 24, 4);
-            ctx.fillRect(-12, -25, 24, 4);
-            ctx.fillRect(-12, -15, 24, 4);
-            
-            // Muzzle glow
-            ctx.fillStyle = '#00ffaa';
-            ctx.beginPath();
-            ctx.arc(0, -45, 8, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#aaffdd';
-            ctx.beginPath();
-            ctx.arc(0, -45, 4, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Side vents (left)
-            ctx.fillStyle = '#ff4444';
-            ctx.fillRect(-20, 5, 4, 8);
-            ctx.fillRect(-20, 16, 4, 8);
-            
-            // Side vents (right)
-            ctx.fillRect(16, 5, 4, 8);
-            ctx.fillRect(16, 16, 4, 8);
-            
-            // Energy core window
-            ctx.fillStyle = '#00aaff';
-            ctx.beginPath();
-            ctx.arc(0, 15, 8, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#66ddff';
-            ctx.beginPath();
-            ctx.arc(0, 15, 4, 0, Math.PI * 2);
-            ctx.fill();
-            
+            ctx.shadowColor = t.color; ctx.shadowBlur = 10;
+            const g = ctx.createRadialGradient(-r*0.3, -r*0.3, 0, 0, 0, r);
+            g.addColorStop(0, lighten(t.color, 35)); g.addColorStop(0.7, t.color); g.addColorStop(1, darken(t.color, 25));
+            ctx.fillStyle = g;
+            ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = 'rgba(0,0,0,0.25)'; ctx.lineWidth = 1.5; ctx.stroke();
+            ctx.fillStyle = 'rgba(255,255,255,0.3)';
+            ctx.beginPath(); ctx.arc(-r*0.25, -r*0.25, r * 0.3, 0, Math.PI * 2); ctx.fill();
+            ctx.font = (r * 1.05) + 'px Arial';
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(t.emoji, 0, 1);
             ctx.restore();
-            
-            // Wheels/treads under gun
-            ctx.fillStyle = '#333';
-            ctx.beginPath();
-            ctx.ellipse(x - 20, y + 30, 8, 5, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.ellipse(x + 20, y + 30, 8, 5, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.strokeStyle = '#555';
-            ctx.lineWidth = 1;
-            ctx.stroke();
         }
 
-        // Sprite cache for snoods
-        const snoodCache = new Map();
-        
-        function createSnoodSprite(type, scale = 1) {
-            const key = `${type}-${scale}`;
-            if (snoodCache.has(key)) return snoodCache.get(key);
-            
-            const t = SNOOD_TYPES[type], r = SNOOD_RADIUS * scale;
-            const size = Math.ceil(r * 2 + 4);
-            const offscreen = document.createElement('canvas');
-            offscreen.width = size;
-            offscreen.height = size;
-            const octx = offscreen.getContext('2d');
-            
-            const cx = size / 2, cy = size / 2;
-            
-            // Main gradient
-            const g = octx.createRadialGradient(cx - r*0.3, cy - r*0.3, 0, cx, cy, r);
-            g.addColorStop(0, '#ffffff');
-            g.addColorStop(0.3, t.color);
-            g.addColorStop(1, shadeColor(t.color, -40));
-            octx.fillStyle = g;
-            octx.beginPath();
-            octx.arc(cx, cy, r, 0, Math.PI * 2);
-            octx.fill();
-            
-            // Border
-            octx.strokeStyle = shadeColor(t.color, -60);
-            octx.lineWidth = 2;
-            octx.stroke();
-            
-            // Emoji
-            octx.font = `${Math.floor(r * 1.2)}px Arial`;
-            octx.textAlign = 'center';
-            octx.textBaseline = 'middle';
-            octx.fillText(t.emoji, cx, cy + 1);
-            
-            snoodCache.set(key, offscreen);
-            return offscreen;
-        }
-        
-        function drawCachedSnood(x, y, type, scale = 1) {
-            const sprite = createSnoodSprite(type, scale);
-            ctx.drawImage(sprite, x - sprite.width/2, y - sprite.height/2);
-        }
+        function lighten(c, p) { const n = parseInt(c.replace('#',''),16), a = Math.round(2.55*p); return '#'+(0x1000000+Math.min(255,(n>>16)+a)*0x10000+Math.min(255,((n>>8)&0xFF)+a)*0x100+Math.min(255,(n&0xFF)+a)).toString(16).slice(1); }
+        function darken(c, p) { const n = parseInt(c.replace('#',''),16), a = Math.round(2.55*p); return '#'+(0x1000000+Math.max(0,(n>>16)-a)*0x10000+Math.max(0,((n>>8)&0xFF)-a)*0x100+Math.max(0,(n&0xFF)-a)).toString(16).slice(1); }
 
-        function shadeColor(c, p) {
-            const n = parseInt(c.replace('#', ''), 16), a = Math.round(2.55 * p);
-            const R = Math.max(0, Math.min(255, (n >> 16) + a));
-            const G = Math.max(0, Math.min(255, ((n >> 8) & 0xFF) + a));
-            const B = Math.max(0, Math.min(255, (n & 0xFF) + a));
-            return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
-        }
-
-        function gameLoop() {
-            if (!gameStarted) return;
-            update();
-            draw();
-            requestAnimationFrame(gameLoop);
-        }
-
-        document.getElementById('startGameBtn').addEventListener('click', startGame);
-        playerNameInput.addEventListener('keypress', e => { if (e.key === 'Enter') startGame(); });
-        document.getElementById('playAgainBtn').addEventListener('click', () => {
-            gameOverOverlay.classList.add('hidden');
-            resetGame();
-            gameStarted = true;
-            gameLoop();
-        });
-        document.getElementById('changeNameBtn').addEventListener('click', () => {
-            gameOverOverlay.classList.add('hidden');
-            nameOverlay.classList.remove('hidden');
-            playerNameInput.focus();
-        });
-        document.getElementById('clearScoresBtn').addEventListener('click', () => {
-            if (confirm('Clear all scores?')) {
-                leaderboard = [];
-                localStorage.removeItem('snoodLeaderboard');
-                updateLeaderboardDisplay();
-                updateHighScoreDisplay();
-            }
-        });
-        document.getElementById('shareScoreBtn').addEventListener('click', () => {
-            const shareText = `SNOOD SINDICAL - Union Game Results
-
-Player: ${playerName}
-Score: ${score}
-Level: ${level}
-Max Combo: ${maxCombo}x
-Snoods Cleared: ${totalCleared}
-
-The revolution will not be televised, but your score will be shared!
-
-Play now: https://ables.ai/snood.html`;
-            
-            navigator.clipboard.writeText(shareText).then(() => {
-                const copied = document.getElementById('shareCopied');
-                copied.classList.remove('hidden');
-                setTimeout(() => copied.classList.add('hidden'), 2000);
-            }).catch(() => {
-                alert('Copy failed. Share this:\n\n' + shareText);
-            });
-        });
-
-        init();
+        updateLeaderboard();
+        const sn = localStorage.getItem('msgaSnoodName');
+        if (sn) document.getElementById('playerNameInput').value = sn;
+        document.getElementById('playerNameInput').focus();
     </script>
 </body>
 </html>
