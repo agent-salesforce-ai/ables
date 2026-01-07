@@ -86,6 +86,21 @@
         .powerup-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 12px; color: #888; }
         .powerup-item.active { color: #00ff00; }
         .powerup-icon-small { font-size: 16px; }
+        .music-toggle {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(180deg, #1a1a2e 0%, #0d0d1a 100%);
+            border: 2px solid #ffd700;
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            z-index: 999;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            color: #ffd700;
+        }
+        .music-toggle:hover { box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
         .combo-popup {
             position: absolute;
             font-family: 'Press Start 2P', cursive;
@@ -161,6 +176,7 @@
 </head>
 <body>
     <div class="scanlines"></div>
+    <div class="music-toggle" id="musicToggle">MUSIC: OFF</div>
     <div class="header">
         <div class="title">MSGA SNOOD</div>
         <div class="subtitle">Make Speedboats Great Again!</div>
@@ -187,6 +203,7 @@
                 <span>MOUSE</span> Aim<br>
                 <span>CLICK</span> Shoot<br>
                 <span>SPACE</span> Dash<br>
+                <span>M</span> Music<br>
             </div>
             <div class="powerups-section">
                 <div class="panel-title">POWER-UPS</div>
@@ -234,32 +251,196 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Audio
+        // ========== 80's CHIPTUNE MUSIC ENGINE ==========
         let audioCtx = null;
-        function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-        function playTone(freq, dur, type, vol) {
-            if (!audioCtx) return;
+        let musicPlaying = false;
+        let musicNodes = [];
+        let masterGain = null;
+        let musicInterval = null;
+        let bassInterval = null;
+        let arpInterval = null;
+        
+        // 80's inspired melody patterns (notes in Hz)
+        const NOTES = {
+            C3: 130.81, D3: 146.83, E3: 164.81, F3: 174.61, G3: 196.00, A3: 220.00, B3: 246.94,
+            C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.00, A4: 440.00, B4: 493.88,
+            C5: 523.25, D5: 587.33, E5: 659.25, F5: 698.46, G5: 783.99, A5: 880.00, B5: 987.77,
+            REST: 0
+        };
+        
+        // Catchy 80's arcade melody
+        const melody = [
+            { note: 'E4', dur: 0.15 }, { note: 'E4', dur: 0.15 }, { note: 'REST', dur: 0.15 }, { note: 'E4', dur: 0.15 },
+            { note: 'REST', dur: 0.15 }, { note: 'C4', dur: 0.15 }, { note: 'E4', dur: 0.3 },
+            { note: 'G4', dur: 0.3 }, { note: 'REST', dur: 0.3 }, { note: 'G3', dur: 0.3 },
+            
+            { note: 'C4', dur: 0.3 }, { note: 'REST', dur: 0.15 }, { note: 'G3', dur: 0.3 },
+            { note: 'REST', dur: 0.15 }, { note: 'E3', dur: 0.3 }, { note: 'REST', dur: 0.15 },
+            { note: 'A3', dur: 0.15 }, { note: 'B3', dur: 0.15 }, { note: 'A3', dur: 0.15 }, { note: 'A3', dur: 0.15 },
+            
+            { note: 'G3', dur: 0.2 }, { note: 'E4', dur: 0.2 }, { note: 'G4', dur: 0.2 },
+            { note: 'A4', dur: 0.3 }, { note: 'F4', dur: 0.15 }, { note: 'G4', dur: 0.15 },
+            { note: 'REST', dur: 0.15 }, { note: 'E4', dur: 0.15 }, { note: 'C4', dur: 0.15 },
+            { note: 'D4', dur: 0.15 }, { note: 'B3', dur: 0.3 },
+        ];
+        
+        // Bass line
+        const bassLine = [
+            'C3', 'C3', 'G3', 'G3', 'A3', 'A3', 'E3', 'E3',
+            'F3', 'F3', 'C3', 'C3', 'G3', 'G3', 'G3', 'G3',
+        ];
+        
+        // Arpeggio pattern
+        const arpPattern = ['C4', 'E4', 'G4', 'E4'];
+        
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                masterGain = audioCtx.createGain();
+                masterGain.gain.value = 0.15;
+                masterGain.connect(audioCtx.destination);
+            }
+        }
+        
+        function playNote(freq, duration, type, volume, delay = 0) {
+            if (!audioCtx || freq === 0) return;
             try {
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.type = type || 'square';
                 osc.frequency.value = freq;
-                gain.gain.setValueAtTime(vol || 0.08, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+                
+                const startTime = audioCtx.currentTime + delay;
+                gain.gain.setValueAtTime(0, startTime);
+                gain.gain.linearRampToValueAtTime(volume || 0.1, startTime + 0.01);
+                gain.gain.linearRampToValueAtTime(volume * 0.7, startTime + duration * 0.3);
+                gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+                
                 osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + dur);
+                gain.connect(masterGain);
+                osc.start(startTime);
+                osc.stop(startTime + duration);
+                
+                musicNodes.push({ osc, gain });
             } catch(e) {}
         }
-        function sfxShoot() { playTone(440, 0.08, 'square', 0.06); }
-        function sfxPop() { playTone(600 + Math.random()*300, 0.12, 'sine', 0.08); }
-        function sfxCombo() { playTone(800, 0.08, 'square', 0.06); setTimeout(() => playTone(1000, 0.08, 'square', 0.06), 60); }
-        function sfxHit() { playTone(120, 0.25, 'sawtooth', 0.12); }
-        function sfxPowerup() { playTone(600, 0.1, 'sine', 0.08); playTone(900, 0.1, 'sine', 0.08); }
-        function sfxBomb() { playTone(100, 0.4, 'sawtooth', 0.15); }
+        
+        function playMelodyNote(noteObj, time) {
+            const freq = NOTES[noteObj.note];
+            if (freq > 0) {
+                playNote(freq, noteObj.dur * 0.9, 'square', 0.12, time);
+                // Add slight vibrato/chorus effect
+                playNote(freq * 1.005, noteObj.dur * 0.9, 'square', 0.04, time);
+            }
+        }
+        
+        function playBassNote(noteName, time) {
+            const freq = NOTES[noteName];
+            if (freq > 0) {
+                playNote(freq, 0.2, 'triangle', 0.15, time);
+            }
+        }
+        
+        function playArpNote(noteName, time) {
+            const freq = NOTES[noteName];
+            if (freq > 0) {
+                playNote(freq * 2, 0.08, 'sine', 0.06, time);
+            }
+        }
+        
+        let melodyIndex = 0;
+        let bassIndex = 0;
+        let arpIndex = 0;
+        
+        function startMusic() {
+            if (musicPlaying) return;
+            initAudio();
+            musicPlaying = true;
+            document.getElementById('musicToggle').textContent = 'MUSIC: ON';
+            
+            melodyIndex = 0;
+            bassIndex = 0;
+            arpIndex = 0;
+            
+            // Main melody loop
+            let melodyTime = 0;
+            function scheduleMelody() {
+                if (!musicPlaying) return;
+                const note = melody[melodyIndex % melody.length];
+                playMelodyNote(note, 0);
+                melodyIndex++;
+                setTimeout(scheduleMelody, note.dur * 1000);
+            }
+            scheduleMelody();
+            
+            // Bass line
+            bassInterval = setInterval(() => {
+                if (!musicPlaying) return;
+                playBassNote(bassLine[bassIndex % bassLine.length], 0);
+                bassIndex++;
+            }, 250);
+            
+            // Arpeggio
+            arpInterval = setInterval(() => {
+                if (!musicPlaying) return;
+                playArpNote(arpPattern[arpIndex % arpPattern.length], 0);
+                arpIndex++;
+            }, 150);
+            
+            // Drum beat
+            musicInterval = setInterval(() => {
+                if (!musicPlaying) return;
+                // Kick
+                playNote(60, 0.1, 'triangle', 0.2, 0);
+                playNote(50, 0.15, 'sine', 0.15, 0);
+                // Hi-hat
+                setTimeout(() => {
+                    if (musicPlaying) {
+                        const noise = audioCtx.createOscillator();
+                        const noiseGain = audioCtx.createGain();
+                        noise.type = 'square';
+                        noise.frequency.value = 800 + Math.random() * 400;
+                        noiseGain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+                        noiseGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                        noise.connect(noiseGain);
+                        noiseGain.connect(masterGain);
+                        noise.start();
+                        noise.stop(audioCtx.currentTime + 0.05);
+                    }
+                }, 125);
+            }, 250);
+        }
+        
+        function stopMusic() {
+            musicPlaying = false;
+            document.getElementById('musicToggle').textContent = 'MUSIC: OFF';
+            if (musicInterval) clearInterval(musicInterval);
+            if (bassInterval) clearInterval(bassInterval);
+            if (arpInterval) clearInterval(arpInterval);
+            musicNodes.forEach(n => { try { n.osc.stop(); } catch(e) {} });
+            musicNodes = [];
+        }
+        
+        function toggleMusic() {
+            initAudio();
+            if (musicPlaying) stopMusic();
+            else startMusic();
+        }
+        
+        document.getElementById('musicToggle').addEventListener('click', toggleMusic);
+        
+        // ========== SOUND EFFECTS ==========
+        function sfxShoot() { playNote(440, 0.08, 'square', 0.08); }
+        function sfxPop() { playNote(600 + Math.random()*300, 0.12, 'sine', 0.1); }
+        function sfxCombo() { playNote(800, 0.08, 'square', 0.08); setTimeout(() => playNote(1000, 0.08, 'square', 0.08), 60); }
+        function sfxHit() { playNote(120, 0.25, 'sawtooth', 0.15); }
+        function sfxPowerup() { playNote(600, 0.1, 'sine', 0.1); setTimeout(() => playNote(900, 0.1, 'sine', 0.1), 80); }
+        function sfxBomb() { playNote(100, 0.4, 'sawtooth', 0.18); }
+        function sfxLevelUp() { 
+            [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => playNote(f, 0.15, 'square', 0.1), i * 100));
+        }
 
-        // Constants
+        // ========== GAME CONSTANTS ==========
         const SNOOD_RADIUS = 18;
         const ROW_HEIGHT = SNOOD_RADIUS * 1.73;
         const COLS = 13;
@@ -292,7 +473,7 @@
             { emoji: '❤️', color: '#ff0066', type: 'life', name: 'Life' },
         ];
 
-        // Game state
+        // ========== GAME STATE ==========
         let grid = [];
         let currentSnood = null;
         let nextSnood = null;
@@ -324,12 +505,13 @@
         let multiShotTimer = 0;
         let screenShake = 0;
         let keys = { left: false, right: false };
-        let leaderboard = JSON.parse(localStorage.getItem('msgaSnoodLB3')) || [];
+        let leaderboard = JSON.parse(localStorage.getItem('msgaSnoodLB4')) || [];
 
-        // Input
+        // ========== INPUT ==========
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') keys.left = true;
             if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') keys.right = true;
+            if (e.key.toLowerCase() === 'm') toggleMusic();
             if (e.key === ' ' && gameStarted && !gameOver && dashCooldown <= 0) {
                 e.preventDefault();
                 const dir = keys.left ? -1 : (keys.right ? 1 : 0);
@@ -340,7 +522,7 @@
                     for (let i = 0; i < 8; i++) {
                         particles.push({ x: launcherX - dir * 40, y: SHOOT_Y, vx: -dir * (2 + Math.random() * 3), vy: (Math.random() - 0.5) * 2, life: 0.3, color: '#00ffff', size: 4 });
                     }
-                    playTone(350, 0.08, 'sine', 0.04);
+                    playNote(350, 0.08, 'sine', 0.06);
                 }
             }
         });
@@ -363,6 +545,7 @@
         });
         canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
+        // ========== GAME FUNCTIONS ==========
         function startGame() {
             initAudio();
             playerName = document.getElementById('playerNameInput').value.trim().toUpperCase() || 'PATRIOT';
@@ -457,7 +640,6 @@
 
             if (currentSnood && !shootingSnood) currentSnood.x = launcherX;
 
-            // Update shooting snood
             if (shootingSnood) {
                 shootingSnood.x += shootingSnood.vx;
                 shootingSnood.y += shootingSnood.vy;
@@ -467,7 +649,6 @@
                 else if (checkSnoodCollision(shootingSnood)) { shootingSnood = null; }
             }
 
-            // Update extra shots
             for (let i = extraShots.length - 1; i >= 0; i--) {
                 const s = extraShots[i];
                 s.x += s.vx; s.y += s.vy;
@@ -475,16 +656,13 @@
                 if (s.y < SNOOD_RADIUS + 25 || checkSnoodCollision(s)) { extraShots.splice(i, 1); }
             }
 
-            // Spawn enemies
             edSpawnTimer += dt;
             const spawnRate = Math.max(0.35, 1.6 - level * 0.1);
             if (edSpawnTimer > spawnRate) { edSpawnTimer = 0; spawnEd(); if (level >= 4 && Math.random() < 0.25) spawnEd(); }
 
-            // Spawn powerups
             powerupSpawnTimer += dt;
             if (powerupSpawnTimer > 8 + Math.random() * 5) { powerupSpawnTimer = 0; spawnPowerup(); }
 
-            // Update falling Eds
             const edSpeed = slowTimer > 0 ? 0.4 : 1;
             for (let i = fallingEds.length - 1; i >= 0; i--) {
                 const ed = fallingEds[i];
@@ -519,7 +697,6 @@
                 if (ed.y > canvas.height + 30) { fallingEds.splice(i, 1); dodgedCount++; score += ed.type.points * level; }
             }
 
-            // Update powerups
             for (let i = fallingPowerups.length - 1; i >= 0; i--) {
                 const p = fallingPowerups[i];
                 p.y += p.speed * 50 * dt;
@@ -535,7 +712,6 @@
 
             if (invincible) { invincibleTimer -= dt; if (invincibleTimer <= 0) invincible = false; }
 
-            // Particles
             for (let i = particles.length - 1; i >= 0; i--) {
                 const p = particles[i];
                 p.x += p.vx; p.y += p.vy; p.vy += 0.12;
@@ -644,7 +820,7 @@
                 if (combo > 1) { showCombo(matches[0].c * SNOOD_RADIUS * 2 + SNOOD_RADIUS, matches[0].r * ROW_HEIGHT + SNOOD_RADIUS + 25, combo, pts); sfxCombo(); }
                 combo++;
                 maxCombo = Math.max(maxCombo, combo);
-                setTimeout(() => { removeFloating(); if (checkWin()) { level++; addRows(); } animating = false; checkGameOver(); }, 150);
+                setTimeout(() => { removeFloating(); if (checkWin()) { level++; sfxLevelUp(); addRows(); } animating = false; checkGameOver(); }, 150);
             } else { combo = 1; checkGameOver(); }
         }
 
@@ -702,6 +878,7 @@
 
         function endGame(reason) {
             gameOver = true;
+            stopMusic();
             document.getElementById('gameOverTitle').textContent = reason;
             document.getElementById('finalScore').textContent = score.toLocaleString();
             document.getElementById('finalLevel').textContent = level;
@@ -716,7 +893,7 @@
             leaderboard.push({ name: playerName, score, level, date: Date.now() });
             leaderboard.sort((a, b) => b.score - a.score);
             leaderboard = leaderboard.slice(0, 30);
-            localStorage.setItem('msgaSnoodLB3', JSON.stringify(leaderboard));
+            localStorage.setItem('msgaSnoodLB4', JSON.stringify(leaderboard));
             updateLeaderboard();
             return leaderboard[0].score === score;
         }
@@ -743,18 +920,15 @@
             ctx.save();
             if (screenShake > 0) ctx.translate((Math.random()-0.5)*screenShake, (Math.random()-0.5)*screenShake);
 
-            // BG
             const grad = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 0, canvas.width/2, canvas.height/2, canvas.width);
             grad.addColorStop(0, '#151525'); grad.addColorStop(1, '#0a0a12');
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Grid
             ctx.strokeStyle = 'rgba(255,215,0,0.04)';
             for (let x = 0; x < canvas.width; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
             for (let y = 0; y < canvas.height; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
 
-            // Danger
             ctx.strokeStyle = 'rgba(255,50,50,0.5)';
             ctx.lineWidth = 2;
             ctx.setLineDash([12, 6]);
@@ -762,14 +936,11 @@
             ctx.setLineDash([]);
             ctx.lineWidth = 1;
 
-            // Snoods
             for (let r = 0; r < grid.length; r++) if (grid[r]) for (let c = 0; c < grid[r].length; c++) { const s = grid[r][c]; if (s) drawSnood(s.x, s.y, s.type, 1); }
 
-            // Particles
             for (let p of particles) { ctx.globalAlpha = Math.min(1, p.life * 2.5); ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.size * Math.min(1, p.life * 2), 0, Math.PI * 2); ctx.fill(); }
             ctx.globalAlpha = 1;
 
-            // Falling Eds
             for (let ed of fallingEds) {
                 ctx.save();
                 ctx.translate(ed.x, ed.y);
@@ -784,7 +955,6 @@
                 ctx.restore();
             }
 
-            // Falling powerups
             for (let p of fallingPowerups) {
                 ctx.save();
                 ctx.translate(p.x, p.y);
@@ -800,7 +970,6 @@
                 ctx.restore();
             }
 
-            // Shooting
             if (shootingSnood) {
                 ctx.globalAlpha = 0.3;
                 drawSnood(shootingSnood.x - shootingSnood.vx * 0.4, shootingSnood.y - shootingSnood.vy * 0.4, shootingSnood.type, 0.6);
@@ -809,7 +978,6 @@
             }
             for (let s of extraShots) drawSnood(s.x, s.y, s.type, 0.85);
 
-            // Aim
             if (!shootingSnood && currentSnood && !animating && !gameOver) {
                 ctx.strokeStyle = 'rgba(255,215,0,0.4)';
                 ctx.lineWidth = 2;
@@ -824,7 +992,6 @@
                 ctx.lineWidth = 1;
             }
 
-            // Shield aura
             if (shieldTimer > 0) {
                 ctx.strokeStyle = 'rgba(0,170,255,' + (0.4 + Math.sin(Date.now()/100)*0.2) + ')';
                 ctx.lineWidth = 3;
@@ -832,7 +999,6 @@
                 ctx.lineWidth = 1;
             }
 
-            // Launcher
             ctx.save();
             ctx.translate(launcherX, SHOOT_Y + 20);
             if (invincible && Math.floor(Date.now()/80) % 2 === 0) ctx.globalAlpha = 0.4;
@@ -852,17 +1018,14 @@
             ctx.restore();
             ctx.globalAlpha = 1;
 
-            // Current snood
             if (currentSnood && !shootingSnood) drawSnood(launcherX, SHOOT_Y, currentSnood.type, 1);
 
-            // Next
             if (nextSnood) {
                 ctx.fillStyle = '#666'; ctx.font = '10px VT323'; ctx.textAlign = 'center';
                 ctx.fillText('NEXT', 32, canvas.height - 55);
                 drawSnood(32, canvas.height - 30, nextSnood.type, 0.6);
             }
 
-            // Dash bar
             ctx.fillStyle = '#333';
             ctx.fillRect(canvas.width - 80, canvas.height - 20, 70, 10);
             ctx.fillStyle = dashCooldown > 0 ? '#005555' : '#00aaaa';
