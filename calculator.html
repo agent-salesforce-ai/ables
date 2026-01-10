@@ -9723,7 +9723,7 @@ Government Issued ID</textarea>
             const termLengthDisplay = getTermDisplay(opt.term, opt.frequency, opt.termOverride);
             
             // Calculate principal percentage for visual
-            const principalPct = Math.round((opt.amount / cal.totalPayback) * 100);
+            const principalPct = cal.totalPayback > 0 ? Math.round((opt.amount / cal.totalPayback) * 100) : 0;
             
             const optionLabelHtml = calcOptions.length > 1 
                 ? `<div style="display: inline-block; background-color: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 20px; padding: 6px 16px; margin-bottom: 16px;">
