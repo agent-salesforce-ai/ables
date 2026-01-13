@@ -1977,80 +1977,283 @@ Each finding MUST include a source_url. Search SEC filings, LinkedIn, company we
                 id: 'ucc_filings',
                 name: 'UCC Filings',
                 icon: 'UC',
-                description: 'Secured transactions, collateral',
-                requiredFields: ['filing_number', 'filing_date', 'secured_party', 'collateral_type', 'status', 'expiration_date'],
-                searchTerms: ['UCC filing', 'UCC-1', 'secured transaction', 'collateral', 'lien search'],
-                prompt: `Search for UCC (Uniform Commercial Code) filings where this company is the debtor. Find:
-- UCC filing numbers
-- Filing dates and expiration dates
-- Secured party (lender) names and addresses
-- Type of collateral (equipment, inventory, accounts receivable, all assets)
-- Filing status (active, terminated, amended)
-- Amendment history
-- Original filing amounts if disclosed
+                description: 'Secured transactions, collateral, financing statements',
+                requiredFields: ['filing_number', 'filing_type', 'filing_date', 'expiration_date', 'filing_state', 'filing_office', 'debtor_name', 'debtor_address', 'secured_party_name', 'secured_party_address', 'collateral_description', 'status'],
+                searchTerms: ['UCC filing', 'UCC-1', 'UCC-3', 'secured transaction', 'collateral', 'lien search', 'financing statement', 'secured creditor', 'debtor filing'],
+                prompt: `Search for ALL UCC (Uniform Commercial Code) filings where this company appears as DEBTOR. You MUST find every UCC filing. Search multiple sources exhaustively.
 
-Search state UCC databases, Secretary of State records, and commercial lien databases. Each finding MUST include a source_url to the filing record.`
+FOR EACH UCC FILING, CAPTURE ALL OF THE FOLLOWING:
+
+FILING IDENTIFICATION:
+- Filing Number (exact format from state, e.g., "2019-1234567")
+- Filing Type (UCC-1 Initial, UCC-3 Amendment, UCC-3 Continuation, UCC-3 Termination, UCC-3 Assignment)
+- Filing Date (exact date)
+- Expiration Date (typically 5 years from filing)
+- Filing State
+- Filing Office (Secretary of State, County, etc.)
+- Filing Status (Active, Lapsed, Terminated)
+
+DEBTOR INFORMATION (THE COMPANY):
+- Debtor Name (exactly as filed)
+- Debtor Type (Organization or Individual)
+- Debtor Mailing Address (full street, city, state, zip)
+- Debtor Organization ID / EIN if listed
+
+SECURED PARTY INFORMATION (THE LENDER/CREDITOR):
+- Secured Party Name (bank, finance company, equipment lessor)
+- Secured Party Address (full street, city, state, zip)
+- Assignee information if filing was assigned
+
+COLLATERAL DESCRIPTION - THIS IS CRITICAL:
+Capture the FULL collateral description verbatim. Common types include:
+- "All assets" / "All inventory, equipment, accounts, and general intangibles"
+- Specific equipment (describe: "2019 Caterpillar Excavator Model 320, VIN: xxx")
+- Vehicles with Year, Make, Model, VIN
+- Accounts receivable and contract rights
+- Inventory (describe type if specified)
+- Intellectual property, patents, trademarks
+- Real property fixtures
+
+AMENDMENT/CONTINUATION HISTORY:
+- List all amendments with dates and what changed
+- Continuation filings
+- Partial releases
+- Terminations
+
+Search these sources:
+1. State Secretary of State UCC database for state of incorporation
+2. State SOS databases for all states where company operates
+3. County UCC filings (some states file at county level)
+4. Commercial databases (if accessible via web)
+
+Common secured parties to look for: banks, equipment finance companies (Caterpillar Financial, John Deere Financial, CAT Financial Services, Wells Fargo Equipment Finance, De Lage Landen), factors, and asset-based lenders.
+
+Each finding MUST include source_url to the actual UCC filing record. Return EVERY filing found - do not summarize or omit any.`
             },
             {
                 id: 'liens_judgments',
                 name: 'Liens & Judgments',
                 icon: 'LJ',
-                description: 'Tax liens, civil judgments',
-                requiredFields: ['type', 'amount', 'filing_date', 'creditor', 'case_number', 'status', 'jurisdiction'],
-                searchTerms: ['tax lien', 'federal tax lien', 'state tax lien', 'judgment', 'civil judgment', 'mechanics lien'],
-                prompt: `Search for liens and judgments against this company. Find:
-- Federal tax liens (IRS)
-- State tax liens
-- Mechanics liens
-- Civil judgments
-- For each: amount, filing date, creditor/plaintiff, case number
-- Lien status (active, released, satisfied)
-- Jurisdiction and court
-- Payment status or satisfaction date
+                description: 'Tax liens, civil judgments, mechanics liens, court judgments',
+                requiredFields: ['lien_type', 'case_number', 'filing_number', 'filing_date', 'amount', 'creditor_name', 'creditor_address', 'debtor_name', 'debtor_address', 'court_jurisdiction', 'filing_office', 'status', 'release_date', 'book_page'],
+                searchTerms: ['tax lien', 'federal tax lien', 'state tax lien', 'judgment', 'civil judgment', 'mechanics lien', 'materialman lien', 'construction lien', 'judgment lien', 'abstract of judgment', 'lien release'],
+                prompt: `Search EXHAUSTIVELY for ALL liens and judgments against this company. This is critical for due diligence.
 
-Search court records, tax lien databases, county recorder offices, and public records. Each finding MUST include a source_url.`
+FEDERAL TAX LIENS (IRS):
+- Lien Serial Number
+- Filing Date
+- Assessment Date
+- Total Amount Due (break down by tax period if available)
+- Tax Periods Covered
+- Recording Office (County Recorder, usually)
+- Book/Page or Document Number
+- IRS Office filing the lien
+- Status: Unreleased, Released, Refiled
+- Release Date and Document Number if released
+- Certificate of Release information
+
+STATE TAX LIENS:
+- State Agency (Department of Revenue, Franchise Tax Board, etc.)
+- Filing Number
+- Filing Date
+- Tax Type (Income, Sales, Withholding, Unemployment)
+- Amount
+- Recording Office
+- Book/Page or Instrument Number
+- Status and Release Information
+
+MECHANICS/MATERIALMAN LIENS:
+- Claimant Name and Address
+- Property Address where work performed
+- Recording Date
+- Instrument/Document Number
+- Claim Amount
+- Nature of Work/Materials
+- Property Owner Name
+- Contractor (if claimant is subcontractor)
+- Lien Expiration Date
+- Foreclosure action filed? Case number if so
+- Release/Satisfaction recorded?
+
+CIVIL JUDGMENTS:
+- Case Number
+- Court Name (County Superior Court, District Court, etc.)
+- Judgment Date
+- Entry Date
+- Judgment Creditor (Plaintiff) Name and Address
+- Judgment Debtor (Defendant) Name
+- Original Judgment Amount
+- Current Amount Due (with interest, costs, fees)
+- Attorney for Creditor
+- Abstract of Judgment Recording Info (Book/Page, County)
+- Writ of Execution Issued? Date?
+- Satisfaction of Judgment Filed? Date?
+- Renewal Filed? Date?
+
+JUDGMENT LIENS FROM COURT CASES:
+- Abstract of Judgment filed in which counties
+- Recording dates and document numbers
+- Properties potentially encumbered
+
+Search these sources:
+1. County Recorder/Clerk offices where company is located
+2. Federal court records (PACER) for judgment abstracts
+3. State court records in all relevant jurisdictions
+4. County tax collector records
+5. IRS Federal Tax Lien public filings
+6. State tax authority lien filings
+7. Construction/permit records for mechanics liens
+
+Each finding MUST include source_url. Return EVERY lien and judgment found with complete details.`
             },
             {
                 id: 'litigation_history',
                 name: 'Litigation History',
                 icon: 'LH',
-                description: 'Court cases, lawsuits',
-                requiredFields: ['case_name', 'case_number', 'court', 'filing_date', 'case_type', 'status', 'opposing_party', 'summary'],
-                searchTerms: ['lawsuit', 'litigation', 'court case', 'plaintiff', 'defendant', 'legal action', 'civil suit'],
-                prompt: `Research all litigation involving this company as plaintiff or defendant. Find:
-- Case names and numbers
-- Court (Federal, State, which district/county)
-- Filing dates
-- Case type (breach of contract, fraud, employment, personal injury, collections, etc.)
-- Case status (pending, settled, dismissed, judgment entered)
-- Opposing parties
-- Attorneys of record
-- Summary of allegations or claims
-- Settlement amounts or judgment amounts if public
-- Class action involvement
+                description: 'Court cases, lawsuits, civil and criminal records',
+                requiredFields: ['case_name', 'case_number', 'court_name', 'court_type', 'jurisdiction', 'filing_date', 'case_type', 'party_role', 'opposing_party', 'opposing_counsel', 'company_counsel', 'cause_of_action', 'relief_sought', 'status', 'disposition', 'disposition_date', 'judgment_amount', 'summary'],
+                searchTerms: ['lawsuit', 'litigation', 'court case', 'plaintiff', 'defendant', 'legal action', 'civil suit', 'PACER', 'court records', 'case filing', 'judgment', 'complaint', 'civil action'],
+                prompt: `Search for ALL litigation involving this company. This includes cases where the company is plaintiff, defendant, cross-defendant, third-party defendant, or any other party role.
 
-Search PACER, state court records, CourtListener, legal news. Each finding MUST include a source_url to court records or news coverage.`
+FOR EACH CASE, CAPTURE ALL OF THE FOLLOWING:
+
+CASE IDENTIFICATION:
+- Full Case Name (e.g., "Smith v. ABC Company LLC")
+- Case Number (exact format: e.g., "2:23-cv-01234-ABC")
+- Court Name (e.g., "United States District Court, Central District of California")
+- Court Type (Federal District, Federal Bankruptcy, State Superior, State District, Small Claims, etc.)
+- Court Division/Department
+- Judge Assigned
+- Magistrate Judge (if federal)
+
+PARTY INFORMATION:
+- Company's Role (Plaintiff, Defendant, Cross-Defendant, Counter-Claimant, Third-Party Defendant, Respondent, Petitioner)
+- All Opposing Parties (full names, whether individual or entity)
+- Co-Defendants or Co-Plaintiffs
+- Company's Attorney(s) of Record (name, firm, contact)
+- Opposing Counsel (name, firm)
+
+CASE DETAILS:
+- Filing Date (initial complaint)
+- Cause of Action / Claims (breach of contract, negligence, fraud, employment discrimination, wage & hour, personal injury, construction defect, collections, etc.)
+- Amount in Controversy / Damages Sought
+- Nature of Suit Code (federal cases)
+- Jury Demand (Yes/No)
+- Class Action (Yes/No, if class certified)
+
+CASE STATUS & DISPOSITION:
+- Current Status (Pending, Stayed, On Appeal, Closed)
+- Key Docket Events (Motion to Dismiss filed/granted/denied, Summary Judgment, Trial Date)
+- Disposition Type (Dismissed, Settled, Default Judgment, Judgment After Trial, Jury Verdict, Bench Decision)
+- Disposition Date
+- Judgment Amount (if judgment entered)
+- Settlement Terms (if public or can be found in news)
+- Appeal Filed? Appellate Case Number?
+
+DOCKET SUMMARY:
+- Brief summary of the allegations
+- Key motions and rulings
+- Any notable orders
+
+ALSO SEARCH FOR:
+- Small claims cases
+- Unlawful detainer/eviction cases (as landlord or tenant)
+- Collections cases
+- Arbitration awards that were confirmed in court
+- Cases involving officers/principals individually
+
+Search these sources:
+1. PACER (Federal Courts) - search all districts
+2. State court records for state of incorporation
+3. State court records for states where company operates
+4. CourtListener
+5. Justia Dockets
+6. Bloomberg Law / Westlaw (if accessible)
+7. Legal news coverage (Law360, Reuters Legal, etc.)
+8. County Superior Court websites
+
+Each finding MUST include source_url to court records or docket. Return EVERY case found - do not filter or omit any.`
             },
             {
                 id: 'bankruptcy',
                 name: 'Bankruptcy Records',
                 icon: 'BK',
-                description: 'Chapter 7, 11, 13 filings',
-                requiredFields: ['case_number', 'chapter', 'filing_date', 'court', 'status', 'debts_listed', 'discharge_date'],
-                searchTerms: ['bankruptcy', 'chapter 7', 'chapter 11', 'chapter 13', 'bankruptcy filing', 'debtor'],
-                prompt: `Search for any bankruptcy filings involving this company or its principals. Find:
-- Bankruptcy case numbers
-- Chapter filed (7, 11, 13)
-- Filing date
-- Bankruptcy court and district
-- Case status (pending, confirmed, discharged, dismissed)
-- Total debts and assets listed
-- Major creditors
-- Discharge date if applicable
-- Reorganization plan details (for Chapter 11)
-- Trustee information
+                description: 'Chapter 7, 11, 13 filings, restructuring, insolvency',
+                requiredFields: ['case_number', 'chapter', 'filing_date', 'court_name', 'court_district', 'debtor_name', 'debtor_address', 'case_status', 'filing_type', 'total_assets', 'total_liabilities', 'trustee_name', 'trustee_contact', 'judge_assigned', 'disposition', 'discharge_date', 'related_cases'],
+                searchTerms: ['bankruptcy', 'chapter 7', 'chapter 11', 'chapter 13', 'bankruptcy filing', 'debtor', 'voluntary petition', 'involuntary petition', 'reorganization', 'liquidation', 'discharge', 'bankruptcy trustee'],
+                prompt: `Search for ALL bankruptcy filings involving this company OR its officers/principals individually.
 
-Also search for bankruptcies of key officers/owners. Search PACER, bankruptcy court records, BankruptcyData. Each finding MUST include a source_url.`
+FOR EACH BANKRUPTCY CASE, CAPTURE:
+
+CASE IDENTIFICATION:
+- Case Number (exact format: e.g., "23-12345-ABC")
+- Chapter (7 - Liquidation, 11 - Reorganization, 13 - Individual Debt Adjustment, 15 - Cross-Border)
+- Court Name (e.g., "United States Bankruptcy Court, Central District of California")
+- Court District and Division
+- Judge Assigned
+- Filing Type (Voluntary or Involuntary)
+
+DEBTOR INFORMATION:
+- Debtor Name (exactly as filed)
+- DBA Names listed
+- Debtor Address
+- Tax ID / EIN (last 4 digits often shown)
+- Type of Debtor (Corporation, LLC, Individual, Partnership)
+- Nature of Business (as stated in petition)
+- Small Business Case (Yes/No)
+
+CASE STATUS & TIMELINE:
+- Filing Date
+- Conversion Date (if converted from one chapter to another)
+- Dismissal Date (if dismissed)
+- Discharge Date (if discharged)
+- Case Closed Date
+- Current Status (Open, Closed, Dismissed, Converted)
+- 341 Meeting Date (Meeting of Creditors)
+
+FINANCIAL SUMMARY:
+- Total Assets Declared
+- Total Liabilities Declared
+- Number of Creditors
+- Top 20 Largest Unsecured Creditors (names and amounts)
+- Secured Creditors (names, amounts, collateral)
+- Priority Claims
+
+CASE ADMINISTRATION:
+- Trustee Name and Contact Information
+- Debtor's Attorney (name, firm, contact)
+- US Trustee Assigned
+- Examiner Appointed? (for Ch. 11)
+- Creditors' Committee Formed? (for Ch. 11)
+
+FOR CHAPTER 11 CASES:
+- Disclosure Statement Filed/Approved Date
+- Plan of Reorganization Filed/Confirmed Date
+- Plan Summary (payment terms, equity treatment)
+- Effective Date of Plan
+- Post-Confirmation Status
+
+RELATED CASES:
+- Adversary Proceedings (case numbers, nature, status)
+- Jointly Administered Cases
+- Related Corporate Debtor Cases
+
+CLAIMS BAR DATE:
+- Deadline to file proofs of claim
+
+ALSO SEARCH FOR:
+- Bankruptcies of company officers/principals individually
+- Bankruptcies of affiliated or related companies
+- Prior bankruptcies (not just current)
+
+Search these sources:
+1. PACER Bankruptcy Court records
+2. Court VCIS (Voice Case Information System)
+3. BankruptcyData.com
+4. Legal news (for larger Ch. 11 cases)
+5. State court receiverships (quasi-bankruptcy proceedings)
+
+Each finding MUST include source_url to PACER or court records. Return EVERY bankruptcy filing found.`
             },
             {
                 id: 'sanctions_watchlists',
