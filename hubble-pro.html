@@ -2175,6 +2175,119 @@ Search these sources:
 Each finding MUST include source_url to court records or docket. Return EVERY case found - do not filter or omit any.`
             },
             {
+                id: 'court_filings',
+                name: 'Court Filings',
+                icon: 'CF',
+                description: 'All court records, case filings, dockets, criminal records',
+                requiredFields: ['case_number', 'case_name', 'court_name', 'court_level', 'court_type', 'jurisdiction', 'filing_date', 'case_type', 'party_name', 'party_role', 'other_parties', 'judge', 'case_status', 'last_docket_entry', 'next_hearing_date', 'disposition', 'disposition_date'],
+                searchTerms: ['court filing', 'court case', 'docket', 'case search', 'court records', 'civil case', 'criminal case', 'traffic court', 'municipal court', 'superior court', 'district court', 'federal court', 'PACER', 'state court'],
+                prompt: `Search EXHAUSTIVELY for ALL court filings and court records involving this company AND its officers/principals. This is a comprehensive court records search.
+
+FEDERAL COURT FILINGS:
+Search PACER for all federal courts:
+- U.S. District Courts (civil and criminal)
+- U.S. Bankruptcy Courts
+- U.S. Courts of Appeals
+- U.S. Court of Federal Claims
+- U.S. Tax Court
+
+For each federal case:
+- Case Number (e.g., "2:23-cv-01234-ABC-DEF")
+- Case Name
+- Court and District
+- Judge and Magistrate
+- Filing Date
+- Nature of Suit Code and Description
+- Cause of Action
+- Jury Demand (Yes/No)
+- Party Names and Roles
+- Attorneys of Record
+- Case Status (Open/Closed)
+- Docket entries summary
+- Key motions and orders
+- Disposition and date
+
+STATE COURT FILINGS:
+Search state courts at ALL levels:
+- State Supreme Court
+- State Court of Appeals
+- Superior Court / Circuit Court / District Court
+- County Court
+- Municipal Court
+- Small Claims Court
+- Family Court
+- Probate Court
+- Traffic Court
+
+For each state case:
+- Case Number
+- Case Name/Caption
+- Court Name and County
+- Filing Date
+- Case Type (Civil, Criminal, Family, Probate, Traffic, Small Claims)
+- Parties (Plaintiff/Petitioner, Defendant/Respondent)
+- Attorneys
+- Judge Assigned
+- Case Status
+- Hearing Dates (past and scheduled)
+- Disposition and Date
+
+CRIMINAL RECORDS:
+Search for criminal cases involving the company or its principals:
+- Felony cases
+- Misdemeanor cases
+- Infractions/Violations
+- Traffic offenses (DUI, reckless driving, etc.)
+
+For each criminal case:
+- Case Number
+- Court Name and Jurisdiction
+- Defendant Name
+- Charge(s) / Offense(s) - include statute codes
+- Offense Date
+- Filing/Arrest Date
+- Offense Level (Felony, Misdemeanor, Infraction)
+- Plea Entered
+- Disposition (Convicted, Acquitted, Dismissed, Nolle Prosequi, Deferred)
+- Sentence (if convicted): jail/prison time, probation, fines, restitution
+- Probation/Parole Status
+- Sex Offender Registry check
+
+ADMINISTRATIVE COURT FILINGS:
+- Workers' Compensation cases
+- Unemployment appeals
+- Administrative hearings
+- Licensing board proceedings
+- EEOC complaints that went to court
+
+DOCKET INFORMATION:
+For active cases, provide:
+- Last docket entry date and description
+- Next scheduled hearing/event
+- Pending motions
+- Discovery status
+- Trial date if set
+
+SEARCH THESE SOURCES:
+1. PACER (all federal districts)
+2. State court case search websites for each relevant state
+3. County court websites
+4. CourtListener
+5. Justia Dockets & Filings
+6. RECAP Archive
+7. State criminal records databases
+8. County Sheriff/Jail inmate search
+9. State Department of Corrections
+10. Sex offender registries
+
+ALSO CHECK:
+- Cases where company principals are parties individually
+- Cases using DBA names or trade names
+- Cases at former business addresses
+
+Each finding MUST include source_url to the court docket or case record. Return EVERY court filing found - criminal, civil, administrative, traffic - do not omit any.`
+            },
+            {
                 id: 'bankruptcy',
                 name: 'Bankruptcy Records',
                 icon: 'BK',
