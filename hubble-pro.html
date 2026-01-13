@@ -1234,6 +1234,51 @@
             font-weight: 600;
         }
 
+        .deep-search-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .deep-search-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .deep-search-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .deep-search-btn.searching {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .deep-search-btn .icon {
+            font-size: 0.85rem;
+        }
+
+        .deep-search-btn.searching .icon {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
         /* Legacy module-card styles for compatibility */
         .module-card { display: none; }
         .module-content { padding: 0; }
@@ -2175,6 +2220,119 @@ Search these sources:
 Each finding MUST include source_url to court records or docket. Return EVERY case found - do not filter or omit any.`
             },
             {
+                id: 'court_filings',
+                name: 'Court Filings',
+                icon: 'CF',
+                description: 'All court records, case filings, dockets, criminal records',
+                requiredFields: ['case_number', 'case_name', 'court_name', 'court_level', 'court_type', 'jurisdiction', 'filing_date', 'case_type', 'party_name', 'party_role', 'other_parties', 'judge', 'case_status', 'last_docket_entry', 'next_hearing_date', 'disposition', 'disposition_date'],
+                searchTerms: ['court filing', 'court case', 'docket', 'case search', 'court records', 'civil case', 'criminal case', 'traffic court', 'municipal court', 'superior court', 'district court', 'federal court', 'PACER', 'state court'],
+                prompt: `Search EXHAUSTIVELY for ALL court filings and court records involving this company AND its officers/principals. This is a comprehensive court records search.
+
+FEDERAL COURT FILINGS:
+Search PACER for all federal courts:
+- U.S. District Courts (civil and criminal)
+- U.S. Bankruptcy Courts
+- U.S. Courts of Appeals
+- U.S. Court of Federal Claims
+- U.S. Tax Court
+
+For each federal case:
+- Case Number (e.g., "2:23-cv-01234-ABC-DEF")
+- Case Name
+- Court and District
+- Judge and Magistrate
+- Filing Date
+- Nature of Suit Code and Description
+- Cause of Action
+- Jury Demand (Yes/No)
+- Party Names and Roles
+- Attorneys of Record
+- Case Status (Open/Closed)
+- Docket entries summary
+- Key motions and orders
+- Disposition and date
+
+STATE COURT FILINGS:
+Search state courts at ALL levels:
+- State Supreme Court
+- State Court of Appeals
+- Superior Court / Circuit Court / District Court
+- County Court
+- Municipal Court
+- Small Claims Court
+- Family Court
+- Probate Court
+- Traffic Court
+
+For each state case:
+- Case Number
+- Case Name/Caption
+- Court Name and County
+- Filing Date
+- Case Type (Civil, Criminal, Family, Probate, Traffic, Small Claims)
+- Parties (Plaintiff/Petitioner, Defendant/Respondent)
+- Attorneys
+- Judge Assigned
+- Case Status
+- Hearing Dates (past and scheduled)
+- Disposition and Date
+
+CRIMINAL RECORDS:
+Search for criminal cases involving the company or its principals:
+- Felony cases
+- Misdemeanor cases
+- Infractions/Violations
+- Traffic offenses (DUI, reckless driving, etc.)
+
+For each criminal case:
+- Case Number
+- Court Name and Jurisdiction
+- Defendant Name
+- Charge(s) / Offense(s) - include statute codes
+- Offense Date
+- Filing/Arrest Date
+- Offense Level (Felony, Misdemeanor, Infraction)
+- Plea Entered
+- Disposition (Convicted, Acquitted, Dismissed, Nolle Prosequi, Deferred)
+- Sentence (if convicted): jail/prison time, probation, fines, restitution
+- Probation/Parole Status
+- Sex Offender Registry check
+
+ADMINISTRATIVE COURT FILINGS:
+- Workers' Compensation cases
+- Unemployment appeals
+- Administrative hearings
+- Licensing board proceedings
+- EEOC complaints that went to court
+
+DOCKET INFORMATION:
+For active cases, provide:
+- Last docket entry date and description
+- Next scheduled hearing/event
+- Pending motions
+- Discovery status
+- Trial date if set
+
+SEARCH THESE SOURCES:
+1. PACER (all federal districts)
+2. State court case search websites for each relevant state
+3. County court websites
+4. CourtListener
+5. Justia Dockets & Filings
+6. RECAP Archive
+7. State criminal records databases
+8. County Sheriff/Jail inmate search
+9. State Department of Corrections
+10. Sex offender registries
+
+ALSO CHECK:
+- Cases where company principals are parties individually
+- Cases using DBA names or trade names
+- Cases at former business addresses
+
+Each finding MUST include source_url to the court docket or case record. Return EVERY court filing found - criminal, civil, administrative, traffic - do not omit any.`
+            },
+            {
                 id: 'bankruptcy',
                 name: 'Bankruptcy Records',
                 icon: 'BK',
@@ -2606,6 +2764,10 @@ IMPORTANT: Every finding MUST have source_url with real URL from search results.
                             </div>
                         </div>
                         <div class="module-section-badges">
+                            <button class="deep-search-btn" id="deepsearch-${m.id}" onclick="runDeepSearch('${m.id}')" title="Run in-depth search for this module">
+                                <span class="icon">↻</span>
+                                <span class="btn-text">Deep Search</span>
+                            </button>
                             <span class="finding-count" id="count-${m.id}">Loading...</span>
                             <span class="risk-badge" id="risk-${m.id}" style="background: var(--bg-tertiary); color: var(--text-muted)">...</span>
                         </div>
@@ -2712,6 +2874,110 @@ IMPORTANT: Every finding MUST have source_url with real URL from search results.
 
             // Launch ALL modules simultaneously
             await Promise.all(MODULES.map(module => runModule(module)));
+        }
+
+        // Run an in-depth search for a specific module
+        async function runDeepSearch(moduleId) {
+            const module = MODULES.find(m => m.id === moduleId);
+            if (!module) return;
+
+            const btn = document.getElementById(`deepsearch-${moduleId}`);
+            const contentEl = document.getElementById(`content-${moduleId}`);
+            const countEl = document.getElementById(`count-${moduleId}`);
+            const riskEl = document.getElementById(`risk-${moduleId}`);
+
+            // Update button state
+            if (btn) {
+                btn.classList.add('searching');
+                btn.disabled = true;
+                btn.querySelector('.btn-text').textContent = 'Searching...';
+            }
+
+            // Show loading state in content
+            if (contentEl) {
+                contentEl.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="font-size: 2rem; margin-bottom: 12px;">🔍</div>
+                        <div style="color: var(--text-secondary); font-weight: 500;">Running in-depth search...</div>
+                        <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 8px;">This may take a moment</div>
+                    </div>
+                `;
+            }
+
+            try {
+                // Build an enhanced deep search prompt
+                const company = state.currentCompany || '';
+                const location = state.currentLocation || '';
+
+                const deepPrompt = `You are conducting an EXHAUSTIVE, IN-DEPTH investigation. Leave no stone unturned.
+
+COMPANY: ${company}
+LOCATION: ${location}
+
+${module.prompt}
+
+ADDITIONAL DEEP SEARCH INSTRUCTIONS:
+- Search MORE sources than usual - be extremely thorough
+- Look for records under alternate names, DBAs, former names, and misspellings
+- Check records for ALL principals, officers, and known associates
+- Search historical records going back as far as possible
+- Include records that may be tangentially related
+- Cross-reference findings across multiple databases
+- If you find one record, search for related records
+- Do NOT summarize or skip any findings - report EVERYTHING you find
+- For each finding, provide as much detail as available
+- Include exact dates, amounts, case numbers, and document references
+- Verify information across multiple sources when possible
+
+This is a DEEP DIVE investigation. The user needs comprehensive, detailed results.`;
+
+                const result = await callGeminiAPI(deepPrompt, moduleId);
+
+                // Merge new findings with existing (avoid duplicates)
+                const existingResult = state.results[moduleId] || { data: { findings: [] }, sources: [] };
+                const existingFindings = existingResult.data?.findings || [];
+                const newFindings = result.data?.findings || [];
+
+                // Simple dedup based on first few chars of JSON stringify
+                const existingKeys = new Set(existingFindings.map(f => JSON.stringify(f).substring(0, 100)));
+                const uniqueNewFindings = newFindings.filter(f => !existingKeys.has(JSON.stringify(f).substring(0, 100)));
+
+                // Combine results
+                const combinedResult = {
+                    data: {
+                        ...result.data,
+                        findings: [...existingFindings, ...uniqueNewFindings],
+                        summary: result.data?.summary || existingResult.data?.summary,
+                        risk_level: result.data?.risk_level || existingResult.data?.risk_level || 'low',
+                        key_concerns: [...(existingResult.data?.key_concerns || []), ...(result.data?.key_concerns || [])].filter((v, i, a) => a.indexOf(v) === i)
+                    },
+                    sources: [...(existingResult.sources || []), ...(result.sources || [])]
+                };
+
+                state.results[moduleId] = combinedResult;
+                state.sources = [...new Set([...state.sources, ...combinedResult.sources])];
+
+                // Re-render the module card with combined results
+                renderModuleCard(module, combinedResult);
+
+            } catch (error) {
+                if (contentEl) {
+                    contentEl.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: var(--danger);">
+                            <div style="font-size: 2rem; margin-bottom: 12px;">⚠️</div>
+                            <div style="font-weight: 500;">Deep search failed</div>
+                            <div style="font-size: 0.85rem; margin-top: 8px;">${error.message}</div>
+                        </div>
+                    `;
+                }
+            } finally {
+                // Reset button state
+                if (btn) {
+                    btn.classList.remove('searching');
+                    btn.disabled = false;
+                    btn.querySelector('.btn-text').textContent = 'Deep Search';
+                }
+            }
         }
 
         // Render a single module card (called progressively as each completes)
