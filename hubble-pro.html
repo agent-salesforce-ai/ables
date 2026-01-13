@@ -2765,7 +2765,7 @@ IMPORTANT: Every finding MUST have source_url with real URL from search results.
                         </div>
                         <div class="module-section-badges">
                             <button class="deep-search-btn" id="deepsearch-${m.id}" onclick="runDeepSearch('${m.id}')" title="Run in-depth search for this module">
-                                <span class="icon">↻</span>
+                                <span class="icon">&#8635;</span>
                                 <span class="btn-text">Deep Search</span>
                             </button>
                             <span class="finding-count" id="count-${m.id}">Loading...</span>
@@ -2897,7 +2897,7 @@ IMPORTANT: Every finding MUST have source_url with real URL from search results.
             if (contentEl) {
                 contentEl.innerHTML = `
                     <div style="text-align: center; padding: 40px;">
-                        <div style="font-size: 2rem; margin-bottom: 12px;">🔍</div>
+                        <div style="font-size: 2rem; margin-bottom: 12px;">&#128269;</div>
                         <div style="color: var(--text-secondary); font-weight: 500;">Running in-depth search...</div>
                         <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 8px;">This may take a moment</div>
                     </div>
@@ -2964,7 +2964,7 @@ This is a DEEP DIVE investigation. The user needs comprehensive, detailed result
                 if (contentEl) {
                     contentEl.innerHTML = `
                         <div style="text-align: center; padding: 40px; color: var(--danger);">
-                            <div style="font-size: 2rem; margin-bottom: 12px;">⚠️</div>
+                            <div style="font-size: 2rem; margin-bottom: 12px;">&#9888;</div>
                             <div style="font-weight: 500;">Deep search failed</div>
                             <div style="font-size: 0.85rem; margin-top: 8px;">${error.message}</div>
                         </div>
