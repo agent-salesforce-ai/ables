@@ -7122,9 +7122,9 @@ Government Issued ID</textarea>
                 console.error('Failed to load theme preference', e);
             }
         } else {
-            // Default to black theme with rainbow accent
+            // Default to black theme with gold accent
             setThemeMode('black');
-            setAccentColor('rainbow');
+            setAccentColor('gold');
         }
         
         // Set initial active states
@@ -7139,8 +7139,8 @@ Government Issued ID</textarea>
     function resetBrandKit() {
         // Reset to defaults
         setThemeMode('black');
-        // Lite users default to indigo (steel), logged-in users get rainbow
-        setAccentColor(currentUser ? 'rainbow' : 'indigo');
+        // Default to gold accent
+        setAccentColor('gold');
         setClientMode('iso');
         
         // Clear brand fields
@@ -7227,8 +7227,8 @@ Government Issued ID</textarea>
     }
 
     function showWelcomeScreen() {
-        // Always show rainbow theme on welcome/login screen
-        setAccentColor('rainbow');
+        // Always show gold theme on welcome/login screen
+        setAccentColor('gold');
         $('welcomeScreen').classList.remove('hidden');
         $('welcomeUsername').value = '';
         $('welcomePassword').value = '';
