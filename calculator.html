@@ -4616,9 +4616,9 @@
                                     </div>
                                 </div>
                             
-                            <!-- Brand Section (Locked when not logged in) -->
-                            <div id="brandSection" class="brand-section locked" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-secondary); position: relative;">
-                                <div class="brand-lock-overlay">
+                            <!-- Brand Section -->
+                            <div id="brandSection" class="brand-section" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-secondary); position: relative;">
+                                <div class="brand-lock-overlay" style="display: none;">
                                     <a href="https://ables.ai/signup.html" target="_blank" class="brand-lock-btn">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -7295,13 +7295,13 @@ Government Issued ID</textarea>
         const userBadgeName = $('userBadgeName');
         
         if (currentUser) {
-            // Logged in - unlock brand section
+            // Logged in - show user badge
             brandSection.classList.remove('locked');
             userBadge.classList.remove('hidden');
             userBadgeName.textContent = currentUser;
         } else {
-            // Logged out - lock brand section
-            brandSection.classList.add('locked');
+            // Logged out - hide user badge but keep brand section unlocked
+            brandSection.classList.remove('locked');
             userBadge.classList.add('hidden');
         }
         
