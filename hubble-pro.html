@@ -3407,6 +3407,12 @@ IMPORTANT: Every finding MUST have source_url with real URL from search results.
             
             try {
                 const decompressed = LZString.decompressFromEncodedURIComponent(reportData);
+                if (!decompressed) {
+                    console.error('Decompression returned null - data may be corrupted');
+                    alert('Could not load shared report - link may be corrupted or truncated');
+                    return false;
+                }
+                
                 const report = JSON.parse(decompressed);
                 
                 // Restore state
@@ -3435,6 +3441,7 @@ IMPORTANT: Every finding MUST have source_url with real URL from search results.
                 return true;
             } catch (e) {
                 console.error('Failed to load shared report:', e);
+                alert('Error loading shared report: ' + e.message);
                 return false;
             }
         }
