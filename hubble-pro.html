@@ -2897,6 +2897,36 @@ IMPORTANT: Every finding MUST have source_url with real URL from search results.
             setupScrollSpy();
         }
 
+        // Render all modules from state (used when loading shared reports)
+        function renderModules() {
+            // First set up the structure
+            initializeModuleCards();
+            
+            // Then render each module with its data
+            MODULES.forEach(module => {
+                const result = state.results[module.id];
+                if (result) {
+                    renderModuleCard(module, result);
+                } else {
+                    // No data for this module - show as empty
+                    const sectionEl = document.getElementById(`section-${module.id}`);
+                    if (sectionEl) sectionEl.classList.remove('loading');
+                    
+                    const countEl = document.getElementById(`count-${module.id}`);
+                    if (countEl) countEl.textContent = 'Not analyzed';
+                    
+                    const contentEl = document.getElementById(`content-${module.id}`);
+                    if (contentEl) contentEl.innerHTML = '<div class="no-findings">This module was not included in the shared report</div>';
+                    
+                    const navEl = document.getElementById(`nav-${module.id}`);
+                    if (navEl) navEl.classList.remove('loading');
+                }
+            });
+            
+            // Update report bar stats (risk, findings, sources)
+            renderFinalSummary();
+        }
+
         // Scroll to a module section
         function scrollToSection(moduleId) {
             const section = document.getElementById(`section-${moduleId}`);
@@ -3396,9 +3426,8 @@ IMPORTANT: Every finding MUST have source_url with real URL from search results.
                 document.getElementById('reportSection').classList.add('active');
                 document.querySelector('.main').classList.add('has-report');
                 
-                // Render modules
+                // Render modules with all data
                 renderModules();
-                updateRiskBadge();
                 
                 // Clean URL without reload
                 window.history.replaceState({}, '', window.location.pathname);
