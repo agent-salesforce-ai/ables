@@ -2680,8 +2680,12 @@ For each indicator: metric name, value, date of information, source type. Each f
             if (savedModel) document.getElementById('modelSelect').value = savedModel;
             if (savedDepth) document.getElementById('thinkingLevel').value = savedDepth;
             
-            // Check for shared report in URL
-            loadSharedReport();
+            // Check for shared report in URL (wrapped in try-catch to prevent page errors)
+            try {
+                loadSharedReport();
+            } catch (e) {
+                console.error('Error loading shared report:', e);
+            }
         });
 
         // API Call
@@ -3378,16 +3382,24 @@ IMPORTANT: Every finding MUST have source_url with real URL from search results.
             const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(report));
             const url = `${window.location.origin}${window.location.pathname}?r=${compressed}`;
             
+            // Warn if URL is very long (may not work in all browsers/apps)
+            if (url.length > 8000) {
+                console.warn('Share URL is very long:', url.length, 'characters');
+            }
+            
             navigator.clipboard.writeText(url).then(() => {
                 // Show toast notification
                 const toast = document.createElement('div');
                 toast.className = 'share-toast';
+                const message = url.length > 8000 
+                    ? `Link copied (${Math.round(url.length/1000)}k chars - may be truncated in some apps)`
+                    : 'Link copied to clipboard';
                 toast.innerHTML = `
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                         <polyline points="22 4 12 14.01 9 11.01"/>
                     </svg>
-                    <span>Link copied to clipboard</span>
+                    <span>${message}</span>
                 `;
                 document.body.appendChild(toast);
                 setTimeout(() => toast.classList.add('show'), 10);
@@ -3406,10 +3418,23 @@ IMPORTANT: Every finding MUST have source_url with real URL from search results.
             if (!reportData) return false;
             
             try {
-                const decompressed = LZString.decompressFromEncodedURIComponent(reportData);
-                if (!decompressed) {
-                    console.error('Decompression returned null - data may be corrupted');
-                    alert('Could not load shared report - link may be corrupted or truncated');
+                // Check if LZString loaded
+                if (typeof LZString === 'undefined') {
+                    console.error('LZString library not loaded');
+                    return false;
+                }
+                
+                let decompressed;
+                try {
+                    decompressed = LZString.decompressFromEncodedURIComponent(reportData);
+                } catch (lzErr) {
+                    console.error('LZString decompression error:', lzErr);
+                    return false;
+                }
+                
+                // Check for null or non-JSON string (LZString may return garbage for corrupt input)
+                if (!decompressed || typeof decompressed !== 'string' || !decompressed.startsWith('{')) {
+                    console.error('Decompression returned invalid data:', decompressed?.substring?.(0, 50));
                     return false;
                 }
                 
@@ -3441,7 +3466,6 @@ IMPORTANT: Every finding MUST have source_url with real URL from search results.
                 return true;
             } catch (e) {
                 console.error('Failed to load shared report:', e);
-                alert('Error loading shared report: ' + e.message);
                 return false;
             }
         }
