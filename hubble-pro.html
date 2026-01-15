@@ -2207,7 +2207,7 @@
         document.addEventListener('click', (e) => {
             const dropdown = document.querySelector('.settings-dropdown');
             const menu = document.getElementById('settingsMenu');
-            if (dropdown && !dropdown.contains(e.target)) {
+            if (dropdown && menu && !dropdown.contains(e.target) && !menu.contains(e.target)) {
                 menu.classList.remove('active');
             }
         });
