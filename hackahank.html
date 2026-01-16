@@ -1,0 +1,1992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HACK A' HANK | Sutton Funding</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Cormorant+Garamond:wght@400;600&family=Jost:wght@300;400;500&display=swap');
+
+        :root {
+            /* Sutton Funding Brand Colors */
+            --sf-navy: #001A32;
+            --sf-navy-dark: #000d19;
+            --sf-navy-light: #1f2937;
+            --sf-ivory: #FAF8F3;
+            --sf-ivory-dark: #EBE6DA;
+            --sf-ivory-light: #FDFCF9;
+            --sf-brass: #A39171;
+            --sf-brass-light: #c4b08a;
+            --sf-brass-dark: #8B7355;
+            --sf-slate: #374151;
+
+            /* Accent colors */
+            --sf-gold: #d4aa00;
+            --sf-red: #8b0000;
+            --sf-success: #2d5a2d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background: var(--sf-ivory);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Bangers', cursive;
+            overflow: hidden;
+            letter-spacing: 1px;
+            position: relative;
+        }
+
+        /* Subtle linen texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h1v1H0V0zm2 0h1v1H2V0zm2 0h1v1H4V0zm2 0h1v1H6V0zm2 0h1v1H8V0zm2 0h1v1h-1V0zm2 0h1v1h-1V0zm2 0h1v1h-1V0zm2 0h1v1h-1V0zm2 0h1v1h-1V0z' fill='%23A39171' fill-opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Screen effects */
+        .shake { animation: shake 0.2s ease-out; }
+        @keyframes shake {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-8px, 4px); }
+            40% { transform: translate(8px, -4px); }
+            60% { transform: translate(-4px, 8px); }
+            80% { transform: translate(4px, -8px); }
+        }
+
+        #hitFlash {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0;
+        }
+
+        #hitFlash.red { background: radial-gradient(circle, rgba(255,0,0,0.5) 0%, transparent 70%); opacity: 1; animation: flash 0.2s; }
+        #hitFlash.gold { background: radial-gradient(circle, rgba(255,215,0,0.6) 0%, transparent 70%); opacity: 1; animation: flash 0.3s; }
+        #hitFlash.hurt { background: rgba(255,0,0,0.4); opacity: 1; animation: flash 0.4s; }
+        @keyframes flash { to { opacity: 0; } }
+
+        #gameContainer {
+            width: 100%;
+            max-width: 600px;
+            padding: 10px;
+        }
+
+        /* Sutton Funding Logo */
+        #sfLogo {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--sf-navy);
+            letter-spacing: 0.05em;
+            z-index: 100;
+        }
+
+        /* Title - Elegant Sutton Style */
+        #title {
+            font-size: 2.8rem;
+            text-align: center;
+            color: var(--sf-navy);
+            text-shadow: 2px 2px 0 var(--sf-brass-light);
+            margin: 15px 0 10px 0;
+        }
+
+        /* HUD - Elegant Sutton Navy with Brass accents */
+        #hud {
+            display: flex;
+            justify-content: space-between;
+            background: var(--sf-navy);
+            border: 1px solid var(--sf-brass);
+            border-radius: 4px;
+            padding: 12px 20px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 15px rgba(0,26,50,0.3);
+        }
+
+        .hud-item { text-align: center; }
+        .hud-label {
+            font-size: 0.65rem;
+            color: var(--sf-brass);
+            font-family: 'Jost', sans-serif;
+            font-weight: 400;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+        .hud-value {
+            font-size: 1.5rem;
+            color: var(--sf-ivory);
+            font-family: 'Cormorant Garamond', serif;
+        }
+        #timerValue { color: var(--sf-brass-light); }
+        #timerValue.danger { color: #ff4444; animation: pulse 0.5s infinite; }
+        @keyframes pulse { 50% { opacity: 0.5; transform: scale(1.1); } }
+
+        /* Weapon Bar - Sutton Elegant Style */
+        #weaponBar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .weapon-btn {
+            flex: 1;
+            padding: 10px 5px;
+            background: var(--sf-ivory-light);
+            border: 1px solid var(--sf-ivory-dark);
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .weapon-btn:hover {
+            border-color: var(--sf-brass);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .weapon-btn.selected {
+            background: var(--sf-navy);
+            border-color: var(--sf-brass);
+            box-shadow: 0 4px 15px rgba(0,26,50,0.3);
+        }
+        .weapon-btn.selected .icon { filter: grayscale(0); }
+        .weapon-btn.selected .name { color: var(--sf-brass-light); }
+
+        .weapon-btn .icon { font-size: 1.8rem; }
+        .weapon-btn .name {
+            font-size: 0.6rem;
+            color: var(--sf-slate);
+            font-family: 'Jost', sans-serif;
+            font-weight: 400;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        /* Game Board - Elegant Sutton Style */
+        #gameBoard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            background: var(--sf-navy);
+            border: 1px solid var(--sf-brass);
+            border-radius: 6px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,26,50,0.4),
+                        inset 0 0 30px rgba(0,0,0,0.3);
+            aspect-ratio: 1;
+        }
+
+        .hole {
+            position: relative;
+            background: radial-gradient(ellipse at center bottom, #000d19 0%, #001A32 60%, #0a2a45 100%);
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+
+        /* Hole depth effect */
+        .hole::before {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 5%; width: 90%; height: 30%;
+            background: radial-gradient(ellipse at center, #000 50%, transparent 100%);
+            border-radius: 50%;
+        }
+
+        /* Hank container */
+        .hank-wrap {
+            position: absolute;
+            bottom: -100%;
+            left: 5%; width: 90%; height: 95%;
+            transition: bottom 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1;
+        }
+
+        .hank-wrap.up { bottom: 8%; }
+
+        /* Animations */
+        .hank-wrap.idle { animation: idle 0.8s ease-in-out infinite; }
+        @keyframes idle {
+            0%, 100% { transform: translateY(0) rotate(-1deg); }
+            50% { transform: translateY(-4px) rotate(1deg); }
+        }
+
+        .hank-wrap.laughing { animation: laugh 0.1s ease-in-out infinite; }
+        @keyframes laugh {
+            0%, 100% { transform: translateY(0) rotate(-3deg) scale(1.02); }
+            50% { transform: translateY(-6px) rotate(3deg) scale(1.05); }
+        }
+
+        .hank-wrap.hit { animation: hit 0.4s ease-out forwards; }
+        @keyframes hit {
+            0% { transform: scale(1) rotate(0); }
+            20% { transform: scale(1.2) rotate(-10deg); filter: brightness(3); }
+            50% { transform: scale(0.8) rotate(20deg); }
+            100% { transform: scale(0.5) rotate(30deg) translateY(50px); opacity: 0; }
+        }
+
+        .hank-wrap.taunting { animation: taunt 0.3s ease-in-out infinite; }
+        @keyframes taunt {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        /* Type effects - Sutton themed */
+        .hank-wrap.golden svg { filter: drop-shadow(0 0 15px var(--sf-brass)) drop-shadow(0 0 30px var(--sf-gold)); }
+        .hank-wrap.golden svg .suit { fill: #6b5500; }
+        .hank-wrap.bomb svg { filter: drop-shadow(0 0 12px #cc3333) drop-shadow(0 0 25px #990000); }
+        .hank-wrap.boss svg { filter: drop-shadow(0 0 15px #4a2a6a) drop-shadow(0 0 30px #6a4a8a); }
+        .hank-wrap.speed svg { filter: drop-shadow(0 0 12px #5080a0); }
+        .hank-wrap.angry svg { filter: drop-shadow(0 0 10px #8b3030) hue-rotate(-10deg); }
+
+        /* Pop-ups */
+        .popup {
+            position: fixed;
+            font-size: 2rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            color: var(--sf-ivory);
+            text-shadow: 2px 2px 0 var(--sf-navy), -1px -1px 0 var(--sf-navy);
+            pointer-events: none;
+            z-index: 100;
+            animation: popUp 0.7s ease-out forwards;
+        }
+        .popup.gold { color: var(--sf-gold); font-size: 2.5rem; text-shadow: 2px 2px 0 #5a4500, 0 0 10px rgba(212,170,0,0.5); }
+        .popup.bad { color: #cc3333; }
+        .popup.laugh { color: var(--sf-brass); font-size: 1.5rem; }
+
+        @keyframes popUp {
+            0% { transform: translate(-50%, 0) scale(0.5); opacity: 1; }
+            50% { transform: translate(-50%, -30px) scale(1.2); }
+            100% { transform: translate(-50%, -60px) scale(1); opacity: 0; }
+        }
+
+        /* Impact */
+        .impact {
+            position: fixed;
+            pointer-events: none;
+            z-index: 90;
+            animation: impact 0.4s ease-out forwards;
+        }
+        @keyframes impact {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(0); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.3) rotate(20deg); }
+            100% { transform: translate(-50%, -50%) scale(1.5) rotate(40deg); opacity: 0; }
+        }
+
+        /* Particles */
+        .particle {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 80;
+            animation: particleFly 0.6s ease-out forwards;
+        }
+        @keyframes particleFly {
+            to { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+        }
+
+        /* Thrown money */
+        .thrown {
+            position: fixed;
+            font-size: 2rem;
+            pointer-events: none;
+            z-index: 200;
+            animation: thrown 0.6s ease-in forwards;
+        }
+        @keyframes thrown {
+            0% { transform: scale(0.5) rotate(0); }
+            100% { transform: scale(3) rotate(360deg); opacity: 0; }
+        }
+
+        /* Menus - Sutton Funding Elegant Theme */
+        .menu {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--sf-ivory);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 500;
+            padding: 20px;
+        }
+        .menu.hidden { display: none; }
+
+        /* Elegant Title */
+        .menu-title {
+            font-size: 3.5rem;
+            color: var(--sf-navy);
+            text-shadow: 3px 3px 0 var(--sf-brass-light);
+            margin-bottom: 10px;
+        }
+
+        /* Sutton Funding subtitle */
+        .menu-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--sf-brass-dark);
+            letter-spacing: 0.3em;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .menu-btn {
+            padding: 15px 50px;
+            font-family: 'Jost', sans-serif;
+            font-weight: 400;
+            font-size: 0.9rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--sf-ivory);
+            background: var(--sf-navy);
+            border: 1px solid var(--sf-brass);
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 8px;
+            transition: all 0.3s ease;
+        }
+        .menu-btn:hover {
+            transform: scale(1.02);
+            background: var(--sf-slate);
+            box-shadow: 0 4px 20px rgba(0,26,50,0.3);
+        }
+        .menu-btn.secondary {
+            background: transparent;
+            color: var(--sf-slate);
+            border-color: var(--sf-slate);
+        }
+        .menu-btn.secondary:hover {
+            background: var(--sf-slate);
+            color: var(--sf-ivory);
+        }
+
+        .mode-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .mode-btn {
+            padding: 20px;
+            background: var(--sf-ivory-light);
+            border: 1px solid var(--sf-ivory-dark);
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            color: var(--sf-slate);
+            transition: all 0.2s ease;
+        }
+        .mode-btn:hover {
+            border-color: var(--sf-brass);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .mode-btn.selected {
+            background: var(--sf-navy);
+            border-color: var(--sf-brass);
+            box-shadow: 0 4px 20px rgba(0,26,50,0.3);
+        }
+        .mode-btn.selected .name { color: var(--sf-brass-light); }
+        .mode-btn .icon { font-size: 2rem; }
+        .mode-btn .name {
+            font-size: 1rem;
+            font-family: 'Cormorant Garamond', serif;
+            color: var(--sf-navy);
+            margin-top: 5px;
+        }
+
+        /* Stats */
+        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+        .stat { text-align: center; }
+        .stat .label {
+            font-size: 0.7rem;
+            color: var(--sf-brass-dark);
+            font-family: 'Jost', sans-serif;
+            font-weight: 400;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+        .stat .value {
+            font-size: 2rem;
+            color: var(--sf-navy);
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        /* Music toggle - Sutton Style */
+        #musicToggle {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            font-size: 1.3rem;
+            background: var(--sf-ivory-light);
+            border: 1px solid var(--sf-ivory-dark);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        #musicToggle:hover {
+            border-color: var(--sf-brass);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        #musicToggle.off { opacity: 0.5; }
+        #musicToggle.playing {
+            background: var(--sf-navy);
+            border-color: var(--sf-brass);
+            box-shadow: 0 4px 15px rgba(0,26,50,0.3);
+        }
+
+        /* Cursor */
+        #cursor {
+            position: fixed;
+            font-size: 40px;
+            pointer-events: none;
+            z-index: 1000;
+            transition: transform 0.05s;
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5));
+            display: none;
+        }
+        @media (hover: hover) {
+            #cursor { display: block; }
+            body { cursor: none; }
+        }
+
+        /* Health bar for boss */
+        .health-bar {
+            position: absolute;
+            top: 5px; left: 10%; width: 80%; height: 8px;
+            background: #333;
+            border-radius: 4px;
+            overflow: hidden;
+            display: none;
+            z-index: 10;
+        }
+        .health-bar.visible { display: block; }
+        .health-bar .fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0000, #ff6600);
+            transition: width 0.2s;
+        }
+
+        /* Combo display */
+        #comboPopup {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 3.5rem;
+            font-family: 'Cormorant Garamond', serif;
+            color: var(--sf-brass);
+            text-shadow: 3px 3px 0 var(--sf-navy), 0 0 20px rgba(163,145,113,0.5);
+            pointer-events: none;
+            z-index: 300;
+            opacity: 0;
+        }
+        #comboPopup.show { animation: comboShow 0.8s ease-out; }
+        @keyframes comboShow {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(-20deg); opacity: 1; }
+            30% { transform: translate(-50%, -50%) scale(1.5) rotate(10deg); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1) rotate(0); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div id="hitFlash"></div>
+    <div id="cursor">🔪</div>
+    <div id="comboPopup"></div>
+    <div id="sfLogo">Sutton Funding</div>
+    <button id="musicToggle" onclick="toggleMusic()">🎵</button>
+
+    <!-- Start Menu -->
+    <div id="startMenu" class="menu">
+        <div class="menu-title">HACK A' HANK</div>
+        <div class="menu-subtitle">Presented by Sutton Funding</div>
+
+        <div class="mode-grid">
+            <div class="mode-btn selected" data-mode="classic" onclick="selectMode('classic')">
+                <div class="icon">⏱️</div>
+                <div class="name">Classic</div>
+            </div>
+            <div class="mode-btn" data-mode="endless" onclick="selectMode('endless')">
+                <div class="icon">♾️</div>
+                <div class="name">Endless</div>
+            </div>
+            <div class="mode-btn" data-mode="blitz" onclick="selectMode('blitz')">
+                <div class="icon">⚡</div>
+                <div class="name">Blitz</div>
+            </div>
+            <div class="mode-btn" data-mode="boss" onclick="selectMode('boss')">
+                <div class="icon">👹</div>
+                <div class="name">Boss Rush</div>
+            </div>
+        </div>
+
+        <button class="menu-btn" onclick="startGame()">PLAY</button>
+    </div>
+
+    <!-- Game Over -->
+    <div id="gameOver" class="menu hidden">
+        <div class="menu-title" style="color:#ff4444;">GAME OVER</div>
+
+        <div class="stats">
+            <div class="stat"><div class="label">SCORE</div><div class="value" id="finalScore">0</div></div>
+            <div class="stat"><div class="label">HITS</div><div class="value" id="finalHits">0</div></div>
+            <div class="stat"><div class="label">COMBO</div><div class="value" id="finalCombo">0x</div></div>
+            <div class="stat"><div class="label">ACCURACY</div><div class="value" id="finalAcc">0%</div></div>
+        </div>
+
+        <button class="menu-btn" onclick="startGame()">PLAY AGAIN</button>
+        <button class="menu-btn secondary" onclick="showMenu()">MENU</button>
+    </div>
+
+    <!-- Game -->
+    <div id="gameContainer">
+        <div id="title">HACK A' HANK</div>
+
+        <div id="hud">
+            <div class="hud-item"><div class="hud-label">SCORE</div><div class="hud-value" id="scoreValue">0</div></div>
+            <div class="hud-item"><div class="hud-label">TIME</div><div class="hud-value" id="timerValue">60</div></div>
+            <div class="hud-item"><div class="hud-label">COMBO</div><div class="hud-value" id="comboValue">0x</div></div>
+            <div class="hud-item"><div class="hud-label">LIVES</div><div class="hud-value" id="livesValue">❤️❤️❤️</div></div>
+        </div>
+
+        <div id="weaponBar">
+            <div class="weapon-btn selected" data-w="knife" onclick="selectWeapon('knife')">
+                <div class="icon">🔪</div><div class="name">Knife</div>
+            </div>
+            <div class="weapon-btn" data-w="axe" onclick="selectWeapon('axe')">
+                <div class="icon">🪓</div><div class="name">Axe</div>
+            </div>
+            <div class="weapon-btn" data-w="hammer" onclick="selectWeapon('hammer')">
+                <div class="icon">🔨</div><div class="name">Hammer</div>
+            </div>
+            <div class="weapon-btn" data-w="sword" onclick="selectWeapon('sword')">
+                <div class="icon">⚔️</div><div class="name">Sword</div>
+            </div>
+            <div class="weapon-btn" data-w="bomb" onclick="selectWeapon('bomb')">
+                <div class="icon">💣</div><div class="name">Bomb</div>
+            </div>
+        </div>
+
+        <div id="gameBoard"></div>
+    </div>
+
+    <script>
+        // =====================================================
+        // HANK SVG - Accurate recreation of Hank n Bank logo
+        // Brown side-parted hair (parts on LEFT), yellow tie,
+        // navy suit, big friendly smile, reaching handshake
+        // =====================================================
+        function createHankSVG(type = 'normal', expression = 'smile') {
+            const isGolden = type === 'golden';
+            const isBomb = type === 'bomb';
+            const isBoss = type === 'boss';
+            const isAngry = type === 'angry';
+            const isSpeed = type === 'speed';
+
+            // Unique IDs for this instance to prevent SVG conflicts
+            const uid = Math.random().toString(36).substr(2, 9);
+
+            // Colors - matching Hankbank.png exactly
+            const skin = '#f5d5b8';
+            const skinHighlight = '#ffe8d6';
+            const skinShade = '#e6c4a0';
+            const skinShadow = '#c9a080';
+
+            // Brown hair - NOT auburn, NOT red - medium brown
+            const hairMain = '#6b4423';
+            const hairDark = '#4a2f18';
+            const hairHighlight = '#8b5a2b';
+
+            // Navy blue suit
+            const suitMain = isGolden ? '#8b7500' : isBoss ? '#4a2a6a' : isAngry ? '#5a2020' : '#2b4970';
+            const suitDark = isGolden ? '#6b5500' : isBoss ? '#2a1a4a' : isAngry ? '#3a1010' : '#1a3050';
+            const suitHighlight = isGolden ? '#a08510' : isBoss ? '#6a4a8a' : isAngry ? '#7a3030' : '#3b5980';
+
+            // Yellow/gold tie - this is KEY
+            const tieMain = isGolden ? '#ffd700' : isBomb ? '#ff3333' : '#e8b830';
+            const tieDark = isGolden ? '#daa520' : isBomb ? '#cc0000' : '#c99820';
+            const tieHighlight = isGolden ? '#ffec80' : isBomb ? '#ff6666' : '#f8d860';
+
+            const shirtColor = '#f8f8f5';
+            const eyeWhite = '#ffffff';
+            const eyeIris = '#5080a0';
+            const eyePupil = '#1a1a1a';
+            const teethColor = '#ffffff';
+            const mouthDark = '#3a1515';
+            const tongueColor = '#d87070';
+            const lineColor = '#1a1a1a';
+
+            // Dynamic elements based on expression
+            let eyesContent = '';
+            let mouthContent = '';
+            let eyebrowsContent = '';
+            let cheeksContent = '';
+            let extraContent = '';
+
+            if (expression === 'smile') {
+                // Friendly salesman smile - eyes slightly squinted with smile
+                eyesContent = `
+                    <!-- Left eye -->
+                    <ellipse cx="58" cy="95" rx="10" ry="8" fill="${eyeWhite}" stroke="${lineColor}" stroke-width="1.5"/>
+                    <ellipse cx="60" cy="96" rx="5" ry="5" fill="${eyeIris}"/>
+                    <circle cx="61" cy="95" r="3" fill="${eyePupil}"/>
+                    <circle cx="63" cy="93" r="1.5" fill="white"/>
+                    <!-- Right eye -->
+                    <ellipse cx="92" cy="95" rx="10" ry="8" fill="${eyeWhite}" stroke="${lineColor}" stroke-width="1.5"/>
+                    <ellipse cx="94" cy="96" rx="5" ry="5" fill="${eyeIris}"/>
+                    <circle cx="95" cy="95" r="3" fill="${eyePupil}"/>
+                    <circle cx="97" cy="93" r="1.5" fill="white"/>
+                    <!-- Smile squint lines -->
+                    <path d="M48 100 Q52 98 55 100" stroke="${skinShadow}" stroke-width="1" fill="none"/>
+                    <path d="M95 100 Q98 98 102 100" stroke="${skinShadow}" stroke-width="1" fill="none"/>`;
+
+                eyebrowsContent = `
+                    <path d="M48 82 Q58 78 68 82" stroke="${hairDark}" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <path d="M82 82 Q92 78 102 82" stroke="${hairDark}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+
+                // Big toothy salesman grin
+                mouthContent = `
+                    <path d="M55 118 Q75 142 95 118" stroke="${lineColor}" stroke-width="2" fill="${mouthDark}"/>
+                    <path d="M58 120 Q75 138 92 120" fill="${teethColor}"/>
+                    <rect x="60" y="120" width="5" height="10" fill="${teethColor}" stroke="#eee" stroke-width="0.5"/>
+                    <rect x="65" y="120" width="5" height="11" fill="${teethColor}" stroke="#eee" stroke-width="0.5"/>
+                    <rect x="70" y="120" width="5" height="12" fill="${teethColor}" stroke="#eee" stroke-width="0.5"/>
+                    <rect x="75" y="120" width="5" height="12" fill="${teethColor}" stroke="#eee" stroke-width="0.5"/>
+                    <rect x="80" y="120" width="5" height="11" fill="${teethColor}" stroke="#eee" stroke-width="0.5"/>
+                    <rect x="85" y="120" width="5" height="10" fill="${teethColor}" stroke="#eee" stroke-width="0.5"/>`;
+
+                cheeksContent = `
+                    <ellipse cx="45" cy="108" rx="8" ry="5" fill="#f0a0a0" opacity="0.3"/>
+                    <ellipse cx="105" cy="108" rx="8" ry="5" fill="#f0a0a0" opacity="0.3"/>`;
+
+            } else if (expression === 'laugh') {
+                // Laughing maniacally
+                eyesContent = `
+                    <!-- Closed laughing eyes - arched up -->
+                    <path d="M48 92 Q58 85 68 92" stroke="${lineColor}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                    <path d="M82 92 Q92 85 102 92" stroke="${lineColor}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                    <!-- Laugh lines -->
+                    <path d="M46 96 Q50 94 52 96" stroke="${skinShadow}" stroke-width="1" fill="none"/>
+                    <path d="M98 96 Q100 94 104 96" stroke="${skinShadow}" stroke-width="1" fill="none"/>`;
+
+                eyebrowsContent = `
+                    <path d="M48 80 Q58 74 68 80" stroke="${hairDark}" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <path d="M82 80 Q92 74 102 80" stroke="${hairDark}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+
+                // Wide open laughing mouth
+                mouthContent = `
+                    <ellipse cx="75" cy="125" rx="22" ry="18" fill="${mouthDark}" stroke="${lineColor}" stroke-width="2"/>
+                    <path d="M55 120 Q75 115 95 120" fill="${teethColor}"/>
+                    <ellipse cx="75" cy="135" rx="12" ry="6" fill="${tongueColor}"/>`;
+
+                cheeksContent = `
+                    <ellipse cx="42" cy="108" rx="10" ry="6" fill="#f0a0a0" opacity="0.4"/>
+                    <ellipse cx="108" cy="108" rx="10" ry="6" fill="#f0a0a0" opacity="0.4"/>`;
+
+                extraContent = `
+                    <text x="75" y="10" text-anchor="middle" font-family="Bangers, sans-serif" font-size="14" fill="#ff4444" stroke="#000" stroke-width="0.5">HA HA!</text>`;
+
+            } else if (expression === 'taunt') {
+                // Smug taunting expression
+                eyesContent = `
+                    <!-- Sly narrowed eyes -->
+                    <ellipse cx="58" cy="94" rx="10" ry="6" fill="${eyeWhite}" stroke="${lineColor}" stroke-width="1.5"/>
+                    <ellipse cx="61" cy="95" rx="4" ry="4" fill="${eyeIris}"/>
+                    <circle cx="62" cy="94" r="2.5" fill="${eyePupil}"/>
+                    <circle cx="64" cy="92" r="1.2" fill="white"/>
+                    <ellipse cx="92" cy="94" rx="10" ry="6" fill="${eyeWhite}" stroke="${lineColor}" stroke-width="1.5"/>
+                    <ellipse cx="95" cy="95" rx="4" ry="4" fill="${eyeIris}"/>
+                    <circle cx="96" cy="94" r="2.5" fill="${eyePupil}"/>
+                    <circle cx="98" cy="92" r="1.2" fill="white"/>`;
+
+                // One raised eyebrow
+                eyebrowsContent = `
+                    <path d="M48 80 Q58 82 68 78" stroke="${hairDark}" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <path d="M82 78 Q92 82 102 80" stroke="${hairDark}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+
+                // Smirk
+                mouthContent = `
+                    <path d="M55 122 Q70 128 95 115" stroke="${lineColor}" stroke-width="2.5" fill="none"/>
+                    <path d="M58 120 Q72 126 90 116" fill="${teethColor}" stroke="none"/>`;
+
+                cheeksContent = `<ellipse cx="100" cy="110" rx="8" ry="5" fill="#f0a0a0" opacity="0.3"/>`;
+
+            } else if (expression === 'hit') {
+                // Pained/hurt expression
+                eyesContent = `
+                    <!-- X eyes -->
+                    <line x1="52" y1="88" x2="64" y2="100" stroke="${lineColor}" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="64" y1="88" x2="52" y2="100" stroke="${lineColor}" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="86" y1="88" x2="98" y2="100" stroke="${lineColor}" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="98" y1="88" x2="86" y2="100" stroke="${lineColor}" stroke-width="3" stroke-linecap="round"/>`;
+
+                eyebrowsContent = `
+                    <path d="M48 82 Q58 88 68 82" stroke="${hairDark}" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <path d="M82 82 Q92 88 102 82" stroke="${hairDark}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+
+                // Pained O mouth
+                mouthContent = `
+                    <ellipse cx="75" cy="125" rx="12" ry="15" fill="${mouthDark}" stroke="${lineColor}" stroke-width="2"/>`;
+
+                extraContent = `
+                    <!-- Impact stars -->
+                    <text x="30" y="60" font-size="16">⭐</text>
+                    <text x="115" y="55" font-size="14">💫</text>
+                    <text x="20" y="85" font-size="12">✨</text>`;
+            }
+
+            return `
+            <svg viewBox="0 0 150 200" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="skinGrad${uid}" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="${skinHighlight}"/>
+                        <stop offset="50%" stop-color="${skin}"/>
+                        <stop offset="100%" stop-color="${skinShade}"/>
+                    </linearGradient>
+                    <linearGradient id="suitGrad${uid}" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="${suitHighlight}"/>
+                        <stop offset="50%" stop-color="${suitMain}"/>
+                        <stop offset="100%" stop-color="${suitDark}"/>
+                    </linearGradient>
+                    <linearGradient id="hairGrad${uid}" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="${hairHighlight}"/>
+                        <stop offset="40%" stop-color="${hairMain}"/>
+                        <stop offset="100%" stop-color="${hairDark}"/>
+                    </linearGradient>
+                    <linearGradient id="tieGrad${uid}" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="${tieHighlight}"/>
+                        <stop offset="50%" stop-color="${tieMain}"/>
+                        <stop offset="100%" stop-color="${tieDark}"/>
+                    </linearGradient>
+                    <filter id="shadow${uid}">
+                        <feDropShadow dx="2" dy="2" stdDeviation="2" flood-opacity="0.3"/>
+                    </filter>
+                </defs>
+
+                <!-- BODY / SHOULDERS -->
+                <g filter="url(#shadow${uid})">
+                    <!-- Suit jacket body -->
+                    <path d="M30 158 L20 200 L130 200 L120 158 Q100 165 75 160 Q50 165 30 158"
+                          fill="url(#suitGrad${uid})" stroke="${lineColor}" stroke-width="1.5"/>
+
+                    <!-- Suit lapels - V shape -->
+                    <path d="M55 160 L45 185 L60 178 L75 195 L90 178 L105 185 L95 160"
+                          fill="${suitDark}" stroke="${lineColor}" stroke-width="1"/>
+
+                    <!-- White shirt visible -->
+                    <path d="M60 163 L75 188 L90 163" fill="${shirtColor}" stroke="#ddd" stroke-width="0.5"/>
+
+                    <!-- TIE - Yellow/Gold - KEY FEATURE -->
+                    <path d="M70 165 L80 165 L84 200 L75 205 L66 200 Z"
+                          fill="url(#tieGrad${uid})" stroke="${lineColor}" stroke-width="1"/>
+                    <!-- Tie knot -->
+                    <path d="M71 165 L79 165 L77 172 L75 174 L73 172 Z"
+                          fill="${tieDark}" stroke="${lineColor}" stroke-width="0.5"/>
+                    <!-- Tie stripe detail -->
+                    <line x1="75" y1="175" x2="75" y2="195" stroke="${tieDark}" stroke-width="1" opacity="0.3"/>
+                </g>
+
+                <!-- REACHING HAND (extending to viewer's left) -->
+                <g filter="url(#shadow${uid})">
+                    <!-- Arm/sleeve -->
+                    <path d="M35 165 Q10 160 -5 175" stroke="${suitMain}" stroke-width="22" fill="none" stroke-linecap="round"/>
+                    <path d="M35 165 Q10 160 -5 175" stroke="${suitHighlight}" stroke-width="18" fill="none" stroke-linecap="round"/>
+
+                    <!-- Shirt cuff -->
+                    <ellipse cx="0" cy="178" rx="8" ry="5" fill="${shirtColor}" stroke="#ddd" stroke-width="0.5"/>
+
+                    <!-- Hand palm -->
+                    <ellipse cx="-8" cy="182" rx="14" ry="11" fill="${skin}" stroke="${lineColor}" stroke-width="1.2"/>
+
+                    <!-- FINGERS - spread for handshake -->
+                    <!-- Index finger -->
+                    <path d="M-18 172 Q-25 168 -28 172 Q-30 176 -25 178 Q-20 178 -16 175"
+                          fill="${skin}" stroke="${lineColor}" stroke-width="1"/>
+                    <!-- Middle finger -->
+                    <path d="M-20 178 Q-30 176 -33 180 Q-34 185 -28 186 Q-22 185 -18 182"
+                          fill="${skin}" stroke="${lineColor}" stroke-width="1"/>
+                    <!-- Ring finger -->
+                    <path d="M-18 185 Q-28 185 -30 190 Q-30 194 -24 194 Q-18 192 -15 188"
+                          fill="${skin}" stroke="${lineColor}" stroke-width="1"/>
+                    <!-- Pinky -->
+                    <path d="M-14 190 Q-22 192 -23 196 Q-22 200 -17 199 Q-12 196 -10 192"
+                          fill="${skin}" stroke="${lineColor}" stroke-width="1"/>
+                    <!-- Thumb -->
+                    <path d="M2 175 Q8 168 5 162 Q0 160 -4 165 Q-6 172 0 177"
+                          fill="${skin}" stroke="${lineColor}" stroke-width="1"/>
+
+                    <!-- Finger creases/details -->
+                    <path d="M-22 175 L-20 176" stroke="${skinShadow}" stroke-width="0.5"/>
+                    <path d="M-26 183 L-24 184" stroke="${skinShadow}" stroke-width="0.5"/>
+                    <path d="M-23 191 L-21 191" stroke="${skinShadow}" stroke-width="0.5"/>
+                </g>
+
+                <!-- NECK -->
+                <rect x="62" y="145" width="26" height="18" fill="url(#skinGrad${uid})"/>
+                <path d="M65 155 Q75 158 85 155" stroke="${skinShadow}" stroke-width="1" fill="none" opacity="0.4"/>
+
+                <!-- HEAD -->
+                <g filter="url(#shadow${uid})">
+                    <!-- Face shape - slightly wider, friendly proportions -->
+                    <ellipse cx="75" cy="90" rx="48" ry="55" fill="url(#skinGrad${uid})" stroke="${lineColor}" stroke-width="1.5"/>
+
+                    <!-- Jaw definition -->
+                    <path d="M35 100 Q30 120 45 140 Q60 152 75 155 Q90 152 105 140 Q120 120 115 100"
+                          fill="none" stroke="${skinShadow}" stroke-width="1" opacity="0.3"/>
+
+                    <!-- Ears -->
+                    <ellipse cx="27" cy="95" rx="7" ry="12" fill="${skin}" stroke="${lineColor}" stroke-width="1"/>
+                    <path d="M28 90 Q32 95 28 100" stroke="${skinShadow}" stroke-width="1" fill="none"/>
+                    <ellipse cx="123" cy="95" rx="7" ry="12" fill="${skin}" stroke="${lineColor}" stroke-width="1"/>
+                    <path d="M122 90 Q118 95 122 100" stroke="${skinShadow}" stroke-width="1" fill="none"/>
+
+                    <!-- HAIR - Side parted on LEFT, sweeping right - CRITICAL -->
+                    <!-- Main hair mass -->
+                    <path d="M30 70
+                             Q28 45 45 32
+                             Q65 22 90 28
+                             Q115 35 122 55
+                             Q125 70 123 85
+                             L120 70
+                             Q118 55 100 48
+                             Q75 40 55 50
+                             Q40 58 35 75
+                             Z"
+                          fill="url(#hairGrad${uid})" stroke="${lineColor}" stroke-width="1.5"/>
+
+                    <!-- Hair part line - on the LEFT side -->
+                    <path d="M42 35 Q45 50 42 70" stroke="${hairDark}" stroke-width="2" fill="none"/>
+
+                    <!-- Hair swooping to the right -->
+                    <path d="M45 35 Q70 30 100 38 Q85 35 60 42 Q48 48 45 55"
+                          fill="${hairHighlight}" opacity="0.4"/>
+
+                    <!-- Hair texture lines -->
+                    <path d="M50 38 Q65 32 85 36" stroke="${hairDark}" stroke-width="1" fill="none" opacity="0.5"/>
+                    <path d="M55 42 Q70 38 90 42" stroke="${hairDark}" stroke-width="1" fill="none" opacity="0.4"/>
+                    <path d="M48 50 Q60 45 75 48" stroke="${hairDark}" stroke-width="1" fill="none" opacity="0.3"/>
+
+                    <!-- Hair over forehead - styled to the right -->
+                    <path d="M42 55 Q50 48 70 50 Q55 55 45 65" fill="${hairMain}" opacity="0.7"/>
+
+                    <!-- Sideburns -->
+                    <path d="M30 70 L32 90 Q35 85 33 75 Z" fill="${hairMain}"/>
+                    <path d="M120 70 L118 90 Q115 85 117 75 Z" fill="${hairMain}"/>
+
+                    <!-- EYEBROWS -->
+                    ${eyebrowsContent}
+
+                    <!-- EYES -->
+                    ${eyesContent}
+
+                    <!-- NOSE - friendly, not too prominent -->
+                    <path d="M75 90 L73 108 Q75 114 77 108 L75 90" fill="${skinShadow}" opacity="0.4"/>
+                    <path d="M68 112 Q75 116 82 112" stroke="${skinShadow}" stroke-width="1" fill="none"/>
+
+                    <!-- Nostrils hint -->
+                    <circle cx="71" cy="111" r="2" fill="${skinShadow}" opacity="0.3"/>
+                    <circle cx="79" cy="111" r="2" fill="${skinShadow}" opacity="0.3"/>
+
+                    <!-- CHEEKS -->
+                    ${cheeksContent}
+
+                    <!-- MOUTH -->
+                    ${mouthContent}
+
+                    <!-- Smile/expression lines -->
+                    <path d="M48 108 Q44 118 48 128" stroke="${skinShadow}" stroke-width="1" fill="none" opacity="0.3"/>
+                    <path d="M102 108 Q106 118 102 128" stroke="${skinShadow}" stroke-width="1" fill="none" opacity="0.3"/>
+
+                    <!-- Chin definition -->
+                    <ellipse cx="75" cy="148" rx="12" ry="4" fill="${skinShadow}" opacity="0.15"/>
+                </g>
+
+                <!-- Type indicators -->
+                ${isGolden ? `
+                    <circle cx="75" cy="8" r="10" fill="none" stroke="#ffd700" stroke-width="2"/>
+                    <text x="75" y="12" text-anchor="middle" font-size="14" fill="#ffd700">★</text>
+                ` : ''}
+                ${isBomb ? `<text x="75" y="15" text-anchor="middle" font-size="18">💣</text>` : ''}
+                ${isBoss ? `<text x="75" y="15" text-anchor="middle" font-size="18">👑</text>` : ''}
+                ${isSpeed ? `<text x="75" y="15" text-anchor="middle" font-size="14">⚡</text>` : ''}
+                ${isAngry ? `<text x="75" y="15" text-anchor="middle" font-size="14">😤</text>` : ''}
+
+                <!-- Extra expression content -->
+                ${extraContent}
+            </svg>`;
+        }
+
+        // =====================================================
+        // MUSIC SYSTEM - 80's NEON SYNTHWAVE
+        // Intense, driving 80s sound with chorus, delay, pads
+        // =====================================================
+        const Music = {
+            ctx: null,
+            playing: false,
+            masterGain: null,
+            reverbGain: null,
+            delayNode: null,
+            tempo: 118, // Classic 80s tempo
+            bar: 0,
+
+            init() {
+                if (this.ctx) return;
+                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+                // Master gain
+                this.masterGain = this.ctx.createGain();
+                this.masterGain.gain.value = 0.35;
+
+                // Create delay for that 80s spacious feel
+                this.delayNode = this.ctx.createDelay(0.5);
+                this.delayNode.delayTime.value = 0.33; // Dotted 8th delay
+                const delayFeedback = this.ctx.createGain();
+                delayFeedback.gain.value = 0.3;
+                const delayFilter = this.ctx.createBiquadFilter();
+                delayFilter.type = 'lowpass';
+                delayFilter.frequency.value = 3000;
+
+                this.delayNode.connect(delayFilter);
+                delayFilter.connect(delayFeedback);
+                delayFeedback.connect(this.delayNode);
+                this.delayNode.connect(this.masterGain);
+
+                this.masterGain.connect(this.ctx.destination);
+            },
+
+            // Neon synth lead - thick detuned with chorus effect
+            playLead(freq, duration, delay = 0) {
+                if (!this.ctx || !this.playing) return;
+
+                // 3 oscillators for super-saw style
+                const oscs = [];
+                const detunes = [-12, 0, 12]; // Spread in cents
+
+                const gain = this.ctx.createGain();
+                const filter = this.ctx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = 4000;
+                filter.Q.value = 2;
+
+                // LFO for vibrato
+                const lfo = this.ctx.createOscillator();
+                const lfoGain = this.ctx.createGain();
+                lfo.type = 'sine';
+                lfo.frequency.value = 5.5;
+                lfoGain.gain.value = 4;
+                lfo.connect(lfoGain);
+
+                const t = this.ctx.currentTime + delay;
+
+                detunes.forEach(detune => {
+                    const osc = this.ctx.createOscillator();
+                    osc.type = 'sawtooth';
+                    osc.frequency.value = freq;
+                    osc.detune.value = detune;
+                    lfoGain.connect(osc.frequency);
+                    osc.connect(filter);
+                    osc.start(t);
+                    osc.stop(t + duration);
+                    oscs.push(osc);
+                });
+
+                // Filter sweep
+                filter.frequency.setValueAtTime(2000, t);
+                filter.frequency.linearRampToValueAtTime(5000, t + 0.05);
+                filter.frequency.exponentialRampToValueAtTime(2000, t + duration);
+
+                // Envelope
+                gain.gain.setValueAtTime(0, t);
+                gain.gain.linearRampToValueAtTime(0.1, t + 0.02);
+                gain.gain.setValueAtTime(0.08, t + duration * 0.4);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
+
+                filter.connect(gain);
+                gain.connect(this.masterGain);
+                gain.connect(this.delayNode); // Feed to delay
+
+                lfo.start(t);
+                lfo.stop(t + duration);
+            },
+
+            // Neon pad - lush 80s synth pad
+            playPad(notes, duration, delay = 0) {
+                if (!this.ctx || !this.playing) return;
+
+                const gain = this.ctx.createGain();
+                const filter = this.ctx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = 1500;
+                filter.Q.value = 1;
+
+                const t = this.ctx.currentTime + delay;
+
+                notes.forEach(freq => {
+                    [-5, 0, 5].forEach(detune => {
+                        const osc = this.ctx.createOscillator();
+                        osc.type = 'sawtooth';
+                        osc.frequency.value = freq;
+                        osc.detune.value = detune;
+                        osc.connect(filter);
+                        osc.start(t);
+                        osc.stop(t + duration);
+                    });
+                });
+
+                // Slow attack for pad feel
+                gain.gain.setValueAtTime(0, t);
+                gain.gain.linearRampToValueAtTime(0.04, t + 0.3);
+                gain.gain.setValueAtTime(0.04, t + duration - 0.3);
+                gain.gain.linearRampToValueAtTime(0.001, t + duration);
+
+                filter.connect(gain);
+                gain.connect(this.masterGain);
+            },
+
+            // Punchy 80s synth bass with filter envelope
+            playBass(freq, duration, delay = 0) {
+                if (!this.ctx || !this.playing) return;
+
+                const osc = this.ctx.createOscillator();
+                const osc2 = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                const filter = this.ctx.createBiquadFilter();
+
+                osc.type = 'sawtooth';
+                osc.frequency.value = freq;
+                osc2.type = 'square';
+                osc2.frequency.value = freq * 0.5;
+
+                filter.type = 'lowpass';
+                filter.Q.value = 8;
+
+                const t = this.ctx.currentTime + delay;
+
+                // Aggressive filter envelope
+                filter.frequency.setValueAtTime(1200, t);
+                filter.frequency.exponentialRampToValueAtTime(150, t + 0.15);
+
+                gain.gain.setValueAtTime(0.3, t);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
+
+                osc.connect(filter);
+                osc2.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.masterGain);
+
+                osc.start(t);
+                osc2.start(t);
+                osc.stop(t + duration);
+                osc2.stop(t + duration);
+            },
+
+            // 808 style kick
+            playKick(delay = 0) {
+                if (!this.ctx || !this.playing) return;
+
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                const click = this.ctx.createOscillator();
+                const clickGain = this.ctx.createGain();
+
+                osc.type = 'sine';
+                const t = this.ctx.currentTime + delay;
+
+                // Pitch drop
+                osc.frequency.setValueAtTime(160, t);
+                osc.frequency.exponentialRampToValueAtTime(35, t + 0.12);
+
+                gain.gain.setValueAtTime(0.5, t);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+
+                // Click transient
+                click.type = 'square';
+                click.frequency.value = 1000;
+                clickGain.gain.setValueAtTime(0.1, t);
+                clickGain.gain.exponentialRampToValueAtTime(0.001, t + 0.02);
+
+                osc.connect(gain);
+                click.connect(clickGain);
+                gain.connect(this.masterGain);
+                clickGain.connect(this.masterGain);
+
+                osc.start(t);
+                click.start(t);
+                osc.stop(t + 0.4);
+                click.stop(t + 0.02);
+            },
+
+            // Gated snare - 80s style
+            playSnare(delay = 0) {
+                if (!this.ctx || !this.playing) return;
+
+                const bufferSize = this.ctx.sampleRate * 0.15;
+                const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+
+                const noise = this.ctx.createBufferSource();
+                noise.buffer = buffer;
+
+                const noiseGain = this.ctx.createGain();
+                const filter = this.ctx.createBiquadFilter();
+                const hpf = this.ctx.createBiquadFilter();
+
+                filter.type = 'bandpass';
+                filter.frequency.value = 3000;
+                filter.Q.value = 1;
+
+                hpf.type = 'highpass';
+                hpf.frequency.value = 500;
+
+                const t = this.ctx.currentTime + delay;
+
+                // Gated envelope
+                noiseGain.gain.setValueAtTime(0.35, t);
+                noiseGain.gain.setValueAtTime(0.35, t + 0.08);
+                noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+
+                // Body tone
+                const osc = this.ctx.createOscillator();
+                const oscGain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.value = 200;
+                oscGain.gain.setValueAtTime(0.2, t);
+                oscGain.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+
+                noise.connect(filter);
+                filter.connect(hpf);
+                hpf.connect(noiseGain);
+                noiseGain.connect(this.masterGain);
+                noiseGain.connect(this.delayNode);
+
+                osc.connect(oscGain);
+                oscGain.connect(this.masterGain);
+
+                noise.start(t);
+                osc.start(t);
+                osc.stop(t + 0.15);
+            },
+
+            // Crisp hi-hat
+            playHiHat(delay = 0, open = false) {
+                if (!this.ctx || !this.playing) return;
+
+                const bufferSize = this.ctx.sampleRate * (open ? 0.2 : 0.04);
+                const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+
+                const noise = this.ctx.createBufferSource();
+                noise.buffer = buffer;
+
+                const gain = this.ctx.createGain();
+                const filter = this.ctx.createBiquadFilter();
+                const hpf = this.ctx.createBiquadFilter();
+
+                filter.type = 'bandpass';
+                filter.frequency.value = 10000;
+                filter.Q.value = 1;
+
+                hpf.type = 'highpass';
+                hpf.frequency.value = 7000;
+
+                const t = this.ctx.currentTime + delay;
+                gain.gain.setValueAtTime(open ? 0.12 : 0.08, t);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + (open ? 0.2 : 0.04));
+
+                noise.connect(filter);
+                filter.connect(hpf);
+                hpf.connect(gain);
+                gain.connect(this.masterGain);
+
+                noise.start(t);
+            },
+
+            // 80s arpeggiator with filter sweep
+            playArp(notes, duration, delay = 0) {
+                if (!this.ctx || !this.playing) return;
+
+                const noteLength = duration / notes.length;
+                const filter = this.ctx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = 2000;
+                filter.Q.value = 4;
+                filter.connect(this.masterGain);
+                filter.connect(this.delayNode);
+
+                notes.forEach((freq, i) => {
+                    const osc = this.ctx.createOscillator();
+                    const osc2 = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+
+                    osc.type = 'square';
+                    osc.frequency.value = freq;
+                    osc2.type = 'sawtooth';
+                    osc2.frequency.value = freq * 1.003;
+
+                    const t = this.ctx.currentTime + delay + (i * noteLength);
+                    gain.gain.setValueAtTime(0, t);
+                    gain.gain.linearRampToValueAtTime(0.05, t + 0.01);
+                    gain.gain.exponentialRampToValueAtTime(0.001, t + noteLength * 0.9);
+
+                    osc.connect(gain);
+                    osc2.connect(gain);
+                    gain.connect(filter);
+
+                    osc.start(t);
+                    osc2.start(t);
+                    osc.stop(t + noteLength);
+                    osc2.stop(t + noteLength);
+                });
+            },
+
+            startGameMusic() {
+                this.playing = true;
+                this.bar = 0;
+                this.playLoop();
+            },
+
+            playLoop() {
+                if (!this.playing) return;
+
+                const beat = 60 / this.tempo;
+                const barLength = beat * 4;
+
+                // More dramatic 80s chord progression (Am - Em - F - G)
+                const chords = [
+                    { root: 110, notes: [220, 262, 330], pad: [220, 330, 440] },   // Am
+                    { root: 82, notes: [165, 247, 330], pad: [165, 247, 330] },    // Em
+                    { root: 87, notes: [175, 220, 262], pad: [175, 262, 349] },    // F
+                    { root: 98, notes: [196, 247, 294], pad: [196, 294, 392] }     // G
+                ];
+
+                const chord = chords[this.bar % 4];
+
+                // Lush synth pad
+                this.playPad(chord.pad, barLength, 0);
+
+                // Driving bass - 16th note pattern
+                for (let i = 0; i < 16; i++) {
+                    const accent = i % 4 === 0;
+                    const bassNote = accent ? chord.root : (i % 2 === 0 ? chord.root * 0.75 : chord.root);
+                    if (i % 2 === 0 || i === 7 || i === 15) {
+                        this.playBass(bassNote, beat * 0.2, i * beat * 0.25);
+                    }
+                }
+
+                // Drums - driving 80s pattern
+                for (let i = 0; i < 4; i++) {
+                    this.playKick(i * beat);
+                    this.playKick(i * beat + beat * 0.75);
+                    if (i === 1 || i === 3) this.playSnare(i * beat);
+                    // 16th note hi-hats
+                    for (let j = 0; j < 4; j++) {
+                        this.playHiHat(i * beat + j * beat * 0.25, j === 2 && i === 3);
+                    }
+                }
+
+                // Neon lead melodies - more dramatic
+                const melodies = [
+                    [440, 523, 659, 523, 440, 392, 440, 523],
+                    [330, 392, 440, 523, 659, 523, 440, 392],
+                    [349, 440, 523, 440, 349, 330, 262, 330],
+                    [392, 494, 587, 494, 392, 330, 294, 392]
+                ];
+                const melody = melodies[this.bar % 4];
+
+                melody.forEach((note, i) => {
+                    if (note > 0 && (i === 0 || i === 2 || i === 4 || i === 6)) {
+                        this.playLead(note, beat * 0.9, i * beat * 0.5);
+                    }
+                });
+
+                // Fast arpeggios - quintessential 80s
+                const arpNotes = [...chord.notes, chord.notes[0] * 2, ...chord.notes.reverse()];
+                this.playArp(arpNotes, beat * 2, 0);
+                this.playArp(arpNotes, beat * 2, beat * 2);
+
+                this.bar++;
+
+                // Schedule next bar
+                setTimeout(() => this.playLoop(), barLength * 1000);
+            },
+
+            stop() {
+                this.playing = false;
+            },
+
+            toggle() {
+                if (this.playing) {
+                    this.stop();
+                } else {
+                    this.init();
+                    this.startGameMusic();
+                }
+                return this.playing;
+            }
+        };
+
+        // =====================================================
+        // SOUND EFFECTS
+        // =====================================================
+        const SFX = {
+            ctx: null,
+
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            },
+
+            play(freq, dur, type = 'square', vol = 0.3) {
+                if (!this.ctx) return;
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + dur);
+                osc.connect(gain).connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + dur);
+            },
+
+            hit() {
+                this.play(300, 0.1, 'sawtooth', 0.4);
+                this.play(450, 0.08, 'square', 0.3);
+            },
+
+            golden() {
+                [500, 630, 750, 900, 1100].forEach((f, i) => {
+                    setTimeout(() => this.play(f, 0.15, 'sine', 0.3), i * 50);
+                });
+            },
+
+            miss() { this.play(100, 0.2, 'sawtooth', 0.2); },
+
+            bomb() {
+                this.play(60, 0.4, 'sawtooth', 0.5);
+                this.play(80, 0.3, 'square', 0.4);
+            },
+
+            laugh() {
+                [400, 500, 400, 500, 450].forEach((f, i) => {
+                    setTimeout(() => this.play(f, 0.08, 'square', 0.2), i * 80);
+                });
+            },
+
+            throw() { this.play(200, 0.15, 'sawtooth', 0.3); },
+
+            hurt() {
+                this.play(150, 0.2, 'sawtooth', 0.4);
+                this.play(100, 0.3, 'square', 0.3);
+            },
+
+            combo() {
+                [600, 800, 1000, 1200].forEach((f, i) => {
+                    setTimeout(() => this.play(f, 0.1, 'sine', 0.25), i * 40);
+                });
+            },
+
+            gameOver() {
+                [400, 350, 300, 250, 200].forEach((f, i) => {
+                    setTimeout(() => this.play(f, 0.3, 'sine', 0.3), i * 150);
+                });
+            }
+        };
+
+        // =====================================================
+        // GAME STATE
+        // =====================================================
+        let score = 0, time = 60, hits = 0, misses = 0, combo = 0, maxCombo = 0, lives = 3;
+        let running = false, gameTimer, spawnTimer;
+        let weapon = 'knife', mode = 'classic';
+        let activeHanks = [];
+        let lastHit = 0;
+        let musicOn = false;
+
+        const weapons = {
+            knife: { dmg: 1, cd: 120, mult: 1, cursor: '🔪' },
+            axe: { dmg: 2, cd: 300, mult: 1.2, cursor: '🪓' },
+            hammer: { dmg: 1.5, cd: 200, mult: 1.1, cursor: '🔨' },
+            sword: { dmg: 1, cd: 80, mult: 1, cursor: '⚔️' },
+            bomb: { dmg: 3, cd: 400, mult: 2, cursor: '💣' }
+        };
+
+        const hankTypes = {
+            normal: { pts: 100, dur: 2000, tauntTime: 1500 },
+            golden: { pts: 500, dur: 1200, tauntTime: 800 },
+            angry: { pts: 150, dur: 1500, tauntTime: 1000 },
+            speed: { pts: 200, dur: 700, tauntTime: 500 },
+            bomb: { pts: -500, dur: 1800, tauntTime: null },
+            boss: { pts: 1000, dur: 8000, hp: 5, tauntTime: 2000 }
+        };
+
+        // DOM
+        const board = document.getElementById('gameBoard');
+        const scoreEl = document.getElementById('scoreValue');
+        const timeEl = document.getElementById('timerValue');
+        const comboEl = document.getElementById('comboValue');
+        const livesEl = document.getElementById('livesValue');
+        const cursor = document.getElementById('cursor');
+        const flash = document.getElementById('hitFlash');
+        const comboPopup = document.getElementById('comboPopup');
+        const startMenu = document.getElementById('startMenu');
+        const gameOver = document.getElementById('gameOver');
+
+        // =====================================================
+        // VISUAL EFFECTS
+        // =====================================================
+        function shake() {
+            document.body.classList.remove('shake');
+            void document.body.offsetWidth;
+            document.body.classList.add('shake');
+        }
+
+        function flashScreen(type) {
+            flash.className = '';
+            void flash.offsetWidth;
+            flash.classList.add(type);
+        }
+
+        function popup(x, y, text, cls = '') {
+            const p = document.createElement('div');
+            p.className = 'popup ' + cls;
+            p.textContent = text;
+            p.style.left = x + 'px';
+            p.style.top = y + 'px';
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 700);
+        }
+
+        function impact(x, y, color = '#ff4444') {
+            const el = document.createElement('div');
+            el.className = 'impact';
+            el.style.left = x + 'px';
+            el.style.top = y + 'px';
+            el.innerHTML = `<svg width="100" height="100" viewBox="-50 -50 100 100">
+                <polygon points="0,-45 12,-15 45,-15 18,5 28,45 0,20 -28,45 -18,5 -45,-15 -12,-15"
+                         fill="${color}" stroke="#000" stroke-width="2"/>
+                <text x="0" y="8" text-anchor="middle" font-family="Bangers" font-size="18" fill="white" stroke="#000" stroke-width="1">POW!</text>
+            </svg>`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 400);
+        }
+
+        function particles(x, y, color = '#cc0000', count = 12) {
+            for (let i = 0; i < count; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.background = color;
+                p.style.width = p.style.height = (6 + Math.random() * 8) + 'px';
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 40 + Math.random() * 60;
+                p.style.left = x + 'px';
+                p.style.top = y + 'px';
+                p.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+                p.style.setProperty('--ty', (Math.sin(angle) * dist - 30) + 'px');
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 600);
+            }
+        }
+
+        function showCombo(num) {
+            comboPopup.textContent = num + 'x COMBO!';
+            comboPopup.classList.remove('show');
+            void comboPopup.offsetWidth;
+            comboPopup.classList.add('show');
+            SFX.combo();
+        }
+
+        // =====================================================
+        // GAME BOARD
+        // =====================================================
+        function initBoard() {
+            board.innerHTML = '';
+            for (let i = 0; i < 9; i++) {
+                const hole = document.createElement('div');
+                hole.className = 'hole';
+                hole.innerHTML = `
+                    <div class="hank-wrap" data-idx="${i}"></div>
+                    <div class="health-bar"><div class="fill"></div></div>
+                `;
+                hole.addEventListener('click', e => handleClick(e, i));
+                hole.addEventListener('touchstart', e => { e.preventDefault(); handleClick(e, i); }, { passive: false });
+                board.appendChild(hole);
+            }
+        }
+
+        // =====================================================
+        // SPAWNING
+        // =====================================================
+        function getType() {
+            const r = Math.random();
+            if (mode === 'boss') return 'boss';
+            if (r < 0.05) return 'bomb';
+            if (r < 0.15) return 'golden';
+            if (r < 0.28) return 'angry';
+            if (r < 0.38) return 'speed';
+            return 'normal';
+        }
+
+        function spawn() {
+            if (!running) return;
+
+            const free = [];
+            for (let i = 0; i < 9; i++) {
+                if (!activeHanks.find(h => h.idx === i)) free.push(i);
+            }
+            if (!free.length) {
+                spawnTimer = setTimeout(spawn, 300);
+                return;
+            }
+
+            const idx = free[Math.floor(Math.random() * free.length)];
+            const type = getType();
+            const data = hankTypes[type];
+
+            const hole = board.children[idx];
+            const wrap = hole.querySelector('.hank-wrap');
+            const healthBar = hole.querySelector('.health-bar');
+
+            // Set initial expression
+            wrap.innerHTML = createHankSVG(type, 'smile');
+            wrap.className = 'hank-wrap up idle ' + type;
+
+            const obj = {
+                idx, type,
+                el: wrap,
+                hp: data.hp || 1,
+                expression: 'smile',
+                taunted: false,
+                tauntTimeout: data.tauntTime ? setTimeout(() => hankTaunts(idx), data.tauntTime) : null,
+                hideTimeout: setTimeout(() => hideHank(idx, true), data.dur)
+            };
+
+            if (type === 'boss') {
+                healthBar.classList.add('visible');
+                healthBar.querySelector('.fill').style.width = '100%';
+                obj.healthBar = healthBar;
+            }
+
+            activeHanks.push(obj);
+
+            // Schedule next spawn
+            const delay = mode === 'blitz' ? 400 + Math.random() * 400 : 600 + Math.random() * 800;
+            spawnTimer = setTimeout(spawn, delay);
+        }
+
+        // =====================================================
+        // HANK TAUNTS (laughs at you!)
+        // =====================================================
+        function hankTaunts(idx) {
+            const obj = activeHanks.find(h => h.idx === idx);
+            if (!obj || !obj.el.classList.contains('up') || obj.taunted) return;
+
+            obj.taunted = true;
+            obj.expression = 'taunt';
+
+            // Change to taunting animation and expression
+            obj.el.classList.remove('idle');
+            obj.el.classList.add('taunting');
+            obj.el.innerHTML = createHankSVG(obj.type, 'taunt');
+
+            // After a moment, start laughing
+            setTimeout(() => {
+                if (!obj.el.classList.contains('up')) return;
+
+                obj.expression = 'laugh';
+                obj.el.classList.remove('taunting');
+                obj.el.classList.add('laughing');
+                obj.el.innerHTML = createHankSVG(obj.type, 'laugh');
+
+                SFX.laugh();
+
+                // Show HA HA text
+                const rect = obj.el.getBoundingClientRect();
+                popup(rect.left + rect.width/2, rect.top, 'HA HA!', 'laugh');
+
+                // Throw something at player
+                setTimeout(() => {
+                    if (!obj.el.classList.contains('up')) return;
+                    throwAtPlayer(obj);
+                }, 400);
+            }, 300);
+        }
+
+        function throwAtPlayer(obj) {
+            const rect = obj.el.getBoundingClientRect();
+            const x = rect.left + rect.width / 2;
+            const y = rect.top + rect.height / 3;
+
+            // Create thrown object
+            const projectiles = ['💰', '💵', '🪙', '💳', '💸', '📈'];
+            const thrown = document.createElement('div');
+            thrown.className = 'thrown';
+            thrown.textContent = projectiles[Math.floor(Math.random() * projectiles.length)];
+            thrown.style.left = x + 'px';
+            thrown.style.top = y + 'px';
+            document.body.appendChild(thrown);
+
+            SFX.throw();
+
+            setTimeout(() => {
+                thrown.remove();
+                playerHit();
+            }, 500);
+        }
+
+        function playerHit() {
+            lives--;
+            combo = 0;
+
+            flashScreen('hurt');
+            shake();
+            SFX.hurt();
+
+            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+
+            updateHUD();
+
+            if (lives <= 0) endGame();
+        }
+
+        // =====================================================
+        // HIDE HANK
+        // =====================================================
+        function hideHank(idx, escaped = false) {
+            const obj = activeHanks.find(h => h.idx === idx);
+            if (!obj) return;
+
+            clearTimeout(obj.hideTimeout);
+            clearTimeout(obj.tauntTimeout);
+
+            obj.el.classList.remove('up', 'idle', 'laughing', 'taunting');
+
+            if (obj.healthBar) obj.healthBar.classList.remove('visible');
+
+            if (escaped && obj.type !== 'bomb') {
+                combo = 0;
+                updateHUD();
+            }
+
+            activeHanks = activeHanks.filter(h => h.idx !== idx);
+        }
+
+        // =====================================================
+        // HIT HANDLING
+        // =====================================================
+        function handleClick(e, idx) {
+            if (!running) return;
+
+            const now = Date.now();
+            if (now - lastHit < weapons[weapon].cd) return;
+            lastHit = now;
+
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = e.clientX || e.touches?.[0]?.clientX || rect.left + rect.width/2;
+            const y = e.clientY || e.touches?.[0]?.clientY || rect.top + rect.height/2;
+
+            const obj = activeHanks.find(h => h.idx === idx);
+
+            if (!obj || !obj.el.classList.contains('up')) {
+                misses++;
+                combo = 0;
+                SFX.miss();
+                popup(x, y, 'MISS', 'bad');
+                updateHUD();
+                return;
+            }
+
+            const type = obj.type;
+            const data = hankTypes[type];
+
+            // BOMB - Don't hit!
+            if (type === 'bomb') {
+                score = Math.max(0, score + data.pts);
+                combo = 0;
+                SFX.bomb();
+                shake();
+                flashScreen('red');
+                impact(x, y, '#ff0000');
+                particles(x, y, '#ff6600', 20);
+                popup(x, y, data.pts, 'bad');
+
+                if (mode === 'endless' || mode === 'blitz') {
+                    lives--;
+                    if (lives <= 0) endGame();
+                }
+
+                // Show hit expression briefly
+                obj.el.innerHTML = createHankSVG(type, 'hit');
+                obj.el.classList.add('hit');
+                hideHank(idx);
+                updateHUD();
+                return;
+            }
+
+            // BOSS
+            if (type === 'boss') {
+                obj.hp -= weapons[weapon].dmg;
+                obj.healthBar.querySelector('.fill').style.width = (obj.hp / data.hp * 100) + '%';
+
+                SFX.hit();
+                shake();
+                particles(x, y, '#cc0000', 8);
+
+                // Change expression to hit briefly
+                obj.el.innerHTML = createHankSVG(type, 'hit');
+                setTimeout(() => {
+                    if (obj.el.classList.contains('up')) {
+                        obj.el.innerHTML = createHankSVG(type, obj.expression);
+                    }
+                }, 150);
+
+                if (obj.hp <= 0) {
+                    // Boss defeated!
+                    const pts = Math.round(data.pts * weapons[weapon].mult);
+                    score += pts;
+                    hits++;
+                    combo++;
+                    maxCombo = Math.max(maxCombo, combo);
+
+                    SFX.golden();
+                    flashScreen('gold');
+                    impact(x, y, '#ffd700');
+                    particles(x, y, '#ffd700', 25);
+                    popup(x, y, '+' + pts, 'gold');
+
+                    if (combo >= 5 && combo % 5 === 0) showCombo(combo);
+
+                    obj.el.innerHTML = createHankSVG(type, 'hit');
+                    obj.el.classList.add('hit');
+                    obj.healthBar.classList.remove('visible');
+                    clearTimeout(obj.hideTimeout);
+                    clearTimeout(obj.tauntTimeout);
+                    activeHanks = activeHanks.filter(h => h.idx !== idx);
+                }
+
+                updateHUD();
+                return;
+            }
+
+            // NORMAL HIT
+            let pts = Math.round(data.pts * weapons[weapon].mult * (1 + combo * 0.1));
+            score += pts;
+            hits++;
+            combo++;
+            maxCombo = Math.max(maxCombo, combo);
+
+            if (type === 'golden') {
+                SFX.golden();
+                flashScreen('gold');
+                impact(x, y, '#ffd700');
+                particles(x, y, '#ffd700', 18);
+                popup(x, y, '+' + pts, 'gold');
+            } else {
+                SFX.hit();
+                shake();
+                flashScreen('red');
+                impact(x, y, '#ff4444');
+                particles(x, y, '#cc0000', 12);
+                popup(x, y, '+' + pts);
+            }
+
+            if (combo >= 5 && combo % 5 === 0) showCombo(combo);
+
+            // Hit expression and animation
+            obj.el.innerHTML = createHankSVG(type, 'hit');
+            obj.el.classList.remove('idle', 'laughing', 'taunting');
+            obj.el.classList.add('hit');
+
+            clearTimeout(obj.hideTimeout);
+            clearTimeout(obj.tauntTimeout);
+            activeHanks = activeHanks.filter(h => h.idx !== idx);
+
+            updateHUD();
+        }
+
+        // =====================================================
+        // HUD
+        // =====================================================
+        function updateHUD() {
+            scoreEl.textContent = score.toLocaleString();
+            timeEl.textContent = mode === 'endless' ? '∞' : time;
+            comboEl.textContent = combo + 'x';
+            livesEl.textContent = '❤️'.repeat(Math.max(0, lives));
+
+            timeEl.classList.toggle('danger', time <= 10 && mode !== 'endless');
+        }
+
+        // =====================================================
+        // GAME FLOW
+        // =====================================================
+        function selectMode(m) {
+            mode = m;
+            document.querySelectorAll('.mode-btn').forEach(b => {
+                b.classList.toggle('selected', b.dataset.mode === m);
+            });
+        }
+
+        function selectWeapon(w) {
+            weapon = w;
+            cursor.textContent = weapons[w].cursor;
+            document.querySelectorAll('.weapon-btn').forEach(b => {
+                b.classList.toggle('selected', b.dataset.w === w);
+            });
+        }
+
+        function toggleMusic() {
+            SFX.init();
+            musicOn = Music.toggle();
+            const btn = document.getElementById('musicToggle');
+            btn.classList.toggle('off', !musicOn);
+            btn.classList.toggle('playing', musicOn);
+        }
+
+        // Auto-start music on first user interaction
+        function autoStartMusic() {
+            if (!musicOn) {
+                SFX.init();
+                Music.init();
+                Music.startGameMusic();
+                musicOn = true;
+                const btn = document.getElementById('musicToggle');
+                btn.classList.remove('off');
+                btn.classList.add('playing');
+            }
+            // Remove listeners after first interaction
+            document.removeEventListener('click', autoStartMusic);
+            document.removeEventListener('touchstart', autoStartMusic);
+            document.removeEventListener('keydown', autoStartMusic);
+        }
+
+        function startGame() {
+            score = 0;
+            time = mode === 'blitz' ? 30 : 60;
+            hits = 0;
+            misses = 0;
+            combo = 0;
+            maxCombo = 0;
+            lives = 3;
+            activeHanks = [];
+
+            SFX.init();
+            if (musicOn) {
+                Music.init();
+                Music.startGameMusic();
+            }
+
+            startMenu.classList.add('hidden');
+            gameOver.classList.add('hidden');
+            initBoard();
+            updateHUD();
+
+            running = true;
+
+            if (mode !== 'endless') {
+                gameTimer = setInterval(() => {
+                    time--;
+                    updateHUD();
+                    if (time <= 0) endGame();
+                }, 1000);
+            }
+
+            setTimeout(spawn, 500);
+        }
+
+        function endGame() {
+            running = false;
+            Music.stop();
+
+            clearInterval(gameTimer);
+            clearTimeout(spawnTimer);
+
+            activeHanks.forEach(h => {
+                clearTimeout(h.hideTimeout);
+                clearTimeout(h.tauntTimeout);
+            });
+            activeHanks = [];
+
+            SFX.gameOver();
+
+            document.getElementById('finalScore').textContent = score.toLocaleString();
+            document.getElementById('finalHits').textContent = hits;
+            document.getElementById('finalCombo').textContent = maxCombo + 'x';
+            document.getElementById('finalAcc').textContent =
+                (hits + misses > 0) ? Math.round(hits / (hits + misses) * 100) + '%' : '0%';
+
+            gameOver.classList.remove('hidden');
+        }
+
+        function showMenu() {
+            gameOver.classList.add('hidden');
+            startMenu.classList.remove('hidden');
+        }
+
+        // =====================================================
+        // CURSOR
+        // =====================================================
+        document.addEventListener('mousemove', e => {
+            cursor.style.left = (e.clientX - 20) + 'px';
+            cursor.style.top = (e.clientY - 20) + 'px';
+        });
+
+        document.addEventListener('mousedown', () => cursor.style.transform = 'scale(0.8) rotate(-20deg)');
+        document.addEventListener('mouseup', () => cursor.style.transform = '');
+
+        // Keyboard
+        document.addEventListener('keydown', e => {
+            const keys = ['1','2','3','4','5'];
+            const weps = ['knife','axe','hammer','sword','bomb'];
+            const i = keys.indexOf(e.key);
+            if (i >= 0) selectWeapon(weps[i]);
+
+            if ((e.key === ' ' || e.key === 'Enter') && !running) {
+                startGame();
+            }
+            if (e.key === 'm') toggleMusic();
+        });
+
+        // Init
+        initBoard();
+
+        // Auto-start 80s music on first user interaction
+        document.addEventListener('click', autoStartMusic, { once: true });
+        document.addEventListener('touchstart', autoStartMusic, { once: true });
+        document.addEventListener('keydown', autoStartMusic, { once: true });
+    </script>
+</body>
+</html>
