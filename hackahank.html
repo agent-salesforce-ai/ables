@@ -1172,10 +1172,10 @@
             loopTimeout: null,
 
             stations: [
-                { name: 'HANK ATTACK FM', freq: '88.5 FM', style: 'synthwave', tempo: 120, color: '#0ff' },
-                { name: 'CHASE RADIO', freq: '92.3 FM', style: 'action', tempo: 140, color: '#f00' },
-                { name: 'RETRO WAVE 80s', freq: '95.7 FM', style: 'retro', tempo: 110, color: '#f0f' },
-                { name: 'FUNK CITY', freq: '101.1 FM', style: 'funk', tempo: 115, color: '#ff0' },
+                { name: 'DARK DRIVE', freq: '66.6 FM', style: 'darkdrive', tempo: 128, color: '#ff0040' },
+                { name: 'MIDNIGHT HUNTER', freq: '93.0 FM', style: 'hunter', tempo: 140, color: '#00ffff' },
+                { name: 'NEON NOIR', freq: '80.5 FM', style: 'noir', tempo: 100, color: '#ff00ff' },
+                { name: 'RAGE MODE', freq: '99.9 FM', style: 'rage', tempo: 160, color: '#ffff00' },
                 { name: 'RADIO OFF', freq: '---.- FM', style: 'off', tempo: 0, color: '#333' }
             ],
 
@@ -1519,7 +1519,7 @@
                 } catch (e) { console.error('playStab error:', e); }
             },
 
-            // ================== MUSIC LOOPS BY STATION ==================
+            // ================== DARK NIGHT MUSIC LOOPS ==================
 
             playLoop() {
                 if (!this.playing) return;
@@ -1531,231 +1531,239 @@
                 const barLength = beat * 4;
 
                 switch (station.style) {
-                    case 'synthwave': this.playSynthwave(beat); break;
-                    case 'action': this.playAction(beat); break;
-                    case 'retro': this.playRetro(beat); break;
-                    case 'funk': this.playFunk(beat); break;
+                    case 'darkdrive': this.playDarkDrive(beat); break;
+                    case 'hunter': this.playHunter(beat); break;
+                    case 'noir': this.playNoir(beat); break;
+                    case 'rage': this.playRage(beat); break;
                 }
 
                 this.bar++;
                 this.loopTimeout = setTimeout(() => this.playLoop(), barLength * 1000);
             },
 
-            // SYNTHWAVE - Driving 80s with iconic sounds
-            playSynthwave(beat) {
-                // Epic chord progression - Am, F, C, G
-                const progressions = [
-                    { root: 110, pad: [220, 277, 330], bass: [110, 110, 82, 110] },
-                    { root: 87, pad: [175, 220, 262], bass: [87, 87, 65, 87] },
-                    { root: 130, pad: [262, 330, 392], bass: [130, 130, 98, 130] },
-                    { root: 98, pad: [196, 247, 294], bass: [98, 98, 73, 98] }
+            // DARK DRIVE - Aggressive darksynth, Perturbator/Carpenter Brut style
+            playDarkDrive(beat) {
+                // Dark minor progressions - Em, Bm, Am, B
+                const dark = [
+                    { root: 82, pad: [165, 196, 247], stab: [330, 392, 494] },
+                    { root: 123, pad: [247, 294, 370], stab: [494, 587, 740] },
+                    { root: 110, pad: [220, 262, 330], stab: [440, 523, 659] },
+                    { root: 123, pad: [247, 311, 370], stab: [494, 622, 740] }
                 ];
-                const prog = progressions[this.bar % 4];
+                const d = dark[this.bar % 4];
 
-                // Lush evolving pad
-                this.playPad(prog.pad, beat * 4.5, 0);
+                // Ominous droning pad
+                this.playPad(d.pad, beat * 4.5, 0);
 
-                // Four-on-the-floor with fills
+                // Pounding four-on-the-floor with aggression
                 for (let i = 0; i < 4; i++) {
-                    this.playKick(i * beat);
-                    // Add extra kicks on bar 4 for energy
-                    if (this.bar % 4 === 3 && i === 3) {
-                        this.playKick(i * beat + beat * 0.5);
-                        this.playKick(i * beat + beat * 0.75);
-                    }
-                    // Snare with ghost notes
-                    if (i === 1 || i === 3) this.playSnare(i * beat);
-                    if (i === 0 && this.bar % 2 === 1) this.playSnare(i * beat + beat * 0.75);
-                    // 16th note hi-hats with accents
+                    this.playKick(i * beat, 'action');
+                    // Double kicks for intensity
+                    this.playKick(i * beat + beat * 0.5, 'action');
+                    // Hard snare on 2 and 4
+                    if (i === 1 || i === 3) this.playSnare(i * beat, 'action');
+                    // Crushing offbeat snares every other bar
+                    if (this.bar % 2 === 1 && i === 2) this.playSnare(i * beat + beat * 0.5, 'action');
+                    // Relentless 16th hi-hats
                     for (let j = 0; j < 4; j++) {
                         this.playHiHat(i * beat + j * beat * 0.25, j === 2);
                     }
                 }
 
-                // Driving bass octaves
-                prog.bass.forEach((note, i) => {
-                    this.playBass(note, beat * 0.4, i * beat);
-                    if (i % 2 === 0) this.playBass(note * 2, beat * 0.2, i * beat + beat * 0.5);
-                });
-
-                // Catchy lead melody - varies each 4 bars
-                const melodies = [
-                    [659, 0, 587, 523, 587, 659, 523, 440],
-                    [440, 523, 587, 659, 587, 523, 440, 392],
-                    [523, 587, 659, 784, 659, 587, 523, 587],
-                    [784, 659, 587, 523, 587, 659, 523, 440]
-                ];
-                const melody = melodies[this.bar % 4];
-                melody.forEach((note, i) => {
-                    if (note > 0) this.playLead(note, beat * 0.45, i * beat * 0.5);
-                });
-
-                // Shimmering arpeggios
-                const arpUp = [prog.pad[0], prog.pad[1], prog.pad[2], prog.pad[0] * 2, prog.pad[1] * 2];
-                const arpDown = [...arpUp].reverse();
-                this.playArp(arpUp, beat * 2, 0);
-                this.playArp(arpDown, beat * 2, beat * 2);
-
-                // Accent stabs on phrase endings
-                if (this.bar % 4 === 3) {
-                    this.playStab([prog.pad[0], prog.pad[1], prog.pad[2]], beat * 0.5, beat * 3.5);
+                // Driving distorted bass - 8th notes
+                for (let i = 0; i < 8; i++) {
+                    const note = i % 2 === 0 ? d.root : d.root * 0.75;
+                    this.playBass(note, beat * 0.4, i * beat * 0.5, 'action');
                 }
+
+                // Aggressive stab hits
+                this.playStab(d.stab, beat * 0.2, 0);
+                this.playStab(d.stab, beat * 0.15, beat * 1.5);
+                this.playStab(d.stab, beat * 0.2, beat * 2);
+                this.playStab(d.stab, beat * 0.15, beat * 3.5);
+
+                // Screaming lead melody - minor scale aggression
+                const melodies = [
+                    [659, 622, 494, 440, 494, 622, 494, 440],
+                    [494, 440, 370, 330, 370, 440, 370, 330],
+                    [440, 494, 587, 494, 440, 370, 330, 370],
+                    [587, 622, 740, 622, 587, 494, 440, 494]
+                ];
+                const mel = melodies[this.bar % 4];
+                mel.forEach((note, i) => {
+                    if (i % 2 === 0) this.playLead(note, beat * 0.4, i * beat * 0.5);
+                });
+
+                // Dark arpeggios
+                const arp = [d.root, d.root * 1.5, d.root * 2, d.root * 3, d.root * 4];
+                this.playArp(arp, beat * 2, 0);
+                this.playArp([...arp].reverse(), beat * 2, beat * 2);
             },
 
-            // ACTION - Intense chase/combat music
-            playAction(beat) {
-                // Minor/diminished for tension - Am, E, Dm, Bdim
-                const tensions = [
+            // MIDNIGHT HUNTER - Cyberpunk chase music
+            playHunter(beat) {
+                // Tension building minor/diminished
+                const hunt = [
                     { root: 110, stab: [220, 262, 330] },
-                    { root: 82, stab: [165, 208, 247] },
-                    { root: 147, stab: [294, 349, 440] },
-                    { root: 123, stab: [247, 294, 370] }
+                    { root: 104, stab: [208, 262, 311] },
+                    { root: 98, stab: [196, 247, 294] },
+                    { root: 117, stab: [233, 294, 349] }
                 ];
-                const tension = tensions[this.bar % 4];
+                const h = hunt[this.bar % 4];
 
-                // Relentless double-kick pattern
+                // Machine gun kick pattern
                 for (let i = 0; i < 4; i++) {
                     this.playKick(i * beat, 'action');
                     this.playKick(i * beat + beat * 0.25, 'action');
                     this.playKick(i * beat + beat * 0.5, 'action');
-                    // Crushing snare
-                    if (i === 1 || i === 3) this.playSnare(i * beat, 'action');
-                    // Buildup snares
-                    if (this.bar % 4 === 3 && i >= 2) {
-                        this.playSnare(i * beat + beat * 0.25, 'action');
-                        this.playSnare(i * beat + beat * 0.5, 'action');
-                    }
-                    // Fast hi-hats
+                    this.playKick(i * beat + beat * 0.75, 'action');
+                    // Snare on every beat for urgency
+                    this.playSnare(i * beat + beat * 0.5, 'action');
+                    // 32nd note hi-hats - pure aggression
                     for (let j = 0; j < 8; j++) {
-                        this.playHiHat(i * beat + j * beat * 0.125, j % 4 === 2);
+                        this.playHiHat(i * beat + j * beat * 0.125, j % 3 === 0);
                     }
                 }
 
-                // Aggressive 16th note bass
+                // Pumping sidechained bass
                 for (let i = 0; i < 16; i++) {
-                    const accent = i % 4 === 0;
-                    const note = accent ? tension.root : tension.root * 0.75;
-                    this.playBass(note, beat * 0.15, i * beat * 0.25, 'action');
+                    const note = i % 4 === 0 ? h.root : (i % 2 === 0 ? h.root * 0.75 : h.root * 0.5);
+                    this.playBass(note, beat * 0.12, i * beat * 0.25, 'action');
                 }
 
-                // Staccato stabs for urgency
-                this.playStab(tension.stab, beat * 0.15, 0);
-                this.playStab(tension.stab, beat * 0.15, beat * 0.5);
-                this.playStab(tension.stab, beat * 0.15, beat * 2);
-                this.playStab(tension.stab, beat * 0.15, beat * 2.5);
-
-                // Screaming lead on alternating bars
-                if (this.bar % 2 === 0) {
-                    this.playLead(tension.root * 4, beat * 0.8, 0);
-                    this.playLead(tension.root * 3.5, beat * 0.4, beat);
-                    this.playLead(tension.root * 4, beat * 1.2, beat * 2);
-                } else {
-                    this.playLead(tension.root * 3, beat * 0.6, beat * 0.5);
-                    this.playLead(tension.root * 4, beat * 0.6, beat * 1.5);
-                    this.playLead(tension.root * 3.5, beat * 1, beat * 2.5);
-                }
-            },
-
-            // RETRO - Dreamy nostalgic synthpop
-            playRetro(beat) {
-                // Warm major progression - C, Am, F, G
-                const warmth = [
-                    { root: 130, pad: [262, 330, 392, 523], bass: 65 },
-                    { root: 110, pad: [220, 277, 330, 440], bass: 55 },
-                    { root: 87, pad: [175, 220, 262, 349], bass: 44 },
-                    { root: 98, pad: [196, 247, 294, 392], bass: 49 }
-                ];
-                const warm = warmth[this.bar % 4];
-
-                // Lush wide pad
-                this.playPad(warm.pad, beat * 5, 0);
-
-                // Laid back groove
-                for (let i = 0; i < 4; i++) {
-                    if (i === 0 || i === 2) this.playKick(i * beat);
-                    if (i === 1) this.playKick(i * beat + beat * 0.75);
-                    if (i === 1 || i === 3) this.playSnare(i * beat);
-                    // Swung hi-hats
-                    this.playHiHat(i * beat, false);
-                    this.playHiHat(i * beat + beat * 0.33, false);
-                    this.playHiHat(i * beat + beat * 0.66, true);
-                }
-
-                // Smooth walking bass
-                this.playBass(warm.bass, beat * 1.5, 0);
-                this.playBass(warm.bass * 1.25, beat * 0.8, beat * 1.5);
-                this.playBass(warm.bass * 1.5, beat * 1.5, beat * 2.5);
-
-                // Dreamy melody with long sustains
-                const dreamMelodies = [
-                    [523, 494, 440, 392],
-                    [440, 392, 349, 392],
-                    [349, 392, 440, 523],
-                    [494, 523, 587, 523]
-                ];
-                const dream = dreamMelodies[this.bar % 4];
-                dream.forEach((note, i) => {
-                    if (note > 0) this.playLead(note, beat * 1.2, i * beat);
-                });
-
-                // Gentle arpeggios
-                const gentleArp = [warm.pad[0] / 2, warm.pad[1] / 2, warm.pad[2] / 2, warm.pad[0], warm.pad[1], warm.pad[2]];
-                this.playArp(gentleArp, beat * 4, 0);
-            },
-
-            // FUNK - Tight groovy pocket
-            playFunk(beat) {
-                // 7th chords for that funk flavor - Em7, Am7, Dm7, G7
-                const funky = [
-                    { root: 82, stab: [165, 196, 247, 294] },
-                    { root: 110, stab: [220, 262, 330, 392] },
-                    { root: 147, stab: [294, 349, 440, 523] },
-                    { root: 98, stab: [196, 247, 294, 370] }
-                ];
-                const funk = funky[this.bar % 4];
-
-                // Tight syncopated drums
-                for (let i = 0; i < 4; i++) {
-                    // Syncopated kick pattern
-                    this.playKick(i * beat);
-                    if (i !== 1) this.playKick(i * beat + beat * 0.75);
-                    if (i === 2) this.playKick(i * beat + beat * 0.5);
-                    // Backbeat snare with ghosts
-                    if (i === 1 || i === 3) this.playSnare(i * beat);
-                    // Ghost notes
-                    this.playSnare(i * beat + beat * 0.25);
-                    // 16th note hi-hats with open on upbeats
-                    for (let j = 0; j < 4; j++) {
-                        this.playHiHat(i * beat + j * beat * 0.25, j === 1 || j === 3);
+                // Staccato stabs - create urgency
+                for (let i = 0; i < 8; i++) {
+                    if (i % 2 === 0 || i === 5) {
+                        this.playStab(h.stab, beat * 0.1, i * beat * 0.5);
                     }
                 }
 
-                // Slap bass with dead notes
-                const slap = [1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1];
-                slap.forEach((hit, i) => {
-                    if (hit) {
-                        const octave = i % 3 === 0 ? 1 : 2;
-                        this.playBass(funk.root * octave, beat * 0.12, i * beat * 0.25, 'funk');
-                    }
+                // Frantic lead lines
+                const frantic = [
+                    [880, 830, 740, 659, 740, 880, 988, 880],
+                    [659, 740, 880, 740, 659, 587, 523, 587],
+                    [740, 830, 880, 988, 880, 740, 659, 740],
+                    [988, 880, 740, 659, 587, 659, 740, 880]
+                ];
+                const line = frantic[this.bar % 4];
+                line.forEach((note, i) => {
+                    this.playLead(note, beat * 0.2, i * beat * 0.5);
                 });
 
-                // Chicken scratch stabs
-                this.playStab(funk.stab, beat * 0.1, beat * 0.5);
-                this.playStab(funk.stab, beat * 0.1, beat * 1);
-                this.playStab(funk.stab, beat * 0.15, beat * 1.75);
-                this.playStab(funk.stab, beat * 0.1, beat * 2.5);
-                this.playStab(funk.stab, beat * 0.15, beat * 3.25);
+                // Rapid fire arpeggios
+                const rapidArp = [h.root * 2, h.root * 2.5, h.root * 3, h.root * 4, h.root * 5, h.root * 6, h.root * 4, h.root * 3];
+                this.playArp(rapidArp, beat * 2, 0);
+                this.playArp(rapidArp.reverse(), beat * 2, beat * 2);
+            },
 
-                // Wah-style lead licks
-                if (this.bar % 2 === 0) {
-                    this.playLead(funk.root * 4, beat * 0.2, 0);
-                    this.playLead(funk.root * 5, beat * 0.15, beat * 0.25);
-                    this.playLead(funk.root * 4, beat * 0.3, beat * 2);
-                } else {
-                    this.playLead(funk.root * 3, beat * 0.25, beat);
-                    this.playLead(funk.root * 4, beat * 0.2, beat * 1.5);
-                    this.playLead(funk.root * 5, beat * 0.4, beat * 3);
+            // NEON NOIR - Dark atmospheric, slower but menacing
+            playNoir(beat) {
+                // Noir jazz minor progressions
+                const noir = [
+                    { root: 73, pad: [147, 175, 220, 262], bass: 37 },
+                    { root: 82, pad: [165, 196, 247, 294], bass: 41 },
+                    { root: 65, pad: [131, 165, 196, 247], bass: 33 },
+                    { root: 87, pad: [175, 208, 262, 311], bass: 44 }
+                ];
+                const n = noir[this.bar % 4];
+
+                // Deep atmospheric pad
+                this.playPad(n.pad, beat * 5, 0);
+
+                // Sparse but heavy drums
+                for (let i = 0; i < 4; i++) {
+                    if (i === 0 || i === 2) this.playKick(i * beat, 'action');
+                    if (i === 1) this.playKick(i * beat + beat * 0.66);
+                    if (i === 3) this.playKick(i * beat + beat * 0.33, 'action');
+                    // Heavy snare
+                    if (i === 1 || i === 3) this.playSnare(i * beat, 'action');
+                    // Moody hi-hats
+                    this.playHiHat(i * beat + beat * 0.5, true);
+                    if (i % 2 === 0) this.playHiHat(i * beat, false);
                 }
+
+                // Deep rumbling bass
+                this.playBass(n.bass, beat * 2, 0, 'action');
+                this.playBass(n.bass * 1.5, beat * 1.5, beat * 2, 'action');
+
+                // Haunting lead melody
+                const haunt = [
+                    [330, 0, 294, 262, 0, 294, 330, 0],
+                    [262, 0, 247, 220, 0, 247, 262, 0],
+                    [294, 0, 262, 247, 0, 262, 294, 330],
+                    [349, 330, 294, 0, 262, 294, 330, 0]
+                ];
+                const h = haunt[this.bar % 4];
+                h.forEach((note, i) => {
+                    if (note > 0) this.playLead(note, beat * 0.8, i * beat * 0.5);
+                });
+
+                // Dark stabs on phrase endings
+                if (this.bar % 2 === 1) {
+                    this.playStab(n.pad.slice(0, 3), beat * 0.8, beat * 3);
+                }
+
+                // Slow menacing arpeggio
+                const darkArp = [n.root, n.root * 1.2, n.root * 1.5, n.root * 2, n.root * 2.5, n.root * 3];
+                this.playArp(darkArp, beat * 4, 0);
+            },
+
+            // RAGE MODE - Maximum aggression industrial
+            playRage(beat) {
+                // Dissonant industrial
+                const rage = [
+                    { root: 55, stab: [110, 139, 165] },
+                    { root: 58, stab: [117, 147, 175] },
+                    { root: 52, stab: [104, 131, 156] },
+                    { root: 62, stab: [123, 156, 185] }
+                ];
+                const r = rage[this.bar % 4];
+
+                // Brutal kick pattern - every 8th note
+                for (let i = 0; i < 8; i++) {
+                    this.playKick(i * beat * 0.5, 'action');
+                }
+
+                // Snare assault
+                for (let i = 0; i < 4; i++) {
+                    this.playSnare(i * beat, 'action');
+                    this.playSnare(i * beat + beat * 0.25, 'action');
+                    if (this.bar % 2 === 0) this.playSnare(i * beat + beat * 0.5, 'action');
+                    // Relentless hi-hats
+                    for (let j = 0; j < 8; j++) {
+                        this.playHiHat(i * beat + j * beat * 0.125, j % 2 === 0);
+                    }
+                }
+
+                // Crushing sub bass
+                for (let i = 0; i < 16; i++) {
+                    this.playBass(r.root, beat * 0.15, i * beat * 0.25, 'action');
+                }
+
+                // Wall of stab noise
+                for (let i = 0; i < 4; i++) {
+                    this.playStab(r.stab, beat * 0.3, i * beat);
+                    this.playStab(r.stab.map(n => n * 2), beat * 0.2, i * beat + beat * 0.5);
+                }
+
+                // Chaotic lead screams
+                const chaos = [
+                    [880, 932, 880, 740, 880, 932, 988, 880],
+                    [740, 784, 880, 784, 740, 659, 740, 784],
+                    [659, 740, 784, 880, 784, 740, 659, 587],
+                    [988, 932, 880, 784, 880, 988, 1047, 988]
+                ];
+                const c = chaos[this.bar % 4];
+                c.forEach((note, i) => {
+                    this.playLead(note, beat * 0.2, i * beat * 0.5);
+                });
+
+                // Insane speed arpeggios
+                const insaneArp = [];
+                for (let i = 0; i < 16; i++) {
+                    insaneArp.push(r.root * (2 + (i % 4)));
+                }
+                this.playArp(insaneArp, beat * 4, 0);
             }
         };
 
