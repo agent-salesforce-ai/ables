@@ -77,10 +77,69 @@
             opacity: 0;
         }
 
-        #hitFlash.red { background: radial-gradient(circle, rgba(255,0,0,0.5) 0%, transparent 70%); opacity: 1; animation: flash 0.2s; }
-        #hitFlash.gold { background: radial-gradient(circle, rgba(255,215,0,0.6) 0%, transparent 70%); opacity: 1; animation: flash 0.3s; }
-        #hitFlash.hurt { background: rgba(255,0,0,0.4); opacity: 1; animation: flash 0.4s; }
-        @keyframes flash { to { opacity: 0; } }
+        #hitFlash.red {
+            background: radial-gradient(circle, rgba(255,50,50,0.7) 0%, rgba(255,0,0,0.3) 40%, transparent 70%);
+            opacity: 1;
+            animation: flashRed 0.25s ease-out;
+        }
+        #hitFlash.gold {
+            background: radial-gradient(circle, rgba(255,230,100,0.8) 0%, rgba(255,215,0,0.4) 40%, transparent 70%);
+            opacity: 1;
+            animation: flashGold 0.4s ease-out;
+        }
+        #hitFlash.hurt {
+            background: linear-gradient(45deg, rgba(255,0,0,0.6) 0%, rgba(150,0,0,0.4) 100%);
+            opacity: 1;
+            animation: flashHurt 0.5s ease-out;
+        }
+        @keyframes flashRed {
+            0% { opacity: 1; transform: scale(0.8); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+            100% { opacity: 0; transform: scale(1); }
+        }
+        @keyframes flashGold {
+            0% { opacity: 1; filter: brightness(1.5); }
+            100% { opacity: 0; filter: brightness(1); }
+        }
+        @keyframes flashHurt {
+            0% { opacity: 1; }
+            20% { opacity: 0.3; }
+            40% { opacity: 0.8; }
+            100% { opacity: 0; }
+        }
+
+        /* Scanlines overlay for retro feel */
+        #scanlines {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0,0,0,0.03) 0px,
+                rgba(0,0,0,0.03) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            pointer-events: none;
+            z-index: 998;
+        }
+
+        /* Vignette effect */
+        #vignette {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(ellipse at center, transparent 50%, rgba(0,26,50,0.3) 100%);
+            pointer-events: none;
+            z-index: 997;
+        }
+
+        /* Score popup fly effect */
+        @keyframes scoreFly {
+            0% { transform: translate(-50%, 0) scale(0.5) rotate(-10deg); opacity: 1; }
+            30% { transform: translate(-50%, -20px) scale(1.3) rotate(5deg); opacity: 1; }
+            100% { transform: translate(-50%, -80px) scale(0.8) rotate(0); opacity: 0; }
+        }
 
         #gameContainer {
             width: 100%;
@@ -236,69 +295,136 @@
             50% { transform: translateY(-6px) rotate(3deg) scale(1.05); }
         }
 
-        .hank-wrap.hit { animation: hit 0.4s ease-out forwards; }
+        .hank-wrap.hit { animation: hit 0.5s ease-out forwards; }
         @keyframes hit {
-            0% { transform: scale(1) rotate(0); }
-            20% { transform: scale(1.2) rotate(-10deg); filter: brightness(3); }
-            50% { transform: scale(0.8) rotate(20deg); }
-            100% { transform: scale(0.5) rotate(30deg) translateY(50px); opacity: 0; }
+            0% { transform: scale(1) rotate(0); filter: brightness(1); }
+            10% { transform: scale(1.3) rotate(-15deg); filter: brightness(3) saturate(2); }
+            30% { transform: scale(1.1) rotate(10deg); filter: brightness(2); }
+            50% { transform: scale(0.9) rotate(25deg); filter: brightness(1.5); }
+            100% { transform: scale(0.3) rotate(45deg) translateY(80px); opacity: 0; filter: brightness(0.5); }
         }
 
-        .hank-wrap.taunting { animation: taunt 0.3s ease-in-out infinite; }
+        .hank-wrap.taunting { animation: taunt 0.25s ease-in-out infinite; }
         @keyframes taunt {
-            0%, 100% { transform: rotate(-5deg); }
-            50% { transform: rotate(5deg); }
+            0%, 100% { transform: rotate(-8deg) scale(1.02); }
+            50% { transform: rotate(8deg) scale(1.05); }
         }
 
-        /* Type effects - Sutton themed */
-        .hank-wrap.golden svg { filter: drop-shadow(0 0 15px var(--sf-brass)) drop-shadow(0 0 30px var(--sf-gold)); }
-        .hank-wrap.golden svg .suit { fill: #6b5500; }
-        .hank-wrap.bomb svg { filter: drop-shadow(0 0 12px #cc3333) drop-shadow(0 0 25px #990000); }
-        .hank-wrap.boss svg { filter: drop-shadow(0 0 15px #4a2a6a) drop-shadow(0 0 30px #6a4a8a); }
-        .hank-wrap.speed svg { filter: drop-shadow(0 0 12px #5080a0); }
-        .hank-wrap.angry svg { filter: drop-shadow(0 0 10px #8b3030) hue-rotate(-10deg); }
+        /* Pop-up entrance animation */
+        .hank-wrap.entering { animation: popUp 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        @keyframes popUp {
+            0% { transform: translateY(100%) scale(0.5); }
+            60% { transform: translateY(-10%) scale(1.1); }
+            100% { transform: translateY(0) scale(1); }
+        }
 
-        /* Pop-ups */
+        /* Type effects - Enhanced with animations */
+        .hank-wrap.golden svg {
+            filter: drop-shadow(0 0 20px #ffd700) drop-shadow(0 0 40px #ffaa00) drop-shadow(0 0 60px #ff8800);
+            animation: goldenGlow 0.5s ease-in-out infinite alternate;
+        }
+        @keyframes goldenGlow {
+            0% { filter: drop-shadow(0 0 15px #ffd700) drop-shadow(0 0 30px #ffaa00); }
+            100% { filter: drop-shadow(0 0 25px #ffd700) drop-shadow(0 0 50px #ffaa00) drop-shadow(0 0 70px #ff6600); }
+        }
+        .hank-wrap.golden svg .suit { fill: #8b7500; }
+
+        .hank-wrap.bomb svg {
+            filter: drop-shadow(0 0 15px #ff0000) drop-shadow(0 0 30px #cc0000);
+            animation: bombPulse 0.3s ease-in-out infinite;
+        }
+        @keyframes bombPulse {
+            0%, 100% { filter: drop-shadow(0 0 10px #ff0000) drop-shadow(0 0 20px #cc0000); transform: scale(1); }
+            50% { filter: drop-shadow(0 0 20px #ff3333) drop-shadow(0 0 40px #ff0000); transform: scale(1.05); }
+        }
+
+        .hank-wrap.boss svg {
+            filter: drop-shadow(0 0 20px #8a2be2) drop-shadow(0 0 40px #4b0082);
+            animation: bossAura 1s ease-in-out infinite;
+        }
+        @keyframes bossAura {
+            0%, 100% { filter: drop-shadow(0 0 15px #8a2be2) drop-shadow(0 0 30px #4b0082); }
+            50% { filter: drop-shadow(0 0 30px #9932cc) drop-shadow(0 0 60px #8a2be2); }
+        }
+
+        .hank-wrap.speed svg {
+            filter: drop-shadow(0 0 15px #00bfff) drop-shadow(0 0 30px #0080ff);
+            animation: speedBlur 0.2s linear infinite;
+        }
+        @keyframes speedBlur {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+        }
+
+        .hank-wrap.angry svg {
+            filter: drop-shadow(0 0 12px #ff4444) hue-rotate(-10deg);
+            animation: angryShake 0.1s linear infinite;
+        }
+        @keyframes angryShake {
+            0%, 100% { transform: rotate(-1deg); }
+            50% { transform: rotate(1deg); }
+        }
+
+        /* Pop-ups - Enhanced */
         .popup {
             position: fixed;
-            font-size: 2rem;
-            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.2rem;
+            font-family: 'Bangers', cursive;
             font-weight: 600;
             color: var(--sf-ivory);
-            text-shadow: 2px 2px 0 var(--sf-navy), -1px -1px 0 var(--sf-navy);
+            text-shadow: 3px 3px 0 var(--sf-navy), -2px -2px 0 var(--sf-navy), 0 0 10px rgba(255,255,255,0.5);
             pointer-events: none;
             z-index: 100;
-            animation: popUp 0.7s ease-out forwards;
+            animation: scorePopup 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-        .popup.gold { color: var(--sf-gold); font-size: 2.5rem; text-shadow: 2px 2px 0 #5a4500, 0 0 10px rgba(212,170,0,0.5); }
-        .popup.bad { color: #cc3333; }
-        .popup.laugh { color: var(--sf-brass); font-size: 1.5rem; }
+        .popup.gold {
+            color: #ffd700;
+            font-size: 3rem;
+            text-shadow: 3px 3px 0 #5a4500, 0 0 20px rgba(255,215,0,0.8), 0 0 40px rgba(255,170,0,0.5);
+            animation: goldPopup 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .popup.bad {
+            color: #ff4444;
+            text-shadow: 2px 2px 0 #440000, 0 0 15px rgba(255,0,0,0.5);
+        }
+        .popup.laugh { color: var(--sf-brass); font-size: 1.8rem; }
 
-        @keyframes popUp {
-            0% { transform: translate(-50%, 0) scale(0.5); opacity: 1; }
-            50% { transform: translate(-50%, -30px) scale(1.2); }
-            100% { transform: translate(-50%, -60px) scale(1); opacity: 0; }
+        @keyframes scorePopup {
+            0% { transform: translate(-50%, 0) scale(0) rotate(-20deg); opacity: 1; }
+            40% { transform: translate(-50%, -40px) scale(1.4) rotate(10deg); opacity: 1; }
+            70% { transform: translate(-50%, -60px) scale(1.1) rotate(-5deg); opacity: 0.8; }
+            100% { transform: translate(-50%, -100px) scale(0.8) rotate(0); opacity: 0; }
         }
 
-        /* Impact */
+        @keyframes goldPopup {
+            0% { transform: translate(-50%, 0) scale(0) rotate(-30deg); opacity: 1; filter: brightness(2); }
+            30% { transform: translate(-50%, -50px) scale(1.6) rotate(15deg); opacity: 1; filter: brightness(1.5); }
+            60% { transform: translate(-50%, -80px) scale(1.2) rotate(-10deg); opacity: 0.9; }
+            100% { transform: translate(-50%, -120px) scale(1) rotate(0); opacity: 0; filter: brightness(1); }
+        }
+
+        /* Impact burst - Enhanced */
         .impact {
             position: fixed;
             pointer-events: none;
             z-index: 90;
-            animation: impact 0.4s ease-out forwards;
+            animation: impactBurst 0.5s ease-out forwards;
         }
-        @keyframes impact {
+        @keyframes impactBurst {
             0% { transform: translate(-50%, -50%) scale(0) rotate(0); opacity: 1; }
-            50% { transform: translate(-50%, -50%) scale(1.3) rotate(20deg); }
-            100% { transform: translate(-50%, -50%) scale(1.5) rotate(40deg); opacity: 0; }
+            30% { transform: translate(-50%, -50%) scale(1.5) rotate(30deg); opacity: 0.8; }
+            60% { transform: translate(-50%, -50%) scale(1.8) rotate(50deg); opacity: 0.4; }
+            100% { transform: translate(-50%, -50%) scale(2.2) rotate(70deg); opacity: 0; }
         }
 
-        /* Particles */
+        /* Particles - Enhanced with trails */
         .particle {
             position: fixed;
             border-radius: 50%;
             pointer-events: none;
             z-index: 80;
+            box-shadow: 0 0 6px currentColor, 0 0 12px currentColor;
             animation: particleFly 0.6s ease-out forwards;
         }
         @keyframes particleFly {
@@ -435,108 +561,112 @@
             font-family: 'Cormorant Garamond', serif;
         }
 
-        /* RADIO TUNER - GTA Style */
-        #radioTuner {
+        /* Pause Button */
+        #pauseBtn {
             position: fixed;
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
-            border: 2px solid #444;
-            border-radius: 15px;
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            z-index: 1000;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
-        }
-
-        .radio-display {
-            background: #0a1a0a;
-            border: 2px solid #333;
-            border-radius: 8px;
-            padding: 8px 15px;
-            min-width: 180px;
-            text-align: center;
-        }
-
-        .radio-freq {
-            font-family: 'Courier New', monospace;
-            font-size: 0.7rem;
-            color: #0f0;
-            text-shadow: 0 0 10px #0f0;
-            letter-spacing: 0.1em;
-        }
-
-        .radio-station {
-            font-family: 'Bangers', cursive;
-            font-size: 1rem;
-            color: #0f0;
-            text-shadow: 0 0 15px #0f0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .radio-btn {
-            width: 40px;
-            height: 40px;
+            top: 15px;
+            right: 15px;
+            width: 50px;
+            height: 50px;
+            background: var(--sf-navy);
+            border: 2px solid var(--sf-brass);
             border-radius: 50%;
-            background: linear-gradient(145deg, #444, #222);
-            border: 2px solid #555;
-            color: #fff;
-            font-size: 1.2rem;
+            color: var(--sf-ivory);
+            font-size: 1.5rem;
             cursor: pointer;
-            transition: all 0.15s ease;
+            z-index: 1001;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0,26,50,0.4);
         }
 
-        .radio-btn:hover {
-            background: linear-gradient(145deg, #555, #333);
+        #pauseBtn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,26,50,0.5);
+        }
+
+        #pauseBtn:active {
+            transform: scale(0.95);
+        }
+
+        /* Pause Menu Overlay */
+        #pauseMenu {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,26,50,0.95);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        #pauseMenu.show {
+            display: flex;
+        }
+
+        #pauseMenu h2 {
+            font-family: 'Bangers', cursive;
+            font-size: 4rem;
+            color: var(--sf-brass);
+            text-shadow: 3px 3px 0 var(--sf-navy-dark);
+            margin-bottom: 30px;
+        }
+
+        .pause-btn {
+            padding: 15px 50px;
+            margin: 10px;
+            font-family: 'Jost', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--sf-ivory);
+            background: var(--sf-brass-dark);
+            border: 2px solid var(--sf-brass);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pause-btn:hover {
+            background: var(--sf-brass);
             transform: scale(1.05);
         }
 
-        .radio-btn:active {
-            transform: scale(0.95);
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
-        }
-
-        .radio-btn.power {
-            background: linear-gradient(145deg, #500, #300);
-            border-color: #700;
-        }
-
-        .radio-btn.power.on {
-            background: linear-gradient(145deg, #0a0, #050);
-            border-color: #0f0;
-            box-shadow: 0 0 15px rgba(0,255,0,0.4);
-        }
-
-        .radio-led {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #300;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
-        }
-
-        .radio-led.on {
-            background: #0f0;
-            box-shadow: 0 0 10px #0f0, 0 0 20px #0f0;
-            animation: ledPulse 1s ease-in-out infinite;
-        }
-
-        @keyframes ledPulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        /* Music toggle - Sutton Style (hidden when radio is shown) */
+        /* Music toggle - Small button in corner */
         #musicToggle {
-            display: none;
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            width: 45px;
+            height: 45px;
+            background: var(--sf-navy);
+            border: 2px solid var(--sf-brass);
+            border-radius: 50%;
+            color: var(--sf-ivory);
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        #musicToggle:hover {
+            transform: scale(1.1);
+        }
+
+        #musicToggle.off {
+            opacity: 0.5;
+        }
+
+        #musicToggle.playing {
+            background: var(--sf-brass-dark);
+            box-shadow: 0 0 15px rgba(163,145,113,0.5);
         }
 
         /* Cursor */
@@ -593,22 +723,20 @@
     </style>
 </head>
 <body>
+    <div id="scanlines"></div>
+    <div id="vignette"></div>
     <div id="hitFlash"></div>
     <div id="cursor">🔪</div>
     <div id="comboPopup"></div>
     <div id="sfLogo">Sutton Funding</div>
     <button id="musicToggle" onclick="toggleMusic()">🎵</button>
+    <button id="pauseBtn" onclick="togglePause()">⏸</button>
 
-    <!-- GTA-Style Radio Tuner -->
-    <div id="radioTuner">
-        <button class="radio-btn" onclick="Radio.prevStation()">◀</button>
-        <div class="radio-display">
-            <div class="radio-freq" id="radioFreq">88.5 FM</div>
-            <div class="radio-station" id="radioStation">HANK ATTACK FM</div>
-        </div>
-        <button class="radio-btn" onclick="Radio.nextStation()">▶</button>
-        <div class="radio-led" id="radioLed"></div>
-        <button class="radio-btn power" id="radioPower" onclick="Radio.togglePower()">⏻</button>
+    <!-- Pause Menu -->
+    <div id="pauseMenu">
+        <h2>PAUSED</h2>
+        <button class="pause-btn" onclick="togglePause()">RESUME</button>
+        <button class="pause-btn" onclick="quitToMenu()">QUIT TO MENU</button>
     </div>
 
     <!-- Start Menu -->
@@ -1090,60 +1218,19 @@
                 }
             },
 
-            updateDisplay() {
-                const station = this.stations[this.currentStation];
-                document.getElementById('radioFreq').textContent = station.freq;
-                document.getElementById('radioStation').textContent = station.name;
-                document.getElementById('radioStation').style.color = station.color;
-                document.getElementById('radioStation').style.textShadow = `0 0 15px ${station.color}`;
-                document.getElementById('radioFreq').style.color = station.color;
-                document.getElementById('radioFreq').style.textShadow = `0 0 10px ${station.color}`;
-            },
-
-            nextStation() {
-                this.currentStation = (this.currentStation + 1) % this.stations.length;
-                this.updateDisplay();
-                SFX.radioTune();
-                if (this.playing) {
-                    this.stop();
-                    if (this.stations[this.currentStation].style !== 'off') {
-                        setTimeout(() => this.start(), 200);
-                    }
-                }
-            },
-
-            prevStation() {
-                this.currentStation = (this.currentStation - 1 + this.stations.length) % this.stations.length;
-                this.updateDisplay();
-                SFX.radioTune();
-                if (this.playing) {
-                    this.stop();
-                    if (this.stations[this.currentStation].style !== 'off') {
-                        setTimeout(() => this.start(), 200);
-                    }
-                }
-            },
-
             togglePower() {
                 if (this.playing) {
                     this.stop();
-                    document.getElementById('radioPower').classList.remove('on');
-                    document.getElementById('radioLed').classList.remove('on');
                 } else {
                     this.init();
-                    if (this.stations[this.currentStation].style !== 'off') {
-                        this.start();
-                    }
-                    document.getElementById('radioPower').classList.add('on');
-                    document.getElementById('radioLed').classList.add('on');
+                    this.start();
                 }
             },
 
             start() {
+                if (this.stations[this.currentStation].style === 'off') return;
                 this.playing = true;
                 this.bar = 0;
-                document.getElementById('radioPower').classList.add('on');
-                document.getElementById('radioLed').classList.add('on');
                 this.playLoop();
             },
 
@@ -1401,6 +1488,37 @@
                 } catch (e) { console.error('playArp error:', e); }
             },
 
+            // Stab chord for accents
+            playStab(notes, duration, delay = 0) {
+                if (!this.ctx || !this.playing || !this.compressor) return;
+                try {
+                const t = this.ctx.currentTime + delay;
+                const gain = this.ctx.createGain();
+                const filter = this.ctx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = 5000;
+                filter.Q.value = 2;
+
+                notes.forEach(freq => {
+                    const osc = this.ctx.createOscillator();
+                    osc.type = 'sawtooth';
+                    osc.frequency.value = freq;
+                    osc.connect(filter);
+                    osc.start(t);
+                    osc.stop(t + duration);
+                });
+
+                filter.frequency.setValueAtTime(5000, t);
+                filter.frequency.exponentialRampToValueAtTime(500, t + duration);
+
+                gain.gain.setValueAtTime(0.2, t);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
+
+                filter.connect(gain);
+                gain.connect(this.compressor);
+                } catch (e) { console.error('playStab error:', e); }
+            },
+
             // ================== MUSIC LOOPS BY STATION ==================
 
             playLoop() {
@@ -1423,133 +1541,220 @@
                 this.loopTimeout = setTimeout(() => this.playLoop(), barLength * 1000);
             },
 
-            // SYNTHWAVE - Classic 80s driving sound
+            // SYNTHWAVE - Driving 80s with iconic sounds
             playSynthwave(beat) {
-                const chords = [
-                    { root: 110, pad: [220, 330, 440] },
-                    { root: 82, pad: [165, 247, 330] },
-                    { root: 87, pad: [175, 262, 349] },
-                    { root: 98, pad: [196, 294, 392] }
+                // Epic chord progression - Am, F, C, G
+                const progressions = [
+                    { root: 110, pad: [220, 277, 330], bass: [110, 110, 82, 110] },
+                    { root: 87, pad: [175, 220, 262], bass: [87, 87, 65, 87] },
+                    { root: 130, pad: [262, 330, 392], bass: [130, 130, 98, 130] },
+                    { root: 98, pad: [196, 247, 294], bass: [98, 98, 73, 98] }
                 ];
-                const chord = chords[this.bar % 4];
+                const prog = progressions[this.bar % 4];
 
-                this.playPad(chord.pad, beat * 4, 0);
+                // Lush evolving pad
+                this.playPad(prog.pad, beat * 4.5, 0);
 
-                // Driving drums
+                // Four-on-the-floor with fills
                 for (let i = 0; i < 4; i++) {
                     this.playKick(i * beat);
+                    // Add extra kicks on bar 4 for energy
+                    if (this.bar % 4 === 3 && i === 3) {
+                        this.playKick(i * beat + beat * 0.5);
+                        this.playKick(i * beat + beat * 0.75);
+                    }
+                    // Snare with ghost notes
                     if (i === 1 || i === 3) this.playSnare(i * beat);
+                    if (i === 0 && this.bar % 2 === 1) this.playSnare(i * beat + beat * 0.75);
+                    // 16th note hi-hats with accents
                     for (let j = 0; j < 4; j++) {
-                        this.playHiHat(i * beat + j * beat * 0.25, j === 2 && i === 3);
+                        this.playHiHat(i * beat + j * beat * 0.25, j === 2);
                     }
                 }
 
-                // Bass line
-                for (let i = 0; i < 8; i++) {
-                    if (i % 2 === 0) this.playBass(chord.root, beat * 0.4, i * beat * 0.5);
-                }
-
-                // Lead melody
-                const melody = [440, 523, 659, 523, 440, 392, 440, 523];
-                melody.forEach((note, i) => {
-                    if (i % 2 === 0) this.playLead(note, beat * 0.8, i * beat * 0.5);
+                // Driving bass octaves
+                prog.bass.forEach((note, i) => {
+                    this.playBass(note, beat * 0.4, i * beat);
+                    if (i % 2 === 0) this.playBass(note * 2, beat * 0.2, i * beat + beat * 0.5);
                 });
 
-                // Arpeggios
-                const arp = [...chord.pad, chord.pad[0] * 2];
-                this.playArp(arp, beat * 2, 0);
-                this.playArp(arp.reverse(), beat * 2, beat * 2);
+                // Catchy lead melody - varies each 4 bars
+                const melodies = [
+                    [659, 0, 587, 523, 587, 659, 523, 440],
+                    [440, 523, 587, 659, 587, 523, 440, 392],
+                    [523, 587, 659, 784, 659, 587, 523, 587],
+                    [784, 659, 587, 523, 587, 659, 523, 440]
+                ];
+                const melody = melodies[this.bar % 4];
+                melody.forEach((note, i) => {
+                    if (note > 0) this.playLead(note, beat * 0.45, i * beat * 0.5);
+                });
+
+                // Shimmering arpeggios
+                const arpUp = [prog.pad[0], prog.pad[1], prog.pad[2], prog.pad[0] * 2, prog.pad[1] * 2];
+                const arpDown = [...arpUp].reverse();
+                this.playArp(arpUp, beat * 2, 0);
+                this.playArp(arpDown, beat * 2, beat * 2);
+
+                // Accent stabs on phrase endings
+                if (this.bar % 4 === 3) {
+                    this.playStab([prog.pad[0], prog.pad[1], prog.pad[2]], beat * 0.5, beat * 3.5);
+                }
             },
 
-            // ACTION - Fast chase music with tension
+            // ACTION - Intense chase/combat music
             playAction(beat) {
-                const roots = [110, 117, 98, 104]; // Am, Bb, G, Ab - tense progression
-                const root = roots[this.bar % 4];
+                // Minor/diminished for tension - Am, E, Dm, Bdim
+                const tensions = [
+                    { root: 110, stab: [220, 262, 330] },
+                    { root: 82, stab: [165, 208, 247] },
+                    { root: 147, stab: [294, 349, 440] },
+                    { root: 123, stab: [247, 294, 370] }
+                ];
+                const tension = tensions[this.bar % 4];
 
-                // Aggressive drums - double time feel
+                // Relentless double-kick pattern
                 for (let i = 0; i < 4; i++) {
                     this.playKick(i * beat, 'action');
+                    this.playKick(i * beat + beat * 0.25, 'action');
                     this.playKick(i * beat + beat * 0.5, 'action');
+                    // Crushing snare
                     if (i === 1 || i === 3) this.playSnare(i * beat, 'action');
-                    this.playSnare(i * beat + beat * 0.25, 'action');
+                    // Buildup snares
+                    if (this.bar % 4 === 3 && i >= 2) {
+                        this.playSnare(i * beat + beat * 0.25, 'action');
+                        this.playSnare(i * beat + beat * 0.5, 'action');
+                    }
+                    // Fast hi-hats
                     for (let j = 0; j < 8; j++) {
-                        this.playHiHat(i * beat + j * beat * 0.125, j === 6);
+                        this.playHiHat(i * beat + j * beat * 0.125, j % 4 === 2);
                     }
                 }
 
-                // Aggressive bass - 16th notes
+                // Aggressive 16th note bass
                 for (let i = 0; i < 16; i++) {
-                    const note = i % 4 === 0 ? root : root * 0.75;
-                    this.playBass(note, beat * 0.2, i * beat * 0.25, 'action');
+                    const accent = i % 4 === 0;
+                    const note = accent ? tension.root : tension.root * 0.75;
+                    this.playBass(note, beat * 0.15, i * beat * 0.25, 'action');
                 }
 
-                // Tense stabs
+                // Staccato stabs for urgency
+                this.playStab(tension.stab, beat * 0.15, 0);
+                this.playStab(tension.stab, beat * 0.15, beat * 0.5);
+                this.playStab(tension.stab, beat * 0.15, beat * 2);
+                this.playStab(tension.stab, beat * 0.15, beat * 2.5);
+
+                // Screaming lead on alternating bars
                 if (this.bar % 2 === 0) {
-                    this.playLead(root * 4, beat * 0.3, 0);
-                    this.playLead(root * 3, beat * 0.3, beat);
-                    this.playLead(root * 4, beat * 0.3, beat * 2);
+                    this.playLead(tension.root * 4, beat * 0.8, 0);
+                    this.playLead(tension.root * 3.5, beat * 0.4, beat);
+                    this.playLead(tension.root * 4, beat * 1.2, beat * 2);
+                } else {
+                    this.playLead(tension.root * 3, beat * 0.6, beat * 0.5);
+                    this.playLead(tension.root * 4, beat * 0.6, beat * 1.5);
+                    this.playLead(tension.root * 3.5, beat * 1, beat * 2.5);
                 }
             },
 
-            // RETRO - Slower, nostalgic 80s
+            // RETRO - Dreamy nostalgic synthpop
             playRetro(beat) {
-                const chords = [
-                    { root: 130, pad: [262, 330, 392] },  // C
-                    { root: 110, pad: [220, 277, 330] },  // A
-                    { root: 146, pad: [294, 370, 440] },  // D
-                    { root: 98, pad: [196, 247, 294] }    // G
+                // Warm major progression - C, Am, F, G
+                const warmth = [
+                    { root: 130, pad: [262, 330, 392, 523], bass: 65 },
+                    { root: 110, pad: [220, 277, 330, 440], bass: 55 },
+                    { root: 87, pad: [175, 220, 262, 349], bass: 44 },
+                    { root: 98, pad: [196, 247, 294, 392], bass: 49 }
                 ];
-                const chord = chords[this.bar % 4];
+                const warm = warmth[this.bar % 4];
 
-                // Lush pad
-                this.playPad(chord.pad, beat * 4, 0);
+                // Lush wide pad
+                this.playPad(warm.pad, beat * 5, 0);
 
-                // Relaxed drums
+                // Laid back groove
                 for (let i = 0; i < 4; i++) {
-                    if (i % 2 === 0) this.playKick(i * beat);
+                    if (i === 0 || i === 2) this.playKick(i * beat);
+                    if (i === 1) this.playKick(i * beat + beat * 0.75);
                     if (i === 1 || i === 3) this.playSnare(i * beat);
+                    // Swung hi-hats
                     this.playHiHat(i * beat, false);
-                    this.playHiHat(i * beat + beat * 0.5, true);
+                    this.playHiHat(i * beat + beat * 0.33, false);
+                    this.playHiHat(i * beat + beat * 0.66, true);
                 }
 
-                // Smooth bass
-                this.playBass(chord.root, beat * 2, 0);
-                this.playBass(chord.root * 0.75, beat * 1.5, beat * 2);
+                // Smooth walking bass
+                this.playBass(warm.bass, beat * 1.5, 0);
+                this.playBass(warm.bass * 1.25, beat * 0.8, beat * 1.5);
+                this.playBass(warm.bass * 1.5, beat * 1.5, beat * 2.5);
 
-                // Dreamy lead
-                const melody = [392, 440, 523, 494, 440, 392, 349, 392];
-                const noteIndex = this.bar % 8;
-                this.playLead(melody[noteIndex], beat * 1.5, beat);
-            },
-
-            // FUNK - Groovy with slap bass feel
-            playFunk(beat) {
-                const roots = [98, 110, 87, 98]; // G, A, F, G
-                const root = roots[this.bar % 4];
-
-                // Funky drums with syncopation
-                for (let i = 0; i < 4; i++) {
-                    this.playKick(i * beat);
-                    if (i !== 2) this.playKick(i * beat + beat * 0.75);
-                    if (i === 1 || i === 3) this.playSnare(i * beat);
-                    // Ghost snares
-                    if (i === 0 || i === 2) this.playSnare(i * beat + beat * 0.5);
-                    for (let j = 0; j < 4; j++) {
-                        this.playHiHat(i * beat + j * beat * 0.25, j === 1);
-                    }
-                }
-
-                // Slap bass - syncopated
-                const bassPattern = [1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0];
-                bassPattern.forEach((hit, i) => {
-                    if (hit) this.playBass(root * (i % 3 === 0 ? 1 : 0.75), beat * 0.15, i * beat * 0.25, 'funk');
+                // Dreamy melody with long sustains
+                const dreamMelodies = [
+                    [523, 494, 440, 392],
+                    [440, 392, 349, 392],
+                    [349, 392, 440, 523],
+                    [494, 523, 587, 523]
+                ];
+                const dream = dreamMelodies[this.bar % 4];
+                dream.forEach((note, i) => {
+                    if (note > 0) this.playLead(note, beat * 1.2, i * beat);
                 });
 
-                // Funky stabs
+                // Gentle arpeggios
+                const gentleArp = [warm.pad[0] / 2, warm.pad[1] / 2, warm.pad[2] / 2, warm.pad[0], warm.pad[1], warm.pad[2]];
+                this.playArp(gentleArp, beat * 4, 0);
+            },
+
+            // FUNK - Tight groovy pocket
+            playFunk(beat) {
+                // 7th chords for that funk flavor - Em7, Am7, Dm7, G7
+                const funky = [
+                    { root: 82, stab: [165, 196, 247, 294] },
+                    { root: 110, stab: [220, 262, 330, 392] },
+                    { root: 147, stab: [294, 349, 440, 523] },
+                    { root: 98, stab: [196, 247, 294, 370] }
+                ];
+                const funk = funky[this.bar % 4];
+
+                // Tight syncopated drums
+                for (let i = 0; i < 4; i++) {
+                    // Syncopated kick pattern
+                    this.playKick(i * beat);
+                    if (i !== 1) this.playKick(i * beat + beat * 0.75);
+                    if (i === 2) this.playKick(i * beat + beat * 0.5);
+                    // Backbeat snare with ghosts
+                    if (i === 1 || i === 3) this.playSnare(i * beat);
+                    // Ghost notes
+                    this.playSnare(i * beat + beat * 0.25);
+                    // 16th note hi-hats with open on upbeats
+                    for (let j = 0; j < 4; j++) {
+                        this.playHiHat(i * beat + j * beat * 0.25, j === 1 || j === 3);
+                    }
+                }
+
+                // Slap bass with dead notes
+                const slap = [1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1];
+                slap.forEach((hit, i) => {
+                    if (hit) {
+                        const octave = i % 3 === 0 ? 1 : 2;
+                        this.playBass(funk.root * octave, beat * 0.12, i * beat * 0.25, 'funk');
+                    }
+                });
+
+                // Chicken scratch stabs
+                this.playStab(funk.stab, beat * 0.1, beat * 0.5);
+                this.playStab(funk.stab, beat * 0.1, beat * 1);
+                this.playStab(funk.stab, beat * 0.15, beat * 1.75);
+                this.playStab(funk.stab, beat * 0.1, beat * 2.5);
+                this.playStab(funk.stab, beat * 0.15, beat * 3.25);
+
+                // Wah-style lead licks
                 if (this.bar % 2 === 0) {
-                    this.playLead(root * 2, beat * 0.2, beat * 0.5);
-                    this.playLead(root * 2.5, beat * 0.2, beat * 1.5);
-                    this.playLead(root * 3, beat * 0.2, beat * 2.5);
+                    this.playLead(funk.root * 4, beat * 0.2, 0);
+                    this.playLead(funk.root * 5, beat * 0.15, beat * 0.25);
+                    this.playLead(funk.root * 4, beat * 0.3, beat * 2);
+                } else {
+                    this.playLead(funk.root * 3, beat * 0.25, beat);
+                    this.playLead(funk.root * 4, beat * 0.2, beat * 1.5);
+                    this.playLead(funk.root * 5, beat * 0.4, beat * 3);
                 }
             }
         };
@@ -1789,11 +1994,12 @@
         // GAME STATE
         // =====================================================
         let score = 0, time = 60, hits = 0, misses = 0, combo = 0, maxCombo = 0, lives = 3;
-        let running = false, gameTimer, spawnTimer;
+        let running = false, paused = false, gameTimer, spawnTimer;
         let weapon = 'knife', mode = 'classic';
         let activeHanks = [];
         let lastHit = 0;
         let musicOn = false;
+        let pausedTimeRemaining = 0;
 
         const weapons = {
             knife: { dmg: 1, cd: 120, mult: 1, cursor: '🔪' },
@@ -2067,7 +2273,7 @@
         // HIT HANDLING
         // =====================================================
         function handleClick(e, idx) {
-            if (!running) return;
+            if (!running || paused) return;
 
             const now = Date.now();
             if (now - lastHit < weapons[weapon].cd) return;
@@ -2229,15 +2435,78 @@
         function toggleMusic() {
             Radio.togglePower();
             musicOn = Radio.playing;
+            const btn = document.getElementById('musicToggle');
+            btn.classList.toggle('playing', musicOn);
+            btn.classList.toggle('off', !musicOn);
         }
 
-        // Auto-start radio on first user interaction
+        // Pause/Resume functionality
+        function togglePause() {
+            if (!running) return;
+
+            paused = !paused;
+            const pauseMenu = document.getElementById('pauseMenu');
+            const pauseBtn = document.getElementById('pauseBtn');
+
+            if (paused) {
+                // Pause the game
+                pauseMenu.classList.add('show');
+                pauseBtn.textContent = '▶';
+                clearInterval(gameTimer);
+                clearTimeout(spawnTimer);
+                // Pause all active Hank timeouts
+                activeHanks.forEach(h => {
+                    clearTimeout(h.hideTimeout);
+                    clearTimeout(h.tauntTimeout);
+                });
+                // Pause music
+                if (Radio.playing) {
+                    Radio.stop();
+                }
+            } else {
+                // Resume the game
+                pauseMenu.classList.remove('show');
+                pauseBtn.textContent = '⏸';
+                // Restart timer
+                if (mode !== 'endless') {
+                    gameTimer = setInterval(() => {
+                        time--;
+                        updateHUD();
+                        if (time <= 0) endGame();
+                    }, 1000);
+                }
+                // Resume spawning
+                setTimeout(spawn, 500);
+                // Resume music
+                if (musicOn) {
+                    Radio.init();
+                    Radio.start();
+                }
+            }
+        }
+
+        function quitToMenu() {
+            paused = false;
+            running = false;
+            document.getElementById('pauseMenu').classList.remove('show');
+            document.getElementById('pauseBtn').textContent = '⏸';
+            clearInterval(gameTimer);
+            clearTimeout(spawnTimer);
+            activeHanks.forEach(h => {
+                clearTimeout(h.hideTimeout);
+                clearTimeout(h.tauntTimeout);
+            });
+            activeHanks = [];
+            Radio.stop();
+            showMenu();
+        }
+
+        // Auto-start music on first user interaction
         function autoStartMusic() {
             if (!musicOn) {
                 try {
                     SFX.init();
                     Radio.init();
-                    Radio.updateDisplay();
                     // Start the radio
                     setTimeout(() => {
                         if (Radio.ctx) {
@@ -2245,10 +2514,12 @@
                                 Radio.ctx.resume().then(() => {
                                     Radio.start();
                                     musicOn = true;
+                                    document.getElementById('musicToggle').classList.add('playing');
                                 });
                             } else {
                                 Radio.start();
                                 musicOn = true;
+                                document.getElementById('musicToggle').classList.add('playing');
                             }
                         }
                     }, 100);
@@ -2343,20 +2614,21 @@
             const keys = ['1','2','3','4','5'];
             const weps = ['knife','axe','hammer','sword','bomb'];
             const i = keys.indexOf(e.key);
-            if (i >= 0) selectWeapon(weps[i]);
+            if (i >= 0 && !paused) selectWeapon(weps[i]);
 
-            if ((e.key === ' ' || e.key === 'Enter') && !running) {
+            if ((e.key === ' ' || e.key === 'Enter') && !running && !paused) {
                 startGame();
             }
-            // Radio controls
-            if (e.key === 'm') toggleMusic();
-            if (e.key === '[' || e.key === ',') Radio.prevStation();
-            if (e.key === ']' || e.key === '.') Radio.nextStation();
+            // Pause controls
+            if ((e.key === 'Escape' || e.key === 'p' || e.key === 'P') && running) {
+                togglePause();
+            }
+            // Music controls
+            if (e.key === 'm' || e.key === 'M') toggleMusic();
         });
 
         // Init
         initBoard();
-        Radio.updateDisplay(); // Initialize radio display
 
         // Auto-start radio on first user interaction
         document.addEventListener('click', autoStartMusic, { once: true });
