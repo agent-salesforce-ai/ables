@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Bridge - Document Watermarking Tool</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #1a1a2e;
+            --bg-panel: rgba(20, 20, 30, 0.8);
+            --bg-input: rgba(0, 0, 0, 0.4);
+            --border-color: #333;
+            --text-primary: #e0e0e0;
+            --text-secondary: #888;
+            --text-muted: #666;
+            --accent: #d4af37;
+            --accent-light: #f4e4a6;
+            --accent-dark: #b8960c;
+            --danger: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+        }
+
+        .light-theme {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --bg-panel: rgba(255, 255, 255, 0.95);
+            --bg-input: rgba(240, 240, 240, 0.8);
+            --border-color: #ddd;
+            --text-primary: #1a1a2e;
+            --text-secondary: #555;
+            --text-muted: #888;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-primary) 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .container { max-width: 1600px; margin: 0 auto; padding: 20px; }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--accent);
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .header-actions {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-panel);
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        .icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        h1 {
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 50%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+        }
+
+        .tagline {
+            color: var(--text-secondary);
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-top: 6px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 320px 1fr 320px;
+            gap: 25px;
+        }
+
+        .panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .panel-title {
+            color: var(--accent);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 25px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--bg-input);
+            margin-bottom: 15px;
+        }
+
+        .upload-zone:hover, .upload-zone.drag-over {
+            border-color: var(--accent);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .upload-zone input { display: none; }
+        .upload-icon { font-size: 32px; margin-bottom: 8px; }
+        .upload-text { color: var(--text-secondary); font-size: 12px; }
+        .upload-text span { color: var(--accent); text-decoration: underline; }
+
+        .file-queue { max-height: 400px; overflow-y: auto; }
+
+        .file-item {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .file-item.active { border-color: var(--accent); background: rgba(212, 175, 55, 0.1); }
+        .file-item.scanned-clean { border-left: 3px solid var(--success); }
+        .file-item.scanned-secure { border-left: 3px solid var(--success); }
+        .file-item.scanned-warning { border-left: 3px solid var(--warning); }
+        .file-item.scanned-danger { border-left: 3px solid var(--danger); }
+
+        .file-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+
+        .file-thumb {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            object-fit: cover;
+            background: var(--border-color);
+        }
+
+        .file-meta { flex: 1; min-width: 0; }
+        .file-name { font-size: 12px; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .file-info { font-size: 10px; color: var(--text-muted); }
+        .file-actions { display: flex; gap: 5px; }
+
+        .file-actions button {
+            width: 24px;
+            height: 24px;
+            border: none;
+            border-radius: 4px;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .file-actions button:hover { background: var(--bg-input); color: var(--accent); }
+        .file-actions button.delete:hover { color: var(--danger); }
+
+        .file-label {
+            width: 100%;
+            padding: 8px 10px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-size: 12px;
+        }
+
+        .file-label:focus { outline: none; border-color: var(--accent); }
+
+        .fraud-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 9px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+
+        .fraud-badge.clean { background: rgba(39, 174, 96, 0.2); color: var(--success); }
+        .fraud-badge.secure { background: rgba(39, 174, 96, 0.2); color: var(--success); }
+        .fraud-badge.warning { background: rgba(243, 156, 18, 0.2); color: var(--warning); }
+        .fraud-badge.danger { background: rgba(231, 76, 60, 0.2); color: var(--danger); }
+        .fraud-badge.pending { background: rgba(212, 175, 55, 0.2); color: var(--accent); }
+
+        .control-group { margin-bottom: 18px; }
+
+        label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 11px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input[type="text"], input[type="password"], input[type="url"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 13px;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus, input[type="url"]:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        input[type="range"] { width: 100%; height: 6px; margin: 8px 0; -webkit-appearance: none; appearance: none; background: var(--border-color); border-radius: 3px; cursor: pointer; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; background: var(--accent); border-radius: 50%; cursor: pointer; border: none; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        input[type="range"]::-moz-range-track { height: 6px; background: var(--border-color); border-radius: 3px; border: none; }
+        input[type="range"]::-moz-range-progress { height: 6px; background: var(--accent); border-radius: 3px; }
+        input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; background: var(--accent); border-radius: 50%; cursor: pointer; border: none; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        input[type="range"]::-ms-fill-lower { background: var(--accent); border-radius: 3px; }
+        input[type="range"]::-ms-fill-upper { background: var(--border-color); border-radius: 3px; }
+        input[type="range"]::-ms-thumb { width: 18px; height: 18px; background: var(--accent); border-radius: 50%; cursor: pointer; border: none; }
+        input[type="range"]:focus { outline: none; }
+        input[type="range"]::-webkit-slider-thumb:hover { background: var(--accent-light); }
+        input[type="range"]::-moz-range-thumb:hover { background: var(--accent-light); }
+
+        .range-header { display: flex; justify-content: space-between; align-items: center; }
+        .range-value { color: var(--accent); font-size: 12px; font-weight: 600; }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .btn-primary { background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%); color: var(--bg-primary); }
+        .btn-primary:hover:not(:disabled) { background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%); transform: translateY(-1px); box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); }
+        .btn-primary:disabled { background: var(--border-color); color: var(--text-muted); cursor: not-allowed; }
+        .btn-secondary { background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-primary); }
+        .btn-secondary:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+        .btn-danger { background: rgba(231, 76, 60, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+
+        .preview-panel { display: flex; flex-direction: column; }
+
+        .preview-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            min-height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #previewCanvas { max-width: 100%; max-height: 100%; display: none; }
+
+        .placeholder { text-align: center; color: var(--text-muted); }
+        .placeholder-icon { font-size: 64px; margin-bottom: 15px; opacity: 0.3; }
+
+        .page-nav {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+            padding: 10px;
+            background: var(--bg-input);
+            border-radius: 6px;
+        }
+
+        .page-nav button {
+            padding: 8px 16px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .page-nav button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+        .page-nav button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .page-info { color: var(--text-secondary); font-size: 12px; min-width: 60px; text-align: center; }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-title { color: var(--accent); font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+        .modal-close { background: none; border: none; color: var(--text-secondary); font-size: 20px; cursor: pointer; }
+        .modal-close:hover { color: var(--accent); }
+
+        .setting-item { margin-bottom: 20px; }
+        .setting-item label { margin-bottom: 8px; }
+
+        .toggle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: var(--bg-input);
+            border-radius: 6px;
+        }
+
+        .toggle-label { color: var(--text-primary); font-size: 13px; }
+
+        .toggle {
+            width: 44px;
+            height: 24px;
+            background: var(--border-color);
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle.active { background: var(--accent); }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.3s;
+        }
+
+        .toggle.active::after { transform: translateX(20px); }
+
+        .tabs { display: flex; gap: 0; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); }
+
+        .tab {
+            padding: 10px 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 12px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            transition: all 0.3s;
+        }
+
+        .tab:hover { color: var(--text-primary); }
+        .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .watermark-preview {
+            width: 100%;
+            height: 80px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .watermark-preview img { max-width: 90%; max-height: 70px; object-fit: contain; }
+
+        .text-gen-preview {
+            background: repeating-linear-gradient(45deg, var(--bg-input), var(--bg-input) 10px, var(--bg-secondary) 10px, var(--bg-secondary) 20px);
+            padding: 20px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+            margin-top: 15px;
+        }
+
+        .color-row { display: flex; gap: 10px; align-items: center; }
+
+        .color-row input[type="color"] {
+            width: 50px;
+            height: 36px;
+            padding: 2px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--bg-input);
+            cursor: pointer;
+        }
+
+        .color-row input[type="text"] { flex: 1; }
+
+        .fraud-report {
+            max-height: 400px;
+            overflow-y: auto;
+            background: var(--bg-input);
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .fraud-report h4 { color: var(--accent); font-size: 12px; margin-bottom: 10px; }
+        .fraud-report p { color: var(--text-secondary); font-size: 12px; line-height: 1.6; white-space: pre-wrap; }
+
+        .section-divider { border: none; border-top: 1px solid var(--border-color); margin: 20px 0; }
+
+        .status-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 13px;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .status-bar.error { border-color: var(--danger); color: var(--danger); }
+        .status-bar.success { border-color: var(--success); color: var(--success); }
+
+        .helper-text { color: var(--text-muted); font-size: 10px; margin-top: 5px; display: block; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-input); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        @media (max-width: 1200px) { .main-content { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="https://i.imgur.com/MXMqYLc.png" alt="Sutton Funding" style="height:50px;margin-bottom:10px;">
+            <h1>THE BRIDGE</h1>
+            <div class="tagline">Sutton Funding Document Processing</div>
+            <div class="header-actions">
+                <button class="icon-btn" id="settingsBtn" title="Settings">⚙</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- Left Panel: Files -->
+            <div class="panel">
+                <div class="panel-title">
+                    <span>Documents</span>
+                    <span id="fileCount">0 files</span>
+                </div>
+
+                <div class="upload-zone" id="uploadZone">
+                    <input type="file" id="fileInput" multiple accept="image/*,.pdf">
+                    <div class="upload-icon">↑</div>
+                    <div class="upload-text">
+                        Drop files here or <span>browse</span><br>
+                        <small>PDF, PNG, JPG supported</small>
+                    </div>
+                </div>
+
+                <div class="file-queue" id="fileQueue"></div>
+
+                <button class="btn btn-secondary" id="scanAllBtn" disabled>⊘ Scan All for Fraud</button>
+                <button class="btn btn-primary" id="downloadAllBtn" disabled>↓ Download All Watermarked</button>
+                <button class="btn btn-danger" id="clearAllBtn" style="display:none">✕ Clear All</button>
+            </div>
+
+            <!-- Center: Preview -->
+            <div class="panel preview-panel">
+                <div class="panel-title">Preview</div>
+                <div class="preview-container">
+                    <div class="placeholder" id="placeholder">
+                        <div class="placeholder-icon">◳</div>
+                        <div>Upload documents to preview</div>
+                    </div>
+                    <canvas id="previewCanvas"></canvas>
+                </div>
+                <div class="page-nav" id="pageNav">
+                    <button id="prevPage">&lt; Prev</button>
+                    <span class="page-info" id="pageInfo">1 / 1</span>
+                    <button id="nextPage">Next &gt;</button>
+                </div>
+            </div>
+
+            <!-- Right Panel: Controls -->
+            <div class="panel">
+                <div class="panel-title">Watermark Settings</div>
+
+                <div class="control-group">
+                    <label>Watermark Image</label>
+                    <div style="display:flex;gap:8px;margin-bottom:8px;">
+                        <input type="url" id="mainWatermarkUrl" placeholder="Paste PNG URL..." style="flex:1;">
+                        <button class="btn btn-secondary" id="createWatermarkBtn" style="width:auto;padding:10px 12px;margin:0;" title="Create text watermark">✎</button>
+                    </div>
+                    <div class="watermark-preview" id="mainWatermarkPreview" style="height:60px;">
+                        <img id="mainPreviewImg" src="" alt="Watermark" style="max-height:50px;display:none;">
+                        <span id="mainPreviewPlaceholder" style="color:var(--text-muted);font-size:10px;">No watermark loaded</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="range-header">
+                        <label>Opacity</label>
+                        <span class="range-value" id="opacityValue">25%</span>
+                    </div>
+                    <input type="range" id="opacitySlider" min="5" max="100" value="25">
+                </div>
+
+                <div class="control-group">
+                    <div class="range-header">
+                        <label>Size</label>
+                        <span class="range-value" id="scaleValue">15%</span>
+                    </div>
+                    <input type="range" id="scaleSlider" min="5" max="80" value="15">
+                </div>
+
+                <div class="control-group">
+                    <div class="range-header">
+                        <label>Tile Density</label>
+                        <span class="range-value" id="densityValue">50%</span>
+                    </div>
+                    <input type="range" id="densitySlider" min="20" max="100" value="50">
+                </div>
+
+                <div class="control-group">
+                    <div class="range-header">
+                        <label>Rotation</label>
+                        <span class="range-value" id="rotationValue">45°</span>
+                    </div>
+                    <input type="range" id="rotationSlider" min="0" max="360" value="45">
+                </div>
+
+                <div class="control-group">
+                    <div class="toggle-row" style="padding:10px 12px;">
+                        <span class="toggle-label" style="font-size:12px;">Add Fraud Check Badge</span>
+                        <div class="toggle" id="fraudBadgeToggle"></div>
+                    </div>
+                    <small class="helper-text">Embeds verification badge on downloaded documents</small>
+                </div>
+
+                <div id="badgeSettings" style="display:none; margin-top:15px; padding:12px; background:var(--bg-input); border-radius:6px;">
+                    <div class="control-group" style="margin-bottom:12px;">
+                        <div class="range-header">
+                            <label style="font-size:10px;">Badge Opacity</label>
+                            <span class="range-value" id="badgeOpacityValue">25%</span>
+                        </div>
+                        <input type="range" id="badgeOpacitySlider" min="5" max="100" value="25">
+                    </div>
+                    <div class="control-group" style="margin-bottom:12px;">
+                        <div class="range-header">
+                            <label style="font-size:10px;">Badge Size</label>
+                            <span class="range-value" id="badgeScaleValue">15%</span>
+                        </div>
+                        <input type="range" id="badgeScaleSlider" min="5" max="80" value="15">
+                    </div>
+                    <div class="control-group" style="margin-bottom:12px;">
+                        <div class="range-header">
+                            <label style="font-size:10px;">Badge Density</label>
+                            <span class="range-value" id="badgeDensityValue">50%</span>
+                        </div>
+                        <input type="range" id="badgeDensitySlider" min="20" max="100" value="50">
+                    </div>
+                    <div class="control-group" style="margin-bottom:0;">
+                        <div class="range-header">
+                            <label style="font-size:10px;">Badge Rotation</label>
+                            <span class="range-value" id="badgeRotationValue">45°</span>
+                        </div>
+                        <input type="range" id="badgeRotationSlider" min="0" max="360" value="45">
+                    </div>
+                </div>
+
+                <hr class="section-divider">
+
+                <button class="btn btn-primary" id="downloadCurrentBtn" disabled>↓ Download Current</button>
+                <button class="btn btn-secondary" id="scanCurrentBtn" disabled>⊘ Scan for Fraud</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title">Settings</span>
+                <button class="modal-close" id="closeSettings">&times;</button>
+            </div>
+
+            <div class="setting-item">
+                <label>Gemini API Key</label>
+                <input type="password" id="apiKeyInput" placeholder="Enter your Gemini API key...">
+                <small class="helper-text">Required for fraud detection. Stored locally only.</small>
+            </div>
+
+            <hr class="section-divider">
+
+            <div class="setting-item">
+                <label>Watermark Image</label>
+                <div class="tabs">
+                    <button class="tab active" data-tab="url">Paste URL</button>
+                    <button class="tab" data-tab="create">Create New</button>
+                </div>
+
+                <div class="tab-content active" id="tab-url">
+                    <input type="url" id="watermarkUrlInput" placeholder="https://example.com/watermark.png">
+                    <small class="helper-text">Enter URL to a PNG image with transparent background</small>
+                    <div class="watermark-preview" id="urlPreview">
+                        <img id="urlPreviewImg" src="" alt="Watermark preview" style="display:none;">
+                        <span id="urlPreviewPlaceholder" style="color:var(--text-muted);font-size:11px;">Enter URL to preview</span>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="tab-create">
+                    <div class="control-group">
+                        <label>Watermark Text</label>
+                        <input type="text" id="genText" placeholder="CONFIDENTIAL" value="CONFIDENTIAL">
+                    </div>
+                    <div class="control-group">
+                        <label>Font</label>
+                        <select id="genFont">
+                            <option value="Arial Black">Arial Black</option>
+                            <option value="Impact">Impact</option>
+                            <option value="Georgia">Georgia</option>
+                            <option value="Times New Roman">Times New Roman</option>
+                            <option value="Courier New">Courier New</option>
+                            <option value="Verdana">Verdana</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Text Color</label>
+                        <div class="color-row">
+                            <input type="color" id="genColor" value="#888888">
+                            <input type="text" id="genColorHex" value="#888888" maxlength="7">
+                        </div>
+                    </div>
+                    <div class="text-gen-preview">
+                        <canvas id="textGenCanvas" width="300" height="60"></canvas>
+                    </div>
+                    <button class="btn btn-secondary" id="useGeneratedBtn" style="margin-top:15px">✓ Use This Watermark</button>
+                </div>
+            </div>
+
+            <hr class="section-divider">
+
+            <div class="setting-item">
+                <div class="toggle-row">
+                    <span class="toggle-label">Light Theme</span>
+                    <div class="toggle" id="themeToggle"></div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" id="saveSettings">Save Settings</button>
+            <button class="btn btn-secondary" id="resetDefaults">Reset to Defaults</button>
+        </div>
+    </div>
+
+    <!-- Fraud Report Modal -->
+    <div class="modal-overlay" id="fraudModal">
+        <div class="modal" style="max-width:550px">
+            <div class="modal-header">
+                <span class="modal-title">Fraud Detection Report</span>
+                <button class="modal-close" id="closeFraud">&times;</button>
+            </div>
+            <div id="fraudReportContent"></div>
+        </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar" id="statusBar"></div>
+
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        const DEFAULTS = { position: 'tiled', opacity: 0.25, scale: 0.15, density: 0.50, rotation: 45, watermarkUrl: 'https://i.imgur.com/MXMqYLc.png' };
+
+        let files = [];
+        let activeFileIndex = -1;
+        let logoImage = null;
+        let currentPosition = 'tiled';
+        let currentOpacity = 0.25;
+        let currentScale = 0.15;
+        let currentDensity = 0.50;
+        let currentRotation = 45;
+        let generatedWatermarkDataUrl = null;
+        let showFraudBadge = false;
+        let badgeOpacity = 0.25;
+        let badgeScale = 0.15;
+        let badgeDensity = 0.50;
+        let badgeRotation = 45;
+
+        const canvas = document.getElementById('previewCanvas');
+        const ctx = canvas.getContext('2d');
+        const placeholder = document.getElementById('placeholder');
+        const fileQueue = document.getElementById('fileQueue');
+        const fileInput = document.getElementById('fileInput');
+        const uploadZone = document.getElementById('uploadZone');
+        const pageNav = document.getElementById('pageNav');
+        const statusBar = document.getElementById('statusBar');
+
+        function updateSliderFill(slider) {
+            const min = slider.min || 0;
+            const max = slider.max || 100;
+            const val = slider.value;
+            const percent = ((val - min) / (max - min)) * 100;
+            slider.style.background = `linear-gradient(to right, var(--accent) 0%, var(--accent) ${percent}%, var(--border-color) ${percent}%, var(--border-color) 100%)`;
+        }
+
+        function loadSettings() {
+            document.getElementById('apiKeyInput').value = localStorage.getItem('bridge_api_key') || '';
+            const lightTheme = localStorage.getItem('bridge_light_theme') === 'true';
+            if (lightTheme) { document.body.classList.add('light-theme'); document.getElementById('themeToggle').classList.add('active'); }
+
+            const savedUrl = localStorage.getItem('bridge_watermark_url') || DEFAULTS.watermarkUrl;
+            document.getElementById('watermarkUrlInput').value = savedUrl;
+            document.getElementById('mainWatermarkUrl').value = savedUrl;
+            loadWatermarkFromUrl(savedUrl);
+
+            currentPosition = localStorage.getItem('bridge_position') || DEFAULTS.position;
+            currentOpacity = parseFloat(localStorage.getItem('bridge_opacity')) || DEFAULTS.opacity;
+            currentScale = parseFloat(localStorage.getItem('bridge_scale')) || DEFAULTS.scale;
+            currentDensity = parseFloat(localStorage.getItem('bridge_density')) || DEFAULTS.density;
+            currentRotation = parseFloat(localStorage.getItem('bridge_rotation')) || DEFAULTS.rotation;
+            showFraudBadge = localStorage.getItem('bridge_fraud_badge') === 'true';
+            if (showFraudBadge) {
+                document.getElementById('fraudBadgeToggle').classList.add('active');
+                document.getElementById('badgeSettings').style.display = 'block';
+            }
+            badgeOpacity = parseFloat(localStorage.getItem('bridge_badge_opacity')) || DEFAULTS.opacity;
+            badgeScale = parseFloat(localStorage.getItem('bridge_badge_scale')) || DEFAULTS.scale;
+            badgeDensity = parseFloat(localStorage.getItem('bridge_badge_density')) || DEFAULTS.density;
+            badgeRotation = parseFloat(localStorage.getItem('bridge_badge_rotation')) || DEFAULTS.rotation;
+
+            document.getElementById('badgeOpacitySlider').value = Math.round(badgeOpacity * 100);
+            document.getElementById('badgeOpacityValue').textContent = Math.round(badgeOpacity * 100) + '%';
+            document.getElementById('badgeScaleSlider').value = Math.round(badgeScale * 100);
+            document.getElementById('badgeScaleValue').textContent = Math.round(badgeScale * 100) + '%';
+            document.getElementById('badgeDensitySlider').value = Math.round(badgeDensity * 100);
+            document.getElementById('badgeDensityValue').textContent = Math.round(badgeDensity * 100) + '%';
+            document.getElementById('badgeRotationSlider').value = badgeRotation;
+            document.getElementById('badgeRotationValue').textContent = badgeRotation + '°';
+
+            document.getElementById('opacitySlider').value = Math.round(currentOpacity * 100);
+            document.getElementById('opacityValue').textContent = Math.round(currentOpacity * 100) + '%';
+            document.getElementById('scaleSlider').value = Math.round(currentScale * 100);
+            document.getElementById('scaleValue').textContent = Math.round(currentScale * 100) + '%';
+            document.getElementById('densitySlider').value = Math.round(currentDensity * 100);
+            document.getElementById('densityValue').textContent = Math.round(currentDensity * 100) + '%';
+            document.getElementById('rotationSlider').value = currentRotation;
+            document.getElementById('rotationValue').textContent = currentRotation + '°';
+            document.querySelectorAll('input[type="range"]').forEach(updateSliderFill);
+        }
+
+        function saveAllSettings() {
+            localStorage.setItem('bridge_api_key', document.getElementById('apiKeyInput').value.trim());
+            localStorage.setItem('bridge_watermark_url', document.getElementById('watermarkUrlInput').value.trim() || DEFAULTS.watermarkUrl);
+            localStorage.setItem('bridge_position', currentPosition);
+            localStorage.setItem('bridge_opacity', currentOpacity);
+            localStorage.setItem('bridge_scale', currentScale);
+            localStorage.setItem('bridge_density', currentDensity);
+            localStorage.setItem('bridge_rotation', currentRotation);
+        }
+
+        document.getElementById('saveSettings').addEventListener('click', () => { saveAllSettings(); closeModal('settingsModal'); showStatus('Settings saved!', 'success'); });
+
+        document.getElementById('resetDefaults').addEventListener('click', () => {
+            currentOpacity = DEFAULTS.opacity; currentScale = DEFAULTS.scale; currentDensity = DEFAULTS.density; currentRotation = DEFAULTS.rotation;
+            document.getElementById('watermarkUrlInput').value = DEFAULTS.watermarkUrl;
+            document.getElementById('opacitySlider').value = Math.round(currentOpacity * 100);
+            document.getElementById('opacityValue').textContent = Math.round(currentOpacity * 100) + '%';
+            document.getElementById('scaleSlider').value = Math.round(currentScale * 100);
+            document.getElementById('scaleValue').textContent = Math.round(currentScale * 100) + '%';
+            document.getElementById('densitySlider').value = Math.round(currentDensity * 100);
+            document.getElementById('densityValue').textContent = Math.round(currentDensity * 100) + '%';
+            document.getElementById('rotationSlider').value = currentRotation;
+            document.getElementById('rotationValue').textContent = currentRotation + '°';
+            document.querySelectorAll('input[type="range"]').forEach(updateSliderFill);
+            loadWatermarkFromUrl(DEFAULTS.watermarkUrl);
+            saveAllSettings();
+            if (activeFileIndex >= 0) renderPreview();
+            showStatus('Reset to defaults!', 'success');
+        });
+
+        function loadWatermarkFromUrl(url, isDataUrl = false) {
+            if (!url) url = DEFAULTS.watermarkUrl;
+            logoImage = new Image();
+            logoImage.crossOrigin = 'anonymous';
+            logoImage.onload = () => {
+                // Update settings modal preview
+                const preview = document.getElementById('urlPreviewImg');
+                const ph = document.getElementById('urlPreviewPlaceholder');
+                if (preview) { preview.src = url; preview.style.display = 'block'; }
+                if (ph) ph.style.display = 'none';
+                // Update main panel preview
+                const mainPreview = document.getElementById('mainPreviewImg');
+                const mainPh = document.getElementById('mainPreviewPlaceholder');
+                if (mainPreview) { mainPreview.src = url; mainPreview.style.display = 'block'; }
+                if (mainPh) mainPh.style.display = 'none';
+                // Sync URL inputs (only if not a data URL)
+                if (!isDataUrl) {
+                    document.getElementById('mainWatermarkUrl').value = url;
+                    document.getElementById('watermarkUrlInput').value = url;
+                }
+                if (activeFileIndex >= 0) renderPreview();
+            };
+            logoImage.onerror = () => {
+                showStatus('Failed to load watermark image', 'error');
+                document.getElementById('urlPreviewImg').style.display = 'none';
+                document.getElementById('urlPreviewPlaceholder').style.display = 'block';
+                document.getElementById('urlPreviewPlaceholder').textContent = 'Failed to load';
+                document.getElementById('mainPreviewImg').style.display = 'none';
+                document.getElementById('mainPreviewPlaceholder').style.display = 'block';
+                document.getElementById('mainPreviewPlaceholder').textContent = 'Failed to load';
+            };
+            logoImage.src = url;
+        }
+
+        // Main panel URL input
+        document.getElementById('mainWatermarkUrl').addEventListener('change', (e) => {
+            const url = e.target.value.trim();
+            if (url) {
+                loadWatermarkFromUrl(url);
+                localStorage.setItem('bridge_watermark_url', url);
+            }
+        });
+
+        // Create watermark button - opens settings to Create New tab
+        document.getElementById('createWatermarkBtn').addEventListener('click', () => {
+            openModal('settingsModal');
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector('.tab[data-tab="create"]').classList.add('active');
+            document.getElementById('tab-create').classList.add('active');
+        });
+
+        // Settings modal URL input
+        document.getElementById('watermarkUrlInput').addEventListener('change', (e) => { if (e.target.value.trim()) { loadWatermarkFromUrl(e.target.value.trim()); localStorage.setItem('bridge_watermark_url', e.target.value.trim()); } });
+
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        const genCanvas = document.getElementById('textGenCanvas');
+        const genCtx = genCanvas.getContext('2d');
+
+        function updateTextWatermarkPreview() {
+            const text = document.getElementById('genText').value || 'CONFIDENTIAL';
+            const font = document.getElementById('genFont').value;
+            const color = document.getElementById('genColor').value;
+            genCanvas.width = 400; genCanvas.height = 80;
+            genCtx.clearRect(0, 0, genCanvas.width, genCanvas.height);
+            genCtx.font = `bold 32px "${font}"`;
+            genCtx.fillStyle = color;
+            genCtx.textAlign = 'center';
+            genCtx.textBaseline = 'middle';
+            genCtx.fillText(text, genCanvas.width / 2, genCanvas.height / 2);
+            generatedWatermarkDataUrl = genCanvas.toDataURL('image/png');
+        }
+
+        document.getElementById('genText').addEventListener('input', updateTextWatermarkPreview);
+        document.getElementById('genFont').addEventListener('change', updateTextWatermarkPreview);
+        document.getElementById('genColor').addEventListener('input', (e) => { document.getElementById('genColorHex').value = e.target.value; updateTextWatermarkPreview(); });
+        document.getElementById('genColorHex').addEventListener('input', (e) => { if (/^#[0-9A-Fa-f]{6}$/.test(e.target.value)) { document.getElementById('genColor').value = e.target.value; updateTextWatermarkPreview(); } });
+
+        document.getElementById('useGeneratedBtn').addEventListener('click', () => {
+            if (generatedWatermarkDataUrl) {
+                loadWatermarkFromUrl(generatedWatermarkDataUrl, true);
+                // Clear URL inputs since we're using generated watermark
+                document.getElementById('watermarkUrlInput').value = '';
+                document.getElementById('mainWatermarkUrl').value = '';
+                document.getElementById('mainWatermarkUrl').placeholder = 'Using generated watermark';
+                showStatus('Using generated watermark!', 'success');
+                closeModal('settingsModal');
+            }
+        });
+
+        updateTextWatermarkPreview();
+
+        document.getElementById('themeToggle').addEventListener('click', function() { this.classList.toggle('active'); document.body.classList.toggle('light-theme'); localStorage.setItem('bridge_light_theme', this.classList.contains('active')); });
+
+        document.getElementById('fraudBadgeToggle').addEventListener('click', function() {
+            this.classList.toggle('active');
+            showFraudBadge = this.classList.contains('active');
+            localStorage.setItem('bridge_fraud_badge', showFraudBadge);
+            document.getElementById('badgeSettings').style.display = showFraudBadge ? 'block' : 'none';
+            if (activeFileIndex >= 0) renderPreview();
+        });
+
+        // Badge settings sliders
+        document.getElementById('badgeOpacitySlider').addEventListener('input', (e) => {
+            badgeOpacity = e.target.value / 100;
+            document.getElementById('badgeOpacityValue').textContent = e.target.value + '%';
+            localStorage.setItem('bridge_badge_opacity', badgeOpacity);
+            updateSliderFill(e.target);
+            if (activeFileIndex >= 0) renderPreview();
+        });
+        document.getElementById('badgeScaleSlider').addEventListener('input', (e) => {
+            badgeScale = e.target.value / 100;
+            document.getElementById('badgeScaleValue').textContent = e.target.value + '%';
+            localStorage.setItem('bridge_badge_scale', badgeScale);
+            updateSliderFill(e.target);
+            if (activeFileIndex >= 0) renderPreview();
+        });
+        document.getElementById('badgeDensitySlider').addEventListener('input', (e) => {
+            badgeDensity = e.target.value / 100;
+            document.getElementById('badgeDensityValue').textContent = e.target.value + '%';
+            localStorage.setItem('bridge_badge_density', badgeDensity);
+            updateSliderFill(e.target);
+            if (activeFileIndex >= 0) renderPreview();
+        });
+        document.getElementById('badgeRotationSlider').addEventListener('input', (e) => {
+            badgeRotation = parseInt(e.target.value);
+            document.getElementById('badgeRotationValue').textContent = e.target.value + '°';
+            localStorage.setItem('bridge_badge_rotation', badgeRotation);
+            updateSliderFill(e.target);
+            if (activeFileIndex >= 0) renderPreview();
+        });
+
+        document.getElementById('settingsBtn').addEventListener('click', () => openModal('settingsModal'));
+        document.getElementById('closeSettings').addEventListener('click', () => closeModal('settingsModal'));
+        document.getElementById('closeFraud').addEventListener('click', () => closeModal('fraudModal'));
+
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        function showStatus(msg, type = '') {
+            statusBar.textContent = msg;
+            statusBar.className = 'status-bar' + (type ? ' ' + type : '');
+            statusBar.style.display = 'block';
+            setTimeout(() => statusBar.style.display = 'none', 3000);
+        }
+
+        uploadZone.addEventListener('click', () => fileInput.click());
+        uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+        uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+        uploadZone.addEventListener('drop', (e) => { e.preventDefault(); uploadZone.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); });
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+        async function handleFiles(fileList) {
+            for (const file of fileList) {
+                if (file.type === 'application/pdf') await loadPDF(file);
+                else if (file.type.startsWith('image/')) await loadImageFile(file);
+            }
+            updateUI();
+        }
+
+        async function loadPDF(file) {
+            try {
+                showStatus('Loading PDF...');
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+                const pages = [];
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const viewport = page.getViewport({scale: 2});
+                    const tempCanvas = document.createElement('canvas');
+                    tempCanvas.width = viewport.width; tempCanvas.height = viewport.height;
+                    await page.render({canvasContext: tempCanvas.getContext('2d'), viewport}).promise;
+                    const img = new Image();
+                    img.src = tempCanvas.toDataURL();
+                    await new Promise(r => img.onload = r);
+                    pages.push(img);
+                }
+                files.push({ id: Date.now() + Math.random(), name: file.name, type: 'pdf', label: file.name.replace(/\.pdf$/i, ''), pages, currentPage: 0, fraudStatus: null, fraudReport: null, thumb: pages[0].src });
+                showStatus(`Loaded ${file.name} (${pages.length} pages)`);
+                if (activeFileIndex === -1) selectFile(files.length - 1);
+            } catch (err) { showStatus('Failed to load PDF: ' + err.message, 'error'); }
+        }
+
+        async function loadImageFile(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        files.push({ id: Date.now() + Math.random(), name: file.name, type: 'image', label: file.name.replace(/\.[^.]+$/, ''), pages: [img], currentPage: 0, fraudStatus: null, fraudReport: null, thumb: img.src });
+                        showStatus(`Loaded ${file.name}`);
+                        if (activeFileIndex === -1) selectFile(files.length - 1);
+                        resolve();
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function updateUI() {
+            document.getElementById('fileCount').textContent = `${files.length} file${files.length !== 1 ? 's' : ''}`;
+            document.getElementById('scanAllBtn').disabled = files.length === 0;
+            document.getElementById('downloadAllBtn').disabled = files.length === 0;
+            document.getElementById('clearAllBtn').style.display = files.length > 0 ? 'block' : 'none';
+            renderFileQueue();
+        }
+
+        function renderFileQueue() {
+            fileQueue.innerHTML = '';
+            files.forEach((file, idx) => {
+                const div = document.createElement('div');
+                div.className = 'file-item' + (idx === activeFileIndex ? ' active' : '');
+                if (file.fraudStatus === 'clean') div.classList.add('scanned-clean');
+                else if (file.fraudStatus === 'secure') div.classList.add('scanned-secure');
+                else if (file.fraudStatus === 'warning') div.classList.add('scanned-warning');
+                else if (file.fraudStatus === 'danger') div.classList.add('scanned-danger');
+                let badge = '';
+                if (file.fraudStatus === 'clean') badge = '<div class="fraud-badge clean" onclick="viewFraudReport('+idx+')" style="cursor:pointer">✓ Clean</div>';
+                else if (file.fraudStatus === 'secure') badge = '<div class="fraud-badge secure" onclick="viewFraudReport('+idx+')" style="cursor:pointer">◈ Secure</div>';
+                else if (file.fraudStatus === 'warning') badge = '<div class="fraud-badge warning" onclick="viewFraudReport('+idx+')" style="cursor:pointer">⚠ Suspicious</div>';
+                else if (file.fraudStatus === 'danger') badge = '<div class="fraud-badge danger" onclick="viewFraudReport('+idx+')" style="cursor:pointer">✕ Altered</div>';
+                else if (file.fraudStatus === 'scanning') badge = '<div class="fraud-badge pending">◌ Scanning</div>';
+                div.innerHTML = `<div class="file-header"><img class="file-thumb" src="${file.thumb}" alt=""><div class="file-meta"><div class="file-name">${file.name}</div><div class="file-info">${file.type.toUpperCase()} - ${file.pages.length} page(s)</div>${badge}</div><div class="file-actions"><button onclick="viewFraudReport(${idx})" title="View Report" ${!file.fraudReport ? 'disabled style="opacity:0.3"' : ''}>ⓘ</button><button class="delete" onclick="removeFile(${idx})" title="Remove">✕</button></div></div><input type="text" class="file-label" value="${file.label}" onchange="updateLabel(${idx}, this.value)" onclick="event.stopPropagation()" placeholder="Enter label...">`;
+                div.addEventListener('click', (e) => { if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') selectFile(idx); });
+                fileQueue.appendChild(div);
+            });
+        }
+
+        function selectFile(idx) {
+            activeFileIndex = idx;
+            const file = files[idx];
+            document.getElementById('downloadCurrentBtn').disabled = false;
+            document.getElementById('scanCurrentBtn').disabled = false;
+            placeholder.style.display = 'none';
+            canvas.style.display = 'block';
+            pageNav.style.display = file.pages.length > 1 ? 'flex' : 'none';
+            if (file.pages.length > 1) updatePageNav();
+            renderPreview();
+            renderFileQueue();
+        }
+
+        function updateLabel(idx, label) { files[idx].label = label; renderFileQueue(); }
+
+        function removeFile(idx) {
+            files.splice(idx, 1);
+            if (activeFileIndex >= files.length) activeFileIndex = files.length - 1;
+            if (files.length === 0) { activeFileIndex = -1; canvas.style.display = 'none'; placeholder.style.display = 'block'; pageNav.style.display = 'none'; document.getElementById('downloadCurrentBtn').disabled = true; document.getElementById('scanCurrentBtn').disabled = true; }
+            else selectFile(activeFileIndex);
+            updateUI();
+        }
+
+        document.getElementById('clearAllBtn').addEventListener('click', () => {
+            if (confirm('Remove all files?')) { files = []; activeFileIndex = -1; canvas.style.display = 'none'; placeholder.style.display = 'block'; pageNav.style.display = 'none'; document.getElementById('downloadCurrentBtn').disabled = true; document.getElementById('scanCurrentBtn').disabled = true; updateUI(); }
+        });
+
+        function updatePageNav() {
+            const file = files[activeFileIndex];
+            document.getElementById('pageInfo').textContent = `${file.currentPage + 1} / ${file.pages.length}`;
+            document.getElementById('prevPage').disabled = file.currentPage === 0;
+            document.getElementById('nextPage').disabled = file.currentPage === file.pages.length - 1;
+        }
+
+        document.getElementById('prevPage').addEventListener('click', () => { if (activeFileIndex >= 0 && files[activeFileIndex].currentPage > 0) { files[activeFileIndex].currentPage--; updatePageNav(); renderPreview(); } });
+        document.getElementById('nextPage').addEventListener('click', () => { const file = files[activeFileIndex]; if (activeFileIndex >= 0 && file.currentPage < file.pages.length - 1) { file.currentPage++; updatePageNav(); renderPreview(); } });
+
+        document.querySelectorAll('input[type="range"]').forEach(slider => {
+            slider.addEventListener('input', () => updateSliderFill(slider));
+        });
+
+        document.getElementById('opacitySlider').addEventListener('input', (e) => { currentOpacity = e.target.value / 100; document.getElementById('opacityValue').textContent = e.target.value + '%'; localStorage.setItem('bridge_opacity', currentOpacity); if (activeFileIndex >= 0) renderPreview(); });
+        document.getElementById('scaleSlider').addEventListener('input', (e) => { currentScale = e.target.value / 100; document.getElementById('scaleValue').textContent = e.target.value + '%'; localStorage.setItem('bridge_scale', currentScale); if (activeFileIndex >= 0) renderPreview(); });
+        document.getElementById('densitySlider').addEventListener('input', (e) => { currentDensity = e.target.value / 100; document.getElementById('densityValue').textContent = e.target.value + '%'; localStorage.setItem('bridge_density', currentDensity); if (activeFileIndex >= 0) renderPreview(); });
+        document.getElementById('rotationSlider').addEventListener('input', (e) => { currentRotation = parseInt(e.target.value); document.getElementById('rotationValue').textContent = e.target.value + '°'; localStorage.setItem('bridge_rotation', currentRotation); if (activeFileIndex >= 0) renderPreview(); });
+
+        function drawFraudBadge(ctx, file, canvasWidth, canvasHeight) {
+            const status = file.fraudStatus;
+
+            // Determine color and text based on status
+            let color, statusText;
+            if (status === 'secure') {
+                color = [39, 174, 96]; // green
+                statusText = 'VERIFIED SECURE';
+            } else if (status === 'clean') {
+                color = [39, 174, 96]; // green
+                statusText = 'VERIFIED CLEAN';
+            } else if (status === 'warning') {
+                color = [243, 156, 18]; // orange
+                statusText = 'SUSPICIOUS';
+            } else if (status === 'danger') {
+                color = [231, 76, 60]; // red
+                statusText = 'HIGH RISK';
+            } else {
+                color = [128, 128, 128]; // gray
+                statusText = 'NOT VERIFIED';
+            }
+
+            ctx.save();
+            ctx.globalAlpha = badgeOpacity;
+
+            // Use badge-specific settings for tiling
+            const tiledScale = badgeScale * 1.6;
+            const badgeBaseWidth = canvasWidth * tiledScale;
+            const badgeBaseHeight = badgeBaseWidth * 0.4; // Badge aspect ratio
+            const gapMultiplier = 1.5 - badgeDensity;
+            const spacingX = badgeBaseWidth * gapMultiplier + 80;
+            const spacingY = badgeBaseHeight * gapMultiplier + 80;
+
+            // Scale for drawing elements
+            const drawScale = badgeBaseWidth / 180;
+
+            for (let tileY = -badgeBaseHeight; tileY < canvasHeight + badgeBaseHeight; tileY += spacingY) {
+                for (let tileX = -badgeBaseWidth; tileX < canvasWidth + badgeBaseWidth; tileX += spacingX) {
+                    ctx.save();
+                    ctx.translate(tileX + badgeBaseWidth / 2, tileY + badgeBaseHeight / 2);
+                    ctx.rotate(badgeRotation * Math.PI / 180);
+
+                    // Draw shield
+                    const shieldSize = 28 * drawScale;
+                    const shieldX = -70 * drawScale;
+                    const shieldY = -shieldSize / 2;
+
+                    ctx.beginPath();
+                    ctx.moveTo(shieldX + shieldSize / 2, shieldY);
+                    ctx.lineTo(shieldX + shieldSize, shieldY + shieldSize * 0.2);
+                    ctx.lineTo(shieldX + shieldSize, shieldY + shieldSize * 0.55);
+                    ctx.quadraticCurveTo(shieldX + shieldSize, shieldY + shieldSize * 0.95, shieldX + shieldSize / 2, shieldY + shieldSize);
+                    ctx.quadraticCurveTo(shieldX, shieldY + shieldSize * 0.95, shieldX, shieldY + shieldSize * 0.55);
+                    ctx.lineTo(shieldX, shieldSize * 0.2 + shieldY);
+                    ctx.closePath();
+                    ctx.strokeStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+                    ctx.lineWidth = 2 * drawScale;
+                    ctx.stroke();
+
+                    // Draw checkmark/icon inside shield
+                    ctx.font = `bold ${16 * drawScale}px Arial`;
+                    ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    const icon = status === 'secure' ? '◈' : status === 'clean' ? '✓' : status === 'warning' ? '⚠' : status === 'danger' ? '✕' : '○';
+                    ctx.fillText(icon, shieldX + shieldSize / 2, shieldY + shieldSize / 2);
+
+                    // Draw status text
+                    ctx.font = `bold ${12 * drawScale}px Arial`;
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(statusText, shieldX + shieldSize + 8 * drawScale, -2 * drawScale);
+
+                    // Draw Sutton Funding text
+                    ctx.font = `${9 * drawScale}px Arial`;
+                    ctx.fillText('Sutton Funding', shieldX + shieldSize + 8 * drawScale, 10 * drawScale);
+
+                    ctx.restore();
+                }
+            }
+
+            ctx.restore();
+        }
+
+        function renderPreview() {
+            if (activeFileIndex < 0 || !logoImage) return;
+            const file = files[activeFileIndex];
+            const baseImage = file.pages[file.currentPage];
+            canvas.width = baseImage.width; canvas.height = baseImage.height;
+            ctx.drawImage(baseImage, 0, 0);
+            ctx.globalAlpha = currentOpacity;
+            // Always tiled
+            const tiledScale = currentScale * 1.6;
+            const tiledLogoWidth = baseImage.width * tiledScale;
+            const tiledLogoHeight = (logoImage.height / logoImage.width) * tiledLogoWidth;
+            const gapMultiplier = 1.5 - currentDensity;
+            const spacingX = tiledLogoWidth * gapMultiplier + 80;
+            const spacingY = tiledLogoHeight * gapMultiplier + 80;
+            for (let y = -tiledLogoHeight; y < baseImage.height + tiledLogoHeight; y += spacingY) {
+                for (let x = -tiledLogoWidth; x < baseImage.width + tiledLogoWidth; x += spacingX) {
+                    ctx.save();
+                    ctx.translate(x + tiledLogoWidth / 2, y + tiledLogoHeight / 2);
+                    ctx.rotate(currentRotation * Math.PI / 180);
+                    ctx.drawImage(logoImage, -tiledLogoWidth / 2, -tiledLogoHeight / 2, tiledLogoWidth, tiledLogoHeight);
+                    ctx.restore();
+                }
+            }
+            ctx.globalAlpha = 1.0;
+
+            // Draw fraud badge if enabled
+            if (showFraudBadge) {
+                drawFraudBadge(ctx, file, canvas.width, canvas.height);
+            }
+        }
+
+        document.getElementById('downloadCurrentBtn').addEventListener('click', () => {
+            if (activeFileIndex < 0) return;
+            const file = files[activeFileIndex];
+            const safeLabel = (file.label || 'document').replace(/[^a-z0-9_-]/gi, '_');
+            if (file.pages.length > 1) downloadAllPagesOfFile(file, safeLabel);
+            else { const link = document.createElement('a'); link.download = `${safeLabel}_watermarked.png`; link.href = canvas.toDataURL('image/png'); link.click(); showStatus('Downloaded!', 'success'); }
+        });
+
+        async function downloadAllPagesOfFile(file, safeLabel) {
+            showStatus('Generating PDF...');
+            const originalPage = file.currentPage;
+            const { jsPDF } = window.jspdf;
+
+            // Render first page to get dimensions
+            file.currentPage = 0;
+            renderPreview();
+            await new Promise(r => setTimeout(r, 100));
+
+            // Determine orientation based on first page
+            const firstWidth = canvas.width;
+            const firstHeight = canvas.height;
+            const orientation = firstWidth > firstHeight ? 'landscape' : 'portrait';
+
+            // Create PDF with first page dimensions
+            const pdf = new jsPDF({
+                orientation: orientation,
+                unit: 'px',
+                format: [firstWidth, firstHeight]
+            });
+
+            for (let i = 0; i < file.pages.length; i++) {
+                file.currentPage = i;
+                renderPreview();
+                await new Promise(r => setTimeout(r, 100));
+
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                const pageWidth = canvas.width;
+                const pageHeight = canvas.height;
+
+                if (i > 0) {
+                    // Add new page with this page's dimensions
+                    const pageOrientation = pageWidth > pageHeight ? 'landscape' : 'portrait';
+                    pdf.addPage([pageWidth, pageHeight], pageOrientation);
+                }
+
+                pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight);
+            }
+
+            pdf.save(`${safeLabel}_watermarked.pdf`);
+            file.currentPage = originalPage;
+            renderPreview();
+            updatePageNav();
+            showStatus(`Downloaded ${file.pages.length}-page PDF!`, 'success');
+        }
+
+        document.getElementById('downloadAllBtn').addEventListener('click', async () => {
+            showStatus('Preparing all files...');
+            const originalActive = activeFileIndex;
+            const { jsPDF } = window.jspdf;
+
+            for (let f = 0; f < files.length; f++) {
+                const file = files[f];
+                const safeLabel = (file.label || 'document').replace(/[^a-z0-9_-]/gi, '_');
+                activeFileIndex = f;
+
+                if (file.pages.length === 1) {
+                    // Single page - download as PNG
+                    file.currentPage = 0;
+                    renderPreview();
+                    await new Promise(r => setTimeout(r, 100));
+                    const link = document.createElement('a');
+                    link.download = `${safeLabel}_watermarked.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    await new Promise(r => setTimeout(r, 300));
+                } else {
+                    // Multi-page - generate PDF
+                    file.currentPage = 0;
+                    renderPreview();
+                    await new Promise(r => setTimeout(r, 100));
+
+                    const firstWidth = canvas.width;
+                    const firstHeight = canvas.height;
+                    const orientation = firstWidth > firstHeight ? 'landscape' : 'portrait';
+
+                    const pdf = new jsPDF({
+                        orientation: orientation,
+                        unit: 'px',
+                        format: [firstWidth, firstHeight]
+                    });
+
+                    for (let p = 0; p < file.pages.length; p++) {
+                        file.currentPage = p;
+                        renderPreview();
+                        await new Promise(r => setTimeout(r, 100));
+
+                        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                        const pageWidth = canvas.width;
+                        const pageHeight = canvas.height;
+
+                        if (p > 0) {
+                            const pageOrientation = pageWidth > pageHeight ? 'landscape' : 'portrait';
+                            pdf.addPage([pageWidth, pageHeight], pageOrientation);
+                        }
+
+                        pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight);
+                    }
+
+                    pdf.save(`${safeLabel}_watermarked.pdf`);
+                    await new Promise(r => setTimeout(r, 300));
+                }
+            }
+
+            activeFileIndex = originalActive;
+            if (activeFileIndex >= 0) selectFile(activeFileIndex);
+            showStatus(`Downloaded ${files.length} file(s)!`, 'success');
+        });
+
+        async function scanForFraud(fileIndex) {
+            const file = files[fileIndex];
+            const apiKey = localStorage.getItem('bridge_api_key');
+            if (!apiKey) { showStatus('Please set your Gemini API key in Settings', 'error'); openModal('settingsModal'); return; }
+            file.fraudStatus = 'scanning'; renderFileQueue(); showStatus(`Scanning ${file.name}...`);
+            try {
+                const tempCanvas = document.createElement('canvas');
+                const img = file.pages[0];
+                tempCanvas.width = img.width; tempCanvas.height = img.height;
+                tempCanvas.getContext('2d').drawImage(img, 0, 0);
+                const base64 = tempCanvas.toDataURL('image/png').split(',')[1];
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: `You are an expert forensic document analyst specializing in detecting fraudulent bank statements.
+
+WATERMARK DETECTION (IMPORTANT):
+- If you see a logo/image TILED REPEATEDLY across the document at an angle, this is a SECURITY WATERMARK
+- Watermarks indicate the document has been SECURED by the sender - this is GOOD, not fraud
+- If watermarks are present AND no manipulation is detected, mark as SECURE (not just CLEAN)
+
+LEGITIMATE FEATURES (NOT FRAUD):
+- Security watermarks (tiled logos across document) = document is protected
+- Letterheads, stamps, signatures = normal
+- Low image quality alone = not fraud
+
+FRAUD DETECTION METHODS - Analyze ALL:
+
+1. PIXEL-LEVEL ANALYSIS:
+- Compression artifacts that differ between regions (edited areas have different JPEG/PNG compression)
+- Inconsistent noise patterns (edited regions may be smoother or grainier)
+- Clone stamping artifacts (repeated pixel patterns used to cover text)
+- Edge discontinuities where elements were cut/pasted
+- Color/brightness inconsistencies at edit boundaries
+- Resampling artifacts (blurry edges around specific text/numbers)
+
+2. TYPOGRAPHY ANALYSIS:
+- Different fonts within same field type
+- Inconsistent character spacing or kerning
+- Misaligned baselines
+- Text sharper or blurrier than surrounding text
+- Different anti-aliasing on certain characters
+
+3. MATHEMATICAL VERIFICATION:
+- Running balance = previous balance + deposits - withdrawals
+- Statement totals must match sum of transactions
+- Opening/closing balance consistency
+
+4. STRUCTURAL ANALYSIS:
+- Misaligned columns or rows
+- Inconsistent spacing between elements
+- Elements that break the document's grid pattern
+
+5. METADATA/LOGICAL:
+- Impossible dates (month >12, day >31, future dates)
+- Duplicate transaction reference numbers
+- Transaction times out of sequence
+
+RESPONSE FORMAT:
+
+RISK LEVEL: [Choose ONE: SECURE / CLEAN / SUSPICIOUS / HIGH RISK]
+- SECURE = Watermark detected, no manipulation found (document is protected)
+- CLEAN = No watermark, no manipulation found
+- SUSPICIOUS = Possible manipulation detected (requires evidence)
+- HIGH RISK = Clear evidence of manipulation/fraud (requires evidence)
+
+WATERMARK DETECTED: [YES/NO - describe if you see tiled logos/images across document]
+
+ANALYSIS PERFORMED:
+[List detection methods applied]
+
+FINDINGS:
+[If SECURE]: "Security watermark detected. No manipulation found. Document is protected and authentic."
+[If CLEAN]: "No watermark present. No manipulation detected. Document appears authentic."
+[If SUSPICIOUS/HIGH RISK - MUST provide SPECIFIC evidence]:
+- Exact location (row, column, area)
+- What was detected (pixel artifacts, font mismatch, math error)
+- Why this indicates manipulation
+
+RECOMMENDATION: [Action to take]
+
+IMPORTANT: Be thorough but conservative. Watermarks = SECURE. Only flag SUSPICIOUS/HIGH RISK with concrete evidence.` }, { inlineData: { mimeType: 'image/png', data: base64 } }] }] })
+                });
+                const data = await response.json();
+                if (data.error) throw new Error(data.error.message);
+                const report = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No analysis available';
+                file.fraudReport = report;
+                // Parse the RISK LEVEL line specifically
+                const riskMatch = report.match(/RISK LEVEL:\s*(SECURE|CLEAN|SUSPICIOUS|HIGH RISK)/i);
+                if (riskMatch) {
+                    const level = riskMatch[1].toUpperCase();
+                    if (level === 'HIGH RISK') file.fraudStatus = 'danger';
+                    else if (level === 'SUSPICIOUS') file.fraudStatus = 'warning';
+                    else if (level === 'SECURE') file.fraudStatus = 'secure';
+                    else file.fraudStatus = 'clean';
+                } else {
+                    // Fallback: check for watermark mention
+                    const hasWatermark = report.toUpperCase().includes('WATERMARK DETECTED: YES');
+                    file.fraudStatus = hasWatermark ? 'secure' : 'clean';
+                }
+                renderFileQueue(); showStatus(`Scan complete: ${file.name}`, 'success');
+            } catch (err) { file.fraudStatus = null; file.fraudReport = 'Error: ' + err.message; renderFileQueue(); showStatus('Scan failed: ' + err.message, 'error'); }
+        }
+
+        document.getElementById('scanCurrentBtn').addEventListener('click', () => { if (activeFileIndex >= 0) scanForFraud(activeFileIndex); });
+        document.getElementById('scanAllBtn').addEventListener('click', async () => { for (let i = 0; i < files.length; i++) { await scanForFraud(i); await new Promise(r => setTimeout(r, 1000)); } showStatus('All scans complete!', 'success'); });
+
+        function viewFraudReport(idx) {
+            const file = files[idx];
+            if (!file.fraudReport) return;
+            let statusClass = file.fraudStatus === 'clean' ? 'clean' : file.fraudStatus === 'secure' ? 'secure' : file.fraudStatus === 'warning' ? 'warning' : 'danger';
+            let statusLabel = file.fraudStatus === 'clean' ? '✓ Clean' : file.fraudStatus === 'secure' ? '◈ Secure - Watermarked' : file.fraudStatus === 'warning' ? '⚠ Suspicious' : '✕ High Risk';
+            document.getElementById('fraudReportContent').innerHTML = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;"><img src="${file.thumb}" style="width:60px;height:60px;border-radius:6px;object-fit:cover;"><div><div style="font-weight:600;color:var(--text-primary)">${file.name}</div><div class="fraud-badge ${statusClass}" style="margin-top:5px">${statusLabel}</div></div></div><div class="fraud-report"><p>${file.fraudReport.replace(/\n/g, '<br>')}</p></div>`;
+            openModal('fraudModal');
+        }
+
+        loadSettings();
+    </script>
+</body>
+</html>
