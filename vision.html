@@ -809,16 +809,28 @@
         .watermark-preview.expanded canvas {
             max-height: 580px;
         }
-        .expand-hint {
+        .expand-btn {
             position: absolute;
-            bottom: 8px;
+            top: 8px;
             right: 8px;
             background: var(--bg-secondary);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 16px;
+            color: var(--text-secondary);
+            cursor: pointer;
             opacity: 0.8;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+        .expand-btn:hover {
+            opacity: 1;
+            background: var(--bg-tertiary);
+            color: var(--gold);
+        }
+        .watermark-preview.expanded .expand-btn {
+            transform: rotate(180deg);
         }
         .watermark-placeholder {
             text-align: center;
@@ -1320,13 +1332,13 @@
             </div>
 
             <!-- Watermark Preview -->
-            <div class="watermark-preview" id="previewContainer" onclick="togglePreviewSize()">
+            <div class="watermark-preview" id="previewContainer">
                 <div class="watermark-placeholder" id="watermarkPlaceholder">
                     <div class="watermark-placeholder-icon">+</div>
                     <div>Select a file to preview watermark</div>
                 </div>
                 <canvas id="previewCanvas" style="display:none;"></canvas>
-                <div class="expand-hint" id="expandHint">Click to expand</div>
+                <button class="expand-btn" id="expandBtn" onclick="togglePreviewSize()">⤢</button>
             </div>
 
             <!-- Watermark Controls -->
@@ -1714,9 +1726,7 @@
 
         function togglePreviewSize() {
             const container = document.getElementById('previewContainer');
-            const hint = document.getElementById('expandHint');
             container.classList.toggle('expanded');
-            hint.textContent = container.classList.contains('expanded') ? 'Click to collapse' : 'Click to expand';
         }
 
         function selectFile(idx) {
