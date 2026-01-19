@@ -2399,61 +2399,59 @@ End with exactly one: RISK_LEVEL:CLEAN or RISK_LEVEL:WARNING or RISK_LEVEL:DANGE
             `;
         }
 
-        async function extractBankData(apiKey) {
+        // Extract data from a single bank statement file
+        async function extractSingleStatement(file, apiKey, fileIndex) {
             const images = [];
-            for (const file of files) {
-                for (const page of file.pages) {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = page.width;
-                    canvas.height = page.height;
-                    canvas.getContext('2d').drawImage(page, 0, 0);
-                    images.push(canvas.toDataURL('image/jpeg', 0.85).split(',')[1]);
-                }
+            for (const page of file.pages) {
+                const canvas = document.createElement('canvas');
+                canvas.width = page.width;
+                canvas.height = page.height;
+                canvas.getContext('2d').drawImage(page, 0, 0);
+                images.push(canvas.toDataURL('image/jpeg', 0.85).split(',')[1]);
             }
 
-            const maxPages = Math.min(images.length, 20);
             const parts = [
-                { text: `You are analyzing bank statements for MCA underwriting. Extract detailed data.
+                { text: `You are analyzing a SINGLE bank statement for MCA underwriting. This is statement ${fileIndex + 1}.
 
-CRITICAL - Extract Business Information:
-- business_name: The EXACT business name on the account (DBA or legal name)
-- owner_name: The owner/account holder name if visible
-- business_address: City, State if visible
-
-For EACH MONTH visible, extract:
-- month: Month name and year
-- total_deposits: Sum of all credits
+Extract the data for THIS ONE MONTH only:
+- month: Month name and year (e.g., "January 2024")
+- total_deposits: Sum of all credits/deposits
 - true_revenue: Deposits minus internal transfers, loans, owner deposits
-- total_withdrawals: Sum of all debits
-- average_daily_balance: Average balance
-- lowest_daily_balance: Minimum balance
-- num_deposits: Count of deposits
-- nsf_count: NSF fees
-- days_negative: Negative balance days
+- total_withdrawals: Sum of all debits/withdrawals
+- average_daily_balance: Average daily balance
+- lowest_daily_balance: Minimum/lowest balance
+- num_deposits: Count of deposit transactions
+- nsf_count: Number of NSF/overdraft fees
+- days_negative: Days with negative balance
 
-Also detect MCA payments - look for recurring daily ACH debits to: LIBERTAS, YELLOWSTONE, CREDIBLY, ONDECK, KAPITUS, FUNDFI, BITTY, etc.
+Also extract:
+- business_name: Business name on the account
+- owner_name: Owner/account holder name
+- bank_name: Name of the bank
+- account_number_last4: Last 4 digits of account
 
-CRITICAL - Detect ALL existing debt obligations:
-For each recurring payment/debt found, extract:
-- creditor_name: Name of lender/creditor
-- payment_type: "MCA", "Loan", "Lease", "Credit Card", "Line of Credit", "Other"
-- payment_amount: Amount of each payment
-- payment_frequency: "Daily", "Weekly", "Bi-Weekly", "Monthly"
-- estimated_balance: If calculable (daily payment x ~180 for MCA)
-- first_seen: First month this payment appears
-- notes: Any relevant observations
+Detect any MCA/debt payments - look for recurring debits to: LIBERTAS, YELLOWSTONE, CREDIBLY, ONDECK, KAPITUS, FUNDFI, BITTY, CLEARFUND, etc.
 
 Return ONLY valid JSON:
 {
-  "business_info": { "business_name": "", "owner_name": "", "business_address": "" },
-  "account_info": { "bank_name": "", "account_holder": "", "account_number_last4": "" },
-  "months": [{ "month": "", "total_deposits": 0, "true_revenue": 0, "total_withdrawals": 0, "average_daily_balance": 0, "lowest_daily_balance": 0, "num_deposits": 0, "nsf_count": 0, "days_negative": 0 }],
-  "aggregated": { "avg_monthly_deposits": 0, "avg_monthly_balance": 0, "total_nsf_fees": 0, "total_negative_days": 0, "avg_num_deposits": 0, "months_analyzed": 0, "detected_mca_lenders": [] },
-  "existing_debt": [{ "creditor_name": "", "payment_type": "", "payment_amount": 0, "payment_frequency": "", "estimated_balance": 0, "first_seen": "", "notes": "" }],
-  "red_flags": [],
-  "underwriting_notes": ""
+  "month": "Month Year",
+  "total_deposits": 0,
+  "true_revenue": 0,
+  "total_withdrawals": 0,
+  "average_daily_balance": 0,
+  "lowest_daily_balance": 0,
+  "num_deposits": 0,
+  "nsf_count": 0,
+  "days_negative": 0,
+  "business_name": "",
+  "owner_name": "",
+  "bank_name": "",
+  "account_number_last4": "",
+  "detected_mca_payments": [],
+  "existing_debt": [],
+  "red_flags": []
 }` },
-                ...images.slice(0, maxPages).map(d => ({ inlineData: { mimeType: 'image/jpeg', data: d } }))
+                ...images.map(d => ({ inlineData: { mimeType: 'image/jpeg', data: d } }))
             ];
 
             try {
@@ -2463,35 +2461,126 @@ Return ONLY valid JSON:
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         contents: [{ parts }],
-                        generationConfig: { temperature: 0.1, maxOutputTokens: 16384 }
+                        generationConfig: { temperature: 0.1, maxOutputTokens: 8192 }
                     })
                 });
 
                 const data = await resp.json();
                 let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
                 text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-                const parsed = JSON.parse(text);
-
-                // Store extracted business info for research
-                if (parsed.business_info) {
-                    extractedBusinessInfo = {
-                        name: parsed.business_info.business_name || parsed.account_info?.account_holder || '',
-                        owner: parsed.business_info.owner_name || '',
-                        address: parsed.business_info.business_address || ''
-                    };
-                }
-
-                return {
-                    monthly_deposits: parsed.aggregated?.avg_monthly_deposits,
-                    average_daily_balance: parsed.aggregated?.avg_monthly_balance,
-                    nsf_negative_days: parsed.aggregated?.total_negative_days,
-                    num_deposits_monthly: parsed.aggregated?.avg_num_deposits,
-                    full_analysis: parsed
-                };
+                return JSON.parse(text);
             } catch (e) {
-                console.error('Extract error:', e);
-                return { monthly_deposits: null, average_daily_balance: null, nsf_negative_days: null, num_deposits_monthly: null, full_analysis: null };
+                console.error(`Extract error for file ${fileIndex}:`, e);
+                return null;
             }
+        }
+
+        async function extractBankData(apiKey) {
+            // Process all statements in PARALLEL
+            showLoading(true, `Extracting data from ${files.length} statements in parallel...`);
+
+            const extractionPromises = files.map((file, index) =>
+                extractSingleStatement(file, apiKey, index)
+            );
+
+            const results = await Promise.all(extractionPromises);
+
+            // Filter out failed extractions and build months array
+            const months = results.filter(r => r !== null).map(r => ({
+                month: r.month || 'Unknown',
+                total_deposits: r.total_deposits || 0,
+                true_revenue: r.true_revenue || 0,
+                total_withdrawals: r.total_withdrawals || 0,
+                average_daily_balance: r.average_daily_balance || 0,
+                lowest_daily_balance: r.lowest_daily_balance || 0,
+                num_deposits: r.num_deposits || 0,
+                nsf_count: r.nsf_count || 0,
+                days_negative: r.days_negative || 0
+            }));
+
+            // Sort months chronologically
+            months.sort((a, b) => {
+                const dateA = new Date(a.month);
+                const dateB = new Date(b.month);
+                return dateA - dateB;
+            });
+
+            // Collect all MCA lenders and debt from all statements
+            const allMcaLenders = new Set();
+            const allDebt = [];
+            const allRedFlags = [];
+            let businessInfo = { business_name: '', owner_name: '', business_address: '' };
+            let accountInfo = { bank_name: '', account_holder: '', account_number_last4: '' };
+
+            results.filter(r => r !== null).forEach(r => {
+                if (r.detected_mca_payments) {
+                    r.detected_mca_payments.forEach(m => allMcaLenders.add(m));
+                }
+                if (r.existing_debt) {
+                    allDebt.push(...r.existing_debt);
+                }
+                if (r.red_flags) {
+                    allRedFlags.push(...r.red_flags);
+                }
+                if (r.business_name && !businessInfo.business_name) {
+                    businessInfo.business_name = r.business_name;
+                }
+                if (r.owner_name && !businessInfo.owner_name) {
+                    businessInfo.owner_name = r.owner_name;
+                }
+                if (r.bank_name && !accountInfo.bank_name) {
+                    accountInfo.bank_name = r.bank_name;
+                }
+                if (r.account_number_last4 && !accountInfo.account_number_last4) {
+                    accountInfo.account_number_last4 = r.account_number_last4;
+                }
+            });
+
+            // Calculate our own aggregates from the extracted month data
+            const numMonths = months.length || 1;
+            const totals = months.reduce((acc, m) => ({
+                deposits: acc.deposits + m.total_deposits,
+                trueRevenue: acc.trueRevenue + m.true_revenue,
+                withdrawals: acc.withdrawals + m.total_withdrawals,
+                avgBal: acc.avgBal + m.average_daily_balance,
+                numDeps: acc.numDeps + m.num_deposits,
+                nsf: acc.nsf + m.nsf_count,
+                negDays: acc.negDays + m.days_negative
+            }), { deposits: 0, trueRevenue: 0, withdrawals: 0, avgBal: 0, numDeps: 0, nsf: 0, negDays: 0 });
+
+            // Store extracted business info for research
+            extractedBusinessInfo = {
+                name: businessInfo.business_name || accountInfo.account_holder || '',
+                owner: businessInfo.owner_name || '',
+                address: businessInfo.business_address || ''
+            };
+
+            // Build the full analysis object with OUR calculated aggregates
+            const parsed = {
+                business_info: businessInfo,
+                account_info: accountInfo,
+                months: months,
+                aggregated: {
+                    avg_monthly_deposits: Math.round(totals.deposits / numMonths),
+                    avg_monthly_true_revenue: Math.round(totals.trueRevenue / numMonths),
+                    avg_monthly_balance: Math.round(totals.avgBal / numMonths),
+                    total_nsf_fees: totals.nsf,
+                    total_negative_days: totals.negDays,
+                    avg_num_deposits: Math.round(totals.numDeps / numMonths),
+                    months_analyzed: numMonths,
+                    detected_mca_lenders: Array.from(allMcaLenders)
+                },
+                existing_debt: allDebt,
+                red_flags: [...new Set(allRedFlags)]
+            };
+
+            return {
+                monthly_deposits: parsed.aggregated.avg_monthly_deposits,
+                average_daily_balance: parsed.aggregated.avg_monthly_balance,
+                nsf_negative_days: parsed.aggregated.total_negative_days,
+                num_deposits_monthly: parsed.aggregated.avg_num_deposits,
+                full_analysis: parsed
+            };
         }
 
         function renderExtractedData() {
