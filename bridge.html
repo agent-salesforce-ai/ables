@@ -1,1495 +1,874 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Bridge - Document Watermarking Tool</title>
+    <title>The Bridge - Sutton Funding</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
             --bg-primary: #0a0a0f;
-            --bg-secondary: #1a1a2e;
-            --bg-panel: rgba(20, 20, 30, 0.8);
-            --bg-input: rgba(0, 0, 0, 0.4);
-            --border-color: #333;
-            --text-primary: #e0e0e0;
-            --text-secondary: #888;
-            --text-muted: #666;
-            --accent: #d4af37;
-            --accent-light: #f4e4a6;
-            --accent-dark: #b8960c;
-            --danger: #e74c3c;
-            --success: #27ae60;
-            --warning: #f39c12;
+            --bg-panel: #12121a;
+            --bg-card: #16161f;
+            --bg-input: #1a1a24;
+            --border: #2a2a3a;
+            --text: #e0e0e0;
+            --text-dim: #888;
+            --text-muted: #555;
+            --gold: #d4af37;
+            --gold-light: #f4e4a6;
+            --red: #e74c3c;
+            --green: #27ae60;
+            --orange: #f39c12;
         }
-
-        .light-theme {
-            --bg-primary: #f5f5f5;
-            --bg-secondary: #ffffff;
-            --bg-panel: rgba(255, 255, 255, 0.95);
-            --bg-input: rgba(240, 240, 240, 0.8);
-            --border-color: #ddd;
-            --text-primary: #1a1a2e;
-            --text-secondary: #555;
-            --text-muted: #888;
-        }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg-primary); min-height: 100vh; color: var(--text); }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-primary) 100%);
-            min-height: 100vh;
-            color: var(--text-primary);
-            transition: all 0.3s ease;
-        }
+        /* Header */
+        header { text-align: center; padding: 20px; border-bottom: 1px solid var(--gold); }
+        header img { height: 40px; margin-bottom: 5px; }
+        h1 { font-size: 28px; background: linear-gradient(135deg, var(--gold), var(--gold-light), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 3px; }
+        .tagline { color: var(--text-dim); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; }
 
-        .container { max-width: 1600px; margin: 0 auto; padding: 20px; }
+        /* Layout */
+        .container { display: grid; grid-template-columns: 320px 1fr; min-height: calc(100vh - 100px); }
 
-        header {
-            text-align: center;
-            padding: 20px 0;
-            border-bottom: 1px solid var(--accent);
-            margin-bottom: 25px;
-            position: relative;
-        }
-
-        .header-actions {
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            gap: 10px;
-        }
-
-        .icon-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background: var(--bg-panel);
-            color: var(--text-secondary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            transition: all 0.3s;
-        }
-
-        .icon-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-        h1 {
-            font-size: 36px;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 50%, var(--accent) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: 2px;
-        }
-
-        .tagline {
-            color: var(--text-secondary);
-            font-size: 12px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            margin-top: 6px;
-        }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 320px 1fr 320px;
-            gap: 25px;
-        }
-
-        .panel {
-            background: var(--bg-panel);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
-        }
-
-        .panel-title {
-            color: var(--accent);
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 15px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+        /* Sidebar */
+        .sidebar { background: var(--bg-panel); padding: 20px; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+        .sidebar-title { color: var(--gold); font-size: 10px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; }
 
         .upload-zone {
-            border: 2px dashed var(--border-color);
-            border-radius: 8px;
-            padding: 25px 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: var(--bg-input);
-            margin-bottom: 15px;
+            border: 2px dashed var(--border); border-radius: 10px; padding: 25px; text-align: center;
+            cursor: pointer; transition: all 0.3s; background: var(--bg-input); margin-bottom: 15px;
         }
-
-        .upload-zone:hover, .upload-zone.drag-over {
-            border-color: var(--accent);
-            background: rgba(212, 175, 55, 0.1);
-        }
-
+        .upload-zone:hover { border-color: var(--gold); background: rgba(212,175,55,0.05); }
         .upload-zone input { display: none; }
-        .upload-icon { font-size: 32px; margin-bottom: 8px; }
-        .upload-text { color: var(--text-secondary); font-size: 12px; }
-        .upload-text span { color: var(--accent); text-decoration: underline; }
+        .upload-icon { font-size: 32px; opacity: 0.5; }
+        .upload-text { color: var(--text-dim); font-size: 12px; margin-top: 8px; }
+        .upload-text span { color: var(--gold); }
 
-        .file-queue { max-height: 400px; overflow-y: auto; }
-
+        .file-list { flex: 1; overflow-y: auto; margin-bottom: 15px; }
         .file-item {
-            background: var(--bg-input);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 10px;
-            position: relative;
+            display: flex; align-items: center; gap: 10px; padding: 10px;
+            background: var(--bg-input); border-radius: 8px; margin-bottom: 6px;
+            border-left: 3px solid var(--border); cursor: pointer;
         }
-
-        .file-item.active { border-color: var(--accent); background: rgba(212, 175, 55, 0.1); }
-        .file-item.scanned-clean { border-left: 3px solid var(--success); }
-        .file-item.scanned-secure { border-left: 3px solid var(--success); }
-        .file-item.scanned-warning { border-left: 3px solid var(--warning); }
-        .file-item.scanned-danger { border-left: 3px solid var(--danger); }
-
-        .file-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-
-        .file-thumb {
-            width: 40px;
-            height: 40px;
-            border-radius: 4px;
-            object-fit: cover;
-            background: var(--border-color);
-        }
-
-        .file-meta { flex: 1; min-width: 0; }
-        .file-name { font-size: 12px; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .file-info { font-size: 10px; color: var(--text-muted); }
-        .file-actions { display: flex; gap: 5px; }
-
-        .file-actions button {
-            width: 24px;
-            height: 24px;
-            border: none;
-            border-radius: 4px;
-            background: transparent;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .file-actions button:hover { background: var(--bg-input); color: var(--accent); }
-        .file-actions button.delete:hover { color: var(--danger); }
-
-        .file-label {
-            width: 100%;
-            padding: 8px 10px;
-            background: var(--bg-input);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            color: var(--text-primary);
-            font-size: 12px;
-        }
-
-        .file-label:focus { outline: none; border-color: var(--accent); }
-
-        .fraud-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 9px;
-            text-transform: uppercase;
-            font-weight: 600;
-            margin-top: 6px;
-        }
-
-        .fraud-badge.clean { background: rgba(39, 174, 96, 0.2); color: var(--success); }
-        .fraud-badge.secure { background: rgba(39, 174, 96, 0.2); color: var(--success); }
-        .fraud-badge.warning { background: rgba(243, 156, 18, 0.2); color: var(--warning); }
-        .fraud-badge.danger { background: rgba(231, 76, 60, 0.2); color: var(--danger); }
-        .fraud-badge.pending { background: rgba(212, 175, 55, 0.2); color: var(--accent); }
-
-        .control-group { margin-bottom: 18px; }
-
-        label {
-            display: block;
-            color: var(--text-secondary);
-            font-size: 11px;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        input[type="text"], input[type="password"], input[type="url"], select, textarea {
-            width: 100%;
-            padding: 10px;
-            background: var(--bg-input);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            color: var(--text-primary);
-            font-size: 13px;
-        }
-
-        input[type="text"]:focus, input[type="password"]:focus, input[type="url"]:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-
-        input[type="range"] { width: 100%; height: 6px; margin: 8px 0; -webkit-appearance: none; appearance: none; background: var(--border-color); border-radius: 3px; cursor: pointer; }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; background: var(--accent); border-radius: 50%; cursor: pointer; border: none; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-        input[type="range"]::-moz-range-track { height: 6px; background: var(--border-color); border-radius: 3px; border: none; }
-        input[type="range"]::-moz-range-progress { height: 6px; background: var(--accent); border-radius: 3px; }
-        input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; background: var(--accent); border-radius: 50%; cursor: pointer; border: none; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-        input[type="range"]::-ms-fill-lower { background: var(--accent); border-radius: 3px; }
-        input[type="range"]::-ms-fill-upper { background: var(--border-color); border-radius: 3px; }
-        input[type="range"]::-ms-thumb { width: 18px; height: 18px; background: var(--accent); border-radius: 50%; cursor: pointer; border: none; }
-        input[type="range"]:focus { outline: none; }
-        input[type="range"]::-webkit-slider-thumb:hover { background: var(--accent-light); }
-        input[type="range"]::-moz-range-thumb:hover { background: var(--accent-light); }
-
-        .range-header { display: flex; justify-content: space-between; align-items: center; }
-        .range-value { color: var(--accent); font-size: 12px; font-weight: 600; }
+        .file-item:hover { background: var(--bg-card); }
+        .file-item.active { border-left-color: var(--gold); }
+        .file-item.clean { border-left-color: var(--green); }
+        .file-item.warning { border-left-color: var(--orange); }
+        .file-item.danger { border-left-color: var(--red); }
+        .file-thumb { width: 40px; height: 40px; border-radius: 4px; object-fit: cover; background: var(--border); }
+        .file-info { flex: 1; min-width: 0; }
+        .file-name { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .file-meta { font-size: 10px; color: var(--text-muted); }
+        .file-badge { font-size: 8px; padding: 2px 6px; border-radius: 8px; font-weight: 600; text-transform: uppercase; }
+        .file-badge.clean { background: rgba(39,174,96,0.2); color: var(--green); }
+        .file-badge.warning { background: rgba(243,156,18,0.2); color: var(--orange); }
+        .file-badge.danger { background: rgba(231,76,60,0.2); color: var(--red); }
+        .file-remove { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px; }
+        .file-remove:hover { color: var(--red); }
 
         .btn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
+            width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 12px;
+            font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
+            display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px;
         }
+        .btn-gold { background: linear-gradient(135deg, var(--gold), #b8960c); color: var(--bg-primary); }
+        .btn-gold:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(212,175,55,0.3); }
+        .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
 
-        .btn-primary { background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%); color: var(--bg-primary); }
-        .btn-primary:hover:not(:disabled) { background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%); transform: translateY(-1px); box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); }
-        .btn-primary:disabled { background: var(--border-color); color: var(--text-muted); cursor: not-allowed; }
-        .btn-secondary { background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-primary); }
-        .btn-secondary:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
-        .btn-danger { background: rgba(231, 76, 60, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+        /* Main Content */
+        .main { padding: 20px; overflow-y: auto; }
 
-        .preview-panel { display: flex; flex-direction: column; }
-
-        .preview-container {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
-            min-height: 500px;
-            position: relative;
-            overflow: hidden;
+        /* Preview Section */
+        .preview-section { margin-bottom: 25px; }
+        .preview-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .section-title { color: var(--gold); font-size: 11px; text-transform: uppercase; letter-spacing: 2px; }
+        .preview-box {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+            min-height: 450px; display: flex; align-items: center; justify-content: center; overflow: hidden;
         }
-
-        #previewCanvas { max-width: 100%; max-height: 100%; display: none; }
-
+        .preview-box canvas { max-width: 100%; max-height: 550px; }
         .placeholder { text-align: center; color: var(--text-muted); }
-        .placeholder-icon { font-size: 64px; margin-bottom: 15px; opacity: 0.3; }
+        .placeholder-icon { font-size: 48px; opacity: 0.3; margin-bottom: 10px; }
 
-        .page-nav {
-            display: none;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            margin-top: 15px;
-            padding: 10px;
-            background: var(--bg-input);
-            border-radius: 6px;
+        /* Watermark Controls */
+        .watermark-controls { display: flex; gap: 20px; margin-top: 12px; flex-wrap: wrap; }
+        .control { flex: 1; min-width: 120px; }
+        .control label { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .control label span { color: var(--gold); }
+        .control input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            outline: none;
+            background: linear-gradient(to right, var(--gold) 0%, var(--border) 0%);
         }
-
-        .page-nav button {
-            padding: 8px 16px;
-            background: var(--bg-panel);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            color: var(--text-primary);
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .page-nav button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
-        .page-nav button:disabled { opacity: 0.5; cursor: not-allowed; }
-        .page-info { color: var(--text-secondary); font-size: 12px; min-width: 60px; text-align: center; }
-
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-overlay.active { display: flex; }
-
-        .modal {
-            background: var(--bg-panel);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 25px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .modal-title { color: var(--accent); font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-
-        .modal-close { background: none; border: none; color: var(--text-secondary); font-size: 20px; cursor: pointer; }
-        .modal-close:hover { color: var(--accent); }
-
-        .setting-item { margin-bottom: 20px; }
-        .setting-item label { margin-bottom: 8px; }
-
-        .toggle-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            background: var(--bg-input);
-            border-radius: 6px;
-        }
-
-        .toggle-label { color: var(--text-primary); font-size: 13px; }
-
-        .toggle {
-            width: 44px;
-            height: 24px;
-            background: var(--border-color);
-            border-radius: 12px;
-            position: relative;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .toggle.active { background: var(--accent); }
-
-        .toggle::after {
-            content: '';
-            position: absolute;
-            width: 18px;
-            height: 18px;
-            background: white;
+        .control input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--gold);
             border-radius: 50%;
-            top: 3px;
-            left: 3px;
-            transition: transform 0.3s;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
-
-        .toggle.active::after { transform: translateX(20px); }
-
-        .tabs { display: flex; gap: 0; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); }
-
-        .tab {
-            padding: 10px 20px;
-            background: transparent;
+        .control input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: var(--gold);
+            border-radius: 50%;
+            cursor: pointer;
             border: none;
-            color: var(--text-secondary);
-            font-size: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        .control input[type="range"]::-moz-range-progress {
+            background: var(--gold);
+            height: 6px;
+            border-radius: 3px;
+        }
+        .control input[type="range"]::-moz-range-track {
+            background: var(--border);
+            height: 6px;
+            border-radius: 3px;
+        }
+        .btn-save-defaults {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 11px;
             cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 1px;
-            border-bottom: 2px solid transparent;
-            margin-bottom: -1px;
-            transition: all 0.3s;
+            margin-left: auto;
+        }
+        .btn-save-defaults:hover {
+            border-color: var(--gold);
+            color: var(--gold);
         }
 
-        .tab:hover { color: var(--text-primary); }
-        .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        .watermark-preview {
-            width: 100%;
-            height: 80px;
-            background: var(--bg-input);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 10px;
-            overflow: hidden;
+        /* Bank Data Section */
+        .bank-data { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 25px; }
+        .data-box {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
+            padding: 15px; text-align: center;
         }
+        .data-box.highlight { border-color: var(--gold); background: rgba(212,175,55,0.05); }
+        .data-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .data-value { font-size: 18px; font-weight: 700; color: var(--gold); }
 
-        .watermark-preview img { max-width: 90%; max-height: 70px; object-fit: contain; }
+        /* Lender Results */
+        .lenders-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .match-count { color: var(--green); font-size: 12px; font-weight: 600; }
 
-        .text-gen-preview {
-            background: repeating-linear-gradient(45deg, var(--bg-input), var(--bg-input) 10px, var(--bg-secondary) 10px, var(--bg-secondary) 20px);
-            padding: 20px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100px;
-            margin-top: 15px;
+        .lender-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 15px; }
+        .lender-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+            padding: 16px; transition: all 0.2s;
         }
+        .lender-card:hover { border-color: var(--gold); }
+        .lender-card.high { border-left: 4px solid var(--green); }
+        .lender-card.medium { border-left: 4px solid var(--orange); }
+        .lender-card.low { border-left: 4px solid var(--red); opacity: 0.6; }
 
-        .color-row { display: flex; gap: 10px; align-items: center; }
+        .lender-top { display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px; }
+        .lender-name { font-size: 14px; font-weight: 700; }
+        .lender-match { padding: 3px 10px; border-radius: 10px; font-size: 10px; font-weight: 700; }
+        .lender-match.high { background: rgba(39,174,96,0.2); color: var(--green); }
+        .lender-match.medium { background: rgba(243,156,18,0.2); color: var(--orange); }
+        .lender-match.low { background: rgba(231,76,60,0.2); color: var(--red); }
 
-        .color-row input[type="color"] {
-            width: 50px;
-            height: 36px;
-            padding: 2px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            background: var(--bg-input);
-            cursor: pointer;
+        .lender-terms { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+        .term { text-align: center; }
+        .term-label { font-size: 8px; color: var(--text-muted); text-transform: uppercase; }
+        .term-value { font-size: 13px; font-weight: 700; color: var(--text); }
+        .term-value.gold { color: var(--gold); }
+
+        .lender-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid var(--border); }
+        .lender-method { font-size: 11px; color: var(--text-dim); }
+        .lender-method a { color: var(--gold); text-decoration: none; }
+        .lender-method code { background: rgba(212,175,55,0.15); padding: 2px 6px; border-radius: 4px; color: var(--gold); cursor: pointer; font-size: 10px; }
+        .lender-freq { font-size: 10px; color: var(--text-muted); }
+
+        /* Settings */
+        .settings-btn { position: fixed; top: 20px; right: 20px; width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-panel); color: var(--text-dim); cursor: pointer; font-size: 16px; z-index: 100; }
+        .settings-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-box { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 12px; padding: 25px; width: 90%; max-width: 400px; }
+        .modal-title { color: var(--gold); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; }
+        .modal-close { float: right; background: none; border: none; color: var(--text-dim); font-size: 20px; cursor: pointer; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+        .input-group input { width: 100%; padding: 10px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 13px; }
+        .input-group input:focus { outline: none; border-color: var(--gold); }
+        .input-group small { display: block; margin-top: 4px; font-size: 10px; color: var(--text-muted); }
+
+        /* Download file list */
+        .download-file-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-input); border-radius: 8px; margin-bottom: 8px; }
+        .download-file-thumb { width: 40px; height: 40px; border-radius: 4px; object-fit: cover; background: var(--border); flex-shrink: 0; }
+        .download-file-input { flex: 1; padding: 8px 10px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 13px; }
+        .download-file-input:focus { outline: none; border-color: var(--gold); }
+        .download-file-ext { color: var(--text-muted); font-size: 12px; flex-shrink: 0; }
+
+        /* Status Toast */
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 12px 24px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px; font-size: 13px; z-index: 100; display: none; }
+        .toast.success { border-color: var(--green); color: var(--green); }
+        .toast.error { border-color: var(--red); color: var(--red); }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .container { grid-template-columns: 1fr; }
+            .sidebar { border-right: none; border-bottom: 1px solid var(--border); }
+            .bank-data { grid-template-columns: repeat(2, 1fr); }
+            .lender-terms { grid-template-columns: repeat(2, 1fr); }
         }
-
-        .color-row input[type="text"] { flex: 1; }
-
-        .fraud-report {
-            max-height: 400px;
-            overflow-y: auto;
-            background: var(--bg-input);
-            border-radius: 6px;
-            padding: 15px;
-            margin-top: 15px;
-        }
-
-        .fraud-report h4 { color: var(--accent); font-size: 12px; margin-bottom: 10px; }
-        .fraud-report p { color: var(--text-secondary); font-size: 12px; line-height: 1.6; white-space: pre-wrap; }
-
-        .section-divider { border: none; border-top: 1px solid var(--border-color); margin: 20px 0; }
-
-        .status-bar {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 12px 24px;
-            background: var(--bg-panel);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 13px;
-            z-index: 100;
-            display: none;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .status-bar.error { border-color: var(--danger); color: var(--danger); }
-        .status-bar.success { border-color: var(--success); color: var(--success); }
-
-        .helper-text { color: var(--text-muted); font-size: 10px; margin-top: 5px; display: block; }
 
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg-input); }
-        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
-
-        @media (max-width: 1200px) { .main-content { grid-template-columns: 1fr; } }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
     </style>
 </head>
 <body>
+    <header>
+        <img src="https://i.imgur.com/MXMqYLc.png" alt="Sutton Funding">
+        <h1>THE BRIDGE</h1>
+        <div class="tagline">Upload • Watermark • Match • Submit</div>
+    </header>
+
+    <button class="settings-btn" onclick="openSettings()">⚙</button>
+
     <div class="container">
-        <header>
-            <img src="https://i.imgur.com/MXMqYLc.png" alt="Sutton Funding" style="height:50px;margin-bottom:10px;">
-            <h1>THE BRIDGE</h1>
-            <div class="tagline">Sutton Funding Document Processing</div>
-            <div class="header-actions">
-                <button class="icon-btn" id="settingsBtn" title="Settings">⚙</button>
-            </div>
-        </header>
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-title">Bank Statements</div>
 
-        <div class="main-content">
-            <!-- Left Panel: Files -->
-            <div class="panel">
-                <div class="panel-title">
-                    <span>Documents</span>
-                    <span id="fileCount">0 files</span>
-                </div>
-
-                <div class="upload-zone" id="uploadZone">
-                    <input type="file" id="fileInput" multiple accept="image/*,.pdf">
-                    <div class="upload-icon">↑</div>
-                    <div class="upload-text">
-                        Drop files here or <span>browse</span><br>
-                        <small>PDF, PNG, JPG supported</small>
-                    </div>
-                </div>
-
-                <div class="file-queue" id="fileQueue"></div>
-
-                <button class="btn btn-secondary" id="scanAllBtn" disabled>⊘ Scan All for Fraud</button>
-                <button class="btn btn-primary" id="downloadAllBtn" disabled>↓ Download All Watermarked</button>
-                <button class="btn btn-danger" id="clearAllBtn" style="display:none">✕ Clear All</button>
+            <div class="upload-zone" id="uploadZone">
+                <input type="file" id="fileInput" multiple accept="image/*,.pdf">
+                <div class="upload-text">Drop files or <span>browse</span></div>
             </div>
 
-            <!-- Center: Preview -->
-            <div class="panel preview-panel">
-                <div class="panel-title">Preview</div>
-                <div class="preview-container">
-                    <div class="placeholder" id="placeholder">
-                        <div class="placeholder-icon">◳</div>
-                        <div>Upload documents to preview</div>
-                    </div>
-                    <canvas id="previewCanvas"></canvas>
+            <button class="btn btn-gold" id="processBtn" disabled onclick="processAll()">
+                Process & Match Lenders
+            </button>
+            <button class="btn btn-outline" id="downloadBtn" disabled onclick="openDownloadModal()">
+                Download Watermarked
+            </button>
+
+            <div class="file-list" id="fileList"></div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main">
+            <!-- Preview -->
+            <div class="preview-section">
+                <div class="preview-header">
+                    <div class="section-title">Preview</div>
                 </div>
-                <div class="page-nav" id="pageNav">
-                    <button id="prevPage">&lt; Prev</button>
-                    <span class="page-info" id="pageInfo">1 / 1</span>
-                    <button id="nextPage">Next &gt;</button>
+                <div class="preview-box" id="previewBox">
+                    <div class="placeholder">
+                        <div>Upload bank statements to preview</div>
+                    </div>
+                    <canvas id="canvas" style="display:none;"></canvas>
+                </div>
+                <div class="watermark-controls">
+                    <div class="control">
+                        <label>Opacity <span id="opacityVal">25%</span></label>
+                        <input type="range" id="opacity" min="5" max="50" value="25">
+                    </div>
+                    <div class="control">
+                        <label>Size <span id="sizeVal">15%</span></label>
+                        <input type="range" id="size" min="5" max="40" value="15">
+                    </div>
+                    <div class="control">
+                        <label>Density <span id="densityVal">50%</span></label>
+                        <input type="range" id="density" min="20" max="80" value="50">
+                    </div>
+                    <div class="control">
+                        <label>Rotation <span id="rotationVal">45°</span></label>
+                        <input type="range" id="rotation" min="0" max="90" value="45">
+                    </div>
+                    <button class="btn-save-defaults" onclick="saveDefaults()">Save as Default</button>
                 </div>
             </div>
 
-            <!-- Right Panel: Controls -->
-            <div class="panel">
-                <div class="panel-title">Watermark Settings</div>
-
-                <div class="control-group">
-                    <label>Watermark Image</label>
-                    <div style="display:flex;gap:8px;margin-bottom:8px;">
-                        <input type="url" id="mainWatermarkUrl" placeholder="Paste PNG URL..." style="flex:1;">
-                        <button class="btn btn-secondary" id="createWatermarkBtn" style="width:auto;padding:10px 12px;margin:0;" title="Create text watermark">✎</button>
+            <!-- Bank Data (hidden until processed) -->
+            <div id="resultsSection" style="display:none;">
+                <div class="section-title" style="margin-bottom:12px;">Extracted Bank Data</div>
+                <div class="bank-data">
+                    <div class="data-box highlight">
+                        <div class="data-label">Monthly Deposits</div>
+                        <div class="data-value" id="dataDeposits">--</div>
                     </div>
-                    <div class="watermark-preview" id="mainWatermarkPreview" style="height:60px;">
-                        <img id="mainPreviewImg" src="" alt="Watermark" style="max-height:50px;display:none;">
-                        <span id="mainPreviewPlaceholder" style="color:var(--text-muted);font-size:10px;">No watermark loaded</span>
+                    <div class="data-box">
+                        <div class="data-label">Avg Daily Balance</div>
+                        <div class="data-value" id="dataADB">--</div>
                     </div>
-                </div>
-
-                <div class="control-group">
-                    <div class="range-header">
-                        <label>Opacity</label>
-                        <span class="range-value" id="opacityValue">25%</span>
+                    <div class="data-box">
+                        <div class="data-label">NSF/Negatives</div>
+                        <div class="data-value" id="dataNSF">--</div>
                     </div>
-                    <input type="range" id="opacitySlider" min="5" max="100" value="25">
-                </div>
-
-                <div class="control-group">
-                    <div class="range-header">
-                        <label>Size</label>
-                        <span class="range-value" id="scaleValue">15%</span>
-                    </div>
-                    <input type="range" id="scaleSlider" min="5" max="80" value="15">
-                </div>
-
-                <div class="control-group">
-                    <div class="range-header">
-                        <label>Tile Density</label>
-                        <span class="range-value" id="densityValue">50%</span>
-                    </div>
-                    <input type="range" id="densitySlider" min="20" max="100" value="50">
-                </div>
-
-                <div class="control-group">
-                    <div class="range-header">
-                        <label>Rotation</label>
-                        <span class="range-value" id="rotationValue">45°</span>
-                    </div>
-                    <input type="range" id="rotationSlider" min="0" max="360" value="45">
-                </div>
-
-                <div class="control-group">
-                    <div class="toggle-row" style="padding:10px 12px;">
-                        <span class="toggle-label" style="font-size:12px;">Add Fraud Check Badge</span>
-                        <div class="toggle" id="fraudBadgeToggle"></div>
-                    </div>
-                    <small class="helper-text">Embeds verification badge on downloaded documents</small>
-                </div>
-
-                <div id="badgeSettings" style="display:none; margin-top:15px; padding:12px; background:var(--bg-input); border-radius:6px;">
-                    <div class="control-group" style="margin-bottom:12px;">
-                        <div class="range-header">
-                            <label style="font-size:10px;">Badge Opacity</label>
-                            <span class="range-value" id="badgeOpacityValue">25%</span>
-                        </div>
-                        <input type="range" id="badgeOpacitySlider" min="5" max="100" value="25">
-                    </div>
-                    <div class="control-group" style="margin-bottom:12px;">
-                        <div class="range-header">
-                            <label style="font-size:10px;">Badge Size</label>
-                            <span class="range-value" id="badgeScaleValue">15%</span>
-                        </div>
-                        <input type="range" id="badgeScaleSlider" min="5" max="80" value="15">
-                    </div>
-                    <div class="control-group" style="margin-bottom:12px;">
-                        <div class="range-header">
-                            <label style="font-size:10px;">Badge Density</label>
-                            <span class="range-value" id="badgeDensityValue">50%</span>
-                        </div>
-                        <input type="range" id="badgeDensitySlider" min="20" max="100" value="50">
-                    </div>
-                    <div class="control-group" style="margin-bottom:0;">
-                        <div class="range-header">
-                            <label style="font-size:10px;">Badge Rotation</label>
-                            <span class="range-value" id="badgeRotationValue">45°</span>
-                        </div>
-                        <input type="range" id="badgeRotationSlider" min="0" max="360" value="45">
+                    <div class="data-box">
+                        <div class="data-label"># Deposits</div>
+                        <div class="data-value" id="dataNumDeps">--</div>
                     </div>
                 </div>
 
-                <hr class="section-divider">
-
-                <button class="btn btn-primary" id="downloadCurrentBtn" disabled>↓ Download Current</button>
-                <button class="btn btn-secondary" id="scanCurrentBtn" disabled>⊘ Scan for Fraud</button>
+                <!-- Lender Results -->
+                <div class="lenders-header">
+                    <div class="section-title">Matched Lenders</div>
+                    <div class="match-count" id="matchCount"></div>
+                </div>
+                <div class="lender-grid" id="lenderGrid"></div>
             </div>
+        </div>
+    </div>
+
+    <!-- Download Modal -->
+    <div class="modal" id="downloadModal">
+        <div class="modal-box" style="max-width:500px;">
+            <button class="modal-close" onclick="closeDownloadModal()">×</button>
+            <div class="modal-title">Download Files</div>
+            <div id="downloadFileList" style="margin-bottom:20px;max-height:300px;overflow-y:auto;"></div>
+            <button class="btn btn-gold" onclick="downloadWithNames()">Download All</button>
         </div>
     </div>
 
     <!-- Settings Modal -->
-    <div class="modal-overlay" id="settingsModal">
-        <div class="modal">
-            <div class="modal-header">
-                <span class="modal-title">Settings</span>
-                <button class="modal-close" id="closeSettings">&times;</button>
-            </div>
-
-            <div class="setting-item">
+    <div class="modal" id="settingsModal">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeSettings()">×</button>
+            <div class="modal-title">Settings</div>
+            <div class="input-group">
                 <label>Gemini API Key</label>
-                <input type="password" id="apiKeyInput" placeholder="Enter your Gemini API key...">
-                <small class="helper-text">Required for fraud detection. Stored locally only.</small>
+                <input type="password" id="apiKey" placeholder="Enter API key...">
+                <small>Required for fraud detection & OCR</small>
             </div>
-
-            <hr class="section-divider">
-
-            <div class="setting-item">
-                <label>Watermark Image</label>
-                <div class="tabs">
-                    <button class="tab active" data-tab="url">Paste URL</button>
-                    <button class="tab" data-tab="create">Create New</button>
-                </div>
-
-                <div class="tab-content active" id="tab-url">
-                    <input type="url" id="watermarkUrlInput" placeholder="https://example.com/watermark.png">
-                    <small class="helper-text">Enter URL to a PNG image with transparent background</small>
-                    <div class="watermark-preview" id="urlPreview">
-                        <img id="urlPreviewImg" src="" alt="Watermark preview" style="display:none;">
-                        <span id="urlPreviewPlaceholder" style="color:var(--text-muted);font-size:11px;">Enter URL to preview</span>
-                    </div>
-                </div>
-
-                <div class="tab-content" id="tab-create">
-                    <div class="control-group">
-                        <label>Watermark Text</label>
-                        <input type="text" id="genText" placeholder="CONFIDENTIAL" value="CONFIDENTIAL">
-                    </div>
-                    <div class="control-group">
-                        <label>Font</label>
-                        <select id="genFont">
-                            <option value="Arial Black">Arial Black</option>
-                            <option value="Impact">Impact</option>
-                            <option value="Georgia">Georgia</option>
-                            <option value="Times New Roman">Times New Roman</option>
-                            <option value="Courier New">Courier New</option>
-                            <option value="Verdana">Verdana</option>
-                        </select>
-                    </div>
-                    <div class="control-group">
-                        <label>Text Color</label>
-                        <div class="color-row">
-                            <input type="color" id="genColor" value="#888888">
-                            <input type="text" id="genColorHex" value="#888888" maxlength="7">
-                        </div>
-                    </div>
-                    <div class="text-gen-preview">
-                        <canvas id="textGenCanvas" width="300" height="60"></canvas>
-                    </div>
-                    <button class="btn btn-secondary" id="useGeneratedBtn" style="margin-top:15px">✓ Use This Watermark</button>
-                </div>
+            <div class="input-group">
+                <label>Watermark Image URL</label>
+                <input type="url" id="watermarkUrl" placeholder="https://...">
             </div>
-
-            <hr class="section-divider">
-
-            <div class="setting-item">
-                <div class="toggle-row">
-                    <span class="toggle-label">Light Theme</span>
-                    <div class="toggle" id="themeToggle"></div>
-                </div>
+            <div class="input-group">
+                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+                    <input type="checkbox" id="verifiedBadge" style="width:auto;">
+                    <span style="text-transform:none;font-size:13px;letter-spacing:0;">Show Verified Badge on Clean Documents</span>
+                </label>
+                <small>Overlays a verification stamp on documents that pass fraud check</small>
             </div>
-
-            <button class="btn btn-primary" id="saveSettings">Save Settings</button>
-            <button class="btn btn-secondary" id="resetDefaults">Reset to Defaults</button>
+            <button class="btn btn-gold" onclick="saveSettings()">Save Settings</button>
         </div>
     </div>
 
-    <!-- Fraud Report Modal -->
-    <div class="modal-overlay" id="fraudModal">
-        <div class="modal" style="max-width:550px">
-            <div class="modal-header">
-                <span class="modal-title">Fraud Detection Report</span>
-                <button class="modal-close" id="closeFraud">&times;</button>
-            </div>
-            <div id="fraudReportContent"></div>
-        </div>
-    </div>
-
-    <!-- Status Bar -->
-    <div class="status-bar" id="statusBar"></div>
+    <div class="toast" id="toast"></div>
 
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        const DEFAULTS = { position: 'tiled', opacity: 0.25, scale: 0.15, density: 0.50, rotation: 45, watermarkUrl: 'https://i.imgur.com/MXMqYLc.png' };
+        // Lender data
+        const lenders = [
+            {name:"Kapitus",method:"portal",portal:"https://partner.kapitus.com",min_rate:1.15,max_rate:1.35,min_term:6,max_term:24,max_amount:200000,avg_amount:67625,frequency:"Weekly",notes:"File must be clean, best rates"},
+            {name:"Ondeck",method:"portal",portal:"https://partner.ondeck.com",min_rate:1.20,max_rate:1.35,min_term:6,max_term:24,max_amount:250000,avg_amount:91250,frequency:"Weekly"},
+            {name:"Kalamata Capital",min_credit:600,min_tib:12,min_deposits:40000,min_num_deps:5,min_adb:5000,max_nsf:3,method:"email",email:"submissions@kalamatacapital.com",min_rate:1.18,max_rate:1.45,min_term:6,max_term:15,max_amount:275000,avg_amount:275000,frequency:"Weekly",notes:"Quick turnaround, white label"},
+            {name:"Trust Capital Funding",min_credit:550,min_tib:6,min_deposits:20000,min_num_deps:10,min_adb:2500,max_nsf:3,method:"email",email:"submissions@trustcapitalfunding.com",min_rate:1.28,max_rate:1.42,min_term:6,max_term:12,max_amount:480000,avg_amount:58577,frequency:"Daily",notes:"White label available"},
+            {name:"JRG Funding",min_credit:500,min_tib:12,min_deposits:15000,min_num_deps:4,min_adb:1000,max_nsf:4,method:"email",email:"deals@jrgfunding.com",min_rate:1.29,max_rate:1.40,min_term:3,max_term:12,max_amount:200000,avg_amount:142500,frequency:"Weekly"},
+            {name:"eFinancial Tree",min_credit:500,min_tib:6,min_deposits:15000,min_num_deps:2,min_adb:1000,max_nsf:3,method:"email",email:"submit@efinancialtree.com",min_rate:1.30,max_rate:1.45,min_term:3,max_term:10,max_amount:105000,avg_amount:85000,frequency:"Weekly",notes:"White label, offers weeklys"},
+            {name:"Reliable Capital",min_credit:525,min_tib:12,min_deposits:25000,max_nsf:3,method:"email",email:"submit@reliablecapital.com",min_rate:1.35,max_rate:1.42,min_term:6,max_term:12,max_amount:45000,frequency:"Weekly"},
+            {name:"Alternative Funding Group",min_credit:550,min_tib:12,min_deposits:20000,min_num_deps:4,min_adb:1000,max_nsf:4,method:"email",email:"deals@altfundinggroup.com",min_rate:1.37,max_rate:1.46,min_term:4,max_term:10,max_amount:150000,frequency:"Weekly",notes:"Reverses available"},
+            {name:"Forward Financing",method:"portal",portal:"https://broker.forwardfinancing.com",min_rate:1.37,max_rate:1.51,min_term:4,max_term:15,max_amount:65000,frequency:"Weekly"},
+            {name:"Credibly",method:"portal",portal:"https://portal.credibly.com",min_rate:1.40,max_rate:1.49,min_term:6,max_term:18,max_amount:116200,frequency:"Weekly"},
+            {name:"Silverline Funding",min_credit:500,min_tib:5,min_deposits:25000,min_adb:1000,max_nsf:3,method:"email",email:"submissions@silverlinefunding.com",min_rate:1.40,max_rate:1.48,min_term:3,max_term:12,max_amount:15000,frequency:"Weekly"},
+            {name:"1DC Funding",method:"email",email:"submissions@1dcfunding.com",min_rate:1.45,max_rate:1.60,min_term:3,max_term:12,max_amount:260000,frequency:"Daily"},
+            {name:"Fundfi",min_tib:12,min_deposits:35000,min_num_deps:6,max_nsf:5,method:"email",email:"submit@fundfi.com",min_rate:1.45,max_rate:1.46,min_term:6,max_term:12,max_amount:85000,frequency:"Daily"},
+            {name:"Wide Merchant Group",min_credit:480,min_tib:6,min_deposits:8000,min_num_deps:2,min_adb:750,max_nsf:0,method:"email",email:"deals@widemerchantgroup.com",min_rate:1.46,max_rate:1.49,min_term:3,max_term:9,max_amount:25000,frequency:"Daily",notes:"No NSFs allowed"},
+            {name:"Rapid Finance",min_credit:620,min_tib:36,min_deposits:10000,method:"portal",portal:"https://portal.rapidfinance.com",min_rate:1.28,max_rate:1.48,min_term:3,max_term:12,max_amount:400000,frequency:"Weekly"},
+            {name:"Bitty Advance",min_credit:500,min_tib:12,min_deposits:5000,max_nsf:7,method:"email",email:"submissions@bittyadvance.com",min_rate:1.55,max_rate:1.59,min_term:2,max_term:6,max_amount:35000,frequency:"Daily",notes:"Multi-tier programs"},
+            {name:"Smart Step Funding",min_credit:600,min_tib:24,min_deposits:10000,min_num_deps:6,method:"email",email:"deals@smartstepfunding.com",min_rate:1.25,max_rate:1.35,min_term:9,max_term:17,max_amount:110000,frequency:"Weekly"}
+        ];
 
+        // State
         let files = [];
-        let activeFileIndex = -1;
-        let logoImage = null;
-        let currentPosition = 'tiled';
-        let currentOpacity = 0.25;
-        let currentScale = 0.15;
-        let currentDensity = 0.50;
-        let currentRotation = 45;
-        let generatedWatermarkDataUrl = null;
-        let showFraudBadge = false;
-        let badgeOpacity = 0.25;
-        let badgeScale = 0.15;
-        let badgeDensity = 0.50;
-        let badgeRotation = 45;
-
-        const canvas = document.getElementById('previewCanvas');
+        let activeIdx = -1;
+        let logo = null;
+        let bankData = null;
+        let settings = { opacity: 0.25, size: 0.15, density: 0.50, rotation: 45 };
+        const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        const placeholder = document.getElementById('placeholder');
-        const fileQueue = document.getElementById('fileQueue');
-        const fileInput = document.getElementById('fileInput');
-        const uploadZone = document.getElementById('uploadZone');
-        const pageNav = document.getElementById('pageNav');
-        const statusBar = document.getElementById('statusBar');
 
-        function updateSliderFill(slider) {
-            const min = slider.min || 0;
-            const max = slider.max || 100;
-            const val = slider.value;
-            const percent = ((val - min) / (max - min)) * 100;
-            slider.style.background = `linear-gradient(to right, var(--accent) 0%, var(--accent) ${percent}%, var(--border-color) ${percent}%, var(--border-color) 100%)`;
-        }
+        // Init
+        function init() {
+            document.getElementById('apiKey').value = localStorage.getItem('gemini_key') || '';
+            document.getElementById('watermarkUrl').value = localStorage.getItem('watermark_url') || 'https://i.imgur.com/MXMqYLc.png';
+            document.getElementById('verifiedBadge').checked = localStorage.getItem('verified_badge') === 'true';
+            loadLogo(localStorage.getItem('watermark_url') || 'https://i.imgur.com/MXMqYLc.png');
 
-        function loadSettings() {
-            document.getElementById('apiKeyInput').value = localStorage.getItem('bridge_api_key') || '';
-            const lightTheme = localStorage.getItem('bridge_light_theme') === 'true';
-            if (lightTheme) { document.body.classList.add('light-theme'); document.getElementById('themeToggle').classList.add('active'); }
+            const zone = document.getElementById('uploadZone');
+            zone.onclick = () => document.getElementById('fileInput').click();
+            zone.ondragover = e => { e.preventDefault(); zone.style.borderColor = 'var(--gold)'; };
+            zone.ondragleave = () => zone.style.borderColor = '';
+            zone.ondrop = e => { e.preventDefault(); zone.style.borderColor = ''; handleFiles(e.dataTransfer.files); };
+            document.getElementById('fileInput').onchange = e => handleFiles(e.target.files);
 
-            const savedUrl = localStorage.getItem('bridge_watermark_url') || DEFAULTS.watermarkUrl;
-            document.getElementById('watermarkUrlInput').value = savedUrl;
-            document.getElementById('mainWatermarkUrl').value = savedUrl;
-            loadWatermarkFromUrl(savedUrl);
-
-            currentPosition = localStorage.getItem('bridge_position') || DEFAULTS.position;
-            currentOpacity = parseFloat(localStorage.getItem('bridge_opacity')) || DEFAULTS.opacity;
-            currentScale = parseFloat(localStorage.getItem('bridge_scale')) || DEFAULTS.scale;
-            currentDensity = parseFloat(localStorage.getItem('bridge_density')) || DEFAULTS.density;
-            currentRotation = parseFloat(localStorage.getItem('bridge_rotation')) || DEFAULTS.rotation;
-            showFraudBadge = localStorage.getItem('bridge_fraud_badge') === 'true';
-            if (showFraudBadge) {
-                document.getElementById('fraudBadgeToggle').classList.add('active');
-                document.getElementById('badgeSettings').style.display = 'block';
-            }
-            badgeOpacity = parseFloat(localStorage.getItem('bridge_badge_opacity')) || DEFAULTS.opacity;
-            badgeScale = parseFloat(localStorage.getItem('bridge_badge_scale')) || DEFAULTS.scale;
-            badgeDensity = parseFloat(localStorage.getItem('bridge_badge_density')) || DEFAULTS.density;
-            badgeRotation = parseFloat(localStorage.getItem('bridge_badge_rotation')) || DEFAULTS.rotation;
-
-            document.getElementById('badgeOpacitySlider').value = Math.round(badgeOpacity * 100);
-            document.getElementById('badgeOpacityValue').textContent = Math.round(badgeOpacity * 100) + '%';
-            document.getElementById('badgeScaleSlider').value = Math.round(badgeScale * 100);
-            document.getElementById('badgeScaleValue').textContent = Math.round(badgeScale * 100) + '%';
-            document.getElementById('badgeDensitySlider').value = Math.round(badgeDensity * 100);
-            document.getElementById('badgeDensityValue').textContent = Math.round(badgeDensity * 100) + '%';
-            document.getElementById('badgeRotationSlider').value = badgeRotation;
-            document.getElementById('badgeRotationValue').textContent = badgeRotation + '°';
-
-            document.getElementById('opacitySlider').value = Math.round(currentOpacity * 100);
-            document.getElementById('opacityValue').textContent = Math.round(currentOpacity * 100) + '%';
-            document.getElementById('scaleSlider').value = Math.round(currentScale * 100);
-            document.getElementById('scaleValue').textContent = Math.round(currentScale * 100) + '%';
-            document.getElementById('densitySlider').value = Math.round(currentDensity * 100);
-            document.getElementById('densityValue').textContent = Math.round(currentDensity * 100) + '%';
-            document.getElementById('rotationSlider').value = currentRotation;
-            document.getElementById('rotationValue').textContent = currentRotation + '°';
-            document.querySelectorAll('input[type="range"]').forEach(updateSliderFill);
-        }
-
-        function saveAllSettings() {
-            localStorage.setItem('bridge_api_key', document.getElementById('apiKeyInput').value.trim());
-            localStorage.setItem('bridge_watermark_url', document.getElementById('watermarkUrlInput').value.trim() || DEFAULTS.watermarkUrl);
-            localStorage.setItem('bridge_position', currentPosition);
-            localStorage.setItem('bridge_opacity', currentOpacity);
-            localStorage.setItem('bridge_scale', currentScale);
-            localStorage.setItem('bridge_density', currentDensity);
-            localStorage.setItem('bridge_rotation', currentRotation);
-        }
-
-        document.getElementById('saveSettings').addEventListener('click', () => { saveAllSettings(); closeModal('settingsModal'); showStatus('Settings saved!', 'success'); });
-
-        document.getElementById('resetDefaults').addEventListener('click', () => {
-            currentOpacity = DEFAULTS.opacity; currentScale = DEFAULTS.scale; currentDensity = DEFAULTS.density; currentRotation = DEFAULTS.rotation;
-            document.getElementById('watermarkUrlInput').value = DEFAULTS.watermarkUrl;
-            document.getElementById('opacitySlider').value = Math.round(currentOpacity * 100);
-            document.getElementById('opacityValue').textContent = Math.round(currentOpacity * 100) + '%';
-            document.getElementById('scaleSlider').value = Math.round(currentScale * 100);
-            document.getElementById('scaleValue').textContent = Math.round(currentScale * 100) + '%';
-            document.getElementById('densitySlider').value = Math.round(currentDensity * 100);
-            document.getElementById('densityValue').textContent = Math.round(currentDensity * 100) + '%';
-            document.getElementById('rotationSlider').value = currentRotation;
-            document.getElementById('rotationValue').textContent = currentRotation + '°';
-            document.querySelectorAll('input[type="range"]').forEach(updateSliderFill);
-            loadWatermarkFromUrl(DEFAULTS.watermarkUrl);
-            saveAllSettings();
-            if (activeFileIndex >= 0) renderPreview();
-            showStatus('Reset to defaults!', 'success');
-        });
-
-        function loadWatermarkFromUrl(url, isDataUrl = false) {
-            if (!url) url = DEFAULTS.watermarkUrl;
-            logoImage = new Image();
-            logoImage.crossOrigin = 'anonymous';
-            logoImage.onload = () => {
-                // Update settings modal preview
-                const preview = document.getElementById('urlPreviewImg');
-                const ph = document.getElementById('urlPreviewPlaceholder');
-                if (preview) { preview.src = url; preview.style.display = 'block'; }
-                if (ph) ph.style.display = 'none';
-                // Update main panel preview
-                const mainPreview = document.getElementById('mainPreviewImg');
-                const mainPh = document.getElementById('mainPreviewPlaceholder');
-                if (mainPreview) { mainPreview.src = url; mainPreview.style.display = 'block'; }
-                if (mainPh) mainPh.style.display = 'none';
-                // Sync URL inputs (only if not a data URL)
-                if (!isDataUrl) {
-                    document.getElementById('mainWatermarkUrl').value = url;
-                    document.getElementById('watermarkUrlInput').value = url;
-                }
-                if (activeFileIndex >= 0) renderPreview();
-            };
-            logoImage.onerror = () => {
-                showStatus('Failed to load watermark image', 'error');
-                document.getElementById('urlPreviewImg').style.display = 'none';
-                document.getElementById('urlPreviewPlaceholder').style.display = 'block';
-                document.getElementById('urlPreviewPlaceholder').textContent = 'Failed to load';
-                document.getElementById('mainPreviewImg').style.display = 'none';
-                document.getElementById('mainPreviewPlaceholder').style.display = 'block';
-                document.getElementById('mainPreviewPlaceholder').textContent = 'Failed to load';
-            };
-            logoImage.src = url;
-        }
-
-        // Main panel URL input
-        document.getElementById('mainWatermarkUrl').addEventListener('change', (e) => {
-            const url = e.target.value.trim();
-            if (url) {
-                loadWatermarkFromUrl(url);
-                localStorage.setItem('bridge_watermark_url', url);
-            }
-        });
-
-        // Create watermark button - opens settings to Create New tab
-        document.getElementById('createWatermarkBtn').addEventListener('click', () => {
-            openModal('settingsModal');
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.querySelector('.tab[data-tab="create"]').classList.add('active');
-            document.getElementById('tab-create').classList.add('active');
-        });
-
-        // Settings modal URL input
-        document.getElementById('watermarkUrlInput').addEventListener('change', (e) => { if (e.target.value.trim()) { loadWatermarkFromUrl(e.target.value.trim()); localStorage.setItem('bridge_watermark_url', e.target.value.trim()); } });
-
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                tab.classList.add('active');
-                document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+            ['opacity','size','density','rotation'].forEach(id => {
+                const slider = document.getElementById(id);
+                const updateSlider = () => {
+                    const v = parseInt(slider.value);
+                    const min = parseInt(slider.min);
+                    const max = parseInt(slider.max);
+                    const pct = ((v - min) / (max - min)) * 100;
+                    slider.style.background = `linear-gradient(to right, var(--gold) ${pct}%, var(--border) ${pct}%)`;
+                    document.getElementById(id+'Val').textContent = id === 'rotation' ? v+'°' : v+'%';
+                    settings[id] = id === 'rotation' ? v : v/100;
+                    if (activeIdx >= 0) render();
+                };
+                slider.oninput = updateSlider;
+                updateSlider(); // Initialize fill on load
             });
-        });
-
-        const genCanvas = document.getElementById('textGenCanvas');
-        const genCtx = genCanvas.getContext('2d');
-
-        function updateTextWatermarkPreview() {
-            const text = document.getElementById('genText').value || 'CONFIDENTIAL';
-            const font = document.getElementById('genFont').value;
-            const color = document.getElementById('genColor').value;
-            genCanvas.width = 400; genCanvas.height = 80;
-            genCtx.clearRect(0, 0, genCanvas.width, genCanvas.height);
-            genCtx.font = `bold 32px "${font}"`;
-            genCtx.fillStyle = color;
-            genCtx.textAlign = 'center';
-            genCtx.textBaseline = 'middle';
-            genCtx.fillText(text, genCanvas.width / 2, genCanvas.height / 2);
-            generatedWatermarkDataUrl = genCanvas.toDataURL('image/png');
         }
 
-        document.getElementById('genText').addEventListener('input', updateTextWatermarkPreview);
-        document.getElementById('genFont').addEventListener('change', updateTextWatermarkPreview);
-        document.getElementById('genColor').addEventListener('input', (e) => { document.getElementById('genColorHex').value = e.target.value; updateTextWatermarkPreview(); });
-        document.getElementById('genColorHex').addEventListener('input', (e) => { if (/^#[0-9A-Fa-f]{6}$/.test(e.target.value)) { document.getElementById('genColor').value = e.target.value; updateTextWatermarkPreview(); } });
-
-        document.getElementById('useGeneratedBtn').addEventListener('click', () => {
-            if (generatedWatermarkDataUrl) {
-                loadWatermarkFromUrl(generatedWatermarkDataUrl, true);
-                // Clear URL inputs since we're using generated watermark
-                document.getElementById('watermarkUrlInput').value = '';
-                document.getElementById('mainWatermarkUrl').value = '';
-                document.getElementById('mainWatermarkUrl').placeholder = 'Using generated watermark';
-                showStatus('Using generated watermark!', 'success');
-                closeModal('settingsModal');
-            }
-        });
-
-        updateTextWatermarkPreview();
-
-        document.getElementById('themeToggle').addEventListener('click', function() { this.classList.toggle('active'); document.body.classList.toggle('light-theme'); localStorage.setItem('bridge_light_theme', this.classList.contains('active')); });
-
-        document.getElementById('fraudBadgeToggle').addEventListener('click', function() {
-            this.classList.toggle('active');
-            showFraudBadge = this.classList.contains('active');
-            localStorage.setItem('bridge_fraud_badge', showFraudBadge);
-            document.getElementById('badgeSettings').style.display = showFraudBadge ? 'block' : 'none';
-            if (activeFileIndex >= 0) renderPreview();
-        });
-
-        // Badge settings sliders
-        document.getElementById('badgeOpacitySlider').addEventListener('input', (e) => {
-            badgeOpacity = e.target.value / 100;
-            document.getElementById('badgeOpacityValue').textContent = e.target.value + '%';
-            localStorage.setItem('bridge_badge_opacity', badgeOpacity);
-            updateSliderFill(e.target);
-            if (activeFileIndex >= 0) renderPreview();
-        });
-        document.getElementById('badgeScaleSlider').addEventListener('input', (e) => {
-            badgeScale = e.target.value / 100;
-            document.getElementById('badgeScaleValue').textContent = e.target.value + '%';
-            localStorage.setItem('bridge_badge_scale', badgeScale);
-            updateSliderFill(e.target);
-            if (activeFileIndex >= 0) renderPreview();
-        });
-        document.getElementById('badgeDensitySlider').addEventListener('input', (e) => {
-            badgeDensity = e.target.value / 100;
-            document.getElementById('badgeDensityValue').textContent = e.target.value + '%';
-            localStorage.setItem('bridge_badge_density', badgeDensity);
-            updateSliderFill(e.target);
-            if (activeFileIndex >= 0) renderPreview();
-        });
-        document.getElementById('badgeRotationSlider').addEventListener('input', (e) => {
-            badgeRotation = parseInt(e.target.value);
-            document.getElementById('badgeRotationValue').textContent = e.target.value + '°';
-            localStorage.setItem('bridge_badge_rotation', badgeRotation);
-            updateSliderFill(e.target);
-            if (activeFileIndex >= 0) renderPreview();
-        });
-
-        document.getElementById('settingsBtn').addEventListener('click', () => openModal('settingsModal'));
-        document.getElementById('closeSettings').addEventListener('click', () => closeModal('settingsModal'));
-        document.getElementById('closeFraud').addEventListener('click', () => closeModal('fraudModal'));
-
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-
-        function showStatus(msg, type = '') {
-            statusBar.textContent = msg;
-            statusBar.className = 'status-bar' + (type ? ' ' + type : '');
-            statusBar.style.display = 'block';
-            setTimeout(() => statusBar.style.display = 'none', 3000);
+        function loadLogo(url) {
+            logo = new Image();
+            logo.crossOrigin = 'anonymous';
+            logo.onload = () => { if (activeIdx >= 0) render(); };
+            logo.src = url;
         }
 
-        uploadZone.addEventListener('click', () => fileInput.click());
-        uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
-        uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
-        uploadZone.addEventListener('drop', (e) => { e.preventDefault(); uploadZone.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); });
-        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
-
+        // Files
         async function handleFiles(fileList) {
-            for (const file of fileList) {
-                if (file.type === 'application/pdf') await loadPDF(file);
-                else if (file.type.startsWith('image/')) await loadImageFile(file);
+            for (const f of fileList) {
+                if (f.type === 'application/pdf') await loadPDF(f);
+                else if (f.type.startsWith('image/')) await loadImage(f);
             }
-            updateUI();
+            updateList();
+            if (files.length && activeIdx === -1) select(0);
+            document.getElementById('processBtn').disabled = !files.length;
+            document.getElementById('downloadBtn').disabled = !files.length;
+
+            // Auto-process after upload
+            if (files.length) {
+                processAll();
+            }
         }
 
         async function loadPDF(file) {
-            try {
-                showStatus('Loading PDF...');
-                const arrayBuffer = await file.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
-                const pages = [];
-                for (let i = 1; i <= pdf.numPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const viewport = page.getViewport({scale: 2});
-                    const tempCanvas = document.createElement('canvas');
-                    tempCanvas.width = viewport.width; tempCanvas.height = viewport.height;
-                    await page.render({canvasContext: tempCanvas.getContext('2d'), viewport}).promise;
-                    const img = new Image();
-                    img.src = tempCanvas.toDataURL();
-                    await new Promise(r => img.onload = r);
-                    pages.push(img);
-                }
-                files.push({ id: Date.now() + Math.random(), name: file.name, type: 'pdf', label: file.name.replace(/\.pdf$/i, ''), pages, currentPage: 0, fraudStatus: null, fraudReport: null, thumb: pages[0].src });
-                showStatus(`Loaded ${file.name} (${pages.length} pages)`);
-                if (activeFileIndex === -1) selectFile(files.length - 1);
-            } catch (err) { showStatus('Failed to load PDF: ' + err.message, 'error'); }
+            const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+            const pages = [];
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const vp = page.getViewport({ scale: 2 });
+                const c = document.createElement('canvas');
+                c.width = vp.width; c.height = vp.height;
+                await page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+                const img = new Image(); img.src = c.toDataURL();
+                await new Promise(r => img.onload = r);
+                pages.push(img);
+            }
+            files.push({ name: file.name, pages, page: 0, thumb: pages[0].src, status: null });
         }
 
-        async function loadImageFile(file) {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
+        async function loadImage(file) {
+            return new Promise(r => {
+                const fr = new FileReader();
+                fr.onload = e => {
                     const img = new Image();
-                    img.onload = () => {
-                        files.push({ id: Date.now() + Math.random(), name: file.name, type: 'image', label: file.name.replace(/\.[^.]+$/, ''), pages: [img], currentPage: 0, fraudStatus: null, fraudReport: null, thumb: img.src });
-                        showStatus(`Loaded ${file.name}`);
-                        if (activeFileIndex === -1) selectFile(files.length - 1);
-                        resolve();
-                    };
+                    img.onload = () => { files.push({ name: file.name, pages: [img], page: 0, thumb: img.src, status: null }); r(); };
                     img.src = e.target.result;
                 };
-                reader.readAsDataURL(file);
+                fr.readAsDataURL(file);
             });
         }
 
-        function updateUI() {
-            document.getElementById('fileCount').textContent = `${files.length} file${files.length !== 1 ? 's' : ''}`;
-            document.getElementById('scanAllBtn').disabled = files.length === 0;
-            document.getElementById('downloadAllBtn').disabled = files.length === 0;
-            document.getElementById('clearAllBtn').style.display = files.length > 0 ? 'block' : 'none';
-            renderFileQueue();
+        function updateList() {
+            document.getElementById('fileList').innerHTML = files.map((f,i) => `
+                <div class="file-item ${f.status||''} ${i===activeIdx?'active':''}" onclick="select(${i})">
+                    <img class="file-thumb" src="${f.thumb}">
+                    <div class="file-info">
+                        <div class="file-name">${f.name}</div>
+                        <div class="file-meta">${f.pages.length} page${f.pages.length>1?'s':''}</div>
+                    </div>
+                    ${f.status ? `<span class="file-badge ${f.status}">${f.status==='clean'?'✓':f.status==='warning'?'⚠':'✕'}</span>` : ''}
+                    <button class="file-remove" onclick="event.stopPropagation();remove(${i})">×</button>
+                </div>
+            `).join('');
         }
 
-        function renderFileQueue() {
-            fileQueue.innerHTML = '';
-            files.forEach((file, idx) => {
-                const div = document.createElement('div');
-                div.className = 'file-item' + (idx === activeFileIndex ? ' active' : '');
-                if (file.fraudStatus === 'clean') div.classList.add('scanned-clean');
-                else if (file.fraudStatus === 'secure') div.classList.add('scanned-secure');
-                else if (file.fraudStatus === 'warning') div.classList.add('scanned-warning');
-                else if (file.fraudStatus === 'danger') div.classList.add('scanned-danger');
-                let badge = '';
-                if (file.fraudStatus === 'clean') badge = '<div class="fraud-badge clean" onclick="viewFraudReport('+idx+')" style="cursor:pointer">✓ Clean</div>';
-                else if (file.fraudStatus === 'secure') badge = '<div class="fraud-badge secure" onclick="viewFraudReport('+idx+')" style="cursor:pointer">◈ Secure</div>';
-                else if (file.fraudStatus === 'warning') badge = '<div class="fraud-badge warning" onclick="viewFraudReport('+idx+')" style="cursor:pointer">⚠ Suspicious</div>';
-                else if (file.fraudStatus === 'danger') badge = '<div class="fraud-badge danger" onclick="viewFraudReport('+idx+')" style="cursor:pointer">✕ Altered</div>';
-                else if (file.fraudStatus === 'scanning') badge = '<div class="fraud-badge pending">◌ Scanning</div>';
-                div.innerHTML = `<div class="file-header"><img class="file-thumb" src="${file.thumb}" alt=""><div class="file-meta"><div class="file-name">${file.name}</div><div class="file-info">${file.type.toUpperCase()} - ${file.pages.length} page(s)</div>${badge}</div><div class="file-actions"><button onclick="viewFraudReport(${idx})" title="View Report" ${!file.fraudReport ? 'disabled style="opacity:0.3"' : ''}>ⓘ</button><button class="delete" onclick="removeFile(${idx})" title="Remove">✕</button></div></div><input type="text" class="file-label" value="${file.label}" onchange="updateLabel(${idx}, this.value)" onclick="event.stopPropagation()" placeholder="Enter label...">`;
-                div.addEventListener('click', (e) => { if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') selectFile(idx); });
-                fileQueue.appendChild(div);
-            });
-        }
-
-        function selectFile(idx) {
-            activeFileIndex = idx;
-            const file = files[idx];
-            document.getElementById('downloadCurrentBtn').disabled = false;
-            document.getElementById('scanCurrentBtn').disabled = false;
-            placeholder.style.display = 'none';
+        function select(i) {
+            activeIdx = i;
+            document.querySelector('.placeholder').style.display = 'none';
             canvas.style.display = 'block';
-            pageNav.style.display = file.pages.length > 1 ? 'flex' : 'none';
-            if (file.pages.length > 1) updatePageNav();
-            renderPreview();
-            renderFileQueue();
+            render();
+            updateList();
         }
 
-        function updateLabel(idx, label) { files[idx].label = label; renderFileQueue(); }
-
-        function removeFile(idx) {
-            files.splice(idx, 1);
-            if (activeFileIndex >= files.length) activeFileIndex = files.length - 1;
-            if (files.length === 0) { activeFileIndex = -1; canvas.style.display = 'none'; placeholder.style.display = 'block'; pageNav.style.display = 'none'; document.getElementById('downloadCurrentBtn').disabled = true; document.getElementById('scanCurrentBtn').disabled = true; }
-            else selectFile(activeFileIndex);
-            updateUI();
+        function remove(i) {
+            files.splice(i, 1);
+            if (activeIdx >= files.length) activeIdx = files.length - 1;
+            updateList();
+            if (!files.length) {
+                document.querySelector('.placeholder').style.display = '';
+                canvas.style.display = 'none';
+                document.getElementById('resultsSection').style.display = 'none';
+            } else select(Math.max(0, activeIdx));
+            document.getElementById('processBtn').disabled = !files.length;
+            document.getElementById('downloadBtn').disabled = !files.length;
         }
 
-        document.getElementById('clearAllBtn').addEventListener('click', () => {
-            if (confirm('Remove all files?')) { files = []; activeFileIndex = -1; canvas.style.display = 'none'; placeholder.style.display = 'block'; pageNav.style.display = 'none'; document.getElementById('downloadCurrentBtn').disabled = true; document.getElementById('scanCurrentBtn').disabled = true; updateUI(); }
-        });
-
-        function updatePageNav() {
-            const file = files[activeFileIndex];
-            document.getElementById('pageInfo').textContent = `${file.currentPage + 1} / ${file.pages.length}`;
-            document.getElementById('prevPage').disabled = file.currentPage === 0;
-            document.getElementById('nextPage').disabled = file.currentPage === file.pages.length - 1;
-        }
-
-        document.getElementById('prevPage').addEventListener('click', () => { if (activeFileIndex >= 0 && files[activeFileIndex].currentPage > 0) { files[activeFileIndex].currentPage--; updatePageNav(); renderPreview(); } });
-        document.getElementById('nextPage').addEventListener('click', () => { const file = files[activeFileIndex]; if (activeFileIndex >= 0 && file.currentPage < file.pages.length - 1) { file.currentPage++; updatePageNav(); renderPreview(); } });
-
-        document.querySelectorAll('input[type="range"]').forEach(slider => {
-            slider.addEventListener('input', () => updateSliderFill(slider));
-        });
-
-        document.getElementById('opacitySlider').addEventListener('input', (e) => { currentOpacity = e.target.value / 100; document.getElementById('opacityValue').textContent = e.target.value + '%'; localStorage.setItem('bridge_opacity', currentOpacity); if (activeFileIndex >= 0) renderPreview(); });
-        document.getElementById('scaleSlider').addEventListener('input', (e) => { currentScale = e.target.value / 100; document.getElementById('scaleValue').textContent = e.target.value + '%'; localStorage.setItem('bridge_scale', currentScale); if (activeFileIndex >= 0) renderPreview(); });
-        document.getElementById('densitySlider').addEventListener('input', (e) => { currentDensity = e.target.value / 100; document.getElementById('densityValue').textContent = e.target.value + '%'; localStorage.setItem('bridge_density', currentDensity); if (activeFileIndex >= 0) renderPreview(); });
-        document.getElementById('rotationSlider').addEventListener('input', (e) => { currentRotation = parseInt(e.target.value); document.getElementById('rotationValue').textContent = e.target.value + '°'; localStorage.setItem('bridge_rotation', currentRotation); if (activeFileIndex >= 0) renderPreview(); });
-
-        function drawFraudBadge(ctx, file, canvasWidth, canvasHeight) {
-            const status = file.fraudStatus;
-
-            // Determine color and text based on status
-            let color, statusText;
-            if (status === 'secure') {
-                color = [39, 174, 96]; // green
-                statusText = 'VERIFIED SECURE';
-            } else if (status === 'clean') {
-                color = [39, 174, 96]; // green
-                statusText = 'VERIFIED CLEAN';
-            } else if (status === 'warning') {
-                color = [243, 156, 18]; // orange
-                statusText = 'SUSPICIOUS';
-            } else if (status === 'danger') {
-                color = [231, 76, 60]; // red
-                statusText = 'HIGH RISK';
-            } else {
-                color = [128, 128, 128]; // gray
-                statusText = 'NOT VERIFIED';
-            }
-
-            ctx.save();
-            ctx.globalAlpha = badgeOpacity;
-
-            // Use badge-specific settings for tiling
-            const tiledScale = badgeScale * 1.6;
-            const badgeBaseWidth = canvasWidth * tiledScale;
-            const badgeBaseHeight = badgeBaseWidth * 0.4; // Badge aspect ratio
-            const gapMultiplier = 1.5 - badgeDensity;
-            const spacingX = badgeBaseWidth * gapMultiplier + 80;
-            const spacingY = badgeBaseHeight * gapMultiplier + 80;
-
-            // Scale for drawing elements
-            const drawScale = badgeBaseWidth / 180;
-
-            for (let tileY = -badgeBaseHeight; tileY < canvasHeight + badgeBaseHeight; tileY += spacingY) {
-                for (let tileX = -badgeBaseWidth; tileX < canvasWidth + badgeBaseWidth; tileX += spacingX) {
+        function render() {
+            if (activeIdx < 0 || !logo) return;
+            const f = files[activeIdx], img = f.pages[f.page];
+            canvas.width = img.width; canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+            ctx.globalAlpha = settings.opacity;
+            const w = img.width * settings.size * 1.5;
+            const h = (logo.height / logo.width) * w;
+            const gap = 1.5 - settings.density;
+            const spX = w * gap + 80, spY = h * gap + 80;
+            const rad = settings.rotation * Math.PI / 180;
+            for (let y = -h; y < img.height + h; y += spY) {
+                for (let x = -w; x < img.width + w; x += spX) {
                     ctx.save();
-                    ctx.translate(tileX + badgeBaseWidth / 2, tileY + badgeBaseHeight / 2);
-                    ctx.rotate(badgeRotation * Math.PI / 180);
-
-                    // Draw shield
-                    const shieldSize = 28 * drawScale;
-                    const shieldX = -70 * drawScale;
-                    const shieldY = -shieldSize / 2;
-
-                    ctx.beginPath();
-                    ctx.moveTo(shieldX + shieldSize / 2, shieldY);
-                    ctx.lineTo(shieldX + shieldSize, shieldY + shieldSize * 0.2);
-                    ctx.lineTo(shieldX + shieldSize, shieldY + shieldSize * 0.55);
-                    ctx.quadraticCurveTo(shieldX + shieldSize, shieldY + shieldSize * 0.95, shieldX + shieldSize / 2, shieldY + shieldSize);
-                    ctx.quadraticCurveTo(shieldX, shieldY + shieldSize * 0.95, shieldX, shieldY + shieldSize * 0.55);
-                    ctx.lineTo(shieldX, shieldSize * 0.2 + shieldY);
-                    ctx.closePath();
-                    ctx.strokeStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-                    ctx.lineWidth = 2 * drawScale;
-                    ctx.stroke();
-
-                    // Draw checkmark/icon inside shield
-                    ctx.font = `bold ${16 * drawScale}px Arial`;
-                    ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    const icon = status === 'secure' ? '◈' : status === 'clean' ? '✓' : status === 'warning' ? '⚠' : status === 'danger' ? '✕' : '○';
-                    ctx.fillText(icon, shieldX + shieldSize / 2, shieldY + shieldSize / 2);
-
-                    // Draw status text
-                    ctx.font = `bold ${12 * drawScale}px Arial`;
-                    ctx.textAlign = 'left';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText(statusText, shieldX + shieldSize + 8 * drawScale, -2 * drawScale);
-
-                    // Draw Sutton Funding text
-                    ctx.font = `${9 * drawScale}px Arial`;
-                    ctx.fillText('Sutton Funding', shieldX + shieldSize + 8 * drawScale, 10 * drawScale);
-
+                    ctx.translate(x + w/2, y + h/2);
+                    ctx.rotate(rad);
+                    ctx.drawImage(logo, -w/2, -h/2, w, h);
                     ctx.restore();
                 }
             }
+            ctx.globalAlpha = 1;
 
-            ctx.restore();
+            // Verified badge overlay - small, bottom-right corner, out of OCR way
+            if (localStorage.getItem('verified_badge') === 'true' && f.status === 'clean') {
+                const badgeH = Math.min(img.width, img.height) * 0.04;
+                const badgeW = badgeH * 4;
+                const margin = 15;
+                const x = img.width - badgeW - margin;
+                const y = img.height - badgeH - margin;
+
+                ctx.save();
+                ctx.globalAlpha = 0.7;
+
+                // Pill background
+                const radius = badgeH / 2;
+                ctx.beginPath();
+                ctx.moveTo(x + radius, y);
+                ctx.lineTo(x + badgeW - radius, y);
+                ctx.arc(x + badgeW - radius, y + radius, radius, -Math.PI/2, Math.PI/2);
+                ctx.lineTo(x + radius, y + badgeH);
+                ctx.arc(x + radius, y + radius, radius, Math.PI/2, -Math.PI/2);
+                ctx.closePath();
+                ctx.fillStyle = '#27ae60';
+                ctx.fill();
+
+                // Checkmark icon
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = badgeH * 0.12;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                const iconX = x + badgeH * 0.5;
+                const iconY = y + badgeH * 0.5;
+                ctx.beginPath();
+                ctx.moveTo(iconX - badgeH * 0.2, iconY);
+                ctx.lineTo(iconX - badgeH * 0.05, iconY + badgeH * 0.18);
+                ctx.lineTo(iconX + badgeH * 0.22, iconY - badgeH * 0.15);
+                ctx.stroke();
+
+                // Text
+                ctx.globalAlpha = 1;
+                ctx.fillStyle = '#fff';
+                ctx.font = `bold ${badgeH * 0.55}px sans-serif`;
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('VERIFIED', x + badgeH * 1.1, y + badgeH * 0.52);
+
+                ctx.restore();
+            }
         }
 
-        function renderPreview() {
-            if (activeFileIndex < 0 || !logoImage) return;
-            const file = files[activeFileIndex];
-            const baseImage = file.pages[file.currentPage];
-            canvas.width = baseImage.width; canvas.height = baseImage.height;
-            ctx.drawImage(baseImage, 0, 0);
-            ctx.globalAlpha = currentOpacity;
-            // Always tiled
-            const tiledScale = currentScale * 1.6;
-            const tiledLogoWidth = baseImage.width * tiledScale;
-            const tiledLogoHeight = (logoImage.height / logoImage.width) * tiledLogoWidth;
-            const gapMultiplier = 1.5 - currentDensity;
-            const spacingX = tiledLogoWidth * gapMultiplier + 80;
-            const spacingY = tiledLogoHeight * gapMultiplier + 80;
-            for (let y = -tiledLogoHeight; y < baseImage.height + tiledLogoHeight; y += spacingY) {
-                for (let x = -tiledLogoWidth; x < baseImage.width + tiledLogoWidth; x += spacingX) {
-                    ctx.save();
-                    ctx.translate(x + tiledLogoWidth / 2, y + tiledLogoHeight / 2);
-                    ctx.rotate(currentRotation * Math.PI / 180);
-                    ctx.drawImage(logoImage, -tiledLogoWidth / 2, -tiledLogoHeight / 2, tiledLogoWidth, tiledLogoHeight);
-                    ctx.restore();
-                }
-            }
-            ctx.globalAlpha = 1.0;
+        // Process
+        async function processAll() {
+            const key = localStorage.getItem('gemini_key');
+            if (!key) { toast('Set Gemini API key in settings', 'error'); return; }
 
-            // Draw fraud badge if enabled
-            if (showFraudBadge) {
-                drawFraudBadge(ctx, file, canvas.width, canvas.height);
+            toast('Processing documents...');
+
+            // Fraud scan
+            for (let i = 0; i < files.length; i++) {
+                files[i].status = await fraudScan(files[i], key);
+                updateList();
             }
+
+            // OCR
+            toast('Extracting bank data...');
+            bankData = await extractData(key);
+            showData();
+
+            // Match
+            const matched = matchLenders(bankData);
+            showLenders(matched);
+
+            document.getElementById('resultsSection').style.display = '';
+            toast('Done!', 'success');
         }
 
-        document.getElementById('downloadCurrentBtn').addEventListener('click', () => {
-            if (activeFileIndex < 0) return;
-            const file = files[activeFileIndex];
-            const safeLabel = (file.label || 'document').replace(/[^a-z0-9_-]/gi, '_');
-            if (file.pages.length > 1) downloadAllPagesOfFile(file, safeLabel);
-            else { const link = document.createElement('a'); link.download = `${safeLabel}_watermarked.png`; link.href = canvas.toDataURL('image/png'); link.click(); showStatus('Downloaded!', 'success'); }
-        });
-
-        async function downloadAllPagesOfFile(file, safeLabel) {
-            showStatus('Generating PDF...');
-            const originalPage = file.currentPage;
-            const { jsPDF } = window.jspdf;
-
-            // Render first page to get dimensions
-            file.currentPage = 0;
-            renderPreview();
-            await new Promise(r => setTimeout(r, 100));
-
-            // Determine orientation based on first page
-            const firstWidth = canvas.width;
-            const firstHeight = canvas.height;
-            const orientation = firstWidth > firstHeight ? 'landscape' : 'portrait';
-
-            // Create PDF with first page dimensions
-            const pdf = new jsPDF({
-                orientation: orientation,
-                unit: 'px',
-                format: [firstWidth, firstHeight]
-            });
-
-            for (let i = 0; i < file.pages.length; i++) {
-                file.currentPage = i;
-                renderPreview();
-                await new Promise(r => setTimeout(r, 100));
-
-                const imgData = canvas.toDataURL('image/jpeg', 0.95);
-                const pageWidth = canvas.width;
-                const pageHeight = canvas.height;
-
-                if (i > 0) {
-                    // Add new page with this page's dimensions
-                    const pageOrientation = pageWidth > pageHeight ? 'landscape' : 'portrait';
-                    pdf.addPage([pageWidth, pageHeight], pageOrientation);
-                }
-
-                pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight);
-            }
-
-            pdf.save(`${safeLabel}_watermarked.pdf`);
-            file.currentPage = originalPage;
-            renderPreview();
-            updatePageNav();
-            showStatus(`Downloaded ${file.pages.length}-page PDF!`, 'success');
-        }
-
-        document.getElementById('downloadAllBtn').addEventListener('click', async () => {
-            showStatus('Preparing all files...');
-            const originalActive = activeFileIndex;
-            const { jsPDF } = window.jspdf;
-
-            for (let f = 0; f < files.length; f++) {
-                const file = files[f];
-                const safeLabel = (file.label || 'document').replace(/[^a-z0-9_-]/gi, '_');
-                activeFileIndex = f;
-
-                if (file.pages.length === 1) {
-                    // Single page - download as PNG
-                    file.currentPage = 0;
-                    renderPreview();
-                    await new Promise(r => setTimeout(r, 100));
-                    const link = document.createElement('a');
-                    link.download = `${safeLabel}_watermarked.png`;
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                    await new Promise(r => setTimeout(r, 300));
-                } else {
-                    // Multi-page - generate PDF
-                    file.currentPage = 0;
-                    renderPreview();
-                    await new Promise(r => setTimeout(r, 100));
-
-                    const firstWidth = canvas.width;
-                    const firstHeight = canvas.height;
-                    const orientation = firstWidth > firstHeight ? 'landscape' : 'portrait';
-
-                    const pdf = new jsPDF({
-                        orientation: orientation,
-                        unit: 'px',
-                        format: [firstWidth, firstHeight]
-                    });
-
-                    for (let p = 0; p < file.pages.length; p++) {
-                        file.currentPage = p;
-                        renderPreview();
-                        await new Promise(r => setTimeout(r, 100));
-
-                        const imgData = canvas.toDataURL('image/jpeg', 0.95);
-                        const pageWidth = canvas.width;
-                        const pageHeight = canvas.height;
-
-                        if (p > 0) {
-                            const pageOrientation = pageWidth > pageHeight ? 'landscape' : 'portrait';
-                            pdf.addPage([pageWidth, pageHeight], pageOrientation);
-                        }
-
-                        pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight);
-                    }
-
-                    pdf.save(`${safeLabel}_watermarked.pdf`);
-                    await new Promise(r => setTimeout(r, 300));
-                }
-            }
-
-            activeFileIndex = originalActive;
-            if (activeFileIndex >= 0) selectFile(activeFileIndex);
-            showStatus(`Downloaded ${files.length} file(s)!`, 'success');
-        });
-
-        async function scanForFraud(fileIndex) {
-            const file = files[fileIndex];
-            const apiKey = localStorage.getItem('bridge_api_key');
-            if (!apiKey) { showStatus('Please set your Gemini API key in Settings', 'error'); openModal('settingsModal'); return; }
-            file.fraudStatus = 'scanning'; renderFileQueue(); showStatus(`Scanning ${file.name}...`);
+        async function fraudScan(file, key) {
             try {
-                const tempCanvas = document.createElement('canvas');
+                const c = document.createElement('canvas');
                 const img = file.pages[0];
-                tempCanvas.width = img.width; tempCanvas.height = img.height;
-                tempCanvas.getContext('2d').drawImage(img, 0, 0);
-                const base64 = tempCanvas.toDataURL('image/png').split(',')[1];
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+                c.width = img.width; c.height = img.height;
+                c.getContext('2d').drawImage(img, 0, 0);
+                const b64 = c.toDataURL('image/jpeg', 0.8).split(',')[1];
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: `You are an expert forensic document analyst specializing in detecting fraudulent bank statements.
-
-WATERMARK DETECTION (IMPORTANT):
-- If you see a logo/image TILED REPEATEDLY across the document at an angle, this is a SECURITY WATERMARK
-- Watermarks indicate the document has been SECURED by the sender - this is GOOD, not fraud
-- If watermarks are present AND no manipulation is detected, mark as SECURE (not just CLEAN)
-
-LEGITIMATE FEATURES (NOT FRAUD):
-- Security watermarks (tiled logos across document) = document is protected
-- Letterheads, stamps, signatures = normal
-- Low image quality alone = not fraud
-
-FRAUD DETECTION METHODS - Analyze ALL:
-
-1. PIXEL-LEVEL ANALYSIS:
-- Compression artifacts that differ between regions (edited areas have different JPEG/PNG compression)
-- Inconsistent noise patterns (edited regions may be smoother or grainier)
-- Clone stamping artifacts (repeated pixel patterns used to cover text)
-- Edge discontinuities where elements were cut/pasted
-- Color/brightness inconsistencies at edit boundaries
-- Resampling artifacts (blurry edges around specific text/numbers)
-
-2. TYPOGRAPHY ANALYSIS:
-- Different fonts within same field type
-- Inconsistent character spacing or kerning
-- Misaligned baselines
-- Text sharper or blurrier than surrounding text
-- Different anti-aliasing on certain characters
-
-3. MATHEMATICAL VERIFICATION:
-- Running balance = previous balance + deposits - withdrawals
-- Statement totals must match sum of transactions
-- Opening/closing balance consistency
-
-4. STRUCTURAL ANALYSIS:
-- Misaligned columns or rows
-- Inconsistent spacing between elements
-- Elements that break the document's grid pattern
-
-5. METADATA/LOGICAL:
-- Impossible dates (month >12, day >31, future dates)
-- Duplicate transaction reference numbers
-- Transaction times out of sequence
-
-RESPONSE FORMAT:
-
-RISK LEVEL: [Choose ONE: SECURE / CLEAN / SUSPICIOUS / HIGH RISK]
-- SECURE = Watermark detected, no manipulation found (document is protected)
-- CLEAN = No watermark, no manipulation found
-- SUSPICIOUS = Possible manipulation detected (requires evidence)
-- HIGH RISK = Clear evidence of manipulation/fraud (requires evidence)
-
-WATERMARK DETECTED: [YES/NO - describe if you see tiled logos/images across document]
-
-ANALYSIS PERFORMED:
-[List detection methods applied]
-
-FINDINGS:
-[If SECURE]: "Security watermark detected. No manipulation found. Document is protected and authentic."
-[If CLEAN]: "No watermark present. No manipulation detected. Document appears authentic."
-[If SUSPICIOUS/HIGH RISK - MUST provide SPECIFIC evidence]:
-- Exact location (row, column, area)
-- What was detected (pixel artifacts, font mismatch, math error)
-- Why this indicates manipulation
-
-RECOMMENDATION: [Action to take]
-
-IMPORTANT: Be thorough but conservative. Watermarks = SECURE. Only flag SUSPICIOUS/HIGH RISK with concrete evidence.` }, { inlineData: { mimeType: 'image/png', data: base64 } }] }] })
+                    body: JSON.stringify({ contents: [{ parts: [
+                        { text: 'Analyze this bank statement for fraud. Look for manipulation, font inconsistencies, altered numbers. End with RISK_LEVEL:CLEAN or RISK_LEVEL:WARNING or RISK_LEVEL:DANGER' },
+                        { inlineData: { mimeType: 'image/jpeg', data: b64 } }
+                    ]}]})
                 });
-                const data = await response.json();
-                if (data.error) throw new Error(data.error.message);
-                const report = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No analysis available';
-                file.fraudReport = report;
-                // Parse the RISK LEVEL line specifically
-                const riskMatch = report.match(/RISK LEVEL:\s*(SECURE|CLEAN|SUSPICIOUS|HIGH RISK)/i);
-                if (riskMatch) {
-                    const level = riskMatch[1].toUpperCase();
-                    if (level === 'HIGH RISK') file.fraudStatus = 'danger';
-                    else if (level === 'SUSPICIOUS') file.fraudStatus = 'warning';
-                    else if (level === 'SECURE') file.fraudStatus = 'secure';
-                    else file.fraudStatus = 'clean';
-                } else {
-                    // Fallback: check for watermark mention
-                    const hasWatermark = report.toUpperCase().includes('WATERMARK DETECTED: YES');
-                    file.fraudStatus = hasWatermark ? 'secure' : 'clean';
+                const d = await res.json();
+                const t = d.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                if (t.includes('DANGER')) return 'danger';
+                if (t.includes('WARNING')) return 'warning';
+                return 'clean';
+            } catch { return 'warning'; }
+        }
+
+        function parseNum(v) {
+            if (v == null) return null;
+            if (typeof v === 'number') return v;
+            const m = String(v).replace(/\$/g,'').match(/[\d,]+\.?\d*/);
+            if (!m) return null;
+            const n = parseFloat(m[0].replace(/,/g,''));
+            return isNaN(n) ? null : n;
+        }
+
+        async function extractData(key) {
+            const imgs = [];
+            for (const f of files.slice(0,3)) {
+                for (const p of f.pages.slice(0,2)) {
+                    const c = document.createElement('canvas');
+                    c.width = p.width; c.height = p.height;
+                    c.getContext('2d').drawImage(p, 0, 0);
+                    imgs.push(c.toDataURL('image/jpeg', 0.8).split(',')[1]);
                 }
-                renderFileQueue(); showStatus(`Scan complete: ${file.name}`, 'success');
-            } catch (err) { file.fraudStatus = null; file.fraudReport = 'Error: ' + err.message; renderFileQueue(); showStatus('Scan failed: ' + err.message, 'error'); }
+            }
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [
+                            { text: 'Extract from these bank statements as SINGLE numbers (average if multiple months). Return JSON only:\n{"monthly_deposits":NUMBER,"average_daily_balance":NUMBER,"nsf_negative_days":NUMBER,"num_deposits_monthly":NUMBER}\nExample: {"monthly_deposits":50000,"average_daily_balance":5000,"nsf_negative_days":2,"num_deposits_monthly":15}' },
+                            ...imgs.slice(0,4).map(d => ({ inlineData: { mimeType: 'image/jpeg', data: d } }))
+                        ]}],
+                        generationConfig: { temperature: 0.1 }
+                    })
+                });
+                const d = await res.json();
+                let t = d.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+                t = t.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
+                const p = JSON.parse(t);
+                return {
+                    monthly_deposits: parseNum(p.monthly_deposits),
+                    average_daily_balance: parseNum(p.average_daily_balance),
+                    nsf_negative_days: parseNum(p.nsf_negative_days),
+                    num_deposits_monthly: parseNum(p.num_deposits_monthly)
+                };
+            } catch { return { monthly_deposits: null, average_daily_balance: null, nsf_negative_days: null, num_deposits_monthly: null }; }
         }
 
-        document.getElementById('scanCurrentBtn').addEventListener('click', () => { if (activeFileIndex >= 0) scanForFraud(activeFileIndex); });
-        document.getElementById('scanAllBtn').addEventListener('click', async () => { for (let i = 0; i < files.length; i++) { await scanForFraud(i); await new Promise(r => setTimeout(r, 1000)); } showStatus('All scans complete!', 'success'); });
-
-        function viewFraudReport(idx) {
-            const file = files[idx];
-            if (!file.fraudReport) return;
-            let statusClass = file.fraudStatus === 'clean' ? 'clean' : file.fraudStatus === 'secure' ? 'secure' : file.fraudStatus === 'warning' ? 'warning' : 'danger';
-            let statusLabel = file.fraudStatus === 'clean' ? '✓ Clean' : file.fraudStatus === 'secure' ? '◈ Secure - Watermarked' : file.fraudStatus === 'warning' ? '⚠ Suspicious' : '✕ High Risk';
-            document.getElementById('fraudReportContent').innerHTML = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;"><img src="${file.thumb}" style="width:60px;height:60px;border-radius:6px;object-fit:cover;"><div><div style="font-weight:600;color:var(--text-primary)">${file.name}</div><div class="fraud-badge ${statusClass}" style="margin-top:5px">${statusLabel}</div></div></div><div class="fraud-report"><p>${file.fraudReport.replace(/\n/g, '<br>')}</p></div>`;
-            openModal('fraudModal');
+        function showData() {
+            document.getElementById('dataDeposits').textContent = bankData.monthly_deposits ? '$'+Math.round(bankData.monthly_deposits).toLocaleString() : '--';
+            document.getElementById('dataADB').textContent = bankData.average_daily_balance ? '$'+Math.round(bankData.average_daily_balance).toLocaleString() : '--';
+            document.getElementById('dataNSF').textContent = bankData.nsf_negative_days ?? '--';
+            document.getElementById('dataNumDeps').textContent = bankData.num_deposits_monthly ?? '--';
         }
 
-        loadSettings();
+        function matchLenders(data) {
+            const deps = data.monthly_deposits || 0;
+            const adb = data.average_daily_balance || 0;
+            const nsf = data.nsf_negative_days ?? 99;
+            const numD = data.num_deposits_monthly || 0;
+
+            return lenders.map(L => {
+                let pass = 0, fail = 0, total = 0;
+                const chk = (min, val, isMax) => {
+                    if (min == null) return;
+                    total++;
+                    if (isMax ? val <= min : val >= min) pass++; else fail++;
+                };
+                if (L.min_deposits) chk(L.min_deposits, deps);
+                if (L.min_adb) chk(L.min_adb, adb);
+                if (L.max_nsf !== undefined) chk(L.max_nsf, nsf, true);
+                if (L.min_num_deps) chk(L.min_num_deps, numD);
+
+                const score = total === 0 ? 50 : Math.round((pass/total)*100);
+                const level = fail === 0 && pass > 0 ? 'high' : score >= 50 ? 'medium' : 'low';
+
+                const base = deps > 0 ? deps * 1.5 : L.avg_amount || 50000;
+                const amt = Math.min(L.max_amount || 100000, base);
+                const rate = level === 'high' ? L.min_rate : level === 'medium' ? (L.min_rate + L.max_rate)/2 : L.max_rate;
+                const term = level === 'high' ? L.max_term : level === 'medium' ? Math.round((L.min_term + L.max_term)/2) : L.min_term;
+                const weeks = term * 4.33;
+                const payback = amt * (rate || 1.4);
+                const weekly = payback / weeks;
+                const pmt = L.frequency === 'Daily' ? Math.round(weekly/5) : Math.round(weekly);
+
+                return { ...L, score, level, amt: Math.round(amt), rate: (rate||1.4).toFixed(2), term: term||6, pmt: pmt||0 };
+            }).sort((a,b) => b.score - a.score);
+        }
+
+        function showLenders(list) {
+            const high = list.filter(l => l.level === 'high').length;
+            document.getElementById('matchCount').textContent = high + ' strong match' + (high !== 1 ? 'es' : '');
+
+            document.getElementById('lenderGrid').innerHTML = list.map(L => `
+                <div class="lender-card ${L.level}">
+                    <div class="lender-top">
+                        <div class="lender-name">${L.name}</div>
+                        <span class="lender-match ${L.level}">${L.score}%</span>
+                    </div>
+                    <div class="lender-terms">
+                        <div class="term"><div class="term-label">Amount</div><div class="term-value gold">$${L.amt.toLocaleString()}</div></div>
+                        <div class="term"><div class="term-label">Rate</div><div class="term-value">${L.rate}</div></div>
+                        <div class="term"><div class="term-label">Term</div><div class="term-value">${L.term} mo</div></div>
+                        <div class="term"><div class="term-label">${L.frequency}</div><div class="term-value">$${L.pmt.toLocaleString()}</div></div>
+                    </div>
+                    <div class="lender-bottom">
+                        <div class="lender-method">
+                            ${L.method === 'email' ? `<code onclick="copy('${L.email}')">${L.email}</code>` : `<a href="${L.portal}" target="_blank">Portal</a>`}
+                        </div>
+                        ${L.notes ? `<div class="lender-freq">${L.notes}</div>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function copy(t) { navigator.clipboard.writeText(t); toast('Copied!', 'success'); }
+
+        // Download modal
+        function openDownloadModal() {
+            const list = document.getElementById('downloadFileList');
+            list.innerHTML = files.map((f, i) => {
+                const baseName = f.name.replace(/\.[^.]+$/, '').replace(/[^a-z0-9_\-\s]/gi, '_');
+                const ext = f.pages.length === 1 ? '.png' : '.pdf';
+                return `
+                    <div class="download-file-item">
+                        <img class="download-file-thumb" src="${f.thumb}">
+                        <input type="text" class="download-file-input" id="fileName${i}" value="${baseName}_watermarked">
+                        <span class="download-file-ext">${ext}</span>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('downloadModal').classList.add('active');
+        }
+
+        function closeDownloadModal() {
+            document.getElementById('downloadModal').classList.remove('active');
+        }
+
+        async function downloadWithNames() {
+            closeDownloadModal();
+            const { jsPDF } = window.jspdf;
+            for (let i = 0; i < files.length; i++) {
+                const f = files[i];
+                const customName = document.getElementById('fileName' + i).value.replace(/[^a-z0-9_\-\s]/gi, '_') || 'file_' + i;
+                if (f.pages.length === 1) {
+                    activeIdx = i; render();
+                    const a = document.createElement('a');
+                    a.download = customName + '.png';
+                    a.href = canvas.toDataURL('image/png');
+                    a.click();
+                } else {
+                    const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [canvas.width, canvas.height] });
+                    for (let j = 0; j < f.pages.length; j++) {
+                        f.page = j; activeIdx = i; render();
+                        await new Promise(r => setTimeout(r, 100));
+                        if (j > 0) pdf.addPage();
+                        pdf.addImage(canvas.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, canvas.width, canvas.height);
+                    }
+                    pdf.save(customName + '.pdf');
+                }
+                await new Promise(r => setTimeout(r, 300));
+            }
+            toast('Downloads complete!', 'success');
+        }
+
+        async function downloadAll() {
+            const { jsPDF } = window.jspdf;
+            for (const f of files) {
+                const name = f.name.replace(/\.[^.]+$/, '').replace(/[^a-z0-9_-]/gi, '_');
+                if (f.pages.length === 1) {
+                    activeIdx = files.indexOf(f); render();
+                    const a = document.createElement('a');
+                    a.download = name + '_watermarked.png';
+                    a.href = canvas.toDataURL('image/png');
+                    a.click();
+                } else {
+                    const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [canvas.width, canvas.height] });
+                    for (let i = 0; i < f.pages.length; i++) {
+                        f.page = i; activeIdx = files.indexOf(f); render();
+                        await new Promise(r => setTimeout(r, 100));
+                        if (i > 0) pdf.addPage();
+                        pdf.addImage(canvas.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, canvas.width, canvas.height);
+                    }
+                    pdf.save(name + '_watermarked.pdf');
+                }
+                await new Promise(r => setTimeout(r, 300));
+            }
+            toast('Downloads complete!', 'success');
+        }
+
+        // Settings
+        function openSettings() { document.getElementById('settingsModal').classList.add('active'); }
+        function closeSettings() { document.getElementById('settingsModal').classList.remove('active'); }
+        function saveSettings() {
+            localStorage.setItem('gemini_key', document.getElementById('apiKey').value);
+            localStorage.setItem('watermark_url', document.getElementById('watermarkUrl').value);
+            localStorage.setItem('verified_badge', document.getElementById('verifiedBadge').checked);
+            loadLogo(document.getElementById('watermarkUrl').value);
+            closeSettings();
+            toast('Settings saved!', 'success');
+        }
+
+        function toast(msg, type) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = 'toast' + (type ? ' ' + type : '');
+            t.style.display = 'block';
+            if (type) setTimeout(() => t.style.display = 'none', 3000);
+        }
+
+        function saveDefaults() {
+            localStorage.setItem('watermark_defaults', JSON.stringify(settings));
+            toast('Defaults saved!', 'success');
+        }
+
+        function loadDefaults() {
+            const saved = localStorage.getItem('watermark_defaults');
+            if (saved) {
+                const d = JSON.parse(saved);
+                settings = { ...settings, ...d };
+                ['opacity','size','density','rotation'].forEach(id => {
+                    const slider = document.getElementById(id);
+                    const val = id === 'rotation' ? settings[id] : settings[id] * 100;
+                    slider.value = val;
+                    const min = parseInt(slider.min);
+                    const max = parseInt(slider.max);
+                    const pct = ((val - min) / (max - min)) * 100;
+                    slider.style.background = `linear-gradient(to right, var(--gold) ${pct}%, var(--border) ${pct}%)`;
+                    document.getElementById(id+'Val').textContent = id === 'rotation' ? val+'°' : Math.round(val)+'%';
+                });
+            }
+        }
+
+        init();
+        loadDefaults();
     </script>
 </body>
 </html>
