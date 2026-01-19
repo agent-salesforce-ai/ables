@@ -1892,11 +1892,6 @@
             if (files.length > 0 && activeFileIndex === -1) {
                 selectFile(0);
             }
-
-            // Auto-trigger analysis when files are added
-            if (files.length > 0) {
-                processDocuments();
-            }
         }
 
         async function loadPDF(file) {
@@ -2284,12 +2279,13 @@ Return ONLY valid JSON:
             // Calculate totals
             const totals = months.reduce((acc, m) => ({
                 deposits: acc.deposits + (m.total_deposits || 0),
+                trueRevenue: acc.trueRevenue + (m.true_revenue || m.total_deposits * 0.92 || 0),
                 withdrawals: acc.withdrawals + (m.total_withdrawals || 0),
                 numDeps: acc.numDeps + (m.num_deposits || 0),
                 nsf: acc.nsf + (m.nsf_count || 0),
                 negDays: acc.negDays + (m.days_negative || 0),
                 avgBalSum: acc.avgBalSum + (m.average_daily_balance || 0)
-            }), { deposits: 0, withdrawals: 0, numDeps: 0, nsf: 0, negDays: 0, avgBalSum: 0 });
+            }), { deposits: 0, trueRevenue: 0, withdrawals: 0, numDeps: 0, nsf: 0, negDays: 0, avgBalSum: 0 });
 
             const numMonths = months.length || 1;
             const avgBalance = Math.round(totals.avgBalSum / numMonths);
@@ -2351,7 +2347,7 @@ Return ONLY valid JSON:
                             <tr>
                                 <td><strong>AVERAGE</strong></td>
                                 <td>$${Math.round(totals.deposits / numMonths).toLocaleString()}</td>
-                                <td>$${Math.round(totals.deposits * 0.92 / numMonths).toLocaleString()}</td>
+                                <td>$${Math.round(totals.trueRevenue / numMonths).toLocaleString()}</td>
                                 <td>${Math.round(totals.numDeps / numMonths)}</td>
                                 <td>$${Math.round(totals.withdrawals / numMonths).toLocaleString()}</td>
                                 <td>$${avgBalance.toLocaleString()}</td>
