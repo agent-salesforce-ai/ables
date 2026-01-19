@@ -2671,8 +2671,8 @@ Return ONLY valid JSON:
                                 <td>$${Math.round(totals.withdrawals / numMonths).toLocaleString()}</td>
                                 <td>$${avgBalance.toLocaleString()}</td>
                                 <td>-</td>
-                                <td>${totals.nsf}</td>
-                                <td>${totals.negDays}</td>
+                                <td>${(totals.nsf / numMonths).toFixed(1)}</td>
+                                <td>${(totals.negDays / numMonths).toFixed(1)}</td>
                             </tr>
                         </tfoot>
                     </table>
