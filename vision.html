@@ -1359,6 +1359,9 @@
                 <button class="btn btn-primary" id="processBtn" style="width: 100%;" disabled>
                     Analyze Documents
                 </button>
+                <button class="btn" id="exportReportBtn" style="width: 100%;" disabled onclick="exportReport()">
+                    Export Summary Report
+                </button>
                 <button class="btn btn-secondary" id="downloadAllBtn" style="width: 100%;" disabled>
                     Download Watermarked
                 </button>
@@ -1857,6 +1860,232 @@
             showStatus('Downloads complete!', 'success');
         }
 
+        async function exportReport() {
+            if (!extractedData.full_analysis) {
+                showStatus('No analysis data to export', 'error');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'letter' });
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const margin = 50;
+            let y = margin;
+
+            const analysis = extractedData.full_analysis;
+            const agg = analysis.aggregated || {};
+            const months = analysis.months || [];
+            const businessName = extractedBusinessInfo.name || 'Unknown Business';
+
+            // Helper functions
+            const addText = (text, x, fontSize, color = [0,0,0], style = 'normal') => {
+                pdf.setFontSize(fontSize);
+                pdf.setTextColor(...color);
+                pdf.setFont('helvetica', style);
+                pdf.text(text, x, y);
+            };
+
+            const checkPageBreak = (needed) => {
+                if (y + needed > pageHeight - margin) {
+                    pdf.addPage();
+                    y = margin;
+                }
+            };
+
+            // Header
+            pdf.setFillColor(234, 179, 8);
+            pdf.rect(0, 0, pageWidth, 80, 'F');
+            pdf.setTextColor(0, 0, 0);
+            pdf.setFontSize(24);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('AblesAI Vision', margin, 45);
+            pdf.setFontSize(12);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text('MCA Underwriting Analysis Report', margin, 62);
+            pdf.setFontSize(10);
+            pdf.text(new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), pageWidth - margin - 100, 45);
+
+            y = 110;
+
+            // Business Info
+            addText(businessName, margin, 20, [0,0,0], 'bold');
+            y += 20;
+            if (extractedBusinessInfo.owner) {
+                addText(`Owner: ${extractedBusinessInfo.owner}`, margin, 11, [100,100,100]);
+                y += 15;
+            }
+            if (extractedBusinessInfo.address) {
+                addText(extractedBusinessInfo.address, margin, 11, [100,100,100]);
+                y += 15;
+            }
+            y += 20;
+
+            // Summary Stats Box
+            pdf.setFillColor(245, 245, 245);
+            pdf.roundedRect(margin, y, pageWidth - margin*2, 70, 5, 5, 'F');
+
+            const statWidth = (pageWidth - margin*2) / 4;
+            const stats = [
+                { label: 'Avg Monthly Deposits', value: '$' + Math.round(agg.avg_monthly_deposits || 0).toLocaleString() },
+                { label: 'Avg Daily Balance', value: '$' + Math.round(agg.avg_monthly_balance || 0).toLocaleString() },
+                { label: 'NSF/Negative Days', value: (agg.total_nsf_fees || 0) + ' / ' + (agg.total_negative_days || 0) },
+                { label: 'Months Analyzed', value: (months.length || 0).toString() }
+            ];
+
+            stats.forEach((stat, i) => {
+                const x = margin + statWidth * i + statWidth/2;
+                pdf.setFontSize(18);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setTextColor(0, 0, 0);
+                pdf.text(stat.value, x, y + 30, { align: 'center' });
+                pdf.setFontSize(9);
+                pdf.setFont('helvetica', 'normal');
+                pdf.setTextColor(100, 100, 100);
+                pdf.text(stat.label, x, y + 50, { align: 'center' });
+            });
+            y += 90;
+
+            // Monthly Data Table
+            checkPageBreak(200);
+            addText('Monthly Bank Data', margin, 14, [0,0,0], 'bold');
+            y += 25;
+
+            const colWidths = [70, 70, 70, 35, 70, 55, 55, 35, 35];
+            const headers = ['Month', 'Deposits', 'True Rev', '#', 'Withdrawals', 'Avg Bal', 'Low Bal', 'NSF', 'Neg'];
+
+            // Table header
+            pdf.setFillColor(40, 40, 40);
+            pdf.rect(margin, y, pageWidth - margin*2, 20, 'F');
+            pdf.setTextColor(255, 255, 255);
+            pdf.setFontSize(8);
+            pdf.setFont('helvetica', 'bold');
+
+            let x = margin + 5;
+            headers.forEach((h, i) => {
+                pdf.text(h, x, y + 13);
+                x += colWidths[i];
+            });
+            y += 20;
+
+            // Table rows
+            pdf.setFont('helvetica', 'normal');
+            months.forEach((m, idx) => {
+                checkPageBreak(20);
+                pdf.setFillColor(idx % 2 === 0 ? 250 : 240, idx % 2 === 0 ? 250 : 240, idx % 2 === 0 ? 250 : 240);
+                pdf.rect(margin, y, pageWidth - margin*2, 18, 'F');
+
+                pdf.setTextColor(0, 0, 0);
+                pdf.setFontSize(9);
+                x = margin + 5;
+
+                const rowData = [
+                    m.month || 'N/A',
+                    '$' + (m.total_deposits || 0).toLocaleString(),
+                    '$' + (m.true_revenue || Math.round((m.total_deposits || 0) * 0.92)).toLocaleString(),
+                    (m.num_deposits || 0).toString(),
+                    '$' + (m.total_withdrawals || 0).toLocaleString(),
+                    '$' + (m.average_daily_balance || 0).toLocaleString(),
+                    '$' + (m.lowest_daily_balance || 0).toLocaleString(),
+                    (m.nsf_count || 0).toString(),
+                    (m.days_negative || 0).toString()
+                ];
+
+                rowData.forEach((val, i) => {
+                    // Color code negative values
+                    if ((i === 6 && m.lowest_daily_balance < 0) || (i === 7 && m.nsf_count > 0) || (i === 8 && m.days_negative > 0)) {
+                        pdf.setTextColor(220, 38, 38);
+                    } else if (i === 1) {
+                        pdf.setTextColor(34, 197, 94);
+                    } else if (i === 2) {
+                        pdf.setTextColor(234, 179, 8);
+                    } else if (i === 4) {
+                        pdf.setTextColor(220, 38, 38);
+                    } else {
+                        pdf.setTextColor(0, 0, 0);
+                    }
+                    pdf.text(val, x, y + 12);
+                    x += colWidths[i];
+                });
+                y += 18;
+            });
+
+            y += 30;
+
+            // Existing Debt Section
+            const existingDebt = analysis.existing_debt?.filter(d => d.creditor_name && d.payment_amount > 0) || [];
+            if (existingDebt.length > 0) {
+                checkPageBreak(100);
+                addText('Existing Debt Obligations', margin, 14, [0,0,0], 'bold');
+                y += 25;
+
+                existingDebt.forEach(d => {
+                    checkPageBreak(40);
+                    pdf.setFillColor(255, 240, 240);
+                    pdf.roundedRect(margin, y, pageWidth - margin*2, 35, 3, 3, 'F');
+
+                    pdf.setTextColor(0, 0, 0);
+                    pdf.setFontSize(11);
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.text(d.creditor_name, margin + 10, y + 15);
+
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setFontSize(10);
+                    pdf.setTextColor(100, 100, 100);
+                    pdf.text(`${d.payment_type || 'Unknown'} • $${(d.payment_amount || 0).toLocaleString()} ${d.payment_frequency || ''}`, margin + 10, y + 28);
+
+                    y += 40;
+                });
+                y += 20;
+            }
+
+            // MCA Lenders Detected
+            const mcaLenders = agg.detected_mca_lenders || [];
+            if (mcaLenders.length > 0) {
+                checkPageBreak(60);
+                pdf.setFillColor(255, 230, 230);
+                pdf.roundedRect(margin, y, pageWidth - margin*2, 50, 5, 5, 'F');
+                pdf.setTextColor(220, 38, 38);
+                pdf.setFontSize(10);
+                pdf.setFont('helvetica', 'bold');
+                pdf.text('⚠ EXISTING MCA POSITIONS DETECTED', margin + 15, y + 20);
+                pdf.setFont('helvetica', 'normal');
+                pdf.setFontSize(9);
+                pdf.text(mcaLenders.join(', '), margin + 15, y + 35);
+                y += 70;
+            }
+
+            // Red Flags
+            const flags = analysis.red_flags || [];
+            if (flags.length > 0) {
+                checkPageBreak(60 + flags.length * 15);
+                addText('Red Flags', margin, 14, [220, 38, 38], 'bold');
+                y += 20;
+                pdf.setTextColor(100, 100, 100);
+                pdf.setFontSize(10);
+                flags.forEach(flag => {
+                    checkPageBreak(15);
+                    pdf.text('• ' + flag, margin + 10, y);
+                    y += 15;
+                });
+                y += 20;
+            }
+
+            // Footer
+            const totalPages = pdf.internal.getNumberOfPages();
+            for (let i = 1; i <= totalPages; i++) {
+                pdf.setPage(i);
+                pdf.setFontSize(8);
+                pdf.setTextColor(150, 150, 150);
+                pdf.text(`Generated by AblesAI Vision • Page ${i} of ${totalPages}`, pageWidth / 2, pageHeight - 20, { align: 'center' });
+            }
+
+            // Save
+            const filename = `${businessName.replace(/[^a-z0-9]/gi, '_')}_Analysis_${new Date().toISOString().split('T')[0]}.pdf`;
+            pdf.save(filename);
+            showStatus('Report exported!', 'success');
+        }
+
         function getSelectedModel() {
             return localStorage.getItem('gemini_model') || 'gemini-3-flash-preview';
         }
@@ -2082,6 +2311,7 @@
 
                 showLoading(false);
                 showStatus('Analysis complete!', 'success');
+                document.getElementById('exportReportBtn').disabled = false;
 
             } catch (error) {
                 console.error(error);
