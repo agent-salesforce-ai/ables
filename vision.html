@@ -3086,6 +3086,8 @@ Return ONLY valid JSON:
 
                 if (completed === researchModules.length) {
                     updateResearchSummary();
+                    // Update button text since all modules are now expanded
+                    document.getElementById('expandAllBtn').textContent = 'Collapse All';
                 }
             };
 
@@ -3162,6 +3164,9 @@ Return ONLY valid JSON.`
 
             // Remove loading state
             moduleEl.classList.remove('loading');
+
+            // Auto-expand the module to show content
+            moduleEl.classList.add('expanded');
 
             // Set risk class on module
             moduleEl.classList.add(`risk-${result.risk || 'unknown'}`);
