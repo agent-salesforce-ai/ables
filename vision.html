@@ -2783,39 +2783,6 @@
                 </div>
             </div>
 
-            <!-- Loading Skeleton (outside resultsArea so export doesn't affect it) -->
-            <div class="skeleton-loading hidden" id="loadingSkeleton">
-                <div class="skeleton-card" style="margin-bottom: 16px;">
-                    <div class="skeleton skeleton-text short" style="height: 20px; margin-bottom: 16px;"></div>
-                    <div class="skeleton-row">
-                        <div class="skeleton skeleton-cell"></div>
-                        <div class="skeleton skeleton-cell"></div>
-                        <div class="skeleton skeleton-cell"></div>
-                        <div class="skeleton skeleton-cell"></div>
-                    </div>
-                    <div class="skeleton-row">
-                        <div class="skeleton skeleton-cell"></div>
-                        <div class="skeleton skeleton-cell"></div>
-                        <div class="skeleton skeleton-cell"></div>
-                        <div class="skeleton skeleton-cell"></div>
-                    </div>
-                </div>
-                <div class="skeleton-card" style="margin-bottom: 16px;">
-                    <div class="skeleton skeleton-text short" style="height: 20px; margin-bottom: 16px;"></div>
-                    <div class="skeleton skeleton-text long"></div>
-                    <div class="skeleton skeleton-text medium"></div>
-                    <div class="skeleton skeleton-text long"></div>
-                    <div style="display: flex; gap: 16px; margin-top: 16px;">
-                        <div class="skeleton" style="flex: 1; height: 150px;"></div>
-                        <div class="skeleton" style="flex: 1; height: 150px;"></div>
-                    </div>
-                </div>
-                <div class="skeleton-card">
-                    <div class="skeleton skeleton-text short" style="height: 20px; margin-bottom: 16px;"></div>
-                    <div class="skeleton" style="height: 200px;"></div>
-                </div>
-            </div>
-
             <!-- Results Area for Export -->
             <div id="resultsArea">
 
@@ -3438,14 +3405,6 @@
             }
         });
 
-        // Show/hide loading skeleton
-        function showSkeleton(show = true) {
-            const skeleton = document.getElementById('loadingSkeleton');
-            if (skeleton) {
-                skeleton.classList.toggle('hidden', !show);
-            }
-        }
-
         function saveSettings() {
             localStorage.setItem('gemini_key', document.getElementById('apiKeyInput').value);
             localStorage.setItem('gemini_model', document.getElementById('modelSelect').value);
@@ -3985,9 +3944,6 @@
             }
 
             try {
-                // Show skeleton placeholder while processing
-                showSkeleton(true);
-
                 // Step 2: Fraud Scan
                 setStep(2);
                 showLoading(true, 'Scanning for fraud indicators...', {
@@ -4065,7 +4021,6 @@
             } catch (error) {
                 console.error(error);
                 showLoading(false);
-                showSkeleton(false); // Hide skeleton on error
                 showStatus(`Error: ${error.message}`, 'error');
             }
         }
@@ -4571,9 +4526,6 @@ Return ONLY valid JSON (no markdown, no explanation):
         }
 
         function renderExtractedData() {
-            // Hide skeleton when data renders
-            showSkeleton(false);
-
             if (!extractedData.full_analysis) {
                 document.getElementById('extractedData').innerHTML = '<div class="placeholder">No data extracted</div>';
                 return;
