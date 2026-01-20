@@ -262,6 +262,11 @@
             top: 56px;
             height: calc(100vh - 56px);
             overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar > * {
+            flex-shrink: 0;
         }
 
         .upload-zone {
@@ -320,9 +325,8 @@
         }
 
         .file-list {
-            flex: 1;
-            overflow-y: auto;
             padding: 0 12px;
+            max-height: none;
         }
 
         .file-item {
@@ -730,51 +734,6 @@
             50% { transform: scale(1.2); }
         }
 
-        /* Brick Breaker Game */
-        .game-container {
-            margin: 30px auto 0;
-            padding: 16px;
-            background: var(--bg-tertiary);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border);
-            text-align: center;
-            max-width: 520px;
-        }
-
-        .game-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            padding: 0 8px;
-        }
-
-        .game-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .game-score {
-            font-size: 13px;
-            color: var(--gold);
-            font-weight: 600;
-        }
-
-        #brickGame {
-            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
-            border-radius: var(--radius-md);
-            display: block;
-            margin: 0 auto;
-            cursor: none;
-        }
-
-        .game-instructions {
-            margin-top: 10px;
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
         /* Skeleton shimmer placeholders */
         .skeleton {
             background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-secondary) 50%, var(--bg-tertiary) 75%);
@@ -979,20 +938,128 @@
             letter-spacing: 0.5px;
         }
 
-        /* MCA Alert */
+        /* MCA Section - Enhanced */
+        .mca-section {
+            background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+            border: 1px solid var(--red);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-top: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mca-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--red) 0%, #f97316 50%, var(--red) 100%);
+        }
+
+        .mca-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .mca-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--red-bg);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .mca-title {
+            flex: 1;
+        }
+
+        .mca-title h3 {
+            color: var(--red);
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+
+        .mca-title p {
+            color: var(--text-muted);
+            font-size: 12px;
+            margin: 2px 0 0 0;
+        }
+
+        .mca-count-badge {
+            background: var(--red);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .mca-lender-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .mca-lender-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--red);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .mca-lender-card:hover {
+            border-color: var(--red);
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+        }
+
+        .mca-lender-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--red-bg);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .mca-lender-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        .mca-lender-status {
+            font-size: 12px;
+            color: var(--red);
+            font-weight: 600;
+        }
+
+        /* Legacy MCA Alert for Red Flags */
         .mca-alert {
             background: var(--red-bg);
             border: 1px solid var(--red);
             border-radius: var(--radius-md);
             padding: 16px;
             margin-top: 16px;
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.15);
-            animation: alertPulse 3s ease-in-out infinite, slideIn 0.4s ease-out;
-        }
-
-        @keyframes alertPulse {
-            0%, 100% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.15); }
-            50% { box-shadow: 0 0 30px rgba(239, 68, 68, 0.25); }
         }
 
         .mca-alert-title {
@@ -1303,29 +1370,30 @@
         .watermark-preview {
             background: var(--bg-tertiary);
             border-radius: var(--radius-md);
-            min-height: 200px;
-            max-height: 400px;
+            min-height: 150px;
+            max-height: 280px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: auto;
             position: relative;
             border: 1px solid var(--border);
-            margin: 16px;
+            margin: 12px 16px;
             cursor: pointer;
             transition: max-height 0.3s ease;
+            flex-shrink: 0;
         }
         .watermark-preview.expanded {
-            max-height: 600px;
+            max-height: 500px;
         }
         .watermark-preview canvas {
             max-width: 100%;
-            max-height: 380px;
+            max-height: 260px;
             border-radius: var(--radius-sm);
             transition: max-height 0.3s ease;
         }
         .watermark-preview.expanded canvas {
-            max-height: 580px;
+            max-height: 480px;
         }
         .expand-btn {
             position: absolute;
@@ -2103,16 +2171,10 @@
                         </div>
                     </div>
                 </div>
-                <!-- Brick Breaker Game -->
-                <div class="game-container" id="gameContainer">
-                    <div class="game-header">
-                        <span class="game-title">🎮 Play while you wait!</span>
-                        <span class="game-score">Score: <span id="gameScore">0</span></span>
-                    </div>
-                    <canvas id="brickGame" width="480" height="320"></canvas>
-                    <div class="game-instructions">Use ← → arrow keys or mouse to move the paddle</div>
-                </div>
             </div>
+
+            <!-- Results Area for Export -->
+            <div id="resultsArea">
 
             <!-- Fraud Results -->
             <div class="section-card hidden" id="fraudSection">
@@ -2239,6 +2301,8 @@
                 <div class="section-body" id="submitInstructions"></div>
             </div>
 
+            </div><!-- End resultsArea -->
+
             <!-- Empty State -->
             <div class="placeholder" id="emptyState">
                 <div class="placeholder-icon"></div>
@@ -2342,146 +2406,6 @@
         let canvas = null;
         let ctx = null;
         const settings = { opacity: 0.25, size: 0.15, density: 0.50, rotation: 45 };
-
-        // ============ BRICK BREAKER GAME ============
-        let gameCanvas, gameCtx, gameRunning = false, gameScore = 0, gameAnimationId;
-        let paddle = { x: 200, y: 290, width: 80, height: 12, speed: 8 };
-        let ball = { x: 240, y: 280, dx: 4, dy: -4, radius: 6 };
-        let bricks = [];
-        const brickRows = 5, brickCols = 8, brickWidth = 54, brickHeight = 18, brickPadding = 4, brickOffsetTop = 30, brickOffsetLeft = 12;
-        const brickColors = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6'];
-
-        function initBricks() {
-            bricks = [];
-            for (let r = 0; r < brickRows; r++) {
-                for (let c = 0; c < brickCols; c++) {
-                    bricks.push({ x: c * (brickWidth + brickPadding) + brickOffsetLeft, y: r * (brickHeight + brickPadding) + brickOffsetTop, alive: true, color: brickColors[r] });
-                }
-            }
-        }
-
-        function resetBall() {
-            ball.x = paddle.x + paddle.width / 2;
-            ball.y = paddle.y - ball.radius - 2;
-            ball.dx = (Math.random() > 0.5 ? 1 : -1) * (3 + Math.random() * 2);
-            ball.dy = -(4 + Math.random());
-        }
-
-        function startGame() {
-            gameCanvas = document.getElementById('brickGame');
-            if (!gameCanvas) return;
-            gameCtx = gameCanvas.getContext('2d');
-            gameScore = 0;
-            document.getElementById('gameScore').textContent = '0';
-            paddle.x = (gameCanvas.width - paddle.width) / 2;
-            initBricks();
-            resetBall();
-            gameRunning = true;
-            gameCanvas.addEventListener('mousemove', handleGameMouse);
-            document.addEventListener('keydown', handleGameKey);
-            gameLoop();
-        }
-
-        function stopGame() {
-            gameRunning = false;
-            if (gameAnimationId) cancelAnimationFrame(gameAnimationId);
-            if (gameCanvas) {
-                gameCanvas.removeEventListener('mousemove', handleGameMouse);
-                document.removeEventListener('keydown', handleGameKey);
-            }
-        }
-
-        function handleGameMouse(e) {
-            const rect = gameCanvas.getBoundingClientRect();
-            paddle.x = Math.min(Math.max(e.clientX - rect.left - paddle.width / 2, 0), gameCanvas.width - paddle.width);
-        }
-
-        function handleGameKey(e) {
-            if (e.key === 'ArrowLeft') paddle.x = Math.max(paddle.x - paddle.speed * 3, 0);
-            if (e.key === 'ArrowRight') paddle.x = Math.min(paddle.x + paddle.speed * 3, gameCanvas.width - paddle.width);
-        }
-
-        function gameLoop() {
-            if (!gameRunning) return;
-            updateGame();
-            drawGame();
-            gameAnimationId = requestAnimationFrame(gameLoop);
-        }
-
-        function updateGame() {
-            ball.x += ball.dx;
-            ball.y += ball.dy;
-
-            // Wall collisions
-            if (ball.x - ball.radius < 0 || ball.x + ball.radius > gameCanvas.width) ball.dx = -ball.dx;
-            if (ball.y - ball.radius < 0) ball.dy = -ball.dy;
-
-            // Paddle collision
-            if (ball.y + ball.radius > paddle.y && ball.y - ball.radius < paddle.y + paddle.height &&
-                ball.x > paddle.x && ball.x < paddle.x + paddle.width) {
-                ball.dy = -Math.abs(ball.dy);
-                const hitPos = (ball.x - paddle.x) / paddle.width;
-                ball.dx = (hitPos - 0.5) * 10;
-            }
-
-            // Ball out
-            if (ball.y > gameCanvas.height) {
-                resetBall();
-            }
-
-            // Brick collisions
-            for (let brick of bricks) {
-                if (brick.alive && ball.x > brick.x && ball.x < brick.x + brickWidth &&
-                    ball.y - ball.radius < brick.y + brickHeight && ball.y + ball.radius > brick.y) {
-                    brick.alive = false;
-                    ball.dy = -ball.dy;
-                    gameScore += 10;
-                    document.getElementById('gameScore').textContent = gameScore;
-                }
-            }
-
-            // Check win
-            if (bricks.every(b => !b.alive)) {
-                initBricks();
-                resetBall();
-                ball.dx *= 1.1;
-                ball.dy *= 1.1;
-            }
-        }
-
-        function drawGame() {
-            gameCtx.fillStyle = '#1a1a2e';
-            gameCtx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
-
-            // Draw bricks
-            for (let brick of bricks) {
-                if (brick.alive) {
-                    gameCtx.fillStyle = brick.color;
-                    gameCtx.beginPath();
-                    gameCtx.roundRect(brick.x, brick.y, brickWidth, brickHeight, 3);
-                    gameCtx.fill();
-                }
-            }
-
-            // Draw paddle with gradient
-            const paddleGrad = gameCtx.createLinearGradient(paddle.x, paddle.y, paddle.x, paddle.y + paddle.height);
-            paddleGrad.addColorStop(0, '#eab308');
-            paddleGrad.addColorStop(1, '#ca8a04');
-            gameCtx.fillStyle = paddleGrad;
-            gameCtx.beginPath();
-            gameCtx.roundRect(paddle.x, paddle.y, paddle.width, paddle.height, 6);
-            gameCtx.fill();
-
-            // Draw ball with glow
-            gameCtx.shadowColor = '#fff';
-            gameCtx.shadowBlur = 10;
-            gameCtx.fillStyle = '#fff';
-            gameCtx.beginPath();
-            gameCtx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-            gameCtx.fill();
-            gameCtx.shadowBlur = 0;
-        }
-        // ============ END BRICK BREAKER ============
 
         // Initialize
         function init() {
@@ -2677,395 +2601,140 @@
         }
 
         async function exportReport() {
-            if (!extractedData.full_analysis) {
-                showStatus('No analysis data to export', 'error');
-                return;
-            }
-
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'letter' });
-            const pageWidth = pdf.internal.pageSize.getWidth();
-            const pageHeight = pdf.internal.pageSize.getHeight();
-            const margin = 50;
-            let y = margin;
-
-            const analysis = extractedData.full_analysis;
-            const agg = analysis.aggregated || {};
-            const months = analysis.months || [];
-            const businessName = extractedBusinessInfo.name || 'Unknown Business';
-
-            // Helper functions
-            const addText = (text, x, fontSize, color = [0,0,0], style = 'normal') => {
-                pdf.setFontSize(fontSize);
-                pdf.setTextColor(...color);
-                pdf.setFont('helvetica', style);
-                pdf.text(text, x, y);
-            };
-
-            const checkPageBreak = (needed) => {
-                if (y + needed > pageHeight - margin) {
-                    pdf.addPage();
-                    y = margin;
-                }
-            };
-
-            // Header
-            pdf.setFillColor(234, 179, 8);
-            pdf.rect(0, 0, pageWidth, 80, 'F');
-            pdf.setTextColor(0, 0, 0);
-            pdf.setFontSize(24);
-            pdf.setFont('helvetica', 'bold');
-            pdf.text('Vision PRO', margin, 45);
-            pdf.setFontSize(12);
-            pdf.setFont('helvetica', 'normal');
-            pdf.text('MCA Underwriting Analysis Report', margin, 62);
-            pdf.setFontSize(10);
-            pdf.text(new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), pageWidth - margin - 100, 45);
-
-            y = 110;
-
-            // Business Info
-            addText(businessName, margin, 20, [0,0,0], 'bold');
-            y += 20;
-            if (extractedBusinessInfo.owner) {
-                addText(`Owner: ${extractedBusinessInfo.owner}`, margin, 11, [100,100,100]);
-                y += 15;
-            }
-            if (extractedBusinessInfo.address) {
-                addText(extractedBusinessInfo.address, margin, 11, [100,100,100]);
-                y += 15;
-            }
-            y += 20;
-
-            // Summary Stats Box
-            pdf.setFillColor(245, 245, 245);
-            pdf.roundedRect(margin, y, pageWidth - margin*2, 70, 5, 5, 'F');
-
-            const statWidth = (pageWidth - margin*2) / 4;
-            const stats = [
-                { label: 'Avg Monthly Deposits', value: '$' + Math.round(agg.avg_monthly_deposits || 0).toLocaleString() },
-                { label: 'Avg Daily Balance', value: '$' + Math.round(agg.avg_monthly_balance || 0).toLocaleString() },
-                { label: 'NSF/Negative Days', value: (agg.total_nsf_fees || 0) + ' / ' + (agg.total_negative_days || 0) },
-                { label: 'Months Analyzed', value: (months.length || 0).toString() }
-            ];
-
-            stats.forEach((stat, i) => {
-                const x = margin + statWidth * i + statWidth/2;
-                pdf.setFontSize(18);
-                pdf.setFont('helvetica', 'bold');
-                pdf.setTextColor(0, 0, 0);
-                pdf.text(stat.value, x, y + 30, { align: 'center' });
-                pdf.setFontSize(9);
-                pdf.setFont('helvetica', 'normal');
-                pdf.setTextColor(100, 100, 100);
-                pdf.text(stat.label, x, y + 50, { align: 'center' });
-            });
-            y += 90;
-
-            // Monthly Data Table
-            checkPageBreak(200);
-            addText('Monthly Bank Data', margin, 14, [0,0,0], 'bold');
-            y += 25;
-
-            const colWidths = [70, 70, 70, 35, 70, 55, 55, 35, 35];
-            const headers = ['Month', 'Deposits', 'True Rev', '#', 'Withdrawals', 'Avg Bal', 'Low Bal', 'NSF', 'Neg'];
-
-            // Table header
-            pdf.setFillColor(40, 40, 40);
-            pdf.rect(margin, y, pageWidth - margin*2, 20, 'F');
-            pdf.setTextColor(255, 255, 255);
-            pdf.setFontSize(8);
-            pdf.setFont('helvetica', 'bold');
-
-            let x = margin + 5;
-            headers.forEach((h, i) => {
-                pdf.text(h, x, y + 13);
-                x += colWidths[i];
-            });
-            y += 20;
-
-            // Table rows
-            pdf.setFont('helvetica', 'normal');
-            months.forEach((m, idx) => {
-                checkPageBreak(20);
-                pdf.setFillColor(idx % 2 === 0 ? 250 : 240, idx % 2 === 0 ? 250 : 240, idx % 2 === 0 ? 250 : 240);
-                pdf.rect(margin, y, pageWidth - margin*2, 18, 'F');
-
-                pdf.setTextColor(0, 0, 0);
-                pdf.setFontSize(9);
-                x = margin + 5;
-
-                const rowData = [
-                    m.month || 'N/A',
-                    '$' + (m.total_deposits || 0).toLocaleString(),
-                    '$' + (m.true_revenue || Math.round((m.total_deposits || 0) * 0.92)).toLocaleString(),
-                    (m.num_deposits || 0).toString(),
-                    '$' + (m.total_withdrawals || 0).toLocaleString(),
-                    '$' + (m.average_daily_balance || 0).toLocaleString(),
-                    '$' + (m.lowest_daily_balance || 0).toLocaleString(),
-                    (m.nsf_count || 0).toString(),
-                    (m.days_negative || 0).toString()
-                ];
-
-                rowData.forEach((val, i) => {
-                    // Color code negative values
-                    if ((i === 6 && m.lowest_daily_balance < 0) || (i === 7 && m.nsf_count > 0) || (i === 8 && m.days_negative > 0)) {
-                        pdf.setTextColor(220, 38, 38);
-                    } else if (i === 1) {
-                        pdf.setTextColor(34, 197, 94);
-                    } else if (i === 2) {
-                        pdf.setTextColor(234, 179, 8);
-                    } else if (i === 4) {
-                        pdf.setTextColor(220, 38, 38);
-                    } else {
-                        pdf.setTextColor(0, 0, 0);
-                    }
-                    pdf.text(val, x, y + 12);
-                    x += colWidths[i];
-                });
-                y += 18;
-            });
-
-            y += 30;
-
-            // Existing Debt Section
-            const existingDebt = analysis.existing_debt?.filter(d => d.creditor_name && d.payment_amount > 0) || [];
-            if (existingDebt.length > 0) {
-                checkPageBreak(100);
-                addText('Existing Debt Obligations', margin, 14, [0,0,0], 'bold');
-                y += 25;
-
-                existingDebt.forEach(d => {
-                    checkPageBreak(40);
-                    pdf.setFillColor(255, 240, 240);
-                    pdf.roundedRect(margin, y, pageWidth - margin*2, 35, 3, 3, 'F');
-
-                    pdf.setTextColor(0, 0, 0);
-                    pdf.setFontSize(11);
-                    pdf.setFont('helvetica', 'bold');
-                    pdf.text(d.creditor_name, margin + 10, y + 15);
-
-                    pdf.setFont('helvetica', 'normal');
-                    pdf.setFontSize(10);
-                    pdf.setTextColor(100, 100, 100);
-                    pdf.text(`${d.payment_type || 'Unknown'} • $${(d.payment_amount || 0).toLocaleString()} ${d.payment_frequency || ''}`, margin + 10, y + 28);
-
-                    y += 40;
-                });
-                y += 20;
-            }
-
-            // MCA Lenders Detected
-            const mcaLenders = agg.detected_mca_lenders || [];
-            if (mcaLenders.length > 0) {
-                checkPageBreak(60);
-                pdf.setFillColor(255, 230, 230);
-                pdf.roundedRect(margin, y, pageWidth - margin*2, 50, 5, 5, 'F');
-                pdf.setTextColor(220, 38, 38);
-                pdf.setFontSize(10);
-                pdf.setFont('helvetica', 'bold');
-                pdf.text('⚠ EXISTING MCA POSITIONS DETECTED', margin + 15, y + 20);
-                pdf.setFont('helvetica', 'normal');
-                pdf.setFontSize(9);
-                pdf.text(mcaLenders.join(', '), margin + 15, y + 35);
-                y += 70;
-            }
-
-            // Red Flags
-            const flags = analysis.red_flags || [];
-            if (flags.length > 0) {
-                checkPageBreak(60 + flags.length * 15);
-                addText('Red Flags', margin, 14, [220, 38, 38], 'bold');
-                y += 20;
-                pdf.setTextColor(100, 100, 100);
-                pdf.setFontSize(10);
-                flags.forEach(flag => {
-                    checkPageBreak(15);
-                    pdf.text('• ' + flag, margin + 10, y);
-                    y += 15;
-                });
-                y += 20;
-            }
-
-            // Footer
-            const totalPages = pdf.internal.getNumberOfPages();
-            for (let i = 1; i <= totalPages; i++) {
-                pdf.setPage(i);
-                pdf.setFontSize(8);
-                pdf.setTextColor(150, 150, 150);
-                pdf.text(`Generated by Vision PRO • Page ${i} of ${totalPages}`, pageWidth / 2, pageHeight - 20, { align: 'center' });
-            }
-
-            // Save
-            const filename = `${businessName.replace(/[^a-z0-9]/gi, '_')}_Analysis_${new Date().toISOString().split('T')[0]}.pdf`;
-            pdf.save(filename);
-            showStatus('Report exported!', 'success');
+            await exportReportAs('pdf');
         }
 
         async function exportReportAsPng() {
+            await exportReportAs('png');
+        }
+
+        async function exportReportAs(format = 'png') {
             if (!extractedData.full_analysis) {
                 showStatus('No analysis data to export', 'error');
                 return;
             }
 
-            showStatus('Generating PNG...', 'info');
+            showStatus(`Generating ${format.toUpperCase()}...`, 'info');
 
             try {
-                // Letter size at 96 DPI: 816 x 1056 pixels
-                const pageWidth = 816;
-                const pageHeight = 1056;
-                const margin = 40;
-                const contentWidth = pageWidth - (margin * 2);
-
-                // Get all result sections
                 const resultsArea = document.getElementById('resultsArea');
                 if (!resultsArea) {
                     showStatus('Results area not found', 'error');
                     return;
                 }
 
-                // Store original styles
-                const originalBg = document.body.style.background;
-                const originalColor = document.body.style.color;
+                // Hide buttons and expand all collapsed sections
+                const buttons = resultsArea.querySelectorAll('button, .expand-toggle');
+                buttons.forEach(b => b.style.display = 'none');
 
-                // Create a wrapper for export with light theme for better printing
-                const exportWrapper = document.createElement('div');
-                exportWrapper.style.cssText = `
-                    position: absolute;
-                    left: -9999px;
-                    top: 0;
-                    width: ${contentWidth}px;
-                    padding: ${margin}px;
-                    background: #ffffff;
-                    color: #1a1a1a;
-                    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-                `;
-
-                // Create header
-                const header = document.createElement('div');
-                header.innerHTML = `
-                    <div style="background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); padding: 20px 24px; border-radius: 12px; margin-bottom: 24px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <div style="font-size: 28px; font-weight: 800; color: #000; letter-spacing: -0.5px;">Vision PRO</div>
-                                <div style="font-size: 13px; color: #333; margin-top: 4px;">MCA Underwriting Analysis Report</div>
-                            </div>
-                            <div style="text-align: right; color: #333; font-size: 12px;">
-                                <div>${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
-                                <div style="margin-top: 2px;">${extractedBusinessInfo.name || 'Business Report'}</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                exportWrapper.appendChild(header);
-
-                // Clone results content
-                const resultsClone = resultsArea.cloneNode(true);
-
-                // Apply print-friendly styles to clone
-                resultsClone.style.cssText = `
-                    background: #ffffff;
-                    color: #1a1a1a;
-                `;
-
-                // Fix all text colors in the clone for light background
-                resultsClone.querySelectorAll('*').forEach(el => {
-                    const computed = window.getComputedStyle(el);
-                    // Convert dark text to light-friendly colors
-                    if (computed.color === 'rgb(255, 255, 255)' || computed.color === 'rgba(255, 255, 255, 1)') {
-                        el.style.color = '#1a1a1a';
-                    }
-                    // Fix backgrounds
-                    if (computed.backgroundColor.includes('rgba(0, 0, 0') || computed.backgroundColor === 'rgb(10, 10, 10)' || computed.backgroundColor === 'rgb(17, 17, 17)' || computed.backgroundColor === 'rgb(26, 26, 26)') {
-                        el.style.backgroundColor = '#f5f5f5';
-                    }
-                    // Fix borders
-                    if (computed.borderColor.includes('rgb(42, 42, 42)')) {
-                        el.style.borderColor = '#e0e0e0';
-                    }
+                // Expand any collapsed sections for full capture
+                resultsArea.querySelectorAll('.hidden').forEach(el => {
+                    el.classList.remove('hidden');
+                    el.dataset.wasHidden = 'true';
                 });
 
-                // Update section backgrounds
-                resultsClone.querySelectorAll('.section, .result-section').forEach(section => {
-                    section.style.backgroundColor = '#f8f9fa';
-                    section.style.border = '1px solid #e0e0e0';
-                    section.style.borderRadius = '12px';
-                    section.style.marginBottom = '16px';
-                    section.style.padding = '16px';
-                });
-
-                // Fix table styling
-                resultsClone.querySelectorAll('table').forEach(table => {
-                    table.style.width = '100%';
-                    table.style.borderCollapse = 'collapse';
-                    table.style.fontSize = '11px';
-                });
-                resultsClone.querySelectorAll('th').forEach(th => {
-                    th.style.backgroundColor = '#e5e7eb';
-                    th.style.color = '#374151';
-                    th.style.padding = '8px 6px';
-                    th.style.textAlign = 'left';
-                    th.style.fontWeight = '600';
-                    th.style.borderBottom = '2px solid #d1d5db';
-                });
-                resultsClone.querySelectorAll('td').forEach(td => {
-                    td.style.padding = '6px';
-                    td.style.borderBottom = '1px solid #e5e7eb';
-                    td.style.color = '#374151';
-                });
-
-                // Keep colored values
-                resultsClone.querySelectorAll('.text-green').forEach(el => el.style.color = '#16a34a');
-                resultsClone.querySelectorAll('.text-red').forEach(el => el.style.color = '#dc2626');
-                resultsClone.querySelectorAll('.text-gold').forEach(el => el.style.color = '#ca8a04');
-
-                // Hide non-printable elements
-                resultsClone.querySelectorAll('.expand-toggle, button, .game-container, #gameContainer').forEach(el => {
-                    el.style.display = 'none';
-                });
-
-                // Add charts note (since canvas doesn't clone well)
-                resultsClone.querySelectorAll('canvas').forEach(canvas => {
-                    const note = document.createElement('div');
-                    note.style.cssText = 'text-align: center; padding: 20px; background: #f0f0f0; border-radius: 8px; color: #666; font-style: italic;';
-                    note.textContent = '[Chart - see interactive report]';
-                    canvas.parentNode.replaceChild(note, canvas);
-                });
-
-                exportWrapper.appendChild(resultsClone);
-
-                // Add footer
-                const footer = document.createElement('div');
-                footer.style.cssText = 'margin-top: 24px; padding-top: 16px; border-top: 1px solid #e0e0e0; text-align: center; color: #666; font-size: 10px;';
-                footer.textContent = 'Generated by Vision PRO • ' + new Date().toLocaleString();
-                exportWrapper.appendChild(footer);
-
-                document.body.appendChild(exportWrapper);
-
-                // Capture with html2canvas
-                const canvas = await html2canvas(exportWrapper, {
-                    scale: 2, // Higher quality
+                // Capture the actual rendered report
+                const canvas = await html2canvas(resultsArea, {
+                    scale: 2,
                     useCORS: true,
-                    backgroundColor: '#ffffff',
-                    width: pageWidth,
-                    windowWidth: pageWidth,
-                    logging: false
+                    backgroundColor: '#0d0d0d',
+                    logging: false,
+                    allowTaint: true,
+                    onclone: (clonedDoc) => {
+                        // Ensure all styles are applied in clone
+                        const clonedResults = clonedDoc.getElementById('resultsArea');
+                        if (clonedResults) {
+                            clonedResults.style.padding = '20px';
+                            clonedResults.style.backgroundColor = '#0d0d0d';
+
+                            // Make all section cards fully opaque
+                            clonedResults.querySelectorAll('.section-card, .stat-card, .lender-card, .metric-item, .risk-chip, table, th, td').forEach(el => {
+                                el.style.opacity = '1';
+                                const computed = window.getComputedStyle(el);
+                                // Replace any rgba backgrounds with solid versions
+                                if (computed.backgroundColor.includes('rgba')) {
+                                    el.style.backgroundColor = computed.backgroundColor.replace(/rgba?\(([^)]+)\)/, (match, values) => {
+                                        const parts = values.split(',').map(v => parseFloat(v.trim()));
+                                        if (parts.length === 4) {
+                                            // Convert rgba to rgb by blending with dark background
+                                            const alpha = parts[3];
+                                            const r = Math.round(parts[0] * alpha + 13 * (1 - alpha));
+                                            const g = Math.round(parts[1] * alpha + 13 * (1 - alpha));
+                                            const b = Math.round(parts[2] * alpha + 13 * (1 - alpha));
+                                            return `rgb(${r}, ${g}, ${b})`;
+                                        }
+                                        return match;
+                                    });
+                                }
+                            });
+                        }
+                    }
                 });
 
-                // Remove the wrapper
-                document.body.removeChild(exportWrapper);
+                // Restore hidden elements
+                buttons.forEach(b => b.style.display = '');
 
-                // Create download link
-                const link = document.createElement('a');
                 const businessName = extractedBusinessInfo.name || 'Report';
-                link.download = `${businessName.replace(/[^a-z0-9]/gi, '_')}_Analysis_${new Date().toISOString().split('T')[0]}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
+                const filename = `${businessName.replace(/[^a-z0-9]/gi, '_')}_Analysis_${new Date().toISOString().split('T')[0]}`;
 
-                showStatus('PNG exported successfully!', 'success');
+                if (format === 'png') {
+                    // Direct PNG download
+                    const link = document.createElement('a');
+                    link.download = filename + '.png';
+                    link.href = canvas.toDataURL('image/png', 1.0);
+                    link.click();
+                    showStatus('PNG exported!', 'success');
+                } else {
+                    // Convert to PDF with proper page sizing
+                    const { jsPDF } = window.jspdf;
+
+                    const imgWidth = canvas.width;
+                    const imgHeight = canvas.height;
+
+                    // Use the image dimensions to set PDF size, scaled to letter width
+                    const pdfWidth = 612; // Letter width in points
+                    const pdfHeight = (imgHeight * pdfWidth) / imgWidth;
+
+                    // If content is too tall for one page, create multi-page PDF
+                    const maxPageHeight = 792; // Letter height in points
+
+                    if (pdfHeight <= maxPageHeight) {
+                        // Single page
+                        const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: [pdfWidth, pdfHeight] });
+                        pdf.addImage(canvas.toDataURL('image/png', 1.0), 'PNG', 0, 0, pdfWidth, pdfHeight);
+                        pdf.save(filename + '.pdf');
+                    } else {
+                        // Multi-page - split the canvas
+                        const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'letter' });
+                        const pageHeightInCanvasPixels = (maxPageHeight * imgWidth) / pdfWidth;
+                        let position = 0;
+                        let pageNum = 0;
+
+                        while (position < imgHeight) {
+                            if (pageNum > 0) pdf.addPage();
+
+                            // Create a temporary canvas for this page slice
+                            const pageCanvas = document.createElement('canvas');
+                            pageCanvas.width = imgWidth;
+                            pageCanvas.height = Math.min(pageHeightInCanvasPixels, imgHeight - position);
+                            const ctx = pageCanvas.getContext('2d');
+
+                            ctx.drawImage(canvas, 0, position, imgWidth, pageCanvas.height, 0, 0, imgWidth, pageCanvas.height);
+
+                            const scaledHeight = (pageCanvas.height * pdfWidth) / imgWidth;
+                            pdf.addImage(pageCanvas.toDataURL('image/png', 1.0), 'PNG', 0, 0, pdfWidth, scaledHeight);
+
+                            position += pageHeightInCanvasPixels;
+                            pageNum++;
+                        }
+
+                        pdf.save(filename + '.pdf');
+                    }
+                    showStatus('PDF exported!', 'success');
+                }
             } catch (error) {
-                console.error('PNG export error:', error);
-                showStatus('Error exporting PNG: ' + error.message, 'error');
+                console.error('Export error:', error);
+                showStatus(`Error exporting ${format.toUpperCase()}: ` + error.message, 'error');
             }
         }
 
@@ -3116,13 +2785,6 @@
                         step.classList.add('active');
                     }
                 });
-            }
-
-            // Start/stop Brick Breaker game
-            if (show && !gameRunning) {
-                setTimeout(startGame, 100);
-            } else if (!show && gameRunning) {
-                stopGame();
             }
 
             // Reset if hiding
@@ -3386,17 +3048,25 @@
                     body: JSON.stringify({
                         contents: [{
                             parts: [
-                                { text: `Today's date is ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}. Analyze this bank statement for fraud indicators. Look for:
-1. FONT INCONSISTENCIES - different fonts, sizes, or spacing
-2. ALTERED NUMBERS - editing artifacts, whiteout marks
-3. ALIGNMENT ISSUES - misaligned columns
-4. DATE ANOMALIES - dates out of order (NOT future dates - compare to today's date above)
-5. BALANCE DISCREPANCIES - running balance doesn't match
-6. IMAGE ARTIFACTS - copy-paste evidence, blur patterns
+                                { text: `Analyze this bank statement image for signs of ALTERATION or TAMPERING only.
 
-IMPORTANT: Dates from 2024 or 2025 are NOT future dates - they are valid past dates. Only flag dates if they are actually in the future relative to today's date.
+ONLY flag as DANGER or WARNING if you see clear evidence of:
+1. DIGITAL EDITING - visible editing artifacts, cut/paste lines, mismatched pixels, blur around numbers
+2. FONT TAMPERING - numbers or text with different fonts/sizes than surrounding content
+3. WHITEOUT/CORRECTION - visible white boxes or correction tape marks covering original text
+4. MATHEMATICAL ERRORS - running balance doesn't add up correctly with transactions shown
 
-Provide 2-3 sentences explaining your findings.
+DO NOT flag documents for:
+- Future dates (these are fine)
+- Low resolution or poor scan quality
+- Normal banking format variations
+- Standard PDF rendering artifacts
+
+Only flag DANGER if there is CLEAR visual evidence of alteration.
+Only flag WARNING if there are suspicious but uncertain indicators.
+Flag CLEAN if the document appears unaltered and authentic.
+
+Provide a brief 1-2 sentence explanation of what you found (or that no alterations were detected).
 End with exactly one: RISK_LEVEL:CLEAN or RISK_LEVEL:WARNING or RISK_LEVEL:DANGER` },
                                 { inlineData: { mimeType: 'image/jpeg', data: base64 } }
                             ]
@@ -3422,8 +3092,24 @@ End with exactly one: RISK_LEVEL:CLEAN or RISK_LEVEL:WARNING or RISK_LEVEL:DANGE
             const warning = files.filter(f => f.status === 'warning').length;
             const danger = files.filter(f => f.status === 'danger').length;
 
+            // Build file-by-file results with explanations
+            const fileResults = files.map((f, i) => {
+                const statusClass = f.status === 'danger' ? 'red' : f.status === 'warning' ? 'yellow' : 'green';
+                const statusText = f.status === 'danger' ? 'Risk' : f.status === 'warning' ? 'Review' : 'Clean';
+                const statusIcon = f.status === 'danger' ? '⚠️' : f.status === 'warning' ? '⚡' : '✓';
+                return `
+                    <div class="fraud-item" style="padding: 12px; border-radius: 8px; background: var(--bg-tertiary); margin-bottom: 8px; border-left: 3px solid var(--${statusClass});">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <span style="font-weight: 600; color: var(--text);">${f.name}</span>
+                            <span class="file-status ${f.status}" style="font-size: 12px;">${statusIcon} ${statusText}</span>
+                        </div>
+                        <p style="color: var(--text-muted); font-size: 13px; margin: 0; line-height: 1.4;">${f.fraudAnalysis || 'No analysis available'}</p>
+                    </div>
+                `;
+            }).join('');
+
             document.getElementById('fraudResults').innerHTML = `
-                <div class="data-grid" style="grid-template-columns: repeat(4, 1fr);">
+                <div class="data-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 16px;">
                     <div class="data-card" style="border-color: var(--green);">
                         <div class="data-label">Clean</div>
                         <div class="data-value green">${clean}</div>
@@ -3441,11 +3127,9 @@ End with exactly one: RISK_LEVEL:CLEAN or RISK_LEVEL:WARNING or RISK_LEVEL:DANGE
                         <div class="data-value">${files.length}</div>
                     </div>
                 </div>
-                <p style="color: var(--text-muted); font-size: 13px;">
-                    ${danger > 0 ? 'Some documents flagged as high risk. Review carefully.' :
-                      warning > 0 ? 'Some documents need review but appear acceptable.' :
-                      'All documents passed fraud screening.'}
-                </p>
+                <div class="fraud-details" style="max-height: 300px; overflow-y: auto;">
+                    ${fileResults}
+                </div>
             `;
         }
 
@@ -3589,7 +3273,7 @@ Return ONLY valid JSON:
             });
 
             // Collect all MCA lenders and debt from all statements
-            const allMcaLenders = new Set();
+            const mcaLenderMap = new Map(); // Use Map to dedupe by lender name
             const allDebt = [];
             const allRedFlags = [];
             let businessInfo = { business_name: '', owner_name: '', business_address: '' };
@@ -3597,7 +3281,31 @@ Return ONLY valid JSON:
 
             results.filter(r => r !== null).forEach(r => {
                 if (r.detected_mca_payments) {
-                    r.detected_mca_payments.forEach(m => allMcaLenders.add(m));
+                    r.detected_mca_payments.forEach(m => {
+                        // Extract lender name from various formats
+                        let lenderName = '';
+                        let amount = 0;
+                        let date = '';
+
+                        if (typeof m === 'string') {
+                            lenderName = m;
+                        } else if (typeof m === 'object') {
+                            lenderName = m.name || m.lender || m.payee || '';
+                            amount = m.amount || m.payment_amount || 0;
+                            date = m.date || '';
+                        }
+
+                        // Skip if no valid lender name
+                        if (!lenderName || lenderName === 'Unknown') return;
+
+                        // Normalize lender name (uppercase, trim)
+                        const normalizedName = lenderName.toUpperCase().trim();
+
+                        // Add or update in map (keep highest amount)
+                        if (!mcaLenderMap.has(normalizedName) || (amount && amount > (mcaLenderMap.get(normalizedName).amount || 0))) {
+                            mcaLenderMap.set(normalizedName, { name: lenderName, amount, date });
+                        }
+                    });
                 }
                 if (r.existing_debt) {
                     allDebt.push(...r.existing_debt);
@@ -3651,7 +3359,7 @@ Return ONLY valid JSON:
                     total_negative_days: totals.negDays,
                     avg_num_deposits: Math.round(totals.numDeps / numMonths),
                     months_analyzed: numMonths,
-                    detected_mca_lenders: Array.from(allMcaLenders)
+                    detected_mca_lenders: Array.from(mcaLenderMap.values())
                 },
                 existing_debt: allDebt,
                 red_flags: [...new Set(allRedFlags)]
@@ -3719,9 +3427,29 @@ Return ONLY valid JSON:
                 ` : '<p style="color: var(--text-muted); text-align: center;">No monthly data extracted</p>'}
 
                 ${mcaLenders.length > 0 ? `
-                <div class="mca-alert">
-                    <div class="mca-alert-title">Existing MCA Positions Detected</div>
-                    <div>${mcaLenders.map(l => `<span class="mca-badge">${typeof l === 'object' ? (l.name || l.lender || JSON.stringify(l)) : l}</span>`).join('')}</div>
+                <div class="mca-section">
+                    <div class="mca-header">
+                        <div class="mca-icon">!</div>
+                        <div class="mca-title">
+                            <h3>Existing MCA Positions Detected</h3>
+                            <p>Active merchant cash advance obligations identified</p>
+                        </div>
+                        <div class="mca-count-badge">${mcaLenders.length} Lender${mcaLenders.length > 1 ? 's' : ''}</div>
+                    </div>
+                    <div class="mca-lender-list">
+                        ${mcaLenders.map((l, idx) => {
+                            const name = typeof l === 'object' ? (l.name || 'Unknown Lender') : l;
+                            const amount = typeof l === 'object' && l.amount ? l.amount : 0;
+                            return `
+                            <div class="mca-lender-card">
+                                <div class="mca-lender-icon">$</div>
+                                <div>
+                                    <div class="mca-lender-name">${name}</div>
+                                    <div class="mca-lender-status">${amount ? '$' + amount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '/week' : 'Active Position'}</div>
+                                </div>
+                            </div>`;
+                        }).join('')}
+                    </div>
                 </div>
                 ` : ''}
 
