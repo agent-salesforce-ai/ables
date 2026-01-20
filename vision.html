@@ -2699,6 +2699,9 @@
                 // Restore buttons
                 buttons.forEach(b => b.style.display = '');
 
+                // Restore hidden elements
+                hiddenEls.forEach(el => el.classList.add('hidden'));
+
                 const businessName = extractedBusinessInfo.name || 'Report';
                 const filename = `${businessName.replace(/[^a-z0-9]/gi, '_')}_Analysis_${new Date().toISOString().split('T')[0]}`;
 
