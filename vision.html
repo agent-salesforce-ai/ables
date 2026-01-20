@@ -2624,79 +2624,104 @@
                     return;
                 }
 
-                // NUCLEAR OPTION: Inject a style element that forces EVERYTHING to light theme
-                // This overrides CSS variables at the highest specificity level
-                const exportStyles = document.createElement('style');
-                exportStyles.id = 'export-override-styles';
-                exportStyles.textContent = `
-                    /* FORCE ALL CSS VARIABLES TO LIGHT VALUES */
-                    :root, html, body, *, *::before, *::after {
-                        --bg: #f8fafc !important;
-                        --bg-secondary: #ffffff !important;
-                        --bg-tertiary: #f1f5f9 !important;
-                        --bg-hover: #e2e8f0 !important;
-                        --text: #0f172a !important;
-                        --text-secondary: #475569 !important;
-                        --text-tertiary: #64748b !important;
-                        --border: #e2e8f0 !important;
-                        --border-secondary: #cbd5e1 !important;
-                    }
-                    /* Force backgrounds on key containers */
-                    body, .content, #resultsArea, .card, .result-card, .metric-card,
-                    .section-card, .summary-box, .detail-item, .info-item, .data-row,
-                    [class*="card"], [class*="section"], [class*="box"], [class*="item"] {
-                        background-color: #ffffff !important;
-                    }
-                    /* Force dark text */
-                    body, .content, #resultsArea, h1, h2, h3, h4, h5, h6, p, span, div,
-                    td, th, li, label, .metric-value, .section-title {
-                        color: #0f172a !important;
-                    }
-                    /* Ensure no dark overlays */
-                    .modal-overlay, .overlay, [class*="overlay"] {
-                        display: none !important;
-                    }
+                // CLONE APPROACH: Create isolated copy with inline styles
+                // This completely bypasses CSS variable issues
+
+                // Create off-screen container
+                const exportContainer = document.createElement('div');
+                exportContainer.id = 'export-container';
+                exportContainer.style.cssText = `
+                    position: absolute;
+                    left: -9999px;
+                    top: 0;
+                    width: ${resultsArea.offsetWidth}px;
+                    background: #ffffff;
+                    padding: 20px;
                 `;
-                document.head.appendChild(exportStyles);
 
-                // Also set data-theme for any CSS that checks it
-                const wasLightTheme = document.documentElement.getAttribute('data-theme') === 'light';
-                document.documentElement.setAttribute('data-theme', 'light');
+                // Clone the results
+                const clone = resultsArea.cloneNode(true);
 
-                // Force reflow to apply styles
-                void document.body.offsetHeight;
+                // Remove buttons from clone
+                clone.querySelectorAll('button, .expand-toggle').forEach(el => el.remove());
 
-                // Hide buttons and expand all collapsed sections
-                const buttons = resultsArea.querySelectorAll('button, .expand-toggle');
-                buttons.forEach(b => b.style.display = 'none');
+                // Expand hidden sections in clone
+                clone.querySelectorAll('.hidden').forEach(el => el.classList.remove('hidden'));
 
-                // Expand any collapsed sections for full capture
-                resultsArea.querySelectorAll('.hidden').forEach(el => {
-                    el.classList.remove('hidden');
-                    el.dataset.wasHidden = 'true';
+                // FORCE LIGHT THEME INLINE STYLES ON EVERY ELEMENT
+                function applyLightStyles(element) {
+                    const computed = window.getComputedStyle(element);
+                    const bgColor = computed.backgroundColor;
+                    const textColor = computed.color;
+
+                    // Check if background is dark (RGB values below threshold)
+                    const rgbMatch = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+                    if (rgbMatch) {
+                        const r = parseInt(rgbMatch[1]);
+                        const g = parseInt(rgbMatch[2]);
+                        const b = parseInt(rgbMatch[3]);
+                        const luminance = (0.299 * r + 0.587 * g + 0.114 * b);
+
+                        // If dark background, force white
+                        if (luminance < 128) {
+                            element.style.backgroundColor = '#ffffff';
+                        }
+                    }
+
+                    // Check if text is light
+                    const textRgbMatch = textColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+                    if (textRgbMatch) {
+                        const r = parseInt(textRgbMatch[1]);
+                        const g = parseInt(textRgbMatch[2]);
+                        const b = parseInt(textRgbMatch[3]);
+                        const luminance = (0.299 * r + 0.587 * g + 0.114 * b);
+
+                        // If light text, force dark
+                        if (luminance > 180) {
+                            element.style.color = '#0f172a';
+                        }
+                    }
+
+                    // Process children
+                    Array.from(element.children).forEach(child => applyLightStyles(child));
+                }
+
+                // Set base styles on clone
+                clone.style.cssText = `
+                    background: #ffffff !important;
+                    color: #0f172a !important;
+                    padding: 20px;
+                `;
+
+                exportContainer.appendChild(clone);
+                document.body.appendChild(exportContainer);
+
+                // Apply light styles to all elements in clone
+                applyLightStyles(clone);
+
+                // Force additional overrides via inline styles on common elements
+                clone.querySelectorAll('div, section, article, main, aside, header, footer, table, tr, td, th').forEach(el => {
+                    const computed = window.getComputedStyle(el);
+                    const bg = computed.backgroundColor;
+                    if (bg && (bg.includes('10, 10, 10') || bg.includes('17, 17, 17') || bg.includes('26, 26, 26') || bg.includes('0, 0, 0'))) {
+                        el.style.backgroundColor = '#ffffff';
+                    }
                 });
 
-                // Wait for styles to fully apply
-                await new Promise(r => setTimeout(r, 200));
+                // Wait for styles to apply
+                await new Promise(r => setTimeout(r, 100));
 
-                // Capture with forced white background
-                const canvas = await html2canvas(resultsArea, {
+                // Capture the clone
+                const canvas = await html2canvas(clone, {
                     scale: 2,
                     useCORS: true,
                     backgroundColor: '#ffffff',
                     logging: false,
-                    allowTaint: true,
-                    removeContainer: false
+                    allowTaint: true
                 });
 
-                // CLEANUP: Remove injected styles and restore theme
-                exportStyles.remove();
-                if (!wasLightTheme) {
-                    document.documentElement.removeAttribute('data-theme');
-                }
-
-                // Restore hidden elements
-                buttons.forEach(b => b.style.display = '');
+                // Remove the export container
+                exportContainer.remove();
 
                 const businessName = extractedBusinessInfo.name || 'Report';
                 const filename = `${businessName.replace(/[^a-z0-9]/gi, '_')}_Analysis_${new Date().toISOString().split('T')[0]}`;
