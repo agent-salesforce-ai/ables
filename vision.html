@@ -2671,15 +2671,28 @@
                         // Walk ALL elements and force light styles via inline CSS
                         const allElements = clonedResults.querySelectorAll('*');
                         allElements.forEach(el => {
-                            // Force white/light backgrounds
+                            // Clear ANY background (including gradients, images)
+                            el.style.setProperty('background', '#ffffff', 'important');
                             el.style.setProperty('background-color', '#ffffff', 'important');
+                            el.style.setProperty('background-image', 'none', 'important');
                             // Force dark text
                             el.style.setProperty('color', '#0f172a', 'important');
                         });
 
+                        // Force white on body, html, and all parent containers
+                        clonedDoc.body.style.setProperty('background', '#ffffff', 'important');
+                        clonedDoc.body.style.setProperty('background-color', '#ffffff', 'important');
+                        clonedDoc.documentElement.style.setProperty('background', '#ffffff', 'important');
+
+                        const content = clonedDoc.querySelector('.content');
+                        if (content) {
+                            content.style.setProperty('background', '#ffffff', 'important');
+                        }
+
                         // Set explicit background on the results container
                         clonedResults.style.setProperty('background', '#ffffff', 'important');
                         clonedResults.style.setProperty('background-color', '#ffffff', 'important');
+                        clonedResults.style.setProperty('background-image', 'none', 'important');
                     }
                 });
 
