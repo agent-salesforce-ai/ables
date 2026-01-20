@@ -5103,17 +5103,25 @@ Return ONLY valid JSON.`
                 };
             }
 
-            text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+            // Clean up response - remove markdown code blocks and find JSON
+            text = text.replace(/```json\n?/gi, '').replace(/```\n?/g, '').trim();
+
+            // Try to extract JSON object from response (in case there's extra text)
+            const jsonMatch = text.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+                text = jsonMatch[0];
+            }
 
             try {
                 return JSON.parse(text);
             } catch (parseError) {
-                console.error(`JSON parse error for ${module.id}:`, parseError, text);
-                // Try to extract useful info from malformed response
+                console.error(`JSON parse error for ${module.id}:`, parseError, 'Raw text:', text.substring(0, 200));
+
+                // Try to build a response from the raw text
                 return {
                     risk: 'unknown',
-                    summary: 'Response parsing failed',
-                    details: ['Data was returned but could not be parsed. Manual verification recommended.'],
+                    summary: text.substring(0, 100) + (text.length > 100 ? '...' : ''),
+                    details: ['Response format was unexpected. See summary for raw data.'],
                     flags: []
                 };
             }
