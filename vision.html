@@ -57,7 +57,7 @@
 
         /* Header */
         .header {
-            background: var(--bg-secondary);
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, rgba(17, 17, 17, 0.95) 100%);
             border-bottom: 1px solid var(--border);
             padding: 12px 24px;
             display: flex;
@@ -66,20 +66,38 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
         .brand {
             display: flex;
             align-items: center;
             gap: 10px;
+            transition: all 0.3s ease;
         }
 
-        .brand svg { width: 28px; height: 28px; }
+        .brand:hover {
+            transform: scale(1.02);
+        }
+
+        .brand svg {
+            width: 28px;
+            height: 28px;
+            filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.4));
+            transition: all 0.3s ease;
+        }
+
+        .brand:hover svg {
+            filter: drop-shadow(0 0 12px rgba(234, 179, 8, 0.6));
+            transform: rotate(5deg);
+        }
 
         .brand-text {
             font-size: 18px;
             font-weight: 800;
             letter-spacing: -0.5px;
+            transition: all 0.3s ease;
         }
 
         .brand-text .gold { color: var(--gold); }
@@ -135,43 +153,71 @@
             font-size: 13px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
         }
 
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
         .btn:hover {
             background: var(--border);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            border-color: var(--text-muted);
         }
 
         .btn:active {
-            transform: translateY(0) scale(0.98);
-            box-shadow: none;
+            transform: translateY(0) scale(0.97);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
         .btn-primary {
-            background: var(--gold);
+            background: linear-gradient(135deg, var(--gold) 0%, #f59e0b 100%);
             border-color: var(--gold);
             color: #000;
             font-weight: 600;
+            box-shadow: 0 2px 8px rgba(234, 179, 8, 0.3);
+        }
+
+        .btn-primary::before {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
         }
 
         .btn-primary:hover {
-            background: #facc15;
-            box-shadow: 0 4px 20px rgba(234, 179, 8, 0.4);
-            transform: translateY(-2px);
+            background: linear-gradient(135deg, #facc15 0%, #fbbf24 100%);
+            box-shadow: 0 8px 30px rgba(234, 179, 8, 0.5), 0 0 20px rgba(234, 179, 8, 0.3);
+            transform: translateY(-3px);
+            border-color: #facc15;
         }
 
         .btn-primary:active {
-            transform: translateY(0) scale(0.98);
-            box-shadow: 0 2px 8px rgba(234, 179, 8, 0.3);
+            transform: translateY(0) scale(0.97);
+            box-shadow: 0 2px 12px rgba(234, 179, 8, 0.4);
         }
 
         .btn-primary:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            background: var(--gold);
+        }
+
+        .btn-primary:disabled:hover {
             transform: none;
             box-shadow: none;
         }
@@ -371,19 +417,36 @@
             border-radius: var(--radius-md);
             font-size: 13px;
             color: var(--text-muted);
-            transition: all 0.3s;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: default;
+        }
+
+        .step:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .step.active {
             border-color: var(--gold);
             background: var(--gold-bg);
             color: var(--gold);
+            box-shadow: 0 0 20px rgba(234, 179, 8, 0.2), inset 0 0 20px rgba(234, 179, 8, 0.05);
+        }
+
+        .step.active .step-num {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(234, 179, 8, 0); }
         }
 
         .step.completed {
             border-color: var(--green);
             background: var(--green-bg);
             color: var(--green);
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.15);
         }
 
         .step-num {
@@ -408,6 +471,25 @@
             border-radius: var(--radius-lg);
             margin-bottom: 20px;
             overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeSlideIn 0.5s ease-out;
+        }
+
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-card:hover {
+            border-color: rgba(234, 179, 8, 0.3);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(234, 179, 8, 0.1);
+            transform: translateY(-2px);
         }
 
         .section-header {
@@ -418,9 +500,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 100%);
         }
 
-        .section-body { padding: 20px; }
+        .section-body {
+            padding: 20px;
+        }
 
         /* Status Message */
         .status-message {
@@ -689,21 +774,42 @@
         }
 
         tbody tr {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        tbody tr::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--gold);
+            opacity: 0;
+            transition: opacity 0.25s ease;
         }
 
         tbody tr:hover {
-            background: var(--bg-tertiary);
+            background: linear-gradient(90deg, rgba(234, 179, 8, 0.08) 0%, var(--bg-tertiary) 100%);
             transform: scale(1.01);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        tbody tr:hover::before {
+            opacity: 1;
         }
 
         tbody tr:hover td {
             color: var(--text);
         }
 
+        tbody tr:active {
+            transform: scale(0.995);
+        }
+
         tfoot tr {
-            background: var(--bg-secondary);
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
             font-weight: 600;
         }
 
@@ -737,13 +843,38 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
 
-        .risk-chip.good { border-color: var(--green); background: var(--green-bg); }
-        .risk-chip.warn { border-color: var(--yellow); background: var(--yellow-bg); }
-        .risk-chip.bad { border-color: var(--red); background: var(--red-bg); }
+        .risk-chip.good {
+            border-color: var(--green);
+            background: var(--green-bg);
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.1);
+        }
+        .risk-chip.warn {
+            border-color: var(--yellow);
+            background: var(--yellow-bg);
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.1);
+        }
+        .risk-chip.bad {
+            border-color: var(--red);
+            background: var(--red-bg);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.1);
+            animation: pulse-danger 3s ease-in-out infinite;
+        }
 
-        .risk-chip.good:hover { box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3); }
-        .risk-chip.warn:hover { box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3); }
-        .risk-chip.bad:hover { box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3); }
+        @keyframes pulse-danger {
+            0%, 100% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.1); }
+            50% { box-shadow: 0 0 25px rgba(239, 68, 68, 0.25); }
+        }
+
+        .risk-chip.good:hover {
+            box-shadow: 0 8px 30px rgba(34, 197, 94, 0.4), 0 0 20px rgba(34, 197, 94, 0.2);
+        }
+        .risk-chip.warn:hover {
+            box-shadow: 0 8px 30px rgba(245, 158, 11, 0.4), 0 0 20px rgba(245, 158, 11, 0.2);
+        }
+        .risk-chip.bad:hover {
+            box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4), 0 0 20px rgba(239, 68, 68, 0.2);
+            animation: none;
+        }
 
         .risk-chip-value {
             font-size: 24px;
@@ -1563,7 +1694,7 @@
                 <circle cx="32" cy="32" r="12" fill="#eab308"/>
                 <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
             </svg>
-            <span class="brand-text"><span class="gold">Vision</span> <span style="color: var(--text-muted);">PRO</span></span>
+            <span class="brand-text"><span style="color: var(--text);">Vision</span> <span style="color: var(--text-muted);">Pro</span></span>
         </div>
         <div class="header-actions">
             <button class="icon-btn" id="themeToggle" title="Toggle Theme">
@@ -2840,11 +2971,40 @@ Return ONLY valid JSON:
                 subtext: `Processing ${files.length} document${files.length > 1 ? 's' : ''} simultaneously`
             });
 
+            // Extract each statement with retry logic
+            const extractWithRetry = async (file, index, maxRetries = 2) => {
+                for (let attempt = 0; attempt <= maxRetries; attempt++) {
+                    try {
+                        const result = await extractSingleStatement(file, apiKey, index);
+                        if (result && result.month) {
+                            console.log(`✓ Statement ${index + 1} extracted: ${result.month}`);
+                            return result;
+                        }
+                        console.warn(`Statement ${index + 1} attempt ${attempt + 1}: Invalid response, retrying...`);
+                    } catch (e) {
+                        console.error(`Statement ${index + 1} attempt ${attempt + 1} failed:`, e);
+                    }
+                    if (attempt < maxRetries) {
+                        await new Promise(r => setTimeout(r, 1000)); // Wait 1s before retry
+                    }
+                }
+                console.error(`✗ Statement ${index + 1} failed after ${maxRetries + 1} attempts`);
+                return null;
+            };
+
             const extractionPromises = files.map((file, index) =>
-                extractSingleStatement(file, apiKey, index)
+                extractWithRetry(file, index)
             );
 
             const results = await Promise.all(extractionPromises);
+
+            // Log extraction summary
+            const successCount = results.filter(r => r !== null).length;
+            console.log(`Extraction complete: ${successCount}/${files.length} statements successful`);
+
+            if (successCount < files.length) {
+                showStatus(`Warning: Only ${successCount} of ${files.length} statements were extracted. Check console for details.`, 'info');
+            }
 
             // Filter out failed extractions and build months array
             const months = results.filter(r => r !== null).map(r => ({
