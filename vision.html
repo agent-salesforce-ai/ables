@@ -2638,7 +2638,7 @@
                 const canvas = await html2canvas(resultsArea, {
                     scale: 2,
                     useCORS: true,
-                    backgroundColor: '#0a0a0a',
+                    backgroundColor: '#f8fafc',
                     logging: false,
                     allowTaint: true,
                     windowWidth: resultsArea.scrollWidth,
@@ -2647,64 +2647,70 @@
                         // Remove ALL overlays and modals completely
                         clonedDoc.querySelectorAll('.modal-overlay, .loading, .status-message').forEach(el => el.remove());
 
+                        // Force light theme
+                        clonedDoc.documentElement.setAttribute('data-theme', 'light');
+
                         const clonedResults = clonedDoc.getElementById('resultsArea');
                         if (clonedResults) {
-                            // Set explicit background
-                            clonedResults.style.backgroundColor = '#0a0a0a';
+                            // Light theme background
+                            clonedResults.style.backgroundColor = '#f8fafc';
                             clonedResults.style.padding = '20px';
 
-                            // Fix ALL elements - set opacity to 1 and convert rgba backgrounds to solid
+                            // Set opacity to 1 on all elements
                             clonedResults.querySelectorAll('*').forEach(el => {
                                 el.style.opacity = '1';
-
-                                // Get computed background
-                                const computed = window.getComputedStyle(el);
-                                const bg = computed.backgroundColor;
-
-                                // Convert rgba to solid rgb for export
-                                if (bg && bg.startsWith('rgba')) {
-                                    const match = bg.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
-                                    if (match) {
-                                        const [, r, g, b, a] = match;
-                                        const alpha = parseFloat(a);
-                                        // Blend with dark background (#0a0a0a = rgb(10,10,10))
-                                        const bgR = 10, bgG = 10, bgB = 10;
-                                        const newR = Math.round(parseInt(r) * alpha + bgR * (1 - alpha));
-                                        const newG = Math.round(parseInt(g) * alpha + bgG * (1 - alpha));
-                                        const newB = Math.round(parseInt(b) * alpha + bgB * (1 - alpha));
-                                        el.style.backgroundColor = `rgb(${newR}, ${newG}, ${newB})`;
-                                    }
-                                }
                             });
 
-                            // Explicitly set section card backgrounds
+                            // Light theme section cards
                             clonedResults.querySelectorAll('.section-card').forEach(el => {
-                                el.style.backgroundColor = '#111111';
-                                el.style.opacity = '1';
+                                el.style.backgroundColor = '#ffffff';
+                                el.style.borderColor = '#e2e8f0';
                             });
 
-                            // Set stat cards
+                            // Light theme stat cards
                             clonedResults.querySelectorAll('.stat-card, .metric-item, .data-card').forEach(el => {
-                                el.style.backgroundColor = '#1a1a1a';
-                                el.style.opacity = '1';
+                                el.style.backgroundColor = '#f1f5f9';
+                                el.style.borderColor = '#e2e8f0';
                             });
 
-                            // Set table cells
+                            // Light theme tables
+                            clonedResults.querySelectorAll('table').forEach(el => {
+                                el.style.backgroundColor = '#ffffff';
+                            });
                             clonedResults.querySelectorAll('th').forEach(el => {
-                                el.style.backgroundColor = '#1a1a1a';
-                                el.style.opacity = '1';
+                                el.style.backgroundColor = '#f1f5f9';
+                                el.style.borderColor = '#e2e8f0';
+                                el.style.color = '#1e293b';
                             });
                             clonedResults.querySelectorAll('td').forEach(el => {
-                                el.style.backgroundColor = '#111111';
-                                el.style.opacity = '1';
+                                el.style.backgroundColor = '#ffffff';
+                                el.style.borderColor = '#e2e8f0';
+                                el.style.color = '#1e293b';
                             });
 
-                            // Ensure text is visible
+                            // Fix ALL text colors for light theme
                             clonedResults.querySelectorAll('*').forEach(el => {
                                 const computed = window.getComputedStyle(el);
-                                if (computed.color === 'rgba(0, 0, 0, 0)' || computed.color === 'transparent') {
-                                    el.style.color = '#ffffff';
+                                const color = computed.color;
+                                // Convert white/light text to dark for light bg
+                                if (color === 'rgb(255, 255, 255)' || color === 'rgba(255, 255, 255, 1)') {
+                                    el.style.color = '#1e293b';
                                 }
+                                // Convert light grays to darker grays
+                                if (color === 'rgb(161, 161, 170)' || color === 'rgb(113, 113, 122)') {
+                                    el.style.color = '#475569';
+                                }
+                            });
+
+                            // MCA section styling
+                            clonedResults.querySelectorAll('.mca-section, .mca-lender-card, .mca-alert').forEach(el => {
+                                el.style.backgroundColor = '#ffffff';
+                                el.style.borderColor = '#e2e8f0';
+                            });
+
+                            // Risk chips - keep their colors but ensure visibility
+                            clonedResults.querySelectorAll('.risk-chip').forEach(el => {
+                                el.style.opacity = '1';
                             });
                         }
                     }
