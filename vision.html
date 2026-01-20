@@ -2638,50 +2638,73 @@
                 const canvas = await html2canvas(resultsArea, {
                     scale: 2,
                     useCORS: true,
-                    backgroundColor: '#0d0d0d',
+                    backgroundColor: '#0a0a0a',
                     logging: false,
                     allowTaint: true,
+                    windowWidth: resultsArea.scrollWidth,
+                    windowHeight: resultsArea.scrollHeight,
                     onclone: (clonedDoc) => {
-                        // AGGRESSIVELY hide ALL overlays, modals, and fixed elements
-                        clonedDoc.querySelectorAll('.modal-overlay, .loading, .status-message, [style*="position: fixed"], [style*="position:fixed"]').forEach(el => {
-                            el.style.display = 'none !important';
-                            el.style.visibility = 'hidden';
-                            el.style.opacity = '0';
-                            el.remove(); // Actually remove from DOM
-                        });
-
-                        // Also hide by class patterns that might be overlays
-                        clonedDoc.querySelectorAll('[class*="overlay"], [class*="modal"], [class*="popup"], [class*="toast"]').forEach(el => {
-                            el.style.display = 'none !important';
-                            el.style.visibility = 'hidden';
-                            el.remove(); // Actually remove from DOM
-                        });
-
-                        // Remove any elements with dark semi-transparent backgrounds
-                        clonedDoc.querySelectorAll('*').forEach(el => {
-                            const style = window.getComputedStyle(el);
-                            const bg = style.backgroundColor;
-                            // Check for rgba with alpha < 1 that's dark
-                            if (bg && bg.includes('rgba') && bg.includes('0.')) {
-                                const match = bg.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
-                                if (match) {
-                                    const [, r, g, b, a] = match;
-                                    // If it's a dark overlay (low RGB, significant alpha)
-                                    if (parseInt(r) < 50 && parseInt(g) < 50 && parseInt(b) < 50 && parseFloat(a) > 0.3) {
-                                        el.style.display = 'none';
-                                    }
-                                }
-                            }
-                        });
+                        // Remove ALL overlays and modals completely
+                        clonedDoc.querySelectorAll('.modal-overlay, .loading, .status-message').forEach(el => el.remove());
 
                         const clonedResults = clonedDoc.getElementById('resultsArea');
                         if (clonedResults) {
+                            // Set explicit background
+                            clonedResults.style.backgroundColor = '#0a0a0a';
                             clonedResults.style.padding = '20px';
-                            clonedResults.style.backgroundColor = '#0d0d0d';
 
-                            // Make all section cards fully opaque
-                            clonedResults.querySelectorAll('.section-card, .stat-card, .lender-card, .metric-item, .risk-chip, table, th, td').forEach(el => {
+                            // Fix ALL elements - set opacity to 1 and convert rgba backgrounds to solid
+                            clonedResults.querySelectorAll('*').forEach(el => {
                                 el.style.opacity = '1';
+
+                                // Get computed background
+                                const computed = window.getComputedStyle(el);
+                                const bg = computed.backgroundColor;
+
+                                // Convert rgba to solid rgb for export
+                                if (bg && bg.startsWith('rgba')) {
+                                    const match = bg.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
+                                    if (match) {
+                                        const [, r, g, b, a] = match;
+                                        const alpha = parseFloat(a);
+                                        // Blend with dark background (#0a0a0a = rgb(10,10,10))
+                                        const bgR = 10, bgG = 10, bgB = 10;
+                                        const newR = Math.round(parseInt(r) * alpha + bgR * (1 - alpha));
+                                        const newG = Math.round(parseInt(g) * alpha + bgG * (1 - alpha));
+                                        const newB = Math.round(parseInt(b) * alpha + bgB * (1 - alpha));
+                                        el.style.backgroundColor = `rgb(${newR}, ${newG}, ${newB})`;
+                                    }
+                                }
+                            });
+
+                            // Explicitly set section card backgrounds
+                            clonedResults.querySelectorAll('.section-card').forEach(el => {
+                                el.style.backgroundColor = '#111111';
+                                el.style.opacity = '1';
+                            });
+
+                            // Set stat cards
+                            clonedResults.querySelectorAll('.stat-card, .metric-item, .data-card').forEach(el => {
+                                el.style.backgroundColor = '#1a1a1a';
+                                el.style.opacity = '1';
+                            });
+
+                            // Set table cells
+                            clonedResults.querySelectorAll('th').forEach(el => {
+                                el.style.backgroundColor = '#1a1a1a';
+                                el.style.opacity = '1';
+                            });
+                            clonedResults.querySelectorAll('td').forEach(el => {
+                                el.style.backgroundColor = '#111111';
+                                el.style.opacity = '1';
+                            });
+
+                            // Ensure text is visible
+                            clonedResults.querySelectorAll('*').forEach(el => {
+                                const computed = window.getComputedStyle(el);
+                                if (computed.color === 'rgba(0, 0, 0, 0)' || computed.color === 'transparent') {
+                                    el.style.color = '#ffffff';
+                                }
                             });
                         }
                     }
