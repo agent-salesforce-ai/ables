@@ -440,26 +440,195 @@
         .loading {
             display: none;
             text-align: center;
-            padding: 60px 20px;
+            padding: 40px 20px;
         }
 
         .loading.show { display: block; }
 
+        .loading-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .spinner-wrapper {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+        }
+
         .spinner {
-            width: 40px;
-            height: 40px;
+            width: 80px;
+            height: 80px;
             border: 3px solid var(--border);
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .spinner-ring {
+            width: 80px;
+            height: 80px;
+            border: 3px solid transparent;
             border-top-color: var(--gold);
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 16px;
+            animation: spin 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .spinner-ring-2 {
+            width: 60px;
+            height: 60px;
+            border: 2px solid transparent;
+            border-bottom-color: var(--gold);
+            border-radius: 50%;
+            animation: spin-reverse 1.5s linear infinite;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            opacity: 0.5;
+        }
+
+        .spinner-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--gold);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse-dot 1.5s ease-in-out infinite;
+            box-shadow: 0 0 20px var(--gold), 0 0 40px rgba(234, 179, 8, 0.3);
         }
 
         @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes spin-reverse { to { transform: rotate(-360deg); } }
+        @keyframes pulse-dot {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.7; }
+        }
 
         .loading-text {
-            font-size: 14px;
-            color: var(--text-secondary);
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .loading-subtext {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .loading-progress {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            height: 6px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .loading-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), #f59e0b, var(--gold));
+            background-size: 200% 100%;
+            animation: shimmer-progress 2s ease-in-out infinite;
+            border-radius: 8px;
+            transition: width 0.5s ease-out;
+        }
+
+        @keyframes shimmer-progress {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .loading-steps {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .loading-step {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 6px 12px;
+            background: var(--bg-tertiary);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .loading-step.active {
+            color: var(--gold);
+            background: rgba(234, 179, 8, 0.15);
+            box-shadow: 0 0 12px rgba(234, 179, 8, 0.2);
+        }
+
+        .loading-step.done {
+            color: var(--green);
+            background: rgba(34, 197, 94, 0.15);
+        }
+
+        .loading-step-icon {
+            width: 14px;
+            height: 14px;
+        }
+
+        .loading-step.active .loading-step-icon {
+            animation: pulse-icon 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse-icon {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Skeleton shimmer placeholders */
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-secondary) 50%, var(--bg-tertiary) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-shimmer 1.5s ease-in-out infinite;
+            border-radius: 4px;
+        }
+
+        @keyframes skeleton-shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .skeleton-text {
+            height: 14px;
+            margin-bottom: 8px;
+        }
+
+        .skeleton-text.short { width: 60%; }
+        .skeleton-text.medium { width: 80%; }
+        .skeleton-text.long { width: 100%; }
+
+        .skeleton-card {
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .skeleton-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .skeleton-cell {
+            flex: 1;
+            height: 40px;
         }
 
         /* Data Grid */
@@ -1534,8 +1703,37 @@
 
             <!-- Loading -->
             <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <div class="loading-text" id="loadingText">Processing...</div>
+                <div class="loading-container">
+                    <div class="spinner-wrapper">
+                        <div class="spinner"></div>
+                        <div class="spinner-ring"></div>
+                        <div class="spinner-ring-2"></div>
+                        <div class="spinner-dot"></div>
+                    </div>
+                    <div class="loading-text" id="loadingText">Processing...</div>
+                    <div class="loading-subtext" id="loadingSubtext">This may take a moment</div>
+                    <div class="loading-progress">
+                        <div class="loading-progress-bar" id="loadingProgressBar" style="width: 0%"></div>
+                    </div>
+                    <div class="loading-steps" id="loadingSteps">
+                        <div class="loading-step" data-step="scan">
+                            <svg class="loading-step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            <span>Scanning</span>
+                        </div>
+                        <div class="loading-step" data-step="extract">
+                            <svg class="loading-step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/></svg>
+                            <span>Extracting</span>
+                        </div>
+                        <div class="loading-step" data-step="analyze">
+                            <svg class="loading-step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            <span>Analyzing</span>
+                        </div>
+                        <div class="loading-step" data-step="match">
+                            <svg class="loading-step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+                            <span>Matching</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Fraud Results -->
@@ -2197,10 +2395,48 @@
             setTimeout(() => el.classList.remove('show'), 5000);
         }
 
-        function showLoading(show, text = 'Processing...') {
-            document.getElementById('loading').classList.toggle('show', show);
+        function showLoading(show, text = 'Processing...', options = {}) {
+            const loadingEl = document.getElementById('loading');
+            loadingEl.classList.toggle('show', show);
             document.getElementById('loadingText').textContent = text;
             document.getElementById('emptyState').classList.toggle('hidden', show || files.length > 0);
+
+            // Handle subtext
+            const subtextEl = document.getElementById('loadingSubtext');
+            subtextEl.textContent = options.subtext || 'This may take a moment';
+
+            // Handle progress bar
+            const progressBar = document.getElementById('loadingProgressBar');
+            if (options.progress !== undefined) {
+                progressBar.style.width = options.progress + '%';
+            } else if (show) {
+                progressBar.style.width = '0%';
+            }
+
+            // Handle step indicators
+            const steps = document.querySelectorAll('.loading-step');
+            steps.forEach(step => {
+                step.classList.remove('active', 'done');
+            });
+
+            if (options.step) {
+                const stepOrder = ['scan', 'extract', 'analyze', 'match'];
+                const currentIdx = stepOrder.indexOf(options.step);
+                steps.forEach((step, idx) => {
+                    const stepName = step.dataset.step;
+                    const stepIdx = stepOrder.indexOf(stepName);
+                    if (stepIdx < currentIdx) {
+                        step.classList.add('done');
+                    } else if (stepIdx === currentIdx) {
+                        step.classList.add('active');
+                    }
+                });
+            }
+
+            // Reset if hiding
+            if (!show) {
+                progressBar.style.width = '0%';
+            }
         }
 
         // File Handling
@@ -2363,11 +2599,20 @@
             try {
                 // Step 2: Fraud Scan
                 setStep(2);
-                showLoading(true, 'Scanning for fraud indicators...');
+                showLoading(true, 'Scanning for fraud indicators...', {
+                    step: 'scan',
+                    progress: 5,
+                    subtext: `Analyzing ${files.length} document${files.length > 1 ? 's' : ''} for manipulation`
+                });
                 document.getElementById('fraudSection').classList.remove('hidden');
 
                 for (let i = 0; i < files.length; i++) {
-                    showLoading(true, `Scanning document ${i + 1} of ${files.length}...`);
+                    const scanProgress = 5 + Math.round((i / files.length) * 20);
+                    showLoading(true, `Scanning document ${i + 1} of ${files.length}...`, {
+                        step: 'scan',
+                        progress: scanProgress,
+                        subtext: `Checking for digital alterations and inconsistencies`
+                    });
                     files[i].status = await scanForFraud(files[i], apiKey);
                 }
                 updateFileList();
@@ -2375,7 +2620,11 @@
 
                 // Step 3: Extract Data
                 setStep(3);
-                showLoading(true, 'Extracting bank data...');
+                showLoading(true, 'Extracting bank data...', {
+                    step: 'extract',
+                    progress: 30,
+                    subtext: 'Reading transaction data and account details'
+                });
                 document.getElementById('dataSection').classList.remove('hidden');
 
                 extractedData = await extractBankData(apiKey);
@@ -2393,7 +2642,11 @@
                 // Step 4: Background Research
                 setStep(4);
                 if (extractedBusinessInfo.name) {
-                    showLoading(true, `Running background research on ${extractedBusinessInfo.name}...`);
+                    showLoading(true, `Researching ${extractedBusinessInfo.name}...`, {
+                        step: 'analyze',
+                        progress: 55,
+                        subtext: 'Running comprehensive background checks'
+                    });
                     document.getElementById('researchSection').classList.remove('hidden');
                     document.getElementById('researchBusinessName').textContent = extractedBusinessInfo.name;
                     await runBackgroundResearch(apiKey);
@@ -2401,7 +2654,11 @@
 
                 // Step 5: Match Lenders
                 setStep(5);
-                showLoading(true, 'Matching lenders...');
+                showLoading(true, 'Finding best lender matches...', {
+                    step: 'match',
+                    progress: 90,
+                    subtext: 'Comparing against lender criteria'
+                });
                 document.getElementById('lenderSection').classList.remove('hidden');
                 document.getElementById('submitSection').classList.remove('hidden');
 
@@ -2577,7 +2834,11 @@ Return ONLY valid JSON:
 
         async function extractBankData(apiKey) {
             // Process all statements in PARALLEL
-            showLoading(true, `Extracting data from ${files.length} statements in parallel...`);
+            showLoading(true, `Extracting data from ${files.length} statements...`, {
+                step: 'extract',
+                progress: 35,
+                subtext: `Processing ${files.length} document${files.length > 1 ? 's' : ''} simultaneously`
+            });
 
             const extractionPromises = files.map((file, index) =>
                 extractSingleStatement(file, apiKey, index)
