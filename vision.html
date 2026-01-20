@@ -10,6 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --bg: #0a0a0a;
@@ -1990,7 +1991,10 @@
                     Analyze Documents
                 </button>
                 <button class="btn" id="exportReportBtn" style="width: 100%;" disabled onclick="exportReport()">
-                    Export Summary Report
+                    Export PDF Report
+                </button>
+                <button class="btn" id="exportPngBtn" style="width: 100%;" disabled onclick="exportReportAsPng()">
+                    Export PNG Screenshot
                 </button>
                 <button class="btn btn-secondary" id="downloadAllBtn" style="width: 100%;" disabled>
                     Download Watermarked
@@ -2894,6 +2898,173 @@
             showStatus('Report exported!', 'success');
         }
 
+        async function exportReportAsPng() {
+            if (!extractedData.full_analysis) {
+                showStatus('No analysis data to export', 'error');
+                return;
+            }
+
+            showStatus('Generating PNG...', 'info');
+
+            try {
+                // Letter size at 96 DPI: 816 x 1056 pixels
+                const pageWidth = 816;
+                const pageHeight = 1056;
+                const margin = 40;
+                const contentWidth = pageWidth - (margin * 2);
+
+                // Get all result sections
+                const resultsArea = document.getElementById('resultsArea');
+                if (!resultsArea) {
+                    showStatus('Results area not found', 'error');
+                    return;
+                }
+
+                // Store original styles
+                const originalBg = document.body.style.background;
+                const originalColor = document.body.style.color;
+
+                // Create a wrapper for export with light theme for better printing
+                const exportWrapper = document.createElement('div');
+                exportWrapper.style.cssText = `
+                    position: absolute;
+                    left: -9999px;
+                    top: 0;
+                    width: ${contentWidth}px;
+                    padding: ${margin}px;
+                    background: #ffffff;
+                    color: #1a1a1a;
+                    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+                `;
+
+                // Create header
+                const header = document.createElement('div');
+                header.innerHTML = `
+                    <div style="background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); padding: 20px 24px; border-radius: 12px; margin-bottom: 24px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-size: 28px; font-weight: 800; color: #000; letter-spacing: -0.5px;">Vision PRO</div>
+                                <div style="font-size: 13px; color: #333; margin-top: 4px;">MCA Underwriting Analysis Report</div>
+                            </div>
+                            <div style="text-align: right; color: #333; font-size: 12px;">
+                                <div>${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                                <div style="margin-top: 2px;">${extractedBusinessInfo.name || 'Business Report'}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                exportWrapper.appendChild(header);
+
+                // Clone results content
+                const resultsClone = resultsArea.cloneNode(true);
+
+                // Apply print-friendly styles to clone
+                resultsClone.style.cssText = `
+                    background: #ffffff;
+                    color: #1a1a1a;
+                `;
+
+                // Fix all text colors in the clone for light background
+                resultsClone.querySelectorAll('*').forEach(el => {
+                    const computed = window.getComputedStyle(el);
+                    // Convert dark text to light-friendly colors
+                    if (computed.color === 'rgb(255, 255, 255)' || computed.color === 'rgba(255, 255, 255, 1)') {
+                        el.style.color = '#1a1a1a';
+                    }
+                    // Fix backgrounds
+                    if (computed.backgroundColor.includes('rgba(0, 0, 0') || computed.backgroundColor === 'rgb(10, 10, 10)' || computed.backgroundColor === 'rgb(17, 17, 17)' || computed.backgroundColor === 'rgb(26, 26, 26)') {
+                        el.style.backgroundColor = '#f5f5f5';
+                    }
+                    // Fix borders
+                    if (computed.borderColor.includes('rgb(42, 42, 42)')) {
+                        el.style.borderColor = '#e0e0e0';
+                    }
+                });
+
+                // Update section backgrounds
+                resultsClone.querySelectorAll('.section, .result-section').forEach(section => {
+                    section.style.backgroundColor = '#f8f9fa';
+                    section.style.border = '1px solid #e0e0e0';
+                    section.style.borderRadius = '12px';
+                    section.style.marginBottom = '16px';
+                    section.style.padding = '16px';
+                });
+
+                // Fix table styling
+                resultsClone.querySelectorAll('table').forEach(table => {
+                    table.style.width = '100%';
+                    table.style.borderCollapse = 'collapse';
+                    table.style.fontSize = '11px';
+                });
+                resultsClone.querySelectorAll('th').forEach(th => {
+                    th.style.backgroundColor = '#e5e7eb';
+                    th.style.color = '#374151';
+                    th.style.padding = '8px 6px';
+                    th.style.textAlign = 'left';
+                    th.style.fontWeight = '600';
+                    th.style.borderBottom = '2px solid #d1d5db';
+                });
+                resultsClone.querySelectorAll('td').forEach(td => {
+                    td.style.padding = '6px';
+                    td.style.borderBottom = '1px solid #e5e7eb';
+                    td.style.color = '#374151';
+                });
+
+                // Keep colored values
+                resultsClone.querySelectorAll('.text-green').forEach(el => el.style.color = '#16a34a');
+                resultsClone.querySelectorAll('.text-red').forEach(el => el.style.color = '#dc2626');
+                resultsClone.querySelectorAll('.text-gold').forEach(el => el.style.color = '#ca8a04');
+
+                // Hide non-printable elements
+                resultsClone.querySelectorAll('.expand-toggle, button, .game-container, #gameContainer').forEach(el => {
+                    el.style.display = 'none';
+                });
+
+                // Add charts note (since canvas doesn't clone well)
+                resultsClone.querySelectorAll('canvas').forEach(canvas => {
+                    const note = document.createElement('div');
+                    note.style.cssText = 'text-align: center; padding: 20px; background: #f0f0f0; border-radius: 8px; color: #666; font-style: italic;';
+                    note.textContent = '[Chart - see interactive report]';
+                    canvas.parentNode.replaceChild(note, canvas);
+                });
+
+                exportWrapper.appendChild(resultsClone);
+
+                // Add footer
+                const footer = document.createElement('div');
+                footer.style.cssText = 'margin-top: 24px; padding-top: 16px; border-top: 1px solid #e0e0e0; text-align: center; color: #666; font-size: 10px;';
+                footer.textContent = 'Generated by Vision PRO • ' + new Date().toLocaleString();
+                exportWrapper.appendChild(footer);
+
+                document.body.appendChild(exportWrapper);
+
+                // Capture with html2canvas
+                const canvas = await html2canvas(exportWrapper, {
+                    scale: 2, // Higher quality
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    width: pageWidth,
+                    windowWidth: pageWidth,
+                    logging: false
+                });
+
+                // Remove the wrapper
+                document.body.removeChild(exportWrapper);
+
+                // Create download link
+                const link = document.createElement('a');
+                const businessName = extractedBusinessInfo.name || 'Report';
+                link.download = `${businessName.replace(/[^a-z0-9]/gi, '_')}_Analysis_${new Date().toISOString().split('T')[0]}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+
+                showStatus('PNG exported successfully!', 'success');
+            } catch (error) {
+                console.error('PNG export error:', error);
+                showStatus('Error exporting PNG: ' + error.message, 'error');
+            }
+        }
+
         function getSelectedModel() {
             return localStorage.getItem('gemini_model') || 'gemini-3-flash-preview';
         }
@@ -3186,6 +3357,7 @@
                 showLoading(false);
                 showStatus('Analysis complete!', 'success');
                 document.getElementById('exportReportBtn').disabled = false;
+                document.getElementById('exportPngBtn').disabled = false;
 
             } catch (error) {
                 console.error(error);
