@@ -2641,7 +2641,16 @@
                     logging: false,
                     allowTaint: true,
                     onclone: (clonedDoc) => {
-                        // Ensure all styles are applied in clone
+                        // Hide ALL overlays, modals, and fixed elements
+                        clonedDoc.querySelectorAll('.modal-overlay, .loading, .status-message, [style*="position: fixed"], [style*="position:fixed"]').forEach(el => {
+                            el.style.display = 'none';
+                        });
+
+                        // Also hide by class patterns that might be overlays
+                        clonedDoc.querySelectorAll('[class*="overlay"], [class*="modal"], [class*="popup"], [class*="toast"]').forEach(el => {
+                            el.style.display = 'none';
+                        });
+
                         const clonedResults = clonedDoc.getElementById('resultsArea');
                         if (clonedResults) {
                             clonedResults.style.padding = '20px';
@@ -2650,22 +2659,6 @@
                             // Make all section cards fully opaque
                             clonedResults.querySelectorAll('.section-card, .stat-card, .lender-card, .metric-item, .risk-chip, table, th, td').forEach(el => {
                                 el.style.opacity = '1';
-                                const computed = window.getComputedStyle(el);
-                                // Replace any rgba backgrounds with solid versions
-                                if (computed.backgroundColor.includes('rgba')) {
-                                    el.style.backgroundColor = computed.backgroundColor.replace(/rgba?\(([^)]+)\)/, (match, values) => {
-                                        const parts = values.split(',').map(v => parseFloat(v.trim()));
-                                        if (parts.length === 4) {
-                                            // Convert rgba to rgb by blending with dark background
-                                            const alpha = parts[3];
-                                            const r = Math.round(parts[0] * alpha + 13 * (1 - alpha));
-                                            const g = Math.round(parts[1] * alpha + 13 * (1 - alpha));
-                                            const b = Math.round(parts[2] * alpha + 13 * (1 - alpha));
-                                            return `rgb(${r}, ${g}, ${b})`;
-                                        }
-                                        return match;
-                                    });
-                                }
                             });
                         }
                     }
@@ -3298,12 +3291,39 @@ Return ONLY valid JSON:
                         // Skip if no valid lender name
                         if (!lenderName || lenderName === 'Unknown') return;
 
-                        // Normalize lender name (uppercase, trim)
-                        const normalizedName = lenderName.toUpperCase().trim();
+                        // Clean lender name - remove amounts, dates, and extra info
+                        // Pattern: "Lender Name: $X,XXX.XX (MM/DD)" or "Lender Name - $X,XXX.XX"
+                        let cleanName = lenderName
+                            .replace(/:\s*\$[\d,]+\.?\d*\s*(\(\d{2}\/\d{2}\))?/gi, '') // Remove ": $X,XXX.XX (MM/DD)"
+                            .replace(/-\s*\$[\d,]+\.?\d*/gi, '') // Remove "- $X,XXX.XX"
+                            .replace(/\s*\(\d{2}\/\d{2}(\/\d{2,4})?\)/gi, '') // Remove standalone dates like (05/06)
+                            .replace(/\s*\$[\d,]+\.?\d*/gi, '') // Remove any remaining dollar amounts
+                            .replace(/\s+/g, ' ') // Normalize whitespace
+                            .trim();
 
-                        // Add or update in map (keep highest amount)
-                        if (!mcaLenderMap.has(normalizedName) || (amount && amount > (mcaLenderMap.get(normalizedName).amount || 0))) {
-                            mcaLenderMap.set(normalizedName, { name: lenderName, amount, date });
+                        // If we stripped everything, use original
+                        if (!cleanName) cleanName = lenderName.trim();
+
+                        // Extract amount from name if not already set
+                        if (!amount) {
+                            const amountMatch = lenderName.match(/\$[\d,]+\.?\d*/);
+                            if (amountMatch) {
+                                amount = parseFloat(amountMatch[0].replace(/[$,]/g, '')) || 0;
+                            }
+                        }
+
+                        // Normalize for deduplication (uppercase, trim)
+                        const normalizedName = cleanName.toUpperCase().trim();
+
+                        // Add or update in map (keep highest amount, count occurrences)
+                        if (!mcaLenderMap.has(normalizedName)) {
+                            mcaLenderMap.set(normalizedName, { name: cleanName, amount, count: 1 });
+                        } else {
+                            const existing = mcaLenderMap.get(normalizedName);
+                            existing.count = (existing.count || 1) + 1;
+                            if (amount && amount > (existing.amount || 0)) {
+                                existing.amount = amount;
+                            }
                         }
                     });
                 }
@@ -3440,12 +3460,13 @@ Return ONLY valid JSON:
                         ${mcaLenders.map((l, idx) => {
                             const name = typeof l === 'object' ? (l.name || 'Unknown Lender') : l;
                             const amount = typeof l === 'object' && l.amount ? l.amount : 0;
+                            const count = typeof l === 'object' && l.count ? l.count : 1;
                             return `
                             <div class="mca-lender-card">
                                 <div class="mca-lender-icon">$</div>
                                 <div>
                                     <div class="mca-lender-name">${name}</div>
-                                    <div class="mca-lender-status">${amount ? '$' + amount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '/week' : 'Active Position'}</div>
+                                    <div class="mca-lender-status">${count > 1 ? count + ' payments detected' : (amount ? '$' + amount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '/week' : 'Active Position')}</div>
                                 </div>
                             </div>`;
                         }).join('')}
