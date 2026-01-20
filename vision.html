@@ -2783,10 +2783,7 @@
                 </div>
             </div>
 
-            <!-- Results Area for Export -->
-            <div id="resultsArea">
-
-            <!-- Loading Skeleton -->
+            <!-- Loading Skeleton (outside resultsArea so export doesn't affect it) -->
             <div class="skeleton-loading hidden" id="loadingSkeleton">
                 <div class="skeleton-card" style="margin-bottom: 16px;">
                     <div class="skeleton skeleton-text short" style="height: 20px; margin-bottom: 16px;"></div>
@@ -2818,6 +2815,9 @@
                     <div class="skeleton" style="height: 200px;"></div>
                 </div>
             </div>
+
+            <!-- Results Area for Export -->
+            <div id="resultsArea">
 
             <!-- Fraud Results -->
             <section class="section-card hidden" id="fraudSection" aria-labelledby="fraudSectionTitle">
