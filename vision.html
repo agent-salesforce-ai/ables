@@ -2624,6 +2624,15 @@
                     return;
                 }
 
+                // SAVE current theme state
+                const wasLightTheme = document.documentElement.getAttribute('data-theme') === 'light';
+
+                // SWITCH TO LIGHT THEME ON ACTUAL PAGE
+                document.documentElement.setAttribute('data-theme', 'light');
+
+                // Force reflow
+                void document.body.offsetHeight;
+
                 // Hide buttons and expand all collapsed sections
                 const buttons = resultsArea.querySelectorAll('button, .expand-toggle');
                 buttons.forEach(b => b.style.display = 'none');
@@ -2634,132 +2643,11 @@
                     el.dataset.wasHidden = 'true';
                 });
 
-                // CRITICAL: Create a completely isolated export container
-                const exportContainer = document.createElement('div');
-                exportContainer.id = 'exportContainer';
-                exportContainer.style.cssText = `
-                    position: fixed;
-                    left: -99999px;
-                    top: 0;
-                    background: #ffffff !important;
-                    padding: 20px;
-                    width: ${resultsArea.offsetWidth}px;
-                    z-index: -1;
-                `;
+                // Wait for CSS to apply
+                await new Promise(r => setTimeout(r, 150));
 
-                // Clone results and strip all CSS variable usage
-                const clonedResults = resultsArea.cloneNode(true);
-                exportContainer.appendChild(clonedResults);
-                document.body.appendChild(exportContainer);
-
-                // FORCEFULLY apply light theme colors to EVERY element
-                const applyLightTheme = (container) => {
-                    // Set container base styles
-                    container.style.backgroundColor = '#ffffff';
-                    container.style.color = '#1e293b';
-
-                    // Process ALL descendants
-                    container.querySelectorAll('*').forEach(el => {
-                        // Remove any overlay/transparency
-                        el.style.opacity = '1';
-
-                        // Force backgrounds to light colors
-                        const computedBg = getComputedStyle(el).backgroundColor;
-                        if (computedBg) {
-                            const rgb = computedBg.match(/\d+/g);
-                            if (rgb && rgb.length >= 3) {
-                                const r = parseInt(rgb[0]);
-                                const g = parseInt(rgb[1]);
-                                const b = parseInt(rgb[2]);
-                                // If it's a dark color (luminance < 50)
-                                const luminance = (0.299 * r + 0.587 * g + 0.114 * b);
-                                if (luminance < 50) {
-                                    el.style.backgroundColor = '#ffffff';
-                                } else if (luminance < 80) {
-                                    el.style.backgroundColor = '#f8fafc';
-                                }
-                            }
-                        }
-
-                        // Force text to dark colors
-                        const computedColor = getComputedStyle(el).color;
-                        if (computedColor) {
-                            const rgb = computedColor.match(/\d+/g);
-                            if (rgb && rgb.length >= 3) {
-                                const r = parseInt(rgb[0]);
-                                const g = parseInt(rgb[1]);
-                                const b = parseInt(rgb[2]);
-                                // If text is light (white/gray)
-                                const luminance = (0.299 * r + 0.587 * g + 0.114 * b);
-                                if (luminance > 200) {
-                                    el.style.color = '#1e293b';
-                                }
-                            }
-                        }
-
-                        // Force border colors
-                        const computedBorder = getComputedStyle(el).borderColor;
-                        if (computedBorder && computedBorder !== 'rgb(0, 0, 0)') {
-                            const rgb = computedBorder.match(/\d+/g);
-                            if (rgb && parseInt(rgb[0]) < 80) {
-                                el.style.borderColor = '#e2e8f0';
-                            }
-                        }
-                    });
-
-                    // Explicit class overrides with !important via cssText
-                    container.querySelectorAll('.section-card, .section-body, .results-content').forEach(el => {
-                        el.style.cssText += 'background-color: #ffffff !important; border-color: #e2e8f0 !important; color: #1e293b !important;';
-                    });
-
-                    container.querySelectorAll('.section-header').forEach(el => {
-                        el.style.cssText += 'background-color: #f8fafc !important; border-color: #e2e8f0 !important; color: #1e293b !important;';
-                    });
-
-                    container.querySelectorAll('.stat-card, .metric-item, .data-card, .risk-chip, .fraud-card, .debt-card, .debt-summary').forEach(el => {
-                        el.style.cssText += 'background-color: #f1f5f9 !important; border-color: #e2e8f0 !important; color: #1e293b !important;';
-                    });
-
-                    container.querySelectorAll('table, tbody, tr, td').forEach(el => {
-                        el.style.cssText += 'background-color: #ffffff !important; border-color: #e2e8f0 !important; color: #1e293b !important;';
-                    });
-
-                    container.querySelectorAll('th').forEach(el => {
-                        el.style.cssText += 'background-color: #f1f5f9 !important; border-color: #e2e8f0 !important; color: #1e293b !important;';
-                    });
-
-                    container.querySelectorAll('.mca-section, .mca-lender-card, .mca-alert, .mca-header, .mca-lender-icon').forEach(el => {
-                        el.style.cssText += 'background-color: #ffffff !important; border-color: #e2e8f0 !important; color: #1e293b !important;';
-                    });
-
-                    container.querySelectorAll('.research-module, .research-module-header, .research-module-body, .finding-item').forEach(el => {
-                        el.style.cssText += 'background-color: #ffffff !important; border-color: #e2e8f0 !important; color: #1e293b !important;';
-                    });
-
-                    // Fix text elements
-                    container.querySelectorAll('h1,h2,h3,h4,h5,h6,p,span,div,li,label,strong,b').forEach(el => {
-                        const current = el.style.color;
-                        if (!current || current === 'rgb(255, 255, 255)' || current === '#ffffff' || current === 'white') {
-                            el.style.color = '#1e293b';
-                        }
-                    });
-
-                    container.querySelectorAll('.section-title, .data-label, .stat-label, .text-muted').forEach(el => {
-                        el.style.cssText += 'color: #64748b !important;';
-                    });
-
-                    container.querySelectorAll('.stat-value, .metric-value, .data-value').forEach(el => {
-                        el.style.cssText += 'color: #1e293b !important;';
-                    });
-
-                    // Remove buttons
-                    container.querySelectorAll('button, .expand-toggle').forEach(el => el.remove());
-                };
-
-                applyLightTheme(exportContainer);
-
-                // Capture the isolated container
-                const canvas = await html2canvas(exportContainer, {
+                // Capture directly - page is now in light theme
+                const canvas = await html2canvas(resultsArea, {
                     scale: 2,
                     useCORS: true,
                     backgroundColor: '#ffffff',
@@ -2767,8 +2655,10 @@
                     allowTaint: true
                 });
 
-                // Cleanup
-                document.body.removeChild(exportContainer);
+                // RESTORE original theme
+                if (!wasLightTheme) {
+                    document.documentElement.removeAttribute('data-theme');
+                }
 
                 // Restore hidden elements
                 buttons.forEach(b => b.style.display = '');
