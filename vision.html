@@ -2638,43 +2638,62 @@
                 const canvas = await html2canvas(resultsArea, {
                     scale: 2,
                     useCORS: true,
-                    backgroundColor: '#f8fafc',
+                    backgroundColor: '#ffffff',
                     logging: false,
                     allowTaint: true,
-                    windowWidth: resultsArea.scrollWidth,
-                    windowHeight: resultsArea.scrollHeight,
                     onclone: (clonedDoc) => {
-                        // Remove ALL overlays and modals completely
-                        clonedDoc.querySelectorAll('.modal-overlay, .loading, .status-message').forEach(el => el.remove());
+                        // NUKE everything that's not resultsArea
+                        clonedDoc.querySelectorAll('body > *:not(.main-container)').forEach(el => el.remove());
+                        clonedDoc.querySelectorAll('.modal-overlay, .loading, .status-message, .sidebar, .header, .progress-steps').forEach(el => el.remove());
 
                         // Force light theme
                         clonedDoc.documentElement.setAttribute('data-theme', 'light');
+                        clonedDoc.body.style.backgroundColor = '#ffffff';
+                        clonedDoc.body.style.color = '#1e293b';
 
                         const clonedResults = clonedDoc.getElementById('resultsArea');
                         if (clonedResults) {
-                            // Light theme background
-                            clonedResults.style.backgroundColor = '#f8fafc';
+                            clonedResults.style.backgroundColor = '#ffffff';
                             clonedResults.style.padding = '20px';
+                            clonedResults.style.color = '#1e293b';
 
-                            // Set opacity to 1 on all elements
+                            // Force light theme colors on EVERYTHING
                             clonedResults.querySelectorAll('*').forEach(el => {
                                 el.style.opacity = '1';
+
+                                // Get current bg and change dark ones to light
+                                const bg = window.getComputedStyle(el).backgroundColor;
+                                if (bg && (bg.includes('rgb(10') || bg.includes('rgb(17') || bg.includes('rgb(26') || bg.includes('rgb(0,'))) {
+                                    el.style.backgroundColor = '#ffffff';
+                                }
+
+                                // Fix text colors
+                                const color = window.getComputedStyle(el).color;
+                                if (color === 'rgb(255, 255, 255)') {
+                                    el.style.color = '#1e293b';
+                                }
                             });
 
-                            // Light theme section cards
-                            clonedResults.querySelectorAll('.section-card').forEach(el => {
+                            // Explicit overrides for known classes
+                            clonedResults.querySelectorAll('.section-card, .section-body').forEach(el => {
                                 el.style.backgroundColor = '#ffffff';
                                 el.style.borderColor = '#e2e8f0';
+                                el.style.color = '#1e293b';
                             });
 
-                            // Light theme stat cards
-                            clonedResults.querySelectorAll('.stat-card, .metric-item, .data-card').forEach(el => {
+                            clonedResults.querySelectorAll('.section-header').forEach(el => {
+                                el.style.backgroundColor = '#f8fafc';
+                                el.style.borderColor = '#e2e8f0';
+                                el.style.color = '#1e293b';
+                            });
+
+                            clonedResults.querySelectorAll('.stat-card, .metric-item, .data-card, .risk-chip, .fraud-card').forEach(el => {
                                 el.style.backgroundColor = '#f1f5f9';
                                 el.style.borderColor = '#e2e8f0';
+                                el.style.color = '#1e293b';
                             });
 
-                            // Light theme tables
-                            clonedResults.querySelectorAll('table').forEach(el => {
+                            clonedResults.querySelectorAll('table, tbody, tr').forEach(el => {
                                 el.style.backgroundColor = '#ffffff';
                             });
                             clonedResults.querySelectorAll('th').forEach(el => {
@@ -2688,29 +2707,33 @@
                                 el.style.color = '#1e293b';
                             });
 
-                            // Fix ALL text colors for light theme
-                            clonedResults.querySelectorAll('*').forEach(el => {
-                                const computed = window.getComputedStyle(el);
-                                const color = computed.color;
-                                // Convert white/light text to dark for light bg
-                                if (color === 'rgb(255, 255, 255)' || color === 'rgba(255, 255, 255, 1)') {
-                                    el.style.color = '#1e293b';
-                                }
-                                // Convert light grays to darker grays
-                                if (color === 'rgb(161, 161, 170)' || color === 'rgb(113, 113, 122)') {
-                                    el.style.color = '#475569';
-                                }
-                            });
-
-                            // MCA section styling
-                            clonedResults.querySelectorAll('.mca-section, .mca-lender-card, .mca-alert').forEach(el => {
+                            clonedResults.querySelectorAll('.mca-section, .mca-lender-card, .mca-alert, .mca-header').forEach(el => {
                                 el.style.backgroundColor = '#ffffff';
                                 el.style.borderColor = '#e2e8f0';
+                                el.style.color = '#1e293b';
                             });
 
-                            // Risk chips - keep their colors but ensure visibility
-                            clonedResults.querySelectorAll('.risk-chip').forEach(el => {
-                                el.style.opacity = '1';
+                            clonedResults.querySelectorAll('.research-module, .research-module-header, .research-module-body, .finding-item').forEach(el => {
+                                el.style.backgroundColor = '#ffffff';
+                                el.style.borderColor = '#e2e8f0';
+                                el.style.color = '#1e293b';
+                            });
+
+                            clonedResults.querySelectorAll('.debt-card, .debt-summary').forEach(el => {
+                                el.style.backgroundColor = '#f1f5f9';
+                                el.style.borderColor = '#e2e8f0';
+                                el.style.color = '#1e293b';
+                            });
+
+                            // Text elements
+                            clonedResults.querySelectorAll('h1,h2,h3,h4,h5,h6,p,span,div,li,label').forEach(el => {
+                                if (!el.style.color || el.style.color === 'rgb(255, 255, 255)') {
+                                    el.style.color = '#1e293b';
+                                }
+                            });
+
+                            clonedResults.querySelectorAll('.section-title, .data-label, .stat-label').forEach(el => {
+                                el.style.color = '#64748b';
                             });
                         }
                     }
