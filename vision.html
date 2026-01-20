@@ -13,37 +13,89 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
-            --bg: #0a0a0a;
-            --bg-secondary: #111111;
-            --bg-tertiary: #1a1a1a;
-            --border: #2a2a2a;
-            --text: #ffffff;
+            /* Background layers - refined dark theme */
+            --bg: #09090b;
+            --bg-secondary: #18181b;
+            --bg-tertiary: #27272a;
+            --bg-raised: #1f1f23;
+            --bg-overlay: #2d2d32;
+            --border: #3f3f46;
+            --border-subtle: #27272a;
+
+            /* Text colors */
+            --text: #fafafa;
             --text-secondary: #a1a1aa;
             --text-muted: #71717a;
-            --gold: #eab308;
-            --gold-bg: rgba(234, 179, 8, 0.1);
-            --green: #22c55e;
-            --green-bg: rgba(34, 197, 94, 0.1);
+
+            /* Accent colors - refined gold */
+            --gold: #f59e0b;
+            --gold-hover: #fbbf24;
+            --gold-bg: rgba(245, 158, 11, 0.12);
+            --gold-soft: rgba(245, 158, 11, 0.08);
+
+            /* Semantic colors */
+            --green: #10b981;
+            --green-bg: rgba(16, 185, 129, 0.12);
             --red: #ef4444;
-            --red-bg: rgba(239, 68, 68, 0.1);
+            --red-bg: rgba(239, 68, 68, 0.12);
             --yellow: #f59e0b;
-            --yellow-bg: rgba(245, 158, 11, 0.1);
+            --yellow-bg: rgba(245, 158, 11, 0.12);
             --blue: #3b82f6;
-            --blue-bg: rgba(59, 130, 246, 0.1);
+            --blue-bg: rgba(59, 130, 246, 0.12);
             --purple: #a855f7;
+            --purple-bg: rgba(168, 85, 247, 0.12);
+
+            /* Spacing scale */
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            --space-8: 32px;
+            --space-10: 40px;
+            --space-12: 48px;
+
+            /* Radius scale */
+            --radius-xs: 4px;
             --radius-sm: 6px;
-            --radius-md: 10px;
-            --radius-lg: 16px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-2xl: 20px;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 20px rgba(245, 158, 11, 0.15);
+
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-base: 200ms ease;
+            --transition-slow: 300ms ease;
         }
 
         [data-theme="light"] {
             --bg: #f8fafc;
             --bg-secondary: #ffffff;
             --bg-tertiary: #f1f5f9;
+            --bg-raised: #ffffff;
+            --bg-overlay: #e2e8f0;
             --border: #e2e8f0;
-            --text: #1e293b;
+            --border-subtle: #f1f5f9;
+            --text: #0f172a;
             --text-secondary: #475569;
             --text-muted: #94a3b8;
+            --gold-bg: rgba(245, 158, 11, 0.1);
+            --gold-soft: rgba(245, 158, 11, 0.05);
+            --green-bg: rgba(16, 185, 129, 0.1);
+            --red-bg: rgba(239, 68, 68, 0.1);
+            --yellow-bg: rgba(245, 158, 11, 0.1);
+            --blue-bg: rgba(59, 130, 246, 0.1);
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -434,38 +486,65 @@
             padding: 24px;
         }
 
-        /* Progress Steps */
+        /* Progress Steps - Horizontal Stepper */
         .progress-steps {
             display: flex;
-            gap: 8px;
-            margin-bottom: 24px;
+            gap: var(--space-2);
+            margin-bottom: var(--space-6);
+            padding: var(--space-2);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-subtle);
         }
 
         .step {
             flex: 1;
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 12px 16px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-4);
+            background: transparent;
+            border: 1px solid transparent;
             border-radius: var(--radius-md);
             font-size: 13px;
             color: var(--text-muted);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all var(--transition-base);
             cursor: default;
+            position: relative;
         }
 
-        .step:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        .step::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-right: 2px solid var(--border);
+            border-bottom: 2px solid var(--border);
+            transform: translateY(-50%) rotate(-45deg);
+            opacity: 0.5;
+        }
+
+        .step:last-child::after {
+            display: none;
+        }
+
+        .step:hover:not(.active):not(.completed) {
+            background: var(--bg-tertiary);
         }
 
         .step.active {
-            border-color: var(--gold);
             background: var(--gold-bg);
+            border-color: var(--gold);
             color: var(--gold);
-            box-shadow: 0 0 20px rgba(234, 179, 8, 0.2), inset 0 0 20px rgba(234, 179, 8, 0.05);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .step.active::after {
+            border-color: var(--gold);
+            opacity: 1;
         }
 
         .step.active .step-num {
@@ -473,20 +552,24 @@
         }
 
         @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.4); }
-            50% { box-shadow: 0 0 0 8px rgba(234, 179, 8, 0); }
+            0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+            50% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
         }
 
         .step.completed {
-            border-color: var(--green);
             background: var(--green-bg);
+            border-color: transparent;
             color: var(--green);
-            box-shadow: 0 0 15px rgba(34, 197, 94, 0.15);
+        }
+
+        .step.completed::after {
+            border-color: var(--green);
+            opacity: 0.7;
         }
 
         .step-num {
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             background: var(--bg-tertiary);
             display: flex;
@@ -494,10 +577,48 @@
             justify-content: center;
             font-size: 12px;
             font-weight: 600;
+            flex-shrink: 0;
+            transition: all var(--transition-fast);
         }
 
-        .step.active .step-num { background: var(--gold); color: #000; }
-        .step.completed .step-num { background: var(--green); color: #fff; }
+        .step-num svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .step.active .step-num {
+            background: var(--gold);
+            color: #000;
+        }
+        .step.completed .step-num {
+            background: var(--green);
+            color: #fff;
+        }
+
+        .step-content {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .step-title {
+            font-weight: 500;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .step-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            opacity: 0.8;
+        }
+
+        .step.active .step-desc,
+        .step.completed .step-desc {
+            opacity: 1;
+        }
 
         /* Section Cards */
         .section-card {
@@ -520,6 +641,20 @@
                 transform: translateY(0);
             }
         }
+
+        /* Staggered entrance for data cards */
+        .data-grid .data-card {
+            opacity: 0;
+            animation: fadeSlideIn 0.4s ease-out forwards;
+        }
+        .data-grid .data-card:nth-child(1) { animation-delay: 0.05s; }
+        .data-grid .data-card:nth-child(2) { animation-delay: 0.1s; }
+        .data-grid .data-card:nth-child(3) { animation-delay: 0.15s; }
+        .data-grid .data-card:nth-child(4) { animation-delay: 0.2s; }
+        .data-grid .data-card:nth-child(5) { animation-delay: 0.25s; }
+        .data-grid .data-card:nth-child(6) { animation-delay: 0.3s; }
+        .data-grid .data-card:nth-child(7) { animation-delay: 0.35s; }
+        .data-grid .data-card:nth-child(8) { animation-delay: 0.4s; }
 
         .section-card:hover {
             border-color: rgba(234, 179, 8, 0.3);
@@ -774,39 +909,143 @@
             height: 40px;
         }
 
-        /* Data Grid */
+        /* Data Grid - Summary Dashboard Cards */
         .data-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 12px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: var(--space-3);
+            margin-bottom: var(--space-5);
         }
 
         .data-card {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 16px;
+            background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            position: relative;
+            overflow: hidden;
+            transition: all var(--transition-base);
         }
 
-        .data-card.highlight { border-color: var(--gold); }
+        .data-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--border);
+            transition: background var(--transition-fast);
+        }
+
+        .data-card:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: var(--shadow-md);
+            border-color: var(--border);
+        }
+
+        .data-card:hover::before {
+            background: var(--gold);
+        }
+
+        .data-card:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .data-card.highlight {
+            border-color: var(--gold);
+        }
+        .data-card.highlight::before {
+            background: var(--gold);
+        }
+
+        .data-card.status-good::before { background: var(--green); }
+        .data-card.status-warn::before { background: var(--yellow); }
+        .data-card.status-bad::before { background: var(--red); }
 
         .data-label {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 6px;
+            margin-bottom: var(--space-2);
+            font-weight: 500;
+        }
+
+        /* Custom tooltip styles */
+        .tooltip-trigger {
+            position: relative;
+            cursor: help;
+            border-bottom: 1px dotted var(--text-muted);
+        }
+
+        .tooltip-trigger::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 8px 12px;
+            font-size: 11px;
+            font-weight: 400;
+            text-transform: none;
+            letter-spacing: normal;
+            white-space: nowrap;
+            max-width: 280px;
+            white-space: normal;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+            pointer-events: none;
+        }
+
+        .tooltip-trigger:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .risk-chip-label.tooltip-trigger::after {
+            bottom: auto;
+            top: 100%;
+            margin-top: 8px;
         }
 
         .data-value {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 700;
+            line-height: 1.2;
+            display: flex;
+            align-items: baseline;
+            gap: var(--space-2);
         }
+
+        .data-value .trend {
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .data-value .trend.up { color: var(--green); }
+        .data-value .trend.down { color: var(--red); }
 
         .data-value.green { color: var(--green); }
         .data-value.red { color: var(--red); }
         .data-value.gold { color: var(--gold); }
+        .data-value.blue { color: var(--blue); }
+
+        .data-subtext {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: var(--space-1);
+        }
 
         /* Tables */
         table {
@@ -829,6 +1068,52 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             color: var(--text-muted);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        /* Sortable table headers */
+        th.sortable {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            padding-right: 24px;
+        }
+
+        th.sortable:hover {
+            background: var(--bg-overlay);
+            color: var(--gold);
+        }
+
+        th.sortable::after {
+            content: '';
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 5px solid var(--text-muted);
+            opacity: 0.3;
+            transition: all var(--transition-fast);
+        }
+
+        th.sortable:hover::after {
+            opacity: 0.6;
+        }
+
+        th.sortable.asc::after {
+            border-top: none;
+            border-bottom: 5px solid var(--gold);
+            opacity: 1;
+        }
+
+        th.sortable.desc::after {
+            border-top: 5px solid var(--gold);
+            opacity: 1;
         }
 
         tbody tr {
@@ -1175,6 +1460,39 @@
             position: relative;
             height: 300px;
             margin-bottom: 20px;
+        }
+
+        .chart-export-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 6px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity var(--transition-fast), background var(--transition-fast);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chart-export-btn svg {
+            color: var(--text-secondary);
+        }
+
+        .chart-container:hover .chart-export-btn {
+            opacity: 1;
+        }
+
+        .chart-export-btn:hover {
+            background: var(--bg-hover);
+        }
+
+        .chart-export-btn:hover svg {
+            color: var(--gold);
         }
 
         .chart-row {
@@ -1981,27 +2299,300 @@
             }
         }
 
+        /* ========================================
+           RESPONSIVE BREAKPOINTS
+           ======================================== */
+
+        /* Mobile First - Base styles are for mobile */
+
+        /* Small devices (landscape phones, 576px and up) */
+        @media (min-width: 576px) {
+            .data-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Medium devices (tablets, 768px and up) */
+        @media (min-width: 768px) {
+            .main-container {
+                grid-template-columns: 280px 1fr;
+            }
+            .sidebar {
+                transform: translateX(0);
+                position: sticky;
+            }
+            .mobile-menu-btn {
+                display: none;
+            }
+            .sidebar-overlay {
+                display: none !important;
+            }
+            .data-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .chart-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Large devices (desktops, 1024px and up) */
+        @media (min-width: 1024px) {
+            .main-container {
+                grid-template-columns: 300px 1fr;
+            }
+            .data-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+            .lender-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+
+        /* Extra large devices (large desktops, 1440px and up) */
+        @media (min-width: 1440px) {
+            .content {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+        }
+
+        /* Mobile Sidebar (under 768px) */
+        @media (max-width: 767px) {
+            .main-container {
+                display: block;
+            }
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 85%;
+                max-width: 320px;
+                height: 100vh;
+                z-index: 1000;
+                transform: translateX(-100%);
+                transition: transform var(--transition-slow);
+                padding-top: 60px;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .sidebar-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity var(--transition-base), visibility var(--transition-base);
+            }
+            .sidebar-overlay.visible {
+                opacity: 1;
+                visibility: visible;
+            }
+            .mobile-menu-btn {
+                display: flex;
+            }
+            .progress-steps {
+                flex-direction: column;
+                gap: var(--space-2);
+            }
+            .step {
+                padding: var(--space-3);
+            }
+            .step-text {
+                font-size: 12px;
+            }
+            .content {
+                padding: var(--space-4);
+            }
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-2);
+            }
+            .data-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--space-2);
+            }
+            .chart-row {
+                grid-template-columns: 1fr;
+            }
+            .chart-container {
+                height: 250px;
+            }
+            .lender-grid {
+                grid-template-columns: 1fr;
+            }
+            table {
+                font-size: 11px;
+            }
+            th, td {
+                padding: var(--space-2);
+            }
+            .risk-summary {
+                flex-wrap: wrap;
+            }
+            .risk-chip {
+                min-width: 70px;
+                padding: var(--space-2) var(--space-3);
+            }
+        }
+
+        /* Mobile menu button */
+        .mobile-menu-btn {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--bg-tertiary);
+            color: var(--text);
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+        .mobile-menu-btn:hover {
+            background: var(--bg-overlay);
+            border-color: var(--gold);
+        }
+        .mobile-menu-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Skip link for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--gold);
+            color: #000;
+            padding: var(--space-2) var(--space-4);
+            z-index: 10000;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 0 0 var(--radius-sm) 0;
+            transition: top var(--transition-fast);
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+
         /* Print Styles */
         @media print {
-            .header, .sidebar, .progress-steps { display: none; }
+            /* Hide non-essential elements */
+            .header, .sidebar, .progress-steps, .mobile-menu-btn,
+            .btn, .chart-export-btn, .loading-overlay, .modal-overlay,
+            .status-message, .sidebar-overlay, .empty-state, .skeleton-loading {
+                display: none !important;
+            }
+
+            /* Reset layout for print */
             .main-container { display: block; }
-            .content { padding: 0; }
+            .content {
+                padding: 0;
+                max-width: 100%;
+                margin: 0;
+            }
+
+            /* Force light background for print */
+            body, .section-card, .data-card, .data-grid {
+                background: white !important;
+                color: #000 !important;
+            }
+
+            /* Remove shadows for print */
+            * {
+                box-shadow: none !important;
+            }
+
+            /* Ensure borders are visible */
+            .section-card {
+                border: 1px solid #ccc !important;
+                page-break-inside: avoid;
+                margin-bottom: 20px;
+            }
+
+            .data-card {
+                border: 1px solid #ddd !important;
+            }
+
+            /* Table print styles */
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            th, td {
+                border: 1px solid #ccc !important;
+                padding: 8px !important;
+                text-align: left;
+                font-size: 11px;
+            }
+
+            th {
+                background: #f5f5f5 !important;
+                font-weight: bold;
+            }
+
+            /* Page break control */
+            .section-card {
+                page-break-inside: avoid;
+            }
+
+            h2, h3 {
+                page-break-after: avoid;
+            }
+
+            /* Charts - hide on print (they're images) */
+            .chart-container canvas {
+                max-width: 100%;
+                height: auto !important;
+            }
+
+            /* Ensure text is readable */
+            .data-label, .data-value {
+                color: #000 !important;
+            }
+
+            /* Print header */
+            @page {
+                margin: 0.5in;
+                size: letter portrait;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Skip Link for Accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
     <!-- Header -->
-    <header class="header">
-        <div class="brand">
-            <svg viewBox="0 0 64 64" fill="none">
-                <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
-                <circle cx="32" cy="32" r="12" fill="#eab308"/>
-                <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
-            </svg>
-            <span class="brand-text"><span style="color: var(--text);">Vision</span> <span style="color: var(--text-muted);">Pro</span></span>
+    <header class="header" role="banner">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <!-- Mobile Menu Button -->
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <div class="brand">
+                <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                    <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
+                    <circle cx="32" cy="32" r="12" fill="#eab308"/>
+                    <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
+                </svg>
+                <span class="brand-text"><span style="color: var(--text);">Vision</span> <span style="color: var(--text-muted);">Pro</span></span>
+            </div>
         </div>
         <div class="header-actions">
-            <button class="icon-btn" id="themeToggle" title="Toggle Theme">
+            <button class="icon-btn" id="themeToggle" title="Toggle Theme" aria-label="Toggle dark/light theme">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="5"></circle>
                     <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -2030,10 +2621,13 @@
         </div>
     </header>
 
+    <!-- Sidebar Overlay (Mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
     <!-- Main Container -->
     <div class="main-container">
         <!-- Sidebar -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar" role="complementary" aria-label="File management and settings">
             <!-- Business Info Section (auto-extracted from bank statements) -->
             <div class="business-info-section" id="businessInfoSection" style="display: none;">
                 <label class="input-label">Extracted Business Info</label>
@@ -2111,38 +2705,53 @@
         </aside>
 
         <!-- Content -->
-        <main class="content">
+        <main class="content" id="main-content" role="main">
             <!-- Progress Steps -->
-            <div class="progress-steps">
-                <div class="step active" id="step1">
-                    <span class="step-num">1</span>
-                    <span>Upload</span>
+            <nav class="progress-steps" role="navigation" aria-label="Analysis progress">
+                <div class="step active" id="step1" role="listitem" aria-current="step">
+                    <span class="step-num" aria-hidden="true">1</span>
+                    <div class="step-content">
+                        <span class="step-title">Upload</span>
+                        <span class="step-desc">Add bank statements</span>
+                    </div>
                 </div>
-                <div class="step" id="step2">
-                    <span class="step-num">2</span>
-                    <span>Fraud Scan</span>
+                <div class="step" id="step2" role="listitem">
+                    <span class="step-num" aria-hidden="true">2</span>
+                    <div class="step-content">
+                        <span class="step-title">Fraud Scan</span>
+                        <span class="step-desc">Check for alterations</span>
+                    </div>
                 </div>
-                <div class="step" id="step3">
-                    <span class="step-num">3</span>
-                    <span>Extract Data</span>
+                <div class="step" id="step3" role="listitem">
+                    <span class="step-num" aria-hidden="true">3</span>
+                    <div class="step-content">
+                        <span class="step-title">Extract Data</span>
+                        <span class="step-desc">Pull financial metrics</span>
+                    </div>
                 </div>
-                <div class="step" id="step4">
-                    <span class="step-num">4</span>
-                    <span>Research</span>
+                <div class="step" id="step4" role="listitem">
+                    <span class="step-num" aria-hidden="true">4</span>
+                    <div class="step-content">
+                        <span class="step-title">Research</span>
+                        <span class="step-desc">Business verification</span>
+                    </div>
                 </div>
-                <div class="step" id="step5">
-                    <span class="step-num">5</span>
-                    <span>Match Lenders</span>
+                <div class="step" id="step5" role="listitem">
+                    <span class="step-num" aria-hidden="true">5</span>
+                    <div class="step-content">
+                        <span class="step-title">Match Lenders</span>
+                        <span class="step-desc">Find best options</span>
+                    </div>
                 </div>
-            </div>
+            </nav>
 
             <!-- Status Message -->
-            <div class="status-message" id="statusMessage"></div>
+            <div class="status-message" id="statusMessage" role="alert" aria-live="polite"></div>
 
             <!-- Loading -->
-            <div class="loading" id="loading">
+            <div class="loading" id="loading" role="status" aria-live="polite" aria-busy="true">
                 <div class="loading-container">
-                    <div class="spinner-wrapper">
+                    <div class="spinner-wrapper" aria-hidden="true">
                         <div class="spinner"></div>
                         <div class="spinner-ring"></div>
                         <div class="spinner-ring-2"></div>
@@ -2177,45 +2786,92 @@
             <!-- Results Area for Export -->
             <div id="resultsArea">
 
-            <!-- Fraud Results -->
-            <div class="section-card hidden" id="fraudSection">
-                <div class="section-header">
-                    <span>Fraud Analysis</span>
+            <!-- Loading Skeleton -->
+            <div class="skeleton-loading hidden" id="loadingSkeleton">
+                <div class="skeleton-card" style="margin-bottom: 16px;">
+                    <div class="skeleton skeleton-text short" style="height: 20px; margin-bottom: 16px;"></div>
+                    <div class="skeleton-row">
+                        <div class="skeleton skeleton-cell"></div>
+                        <div class="skeleton skeleton-cell"></div>
+                        <div class="skeleton skeleton-cell"></div>
+                        <div class="skeleton skeleton-cell"></div>
+                    </div>
+                    <div class="skeleton-row">
+                        <div class="skeleton skeleton-cell"></div>
+                        <div class="skeleton skeleton-cell"></div>
+                        <div class="skeleton skeleton-cell"></div>
+                        <div class="skeleton skeleton-cell"></div>
+                    </div>
                 </div>
-                <div class="section-body" id="fraudResults"></div>
+                <div class="skeleton-card" style="margin-bottom: 16px;">
+                    <div class="skeleton skeleton-text short" style="height: 20px; margin-bottom: 16px;"></div>
+                    <div class="skeleton skeleton-text long"></div>
+                    <div class="skeleton skeleton-text medium"></div>
+                    <div class="skeleton skeleton-text long"></div>
+                    <div style="display: flex; gap: 16px; margin-top: 16px;">
+                        <div class="skeleton" style="flex: 1; height: 150px;"></div>
+                        <div class="skeleton" style="flex: 1; height: 150px;"></div>
+                    </div>
+                </div>
+                <div class="skeleton-card">
+                    <div class="skeleton skeleton-text short" style="height: 20px; margin-bottom: 16px;"></div>
+                    <div class="skeleton" style="height: 200px;"></div>
+                </div>
             </div>
+
+            <!-- Fraud Results -->
+            <section class="section-card hidden" id="fraudSection" aria-labelledby="fraudSectionTitle">
+                <header class="section-header">
+                    <h2 id="fraudSectionTitle" style="font-size: inherit; font-weight: inherit; margin: 0;">Fraud Analysis</h2>
+                </header>
+                <div class="section-body" id="fraudResults" role="region" aria-label="Fraud scan results"></div>
+            </section>
 
             <!-- Extracted Data -->
-            <div class="section-card hidden" id="dataSection">
-                <div class="section-header">
-                    <span>Bank Analysis Worksheet</span>
-                </div>
-                <div class="section-body" id="extractedData"></div>
-            </div>
+            <section class="section-card hidden" id="dataSection" aria-labelledby="dataSectionTitle">
+                <header class="section-header">
+                    <h2 id="dataSectionTitle" style="font-size: inherit; font-weight: inherit; margin: 0;">Bank Analysis Worksheet</h2>
+                </header>
+                <div class="section-body" id="extractedData" role="region" aria-label="Extracted financial data"></div>
+            </section>
 
             <!-- Charts Section -->
-            <div class="section-card hidden" id="chartsSection">
-                <div class="section-header">
-                    <span>Cash Flow Analysis</span>
-                </div>
+            <section class="section-card hidden" id="chartsSection" aria-labelledby="chartsSectionTitle">
+                <header class="section-header">
+                    <h2 id="chartsSectionTitle" style="font-size: inherit; font-weight: inherit; margin: 0;">Cash Flow Analysis</h2>
+                </header>
                 <div class="section-body">
                     <div class="chart-row">
-                        <div class="chart-container">
+                        <div class="chart-container" role="img" aria-label="Average daily balance over time">
                             <canvas id="balanceChart"></canvas>
+                            <button class="chart-export-btn" onclick="exportChart('balanceChart', 'balance_trend')" title="Download as PNG" aria-label="Download balance chart as PNG">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                            </button>
                         </div>
-                        <div class="chart-container">
+                        <div class="chart-container" role="img" aria-label="Deposits and withdrawals comparison">
                             <canvas id="flowChart"></canvas>
+                            <button class="chart-export-btn" onclick="exportChart('flowChart', 'cash_flow')" title="Download as PNG" aria-label="Download cash flow chart as PNG">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
             <!-- Existing Debt Obligations -->
-            <div class="section-card hidden" id="debtSection">
-                <div class="section-header">
-                    <span>Existing Debt Obligations</span>
-                    <span class="debt-total-badge" id="debtTotalBadge">$0/mo</span>
-                </div>
+            <section class="section-card hidden" id="debtSection" aria-labelledby="debtSectionTitle">
+                <header class="section-header">
+                    <h2 id="debtSectionTitle" style="font-size: inherit; font-weight: inherit; margin: 0;">Existing Debt Obligations</h2>
+                    <span class="debt-total-badge" id="debtTotalBadge" aria-label="Total monthly debt">$0/mo</span>
+                </header>
                 <div class="section-body">
                     <div class="debt-summary" id="debtSummary">
                         <div class="debt-stat">
@@ -2237,17 +2893,24 @@
                     </div>
                     <div class="chart-container" style="height: 200px; margin: 16px 0;">
                         <canvas id="debtChart"></canvas>
+                        <button class="chart-export-btn" onclick="exportChart('debtChart', 'debt_breakdown')" title="Download as PNG" aria-label="Download debt chart as PNG">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                        </button>
                     </div>
-                    <div class="debt-table-container" id="debtTableContainer"></div>
+                    <div class="debt-table-container" id="debtTableContainer" role="region" aria-label="Debt details table"></div>
                 </div>
-            </div>
+            </section>
 
             <!-- Background Research -->
-            <div class="section-card hidden" id="researchSection">
-                <div class="section-header">
-                    <span>Background Research: <span id="researchBusinessName">-</span></span>
-                    <button class="btn" id="expandAllBtn" onclick="toggleAllModules()" style="font-size: 12px; padding: 6px 12px;">Expand All</button>
-                </div>
+            <section class="section-card hidden" id="researchSection" aria-labelledby="researchSectionTitle">
+                <header class="section-header">
+                    <h2 id="researchSectionTitle" style="font-size: inherit; font-weight: inherit; margin: 0;">Background Research: <span id="researchBusinessName">-</span></h2>
+                    <button class="btn" id="expandAllBtn" onclick="toggleAllModules()" style="font-size: 12px; padding: 6px 12px;" aria-expanded="false">Expand All</button>
+                </header>
                 <div class="section-body">
                     <!-- Progress Bar -->
                     <div class="research-progress" id="researchProgress">
@@ -2279,28 +2942,28 @@
                     </div>
 
                     <!-- Module Grid -->
-                    <div class="research-grid" id="researchResults"></div>
+                    <div class="research-grid" id="researchResults" role="list" aria-label="Research modules"></div>
                 </div>
-            </div>
+            </section>
 
             <!-- Lender Results -->
-            <div class="section-card hidden" id="lenderSection">
-                <div class="section-header">
-                    <span>Lender Matches</span>
-                    <span class="file-count" id="lenderCount"></span>
-                </div>
+            <section class="section-card hidden" id="lenderSection" aria-labelledby="lenderSectionTitle">
+                <header class="section-header">
+                    <h2 id="lenderSectionTitle" style="font-size: inherit; font-weight: inherit; margin: 0;">Lender Matches</h2>
+                    <span class="file-count" id="lenderCount" aria-live="polite"></span>
+                </header>
                 <div class="section-body">
-                    <div class="lender-grid" id="lenderResults"></div>
+                    <div class="lender-grid" id="lenderResults" role="list" aria-label="Matched lenders"></div>
                 </div>
-            </div>
+            </section>
 
             <!-- Submit Instructions -->
-            <div class="section-card hidden" id="submitSection">
-                <div class="section-header">
-                    <span>Submission Instructions</span>
-                </div>
-                <div class="section-body" id="submitInstructions"></div>
-            </div>
+            <section class="section-card hidden" id="submitSection" aria-labelledby="submitSectionTitle">
+                <header class="section-header">
+                    <h2 id="submitSectionTitle" style="font-size: inherit; font-weight: inherit; margin: 0;">Submission Instructions</h2>
+                </header>
+                <div class="section-body" id="submitInstructions" role="region" aria-label="How to submit applications"></div>
+            </section>
 
             </div><!-- End resultsArea -->
 
@@ -2408,6 +3071,113 @@
         let ctx = null;
         const settings = { opacity: 0.25, size: 0.15, density: 0.50, rotation: 45 };
 
+        // Validation Schema for extracted bank statement data
+        const VALIDATION_SCHEMA = {
+            month: { type: 'string', required: true, pattern: /^[A-Za-z]+\s+\d{4}$/ },
+            total_deposits: { type: 'number', min: 0, required: true },
+            true_revenue: { type: 'number', required: true },
+            total_withdrawals: { type: 'number', min: 0, required: true },
+            average_daily_balance: { type: 'number', required: true },
+            lowest_daily_balance: { type: 'number', required: true },
+            num_deposits: { type: 'number', min: 0, integer: true, required: true },
+            nsf_count: { type: 'number', min: 0, max: 999, integer: true, required: true },
+            days_negative: { type: 'number', min: 0, max: 31, integer: true, required: true }
+        };
+
+        // Known MCA lender names for detection
+        const KNOWN_MCA_LENDERS = [
+            'LIBERTAS', 'YELLOWSTONE', 'CREDIBLY', 'ONDECK', 'KAPITUS', 'FUNDFI', 'BITTY', 'CLEARFUND',
+            'RAPID FINANCE', 'SWIFT CAPITAL', 'NATIONAL FUNDING', 'FUNDBOX', 'BLUEVINE', 'KABBAGE',
+            'CAN CAPITAL', 'FORWARD FINANCING', 'GREENBOX', 'MERCHANT GROWTH', 'SQUARE CAPITAL',
+            'PAYPAL WORKING', 'SHOPIFY CAPITAL', 'STRIPE CAPITAL', 'AMAZON LENDING', 'LENDIO',
+            'FORA FINANCIAL', 'MULLIGAN FUNDING', 'BUSINESS BACKER', 'LENDR', 'HEADWAY CAPITAL',
+            'BECOME CAPITAL', 'FUNDKITE', 'SLICE CAPITAL', 'EVEREST BUSINESS', 'CLOUDFUND',
+            'ACH DEBIT', 'DAILY DEBIT', 'MCF CAPITAL', 'EBF CAPITAL', 'TVP CAPITAL'
+        ];
+
+        // Validate extracted month data against schema
+        function validateExtraction(data) {
+            const errors = [];
+            const warnings = [];
+
+            if (!data || typeof data !== 'object') {
+                return { valid: false, errors: ['Invalid data object'], warnings: [], sanitized: null };
+            }
+
+            const sanitized = {};
+
+            for (const [field, rules] of Object.entries(VALIDATION_SCHEMA)) {
+                let value = data[field];
+
+                // Check required fields
+                if (rules.required && (value === undefined || value === null || value === '')) {
+                    if (field === 'month') {
+                        errors.push(`Missing required field: ${field}`);
+                        continue;
+                    } else {
+                        warnings.push(`Missing field ${field}, defaulting to ${rules.type === 'number' ? 0 : 'null'}`);
+                        value = rules.type === 'number' ? 0 : null;
+                    }
+                }
+
+                // Type validation
+                if (rules.type === 'number') {
+                    value = parseFloat(value);
+                    if (isNaN(value)) {
+                        warnings.push(`Invalid number for ${field}, defaulting to 0`);
+                        value = 0;
+                    }
+                    // Integer check
+                    if (rules.integer && !Number.isInteger(value)) {
+                        value = Math.round(value);
+                    }
+                    // Range checks
+                    if (rules.min !== undefined && value < rules.min) {
+                        warnings.push(`${field} (${value}) below minimum (${rules.min}), clamping`);
+                        value = rules.min;
+                    }
+                    if (rules.max !== undefined && value > rules.max) {
+                        warnings.push(`${field} (${value}) above maximum (${rules.max}), clamping`);
+                        value = rules.max;
+                    }
+                }
+
+                if (rules.type === 'string' && rules.pattern && value) {
+                    if (!rules.pattern.test(value)) {
+                        warnings.push(`${field} format invalid: "${value}"`);
+                    }
+                }
+
+                sanitized[field] = value;
+            }
+
+            // Cross-validation: deposits should roughly match withdrawals + balance change
+            if (sanitized.total_deposits && sanitized.total_withdrawals) {
+                const ratio = sanitized.total_deposits / (sanitized.total_withdrawals || 1);
+                if (ratio > 10 || ratio < 0.1) {
+                    warnings.push(`Unusual deposit/withdrawal ratio: ${ratio.toFixed(2)}`);
+                }
+            }
+
+            // Sanity check: NSF count shouldn't exceed reasonable limits
+            if (sanitized.nsf_count > 50) {
+                warnings.push(`Unusually high NSF count: ${sanitized.nsf_count}`);
+            }
+
+            // Sanity check: days negative shouldn't exceed days in month
+            if (sanitized.days_negative > 31) {
+                errors.push(`Invalid days_negative: ${sanitized.days_negative} (max 31)`);
+                sanitized.days_negative = 31;
+            }
+
+            return {
+                valid: errors.length === 0,
+                errors,
+                warnings,
+                sanitized
+            };
+        }
+
         // Initialize
         function init() {
             // Initialize canvas
@@ -2454,6 +3224,58 @@
                     });
                 }
             });
+
+            // Mobile sidebar toggle
+            initMobileSidebar();
+        }
+
+        // Mobile Sidebar Management
+        function initMobileSidebar() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            if (!mobileMenuBtn || !sidebar || !overlay) return;
+
+            function openSidebar() {
+                sidebar.classList.add('open');
+                overlay.classList.add('visible');
+                mobileMenuBtn.setAttribute('aria-expanded', 'true');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeSidebar() {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('visible');
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+
+            mobileMenuBtn.addEventListener('click', () => {
+                if (sidebar.classList.contains('open')) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
+            });
+
+            overlay.addEventListener('click', closeSidebar);
+
+            // Close sidebar on escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+                    closeSidebar();
+                }
+            });
+
+            // Close sidebar when clicking a button inside (for mobile UX)
+            sidebar.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (window.innerWidth < 768) {
+                        setTimeout(closeSidebar, 300);
+                    }
+                });
+            });
         }
 
         function toggleTheme() {
@@ -2463,8 +3285,166 @@
             localStorage.setItem('theme', next);
         }
 
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        // Sortable Table State
+        let tableSortState = { column: null, direction: 'asc' };
+
+        // Sort table by column
+        function sortTable(tableId, columnIndex, dataType = 'string') {
+            const table = document.getElementById(tableId);
+            if (!table) return;
+
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const headers = table.querySelectorAll('th.sortable');
+
+            // Toggle sort direction
+            if (tableSortState.column === columnIndex) {
+                tableSortState.direction = tableSortState.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                tableSortState.column = columnIndex;
+                tableSortState.direction = 'asc';
+            }
+
+            // Update header classes
+            headers.forEach((h, i) => {
+                h.classList.remove('asc', 'desc');
+                if (i === columnIndex) {
+                    h.classList.add(tableSortState.direction);
+                }
+            });
+
+            // Sort rows
+            rows.sort((a, b) => {
+                let aVal = a.cells[columnIndex]?.textContent?.trim() || '';
+                let bVal = b.cells[columnIndex]?.textContent?.trim() || '';
+
+                // Parse based on data type
+                if (dataType === 'number' || dataType === 'currency') {
+                    aVal = parseFloat(aVal.replace(/[$,%]/g, '')) || 0;
+                    bVal = parseFloat(bVal.replace(/[$,%]/g, '')) || 0;
+                } else if (dataType === 'date') {
+                    aVal = new Date(aVal);
+                    bVal = new Date(bVal);
+                }
+
+                let result = 0;
+                if (aVal < bVal) result = -1;
+                else if (aVal > bVal) result = 1;
+
+                return tableSortState.direction === 'desc' ? -result : result;
+            });
+
+            // Re-append rows in sorted order
+            rows.forEach(row => tbody.appendChild(row));
+        }
+
+        // Export chart as PNG
+        function exportChart(chartId, filename) {
+            const canvas = document.getElementById(chartId);
+            if (!canvas) return;
+
+            const link = document.createElement('a');
+            link.download = filename || `${chartId}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // Export data to CSV
+        function exportToCSV() {
+            if (!extractedData?.full_analysis?.months) {
+                showStatus('No data to export', 'warning');
+                return;
+            }
+
+            const months = extractedData.full_analysis.months;
+            const headers = ['Month', 'Total Deposits', 'True Revenue', 'Num Deposits', 'Total Withdrawals', 'Avg Daily Balance', 'Lowest Balance', 'NSF Count', 'Days Negative'];
+
+            const csvRows = [
+                headers.join(','),
+                ...months.map(m => [
+                    `"${m.month || 'N/A'}"`,
+                    m.total_deposits || 0,
+                    m.true_revenue || 0,
+                    m.num_deposits || 0,
+                    m.total_withdrawals || 0,
+                    m.average_daily_balance || 0,
+                    m.lowest_daily_balance || 0,
+                    m.nsf_count || 0,
+                    m.days_negative || 0
+                ].join(','))
+            ];
+
+            const csvContent = csvRows.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `bank_analysis_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+
+            showStatus('CSV exported successfully!', 'success');
+        }
+
+        let lastFocusedElement = null;
+
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            // Store the element that had focus before modal opened
+            lastFocusedElement = document.activeElement;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent background scroll
+            // Focus management for accessibility
+            const firstFocusable = modal.querySelector('button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if (firstFocusable) firstFocusable.focus();
+            // Trap focus in modal
+            modal.addEventListener('keydown', trapFocus);
+        }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.remove('active');
+            document.body.style.overflow = ''; // Restore scroll
+            modal.removeEventListener('keydown', trapFocus);
+            // Restore focus to the element that opened the modal
+            if (lastFocusedElement) {
+                lastFocusedElement.focus();
+                lastFocusedElement = null;
+            }
+        }
+
+        // Trap focus within modal for accessibility
+        function trapFocus(e) {
+            if (e.key !== 'Tab') return;
+
+            const modal = e.currentTarget;
+            const focusables = modal.querySelectorAll('button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            const firstFocusable = focusables[0];
+            const lastFocusable = focusables[focusables.length - 1];
+
+            if (e.shiftKey && document.activeElement === firstFocusable) {
+                e.preventDefault();
+                lastFocusable.focus();
+            } else if (!e.shiftKey && document.activeElement === lastFocusable) {
+                e.preventDefault();
+                firstFocusable.focus();
+            }
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const activeModal = document.querySelector('.modal-overlay.active');
+                if (activeModal) closeModal(activeModal.id);
+            }
+        });
+
+        // Show/hide loading skeleton
+        function showSkeleton(show = true) {
+            const skeleton = document.getElementById('loadingSkeleton');
+            if (skeleton) {
+                skeleton.classList.toggle('hidden', !show);
+            }
+        }
 
         function saveSettings() {
             localStorage.setItem('gemini_key', document.getElementById('apiKeyInput').value);
@@ -2537,7 +3517,7 @@
         function downloadAll() {
             if (files.length === 0) return;
             if (!logoImage || !logoImage.complete) {
-                showStatus('Watermark image not loaded. Check settings.', 'error');
+                showStatus('Watermark image not loaded. Add a valid image URL in Settings.', 'error');
                 return;
             }
 
@@ -2611,7 +3591,7 @@
 
         async function exportReportAs(format = 'png') {
             if (!extractedData.full_analysis) {
-                showStatus('No analysis data to export', 'error');
+                showStatus('No analysis data to export. Process documents first.', 'warning');
                 return;
             }
 
@@ -2699,6 +3679,9 @@
                 // Restore buttons
                 buttons.forEach(b => b.style.display = '');
 
+                // Restore hidden elements that were temporarily shown for export
+                hiddenEls.forEach(el => el.classList.add('hidden'));
+
                 const businessName = extractedBusinessInfo.name || 'Report';
                 const filename = `${businessName.replace(/[^a-z0-9]/gi, '_')}_Analysis_${new Date().toISOString().split('T')[0]}`;
 
@@ -2767,11 +3750,37 @@
             return localStorage.getItem('gemini_model') || 'gemini-3-flash-preview';
         }
 
+        // Error message mappings for actionable guidance
+        const ERROR_GUIDANCE = {
+            'API key': 'Click the ⚙️ Settings button to add your Gemini API key.',
+            'rate limit': 'API rate limit reached. Wait a moment and try again.',
+            'network': 'Check your internet connection and try again.',
+            'timeout': 'Request timed out. Try with fewer files or wait and retry.',
+            'invalid': 'The file format may not be supported. Ensure files are PDF or images.',
+            'quota': 'API quota exceeded. Check your Gemini API dashboard.',
+            '403': 'API key may be invalid or expired. Check Settings.',
+            '401': 'Authentication failed. Verify your API key in Settings.',
+            '500': 'Gemini service error. Try again in a few moments.',
+            '503': 'Gemini service temporarily unavailable. Try again later.'
+        };
+
         function showStatus(msg, type = 'info') {
             const el = document.getElementById('statusMessage');
-            el.textContent = msg;
+            let finalMsg = msg;
+
+            // Add actionable guidance for errors
+            if (type === 'error') {
+                for (const [key, guidance] of Object.entries(ERROR_GUIDANCE)) {
+                    if (msg.toLowerCase().includes(key.toLowerCase())) {
+                        finalMsg = `${msg} — ${guidance}`;
+                        break;
+                    }
+                }
+            }
+
+            el.innerHTML = finalMsg;
             el.className = `status-message show ${type}`;
-            setTimeout(() => el.classList.remove('show'), 5000);
+            setTimeout(() => el.classList.remove('show'), type === 'error' ? 8000 : 5000);
         }
 
         function showLoading(show, text = 'Processing...', options = {}) {
@@ -2976,6 +3985,9 @@
             }
 
             try {
+                // Show skeleton placeholder while processing
+                showSkeleton(true);
+
                 // Step 2: Fraud Scan
                 setStep(2);
                 showLoading(true, 'Scanning for fraud indicators...', {
@@ -3053,6 +4065,7 @@
             } catch (error) {
                 console.error(error);
                 showLoading(false);
+                showSkeleton(false); // Hide skeleton on error
                 showStatus(`Error: ${error.message}`, 'error');
             }
         }
@@ -3107,8 +4120,8 @@ End with exactly one: RISK_LEVEL:CLEAN or RISK_LEVEL:WARNING or RISK_LEVEL:DANGE
                 if (text.includes('RISK_LEVEL:WARNING')) return 'warning';
                 return 'clean';
             } catch (e) {
-                file.fraudAnalysis = 'Analysis failed - API error';
-                return 'warning';
+                file.fraudAnalysis = 'Analysis failed - API error. Manual review recommended.';
+                return 'unknown';
             }
         }
 
@@ -3116,12 +4129,13 @@ End with exactly one: RISK_LEVEL:CLEAN or RISK_LEVEL:WARNING or RISK_LEVEL:DANGE
             const clean = files.filter(f => f.status === 'clean').length;
             const warning = files.filter(f => f.status === 'warning').length;
             const danger = files.filter(f => f.status === 'danger').length;
+            const unknown = files.filter(f => f.status === 'unknown').length;
 
             // Build file-by-file results with explanations
             const fileResults = files.map((f, i) => {
-                const statusClass = f.status === 'danger' ? 'red' : f.status === 'warning' ? 'yellow' : 'green';
-                const statusText = f.status === 'danger' ? 'Risk' : f.status === 'warning' ? 'Review' : 'Clean';
-                const statusIcon = f.status === 'danger' ? '⚠️' : f.status === 'warning' ? '⚡' : '✓';
+                const statusClass = f.status === 'danger' ? 'red' : f.status === 'warning' ? 'yellow' : f.status === 'unknown' ? 'blue' : 'green';
+                const statusText = f.status === 'danger' ? 'Risk' : f.status === 'warning' ? 'Review' : f.status === 'unknown' ? 'Unknown' : 'Clean';
+                const statusIcon = f.status === 'danger' ? '⚠️' : f.status === 'warning' ? '⚡' : f.status === 'unknown' ? '?' : '✓';
                 return `
                     <div class="fraud-item" style="padding: 12px; border-radius: 8px; background: var(--bg-tertiary); margin-bottom: 8px; border-left: 3px solid var(--${statusClass});">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
@@ -3134,7 +4148,7 @@ End with exactly one: RISK_LEVEL:CLEAN or RISK_LEVEL:WARNING or RISK_LEVEL:DANGE
             }).join('');
 
             document.getElementById('fraudResults').innerHTML = `
-                <div class="data-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 16px;">
+                <div class="data-grid" style="grid-template-columns: repeat(${unknown > 0 ? 5 : 4}, 1fr); margin-bottom: 16px;">
                     <div class="data-card" style="border-color: var(--green);">
                         <div class="data-label">Clean</div>
                         <div class="data-value green">${clean}</div>
@@ -3147,6 +4161,12 @@ End with exactly one: RISK_LEVEL:CLEAN or RISK_LEVEL:WARNING or RISK_LEVEL:DANGE
                         <div class="data-label">Risk</div>
                         <div class="data-value red">${danger}</div>
                     </div>
+                    ${unknown > 0 ? `
+                    <div class="data-card" style="border-color: var(--blue);">
+                        <div class="data-label">Unknown</div>
+                        <div class="data-value" style="color: var(--blue);">${unknown}</div>
+                    </div>
+                    ` : ''}
                     <div class="data-card">
                         <div class="data-label">Total</div>
                         <div class="data-value">${files.length}</div>
@@ -3170,36 +4190,75 @@ End with exactly one: RISK_LEVEL:CLEAN or RISK_LEVEL:WARNING or RISK_LEVEL:DANGE
             }
 
             const parts = [
-                { text: `You are analyzing a SINGLE bank statement for MCA underwriting. This is statement ${fileIndex + 1}.
+                { text: `You are analyzing a SINGLE bank statement for MCA (Merchant Cash Advance) underwriting. This is statement ${fileIndex + 1}.
 
-Extract the data for THIS ONE MONTH only:
-- month: Month name and year (e.g., "January 2024")
-- total_deposits: Sum of all credits/deposits
-- true_revenue: Deposits minus internal transfers, loans, owner deposits
-- total_withdrawals: Sum of all debits/withdrawals
-- average_daily_balance: Average daily balance
-- lowest_daily_balance: Minimum/lowest balance
-- num_deposits: Count of deposit transactions
-- nsf_count: Number of NSF/overdraft fees
-- days_negative: Days with negative balance
+IMPORTANT INSTRUCTIONS:
+- Extract data for THIS ONE STATEMENT PERIOD only
+- Use null for any value you cannot determine with confidence (do NOT guess or use 0 as placeholder)
+- All monetary values should be positive numbers (no dollar signs or commas)
+- Count actual transactions, not estimated numbers
 
-Also extract:
-- business_name: Business name on the account
-- owner_name: Owner/account holder name
-- bank_name: Name of the bank
-- account_number_last4: Last 4 digits of account
+REQUIRED FIELDS - extract exactly as defined:
 
-Detect any MCA/debt payments - look for recurring debits to: LIBERTAS, YELLOWSTONE, CREDIBLY, ONDECK, KAPITUS, FUNDFI, BITTY, CLEARFUND, etc.
+1. month: Statement period in format "Month Year" (e.g., "January 2024", "December 2023")
+   - Use the statement date range or ending date to determine the month
 
-Return ONLY valid JSON:
+2. total_deposits: Sum of ALL credits/deposits shown on statement
+   - Include: customer payments, sales deposits, transfers IN, refunds received
+   - This is the gross deposit total
+
+3. true_revenue: Actual business revenue (deposits MINUS non-revenue items)
+   - EXCLUDE: internal transfers between own accounts, loan proceeds, owner/investor deposits, tax refunds
+   - This represents genuine business income
+
+4. total_withdrawals: Sum of ALL debits/withdrawals shown on statement
+   - Include: checks, ACH debits, wire transfers, fees, purchases
+
+5. average_daily_balance: The average daily balance for the period
+   - Often shown on statement summary; if not, estimate from daily balances
+
+6. lowest_daily_balance: The minimum/lowest balance reached during the period
+   - Can be negative if account was overdrawn
+
+7. num_deposits: Count of individual deposit transactions (integer)
+   - Count each separate deposit line item
+
+8. nsf_count: Number of NSF (Non-Sufficient Funds) or overdraft fee occurrences (integer, 0-999)
+   - Look for: NSF FEE, OVERDRAFT FEE, RETURNED ITEM FEE, INSUFFICIENT FUNDS
+
+9. days_negative: Number of days with negative balance (integer, 0-31)
+   - Count days where ending balance was below zero
+
+BUSINESS INFORMATION:
+- business_name: Legal business name on the account
+- owner_name: Account holder/signer name
+- bank_name: Financial institution name
+- account_number_last4: Last 4 digits only
+
+MCA/DEBT DETECTION - Look for recurring debits to these lenders:
+LIBERTAS, YELLOWSTONE, CREDIBLY, ONDECK, KAPITUS, FUNDFI, BITTY, CLEARFUND,
+RAPID FINANCE, SWIFT CAPITAL, NATIONAL FUNDING, FUNDBOX, BLUEVINE, KABBAGE,
+CAN CAPITAL, FORWARD FINANCING, GREENBOX, SQUARE CAPITAL, PAYPAL WORKING,
+SHOPIFY CAPITAL, AMAZON LENDING, FORA FINANCIAL, HEADWAY CAPITAL, FUNDKITE
+
+For detected_mca_payments, include: { "name": "Lender Name", "amount": 123.45 }
+
+RED FLAGS to identify:
+- Multiple NSF/overdraft fees
+- Frequent negative balances
+- Large unexplained withdrawals
+- Declining deposit trends
+- Multiple MCA positions
+
+Return ONLY valid JSON (no markdown, no explanation):
 {
   "month": "Month Year",
-  "total_deposits": 0,
-  "true_revenue": 0,
-  "total_withdrawals": 0,
-  "average_daily_balance": 0,
-  "lowest_daily_balance": 0,
-  "num_deposits": 0,
+  "total_deposits": null,
+  "true_revenue": null,
+  "total_withdrawals": null,
+  "average_daily_balance": null,
+  "lowest_daily_balance": null,
+  "num_deposits": null,
   "nsf_count": 0,
   "days_negative": 0,
   "business_name": "",
@@ -3277,18 +4336,45 @@ Return ONLY valid JSON:
                 showStatus(`Warning: Only ${successCount} of ${files.length} statements were extracted. Check console for details.`, 'info');
             }
 
-            // Filter out failed extractions and build months array
-            const months = results.filter(r => r !== null).map(r => ({
-                month: r.month || 'Unknown',
-                total_deposits: r.total_deposits || 0,
-                true_revenue: r.true_revenue || 0,
-                total_withdrawals: r.total_withdrawals || 0,
-                average_daily_balance: r.average_daily_balance || 0,
-                lowest_daily_balance: r.lowest_daily_balance || 0,
-                num_deposits: r.num_deposits || 0,
-                nsf_count: r.nsf_count || 0,
-                days_negative: r.days_negative || 0
-            }));
+            // Filter out failed extractions, validate, and build months array
+            const months = [];
+            const validationIssues = [];
+
+            results.filter(r => r !== null).forEach((r, idx) => {
+                const validation = validateExtraction(r);
+
+                if (validation.errors.length > 0) {
+                    console.warn(`Statement ${idx + 1} validation errors:`, validation.errors);
+                    validationIssues.push(`Statement ${idx + 1}: ${validation.errors.join(', ')}`);
+                }
+                if (validation.warnings.length > 0) {
+                    console.info(`Statement ${idx + 1} validation warnings:`, validation.warnings);
+                }
+
+                // Use sanitized data if available, otherwise fall back to original with defaults
+                const data = validation.sanitized || {
+                    month: r.month || 'Unknown',
+                    total_deposits: r.total_deposits || 0,
+                    true_revenue: r.true_revenue || 0,
+                    total_withdrawals: r.total_withdrawals || 0,
+                    average_daily_balance: r.average_daily_balance || 0,
+                    lowest_daily_balance: r.lowest_daily_balance || 0,
+                    num_deposits: r.num_deposits || 0,
+                    nsf_count: r.nsf_count || 0,
+                    days_negative: r.days_negative || 0
+                };
+
+                // Only add if we have a valid month
+                if (data.month && data.month !== 'Unknown') {
+                    months.push(data);
+                } else {
+                    console.warn(`Skipping statement ${idx + 1}: no valid month extracted`);
+                }
+            });
+
+            if (validationIssues.length > 0) {
+                console.warn('Validation issues found:', validationIssues);
+            }
 
             // Sort months chronologically
             months.sort((a, b) => {
@@ -3344,17 +4430,44 @@ Return ONLY valid JSON:
                             }
                         }
 
-                        // Normalize for deduplication - aggressive cleaning
+                        // Normalize for deduplication - preserve word boundaries
+                        // Convert to uppercase and normalize spaces, but keep word structure
                         const normalizedName = cleanName
                             .toUpperCase()
-                            .replace(/[^A-Z0-9]/g, '') // Remove ALL non-alphanumeric chars (spaces, dashes, etc)
+                            .replace(/[^A-Z0-9\s]/g, '') // Remove special chars but keep spaces
+                            .replace(/\s+/g, ' ')         // Normalize multiple spaces
                             .trim();
 
+                        // Find if this lender already exists (fuzzy match)
+                        let existingKey = null;
+                        for (const [key, value] of mcaLenderMap.entries()) {
+                            // Exact match
+                            if (key === normalizedName) {
+                                existingKey = key;
+                                break;
+                            }
+                            // Fuzzy match: check if one contains the other (for variations like "YELLOWSTONE" vs "YELLOWSTONE CAPITAL")
+                            const keyNoSpaces = key.replace(/\s/g, '');
+                            const normalizedNoSpaces = normalizedName.replace(/\s/g, '');
+                            if (keyNoSpaces === normalizedNoSpaces) {
+                                existingKey = key;
+                                break;
+                            }
+                            // Check for known lender name matches
+                            const knownMatch = KNOWN_MCA_LENDERS.find(known =>
+                                key.includes(known) && normalizedName.includes(known)
+                            );
+                            if (knownMatch) {
+                                existingKey = key;
+                                break;
+                            }
+                        }
+
                         // Add or update in map (keep highest amount, count occurrences)
-                        if (!mcaLenderMap.has(normalizedName)) {
+                        if (!existingKey) {
                             mcaLenderMap.set(normalizedName, { name: cleanName, amount, count: 1 });
                         } else {
-                            const existing = mcaLenderMap.get(normalizedName);
+                            const existing = mcaLenderMap.get(existingKey);
                             existing.count = (existing.count || 1) + 1;
                             if (amount && amount > (existing.amount || 0)) {
                                 existing.amount = amount;
@@ -3383,15 +4496,43 @@ Return ONLY valid JSON:
             });
 
             // Calculate our own aggregates from the extracted month data
-            const numMonths = months.length || 1;
+            // Guard against empty months array
+            if (months.length === 0) {
+                console.warn('No valid month data extracted from statements');
+                return {
+                    monthly_deposits: 0,
+                    average_daily_balance: 0,
+                    nsf_negative_days: 0,
+                    num_deposits_monthly: 0,
+                    full_analysis: {
+                        business_info: businessInfo,
+                        account_info: accountInfo,
+                        months: [],
+                        aggregated: {
+                            avg_monthly_deposits: 0,
+                            avg_monthly_true_revenue: 0,
+                            avg_monthly_balance: 0,
+                            total_nsf_fees: 0,
+                            total_negative_days: 0,
+                            avg_num_deposits: 0,
+                            months_analyzed: 0,
+                            detected_mca_lenders: Array.from(mcaLenderMap.values())
+                        },
+                        existing_debt: allDebt,
+                        red_flags: [...new Set(allRedFlags)]
+                    }
+                };
+            }
+
+            const numMonths = months.length;
             const totals = months.reduce((acc, m) => ({
-                deposits: acc.deposits + m.total_deposits,
-                trueRevenue: acc.trueRevenue + m.true_revenue,
-                withdrawals: acc.withdrawals + m.total_withdrawals,
-                avgBal: acc.avgBal + m.average_daily_balance,
-                numDeps: acc.numDeps + m.num_deposits,
-                nsf: acc.nsf + m.nsf_count,
-                negDays: acc.negDays + m.days_negative
+                deposits: acc.deposits + (m.total_deposits || 0),
+                trueRevenue: acc.trueRevenue + (m.true_revenue || 0),
+                withdrawals: acc.withdrawals + (m.total_withdrawals || 0),
+                avgBal: acc.avgBal + (m.average_daily_balance || 0),
+                numDeps: acc.numDeps + (m.num_deposits || 0),
+                nsf: acc.nsf + (m.nsf_count || 0),
+                negDays: acc.negDays + (m.days_negative || 0)
             }), { deposits: 0, trueRevenue: 0, withdrawals: 0, avgBal: 0, numDeps: 0, nsf: 0, negDays: 0 });
 
             // Store extracted business info for research
@@ -3430,6 +4571,9 @@ Return ONLY valid JSON:
         }
 
         function renderExtractedData() {
+            // Hide skeleton when data renders
+            showSkeleton(false);
+
             if (!extractedData.full_analysis) {
                 document.getElementById('extractedData').innerHTML = '<div class="placeholder">No data extracted</div>';
                 return;
@@ -3458,19 +4602,19 @@ Return ONLY valid JSON:
             document.getElementById('extractedData').innerHTML = `
                 <!-- Risk Summary -->
                 <div class="risk-summary">
-                    <div class="risk-chip ${totals.nsf === 0 ? 'good' : totals.nsf <= 3 ? 'warn' : 'bad'}">
+                    <div class="risk-chip ${totals.nsf === 0 ? 'good' : totals.nsf <= 3 ? 'warn' : 'bad'}" title="Non-Sufficient Funds: Bounced checks or overdraft fees indicate cash flow problems. 0 is ideal, 1-3 is acceptable, 4+ is high risk.">
                         <div class="risk-chip-value">${totals.nsf}</div>
                         <div class="risk-chip-label">NSF Items</div>
                     </div>
-                    <div class="risk-chip ${totals.negDays === 0 ? 'good' : totals.negDays <= 5 ? 'warn' : 'bad'}">
+                    <div class="risk-chip ${totals.negDays === 0 ? 'good' : totals.negDays <= 5 ? 'warn' : 'bad'}" title="Negative Balance Days: Days when account balance dropped below zero. More days = higher risk. Ideal is 0.">
                         <div class="risk-chip-value">${totals.negDays}</div>
                         <div class="risk-chip-label">Neg Days</div>
                     </div>
-                    <div class="risk-chip ${mcaLenders.length === 0 ? 'good' : mcaLenders.length <= 2 ? 'warn' : 'bad'}">
+                    <div class="risk-chip ${mcaLenders.length === 0 ? 'good' : mcaLenders.length <= 2 ? 'warn' : 'bad'}" title="Existing MCA Positions: Number of active Merchant Cash Advance payments detected. More positions = higher debt load.">
                         <div class="risk-chip-value">${mcaLenders.length}</div>
                         <div class="risk-chip-label">MCA Found</div>
                     </div>
-                    <div class="risk-chip">
+                    <div class="risk-chip" title="Deposits Per Month: Average number of deposit transactions. Higher count suggests more consistent cash flow.">
                         <div class="risk-chip-value">${Math.round(totals.numDeps / numMonths)}</div>
                         <div class="risk-chip-label">Deps/Month</div>
                     </div>
@@ -3478,7 +4622,55 @@ Return ONLY valid JSON:
 
                 <!-- Monthly Table -->
                 ${months.length > 0 ? `
-                <div style="overflow-x: auto;"><table><thead><tr><th>Month</th><th>Deposits</th><th>True Rev</th><th>#</th><th>Withdrawals</th><th>Avg Bal</th><th>Low Bal</th><th>NSF</th><th>Neg</th></tr></thead><tbody>${months.map(m => `<tr><td style="font-weight: 500;">${m.month || 'N/A'}</td><td class="text-green">$${(m.total_deposits || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td class="text-gold">$${(m.true_revenue || (m.total_deposits || 0) * 0.92).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>${m.num_deposits || 0}</td><td class="text-red">$${(m.total_withdrawals || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>$${(m.average_daily_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td class="${(m.lowest_daily_balance || 0) < 0 ? 'text-red' : ''}">$${(m.lowest_daily_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td class="${(m.nsf_count || 0) > 0 ? 'text-red' : ''}">${m.nsf_count || 0}</td><td class="${(m.days_negative || 0) > 0 ? 'text-red' : ''}">${m.days_negative || 0}</td></tr>`).join('')}</tbody><tfoot><tr><td><strong>AVERAGE</strong></td><td>$${(totals.deposits / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>$${(totals.trueRevenue / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>${Math.round(totals.numDeps / numMonths)}</td><td>$${(totals.withdrawals / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>$${avgBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>-</td><td>${(totals.nsf / numMonths).toFixed(2)}</td><td>${(totals.negDays / numMonths).toFixed(2)}</td></tr></tfoot></table></div>
+                <div class="table-actions" style="display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 12px;">
+                    <button class="btn" onclick="exportToCSV()" title="Export data to CSV">
+                        <svg style="width: 14px; height: 14px; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                        Export CSV
+                    </button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table id="monthlyDataTable" role="grid" aria-label="Monthly bank statement data">
+                        <thead>
+                            <tr>
+                                <th class="sortable" onclick="sortTable('monthlyDataTable', 0, 'date')" title="Statement period month">Month</th>
+                                <th class="sortable" onclick="sortTable('monthlyDataTable', 1, 'currency')" title="Total Deposits: All money deposited into the account including sales, transfers, and payments received">Deposits</th>
+                                <th class="sortable" onclick="sortTable('monthlyDataTable', 2, 'currency')" title="True Revenue: Deposits minus internal transfers and non-revenue items (approx. 92% of deposits)">True Rev</th>
+                                <th class="sortable" onclick="sortTable('monthlyDataTable', 3, 'number')" title="Deposit Count: Number of individual deposit transactions">#</th>
+                                <th class="sortable" onclick="sortTable('monthlyDataTable', 4, 'currency')" title="Total Withdrawals: All money leaving the account including payments, fees, and transfers out">Withdrawals</th>
+                                <th class="sortable" onclick="sortTable('monthlyDataTable', 5, 'currency')" title="Average Daily Balance (ADB): Mean account balance across all days in the month - key underwriting metric">Avg Bal</th>
+                                <th class="sortable" onclick="sortTable('monthlyDataTable', 6, 'currency')" title="Lowest Daily Balance: The minimum balance reached during the month">Low Bal</th>
+                                <th class="sortable" onclick="sortTable('monthlyDataTable', 7, 'number')" title="NSF Count: Non-Sufficient Funds - number of bounced checks or overdraft fees">NSF</th>
+                                <th class="sortable" onclick="sortTable('monthlyDataTable', 8, 'number')" title="Negative Days: Number of days the account balance was below zero">Neg</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${months.map(m => `<tr>
+                                <td style="font-weight: 500;">${m.month || 'N/A'}</td>
+                                <td class="text-green">$${(m.total_deposits || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                <td class="text-gold">$${(m.true_revenue || (m.total_deposits || 0) * 0.92).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                <td>${m.num_deposits || 0}</td>
+                                <td class="text-red">$${(m.total_withdrawals || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                <td>$${(m.average_daily_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                <td class="${(m.lowest_daily_balance || 0) < 0 ? 'text-red' : ''}">$${(m.lowest_daily_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                <td class="${(m.nsf_count || 0) > 0 ? 'text-red' : ''}">${m.nsf_count || 0}</td>
+                                <td class="${(m.days_negative || 0) > 0 ? 'text-red' : ''}">${m.days_negative || 0}</td>
+                            </tr>`).join('')}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td><strong>AVERAGE</strong></td>
+                                <td>$${(totals.deposits / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                <td>$${(totals.trueRevenue / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                <td>${Math.round(totals.numDeps / numMonths)}</td>
+                                <td>$${(totals.withdrawals / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                <td>$${avgBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                <td>-</td>
+                                <td>${(totals.nsf / numMonths).toFixed(2)}</td>
+                                <td>${(totals.negDays / numMonths).toFixed(2)}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
                 ` : '<p style="color: var(--text-muted); text-align: center;">No monthly data extracted</p>'}
 
                 ${mcaLenders.length > 0 ? `
@@ -3814,8 +5006,8 @@ Return ONLY valid JSON:
                 }
             };
 
-            // Run research in parallel batches of 3
-            const batchSize = 3;
+            // Run research in parallel batches of 2 with delays to avoid rate limiting
+            const batchSize = 2;
             for (let i = 0; i < researchModules.length; i += batchSize) {
                 const batch = researchModules.slice(i, i + batchSize);
                 await Promise.all(batch.map(async (module) => {
@@ -3824,11 +5016,21 @@ Return ONLY valid JSON:
                         researchResults[module.id] = result;
                         renderResearchModule(module, result);
                     } catch (e) {
-                        researchResults[module.id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
+                        console.error(`Research error for ${module.id}:`, e);
+                        researchResults[module.id] = {
+                            risk: 'unknown',
+                            summary: `Research failed: ${e.message || 'API error'}`,
+                            details: ['An error occurred during research. Please click to retry or verify manually.'],
+                            flags: []
+                        };
                         renderResearchModule(module, researchResults[module.id]);
                     }
                     updateProgress();
                 }));
+                // Add delay between batches to avoid rate limiting
+                if (i + batchSize < researchModules.length) {
+                    await new Promise(r => setTimeout(r, 500));
+                }
             }
         }
 
@@ -3857,13 +5059,17 @@ Return ONLY valid JSON:
                         parts: [{
                             text: `${prompts[module.id]}
 
-Based on typical patterns for this type of business, provide a simulated research report. Format as JSON:
+Based on your knowledge and the business information provided, provide a research assessment. If you cannot find specific information, indicate "unknown" risk level and note that verification is recommended.
+
+Format your response as JSON:
 {
   "risk": "low" | "medium" | "high" | "unknown",
-  "summary": "One sentence summary",
+  "summary": "One sentence summary of findings",
   "details": ["Key finding 1", "Key finding 2", "Key finding 3"],
-  "flags": ["Any red flags or concerns"]
+  "flags": ["Any red flags or concerns identified"]
 }
+
+IMPORTANT: If information cannot be verified, set risk to "unknown" and include a note in details that manual verification is recommended.
 
 Return ONLY valid JSON.`
                         }]
@@ -3873,9 +5079,44 @@ Return ONLY valid JSON.`
             });
 
             const data = await resp.json();
-            let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+
+            // Check for API errors
+            if (data.error) {
+                console.error(`Research API error for ${module.id}:`, data.error);
+                return {
+                    risk: 'unknown',
+                    summary: `API error: ${data.error.message || 'Unknown error'}`,
+                    details: ['Manual verification recommended due to API limitations.'],
+                    flags: []
+                };
+            }
+
+            let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+            // If no text returned, return unknown
+            if (!text) {
+                return {
+                    risk: 'unknown',
+                    summary: 'No data returned from API',
+                    details: ['Research could not be completed. Manual verification recommended.'],
+                    flags: []
+                };
+            }
+
             text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-            return JSON.parse(text);
+
+            try {
+                return JSON.parse(text);
+            } catch (parseError) {
+                console.error(`JSON parse error for ${module.id}:`, parseError, text);
+                // Try to extract useful info from malformed response
+                return {
+                    risk: 'unknown',
+                    summary: 'Response parsing failed',
+                    details: ['Data was returned but could not be parsed. Manual verification recommended.'],
+                    flags: []
+                };
+            }
         }
 
         function renderResearchModule(module, result) {
