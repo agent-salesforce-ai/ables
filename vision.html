@@ -1269,7 +1269,7 @@
             right: 0;
             bottom: 0;
             background: rgba(0, 0, 0, 0.8);
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
             z-index: 1000;
@@ -1279,6 +1279,7 @@
         }
 
         .modal-overlay.active {
+            display: flex;
             opacity: 1;
             pointer-events: auto;
         }
@@ -2641,14 +2642,36 @@
                     logging: false,
                     allowTaint: true,
                     onclone: (clonedDoc) => {
-                        // Hide ALL overlays, modals, and fixed elements
+                        // AGGRESSIVELY hide ALL overlays, modals, and fixed elements
                         clonedDoc.querySelectorAll('.modal-overlay, .loading, .status-message, [style*="position: fixed"], [style*="position:fixed"]').forEach(el => {
-                            el.style.display = 'none';
+                            el.style.display = 'none !important';
+                            el.style.visibility = 'hidden';
+                            el.style.opacity = '0';
+                            el.remove(); // Actually remove from DOM
                         });
 
                         // Also hide by class patterns that might be overlays
                         clonedDoc.querySelectorAll('[class*="overlay"], [class*="modal"], [class*="popup"], [class*="toast"]').forEach(el => {
-                            el.style.display = 'none';
+                            el.style.display = 'none !important';
+                            el.style.visibility = 'hidden';
+                            el.remove(); // Actually remove from DOM
+                        });
+
+                        // Remove any elements with dark semi-transparent backgrounds
+                        clonedDoc.querySelectorAll('*').forEach(el => {
+                            const style = window.getComputedStyle(el);
+                            const bg = style.backgroundColor;
+                            // Check for rgba with alpha < 1 that's dark
+                            if (bg && bg.includes('rgba') && bg.includes('0.')) {
+                                const match = bg.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
+                                if (match) {
+                                    const [, r, g, b, a] = match;
+                                    // If it's a dark overlay (low RGB, significant alpha)
+                                    if (parseInt(r) < 50 && parseInt(g) < 50 && parseInt(b) < 50 && parseFloat(a) > 0.3) {
+                                        el.style.display = 'none';
+                                    }
+                                }
+                            }
                         });
 
                         const clonedResults = clonedDoc.getElementById('resultsArea');
