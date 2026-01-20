@@ -3538,17 +3538,7 @@ Return ONLY valid JSON:
 
                 <!-- Monthly Table -->
                 ${months.length > 0 ? `
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead><tr><th>Month</th><th>Deposits</th><th>True Rev</th><th>#</th><th>Withdrawals</th><th>Avg Bal</th><th>Low Bal</th><th>NSF</th><th>Neg</th></tr></thead>
-                        <tbody>
-                            ${months.map(m => `<tr><td style="font-weight: 500;">${m.month || 'N/A'}</td><td class="text-green">$${(m.total_deposits || 0).toLocaleString()}</td><td class="text-gold">$${(m.true_revenue || Math.round((m.total_deposits || 0) * 0.92)).toLocaleString()}</td><td>${m.num_deposits || 0}</td><td class="text-red">$${(m.total_withdrawals || 0).toLocaleString()}</td><td>$${(m.average_daily_balance || 0).toLocaleString()}</td><td class="${(m.lowest_daily_balance || 0) < 0 ? 'text-red' : ''}">$${(m.lowest_daily_balance || 0).toLocaleString()}</td><td class="${(m.nsf_count || 0) > 0 ? 'text-red' : ''}">${m.nsf_count || 0}</td><td class="${(m.days_negative || 0) > 0 ? 'text-red' : ''}">${m.days_negative || 0}</td></tr>`).join('')}
-                        </tbody>
-                        <tfoot>
-                            <tr><td><strong>AVERAGE</strong></td><td>$${Math.round(totals.deposits / numMonths).toLocaleString()}</td><td>$${Math.round(totals.trueRevenue / numMonths).toLocaleString()}</td><td>${Math.round(totals.numDeps / numMonths)}</td><td>$${Math.round(totals.withdrawals / numMonths).toLocaleString()}</td><td>$${avgBalance.toLocaleString()}</td><td>-</td><td>${(totals.nsf / numMonths).toFixed(2)}</td><td>${(totals.negDays / numMonths).toFixed(2)}</td></tr>
-                        </tfoot>
-                    </table>
-                </div>
+                <div style="overflow-x: auto;"><table><thead><tr><th>Month</th><th>Deposits</th><th>True Rev</th><th>#</th><th>Withdrawals</th><th>Avg Bal</th><th>Low Bal</th><th>NSF</th><th>Neg</th></tr></thead><tbody>${months.map(m => `<tr><td style="font-weight: 500;">${m.month || 'N/A'}</td><td class="text-green">$${(m.total_deposits || 0).toLocaleString()}</td><td class="text-gold">$${(m.true_revenue || Math.round((m.total_deposits || 0) * 0.92)).toLocaleString()}</td><td>${m.num_deposits || 0}</td><td class="text-red">$${(m.total_withdrawals || 0).toLocaleString()}</td><td>$${(m.average_daily_balance || 0).toLocaleString()}</td><td class="${(m.lowest_daily_balance || 0) < 0 ? 'text-red' : ''}">$${(m.lowest_daily_balance || 0).toLocaleString()}</td><td class="${(m.nsf_count || 0) > 0 ? 'text-red' : ''}">${m.nsf_count || 0}</td><td class="${(m.days_negative || 0) > 0 ? 'text-red' : ''}">${m.days_negative || 0}</td></tr>`).join('')}</tbody><tfoot><tr><td><strong>AVERAGE</strong></td><td>$${Math.round(totals.deposits / numMonths).toLocaleString()}</td><td>$${Math.round(totals.trueRevenue / numMonths).toLocaleString()}</td><td>${Math.round(totals.numDeps / numMonths)}</td><td>$${Math.round(totals.withdrawals / numMonths).toLocaleString()}</td><td>$${avgBalance.toLocaleString()}</td><td>-</td><td>${(totals.nsf / numMonths).toFixed(2)}</td><td>${(totals.negDays / numMonths).toFixed(2)}</td></tr></tfoot></table></div>
                 ` : '<p style="color: var(--text-muted); text-align: center;">No monthly data extracted</p>'}
 
                 ${mcaLenders.length > 0 ? `
