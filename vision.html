@@ -2624,20 +2624,46 @@
                     return;
                 }
 
-                // SAVE current state
+                // NUCLEAR OPTION: Inject a style element that forces EVERYTHING to light theme
+                // This overrides CSS variables at the highest specificity level
+                const exportStyles = document.createElement('style');
+                exportStyles.id = 'export-override-styles';
+                exportStyles.textContent = `
+                    /* FORCE ALL CSS VARIABLES TO LIGHT VALUES */
+                    :root, html, body, *, *::before, *::after {
+                        --bg: #f8fafc !important;
+                        --bg-secondary: #ffffff !important;
+                        --bg-tertiary: #f1f5f9 !important;
+                        --bg-hover: #e2e8f0 !important;
+                        --text: #0f172a !important;
+                        --text-secondary: #475569 !important;
+                        --text-tertiary: #64748b !important;
+                        --border: #e2e8f0 !important;
+                        --border-secondary: #cbd5e1 !important;
+                    }
+                    /* Force backgrounds on key containers */
+                    body, .content, #resultsArea, .card, .result-card, .metric-card,
+                    .section-card, .summary-box, .detail-item, .info-item, .data-row,
+                    [class*="card"], [class*="section"], [class*="box"], [class*="item"] {
+                        background-color: #ffffff !important;
+                    }
+                    /* Force dark text */
+                    body, .content, #resultsArea, h1, h2, h3, h4, h5, h6, p, span, div,
+                    td, th, li, label, .metric-value, .section-title {
+                        color: #0f172a !important;
+                    }
+                    /* Ensure no dark overlays */
+                    .modal-overlay, .overlay, [class*="overlay"] {
+                        display: none !important;
+                    }
+                `;
+                document.head.appendChild(exportStyles);
+
+                // Also set data-theme for any CSS that checks it
                 const wasLightTheme = document.documentElement.getAttribute('data-theme') === 'light';
-                const originalBodyBg = document.body.style.background;
-                const originalResultsBg = resultsArea.style.background;
-                const contentEl = document.querySelector('.content');
-                const originalContentBg = contentEl ? contentEl.style.background : '';
-
-                // FORCE LIGHT THEME AND WHITE BACKGROUNDS EVERYWHERE
                 document.documentElement.setAttribute('data-theme', 'light');
-                document.body.style.background = '#ffffff';
-                if (contentEl) contentEl.style.background = '#ffffff';
-                resultsArea.style.background = '#ffffff';
 
-                // Force reflow
+                // Force reflow to apply styles
                 void document.body.offsetHeight;
 
                 // Hide buttons and expand all collapsed sections
@@ -2650,25 +2676,24 @@
                     el.dataset.wasHidden = 'true';
                 });
 
-                // Wait for CSS to apply
-                await new Promise(r => setTimeout(r, 150));
+                // Wait for styles to fully apply
+                await new Promise(r => setTimeout(r, 200));
 
-                // Capture directly - page is now in light theme with white bg
+                // Capture with forced white background
                 const canvas = await html2canvas(resultsArea, {
                     scale: 2,
                     useCORS: true,
                     backgroundColor: '#ffffff',
                     logging: false,
-                    allowTaint: true
+                    allowTaint: true,
+                    removeContainer: false
                 });
 
-                // RESTORE original theme and backgrounds
+                // CLEANUP: Remove injected styles and restore theme
+                exportStyles.remove();
                 if (!wasLightTheme) {
                     document.documentElement.removeAttribute('data-theme');
                 }
-                document.body.style.background = originalBodyBg;
-                if (contentEl) contentEl.style.background = originalContentBg;
-                resultsArea.style.background = originalResultsBg;
 
                 // Restore hidden elements
                 buttons.forEach(b => b.style.display = '');
@@ -3318,8 +3343,11 @@ Return ONLY valid JSON:
                             }
                         }
 
-                        // Normalize for deduplication (uppercase, trim)
-                        const normalizedName = cleanName.toUpperCase().trim();
+                        // Normalize for deduplication - aggressive cleaning
+                        const normalizedName = cleanName
+                            .toUpperCase()
+                            .replace(/[^A-Z0-9]/g, '') // Remove ALL non-alphanumeric chars (spaces, dashes, etc)
+                            .trim();
 
                         // Add or update in map (keep highest amount, count occurrences)
                         if (!mcaLenderMap.has(normalizedName)) {
