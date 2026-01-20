@@ -2634,110 +2634,141 @@
                     el.dataset.wasHidden = 'true';
                 });
 
-                // Capture the actual rendered report
-                const canvas = await html2canvas(resultsArea, {
+                // CRITICAL: Create a completely isolated export container
+                const exportContainer = document.createElement('div');
+                exportContainer.id = 'exportContainer';
+                exportContainer.style.cssText = `
+                    position: fixed;
+                    left: -99999px;
+                    top: 0;
+                    background: #ffffff !important;
+                    padding: 20px;
+                    width: ${resultsArea.offsetWidth}px;
+                    z-index: -1;
+                `;
+
+                // Clone results and strip all CSS variable usage
+                const clonedResults = resultsArea.cloneNode(true);
+                exportContainer.appendChild(clonedResults);
+                document.body.appendChild(exportContainer);
+
+                // FORCEFULLY apply light theme colors to EVERY element
+                const applyLightTheme = (container) => {
+                    // Set container base styles
+                    container.style.backgroundColor = '#ffffff';
+                    container.style.color = '#1e293b';
+
+                    // Process ALL descendants
+                    container.querySelectorAll('*').forEach(el => {
+                        // Remove any overlay/transparency
+                        el.style.opacity = '1';
+
+                        // Force backgrounds to light colors
+                        const computedBg = getComputedStyle(el).backgroundColor;
+                        if (computedBg) {
+                            const rgb = computedBg.match(/\d+/g);
+                            if (rgb && rgb.length >= 3) {
+                                const r = parseInt(rgb[0]);
+                                const g = parseInt(rgb[1]);
+                                const b = parseInt(rgb[2]);
+                                // If it's a dark color (luminance < 50)
+                                const luminance = (0.299 * r + 0.587 * g + 0.114 * b);
+                                if (luminance < 50) {
+                                    el.style.backgroundColor = '#ffffff';
+                                } else if (luminance < 80) {
+                                    el.style.backgroundColor = '#f8fafc';
+                                }
+                            }
+                        }
+
+                        // Force text to dark colors
+                        const computedColor = getComputedStyle(el).color;
+                        if (computedColor) {
+                            const rgb = computedColor.match(/\d+/g);
+                            if (rgb && rgb.length >= 3) {
+                                const r = parseInt(rgb[0]);
+                                const g = parseInt(rgb[1]);
+                                const b = parseInt(rgb[2]);
+                                // If text is light (white/gray)
+                                const luminance = (0.299 * r + 0.587 * g + 0.114 * b);
+                                if (luminance > 200) {
+                                    el.style.color = '#1e293b';
+                                }
+                            }
+                        }
+
+                        // Force border colors
+                        const computedBorder = getComputedStyle(el).borderColor;
+                        if (computedBorder && computedBorder !== 'rgb(0, 0, 0)') {
+                            const rgb = computedBorder.match(/\d+/g);
+                            if (rgb && parseInt(rgb[0]) < 80) {
+                                el.style.borderColor = '#e2e8f0';
+                            }
+                        }
+                    });
+
+                    // Explicit class overrides with !important via cssText
+                    container.querySelectorAll('.section-card, .section-body, .results-content').forEach(el => {
+                        el.style.cssText += 'background-color: #ffffff !important; border-color: #e2e8f0 !important; color: #1e293b !important;';
+                    });
+
+                    container.querySelectorAll('.section-header').forEach(el => {
+                        el.style.cssText += 'background-color: #f8fafc !important; border-color: #e2e8f0 !important; color: #1e293b !important;';
+                    });
+
+                    container.querySelectorAll('.stat-card, .metric-item, .data-card, .risk-chip, .fraud-card, .debt-card, .debt-summary').forEach(el => {
+                        el.style.cssText += 'background-color: #f1f5f9 !important; border-color: #e2e8f0 !important; color: #1e293b !important;';
+                    });
+
+                    container.querySelectorAll('table, tbody, tr, td').forEach(el => {
+                        el.style.cssText += 'background-color: #ffffff !important; border-color: #e2e8f0 !important; color: #1e293b !important;';
+                    });
+
+                    container.querySelectorAll('th').forEach(el => {
+                        el.style.cssText += 'background-color: #f1f5f9 !important; border-color: #e2e8f0 !important; color: #1e293b !important;';
+                    });
+
+                    container.querySelectorAll('.mca-section, .mca-lender-card, .mca-alert, .mca-header, .mca-lender-icon').forEach(el => {
+                        el.style.cssText += 'background-color: #ffffff !important; border-color: #e2e8f0 !important; color: #1e293b !important;';
+                    });
+
+                    container.querySelectorAll('.research-module, .research-module-header, .research-module-body, .finding-item').forEach(el => {
+                        el.style.cssText += 'background-color: #ffffff !important; border-color: #e2e8f0 !important; color: #1e293b !important;';
+                    });
+
+                    // Fix text elements
+                    container.querySelectorAll('h1,h2,h3,h4,h5,h6,p,span,div,li,label,strong,b').forEach(el => {
+                        const current = el.style.color;
+                        if (!current || current === 'rgb(255, 255, 255)' || current === '#ffffff' || current === 'white') {
+                            el.style.color = '#1e293b';
+                        }
+                    });
+
+                    container.querySelectorAll('.section-title, .data-label, .stat-label, .text-muted').forEach(el => {
+                        el.style.cssText += 'color: #64748b !important;';
+                    });
+
+                    container.querySelectorAll('.stat-value, .metric-value, .data-value').forEach(el => {
+                        el.style.cssText += 'color: #1e293b !important;';
+                    });
+
+                    // Remove buttons
+                    container.querySelectorAll('button, .expand-toggle').forEach(el => el.remove());
+                };
+
+                applyLightTheme(exportContainer);
+
+                // Capture the isolated container
+                const canvas = await html2canvas(exportContainer, {
                     scale: 2,
                     useCORS: true,
                     backgroundColor: '#ffffff',
                     logging: false,
-                    allowTaint: true,
-                    onclone: (clonedDoc) => {
-                        // NUKE everything that's not resultsArea
-                        clonedDoc.querySelectorAll('body > *:not(.main-container)').forEach(el => el.remove());
-                        clonedDoc.querySelectorAll('.modal-overlay, .loading, .status-message, .sidebar, .header, .progress-steps').forEach(el => el.remove());
-
-                        // Force light theme
-                        clonedDoc.documentElement.setAttribute('data-theme', 'light');
-                        clonedDoc.body.style.backgroundColor = '#ffffff';
-                        clonedDoc.body.style.color = '#1e293b';
-
-                        const clonedResults = clonedDoc.getElementById('resultsArea');
-                        if (clonedResults) {
-                            clonedResults.style.backgroundColor = '#ffffff';
-                            clonedResults.style.padding = '20px';
-                            clonedResults.style.color = '#1e293b';
-
-                            // Force light theme colors on EVERYTHING
-                            clonedResults.querySelectorAll('*').forEach(el => {
-                                el.style.opacity = '1';
-
-                                // Get current bg and change dark ones to light
-                                const bg = window.getComputedStyle(el).backgroundColor;
-                                if (bg && (bg.includes('rgb(10') || bg.includes('rgb(17') || bg.includes('rgb(26') || bg.includes('rgb(0,'))) {
-                                    el.style.backgroundColor = '#ffffff';
-                                }
-
-                                // Fix text colors
-                                const color = window.getComputedStyle(el).color;
-                                if (color === 'rgb(255, 255, 255)') {
-                                    el.style.color = '#1e293b';
-                                }
-                            });
-
-                            // Explicit overrides for known classes
-                            clonedResults.querySelectorAll('.section-card, .section-body').forEach(el => {
-                                el.style.backgroundColor = '#ffffff';
-                                el.style.borderColor = '#e2e8f0';
-                                el.style.color = '#1e293b';
-                            });
-
-                            clonedResults.querySelectorAll('.section-header').forEach(el => {
-                                el.style.backgroundColor = '#f8fafc';
-                                el.style.borderColor = '#e2e8f0';
-                                el.style.color = '#1e293b';
-                            });
-
-                            clonedResults.querySelectorAll('.stat-card, .metric-item, .data-card, .risk-chip, .fraud-card').forEach(el => {
-                                el.style.backgroundColor = '#f1f5f9';
-                                el.style.borderColor = '#e2e8f0';
-                                el.style.color = '#1e293b';
-                            });
-
-                            clonedResults.querySelectorAll('table, tbody, tr').forEach(el => {
-                                el.style.backgroundColor = '#ffffff';
-                            });
-                            clonedResults.querySelectorAll('th').forEach(el => {
-                                el.style.backgroundColor = '#f1f5f9';
-                                el.style.borderColor = '#e2e8f0';
-                                el.style.color = '#1e293b';
-                            });
-                            clonedResults.querySelectorAll('td').forEach(el => {
-                                el.style.backgroundColor = '#ffffff';
-                                el.style.borderColor = '#e2e8f0';
-                                el.style.color = '#1e293b';
-                            });
-
-                            clonedResults.querySelectorAll('.mca-section, .mca-lender-card, .mca-alert, .mca-header').forEach(el => {
-                                el.style.backgroundColor = '#ffffff';
-                                el.style.borderColor = '#e2e8f0';
-                                el.style.color = '#1e293b';
-                            });
-
-                            clonedResults.querySelectorAll('.research-module, .research-module-header, .research-module-body, .finding-item').forEach(el => {
-                                el.style.backgroundColor = '#ffffff';
-                                el.style.borderColor = '#e2e8f0';
-                                el.style.color = '#1e293b';
-                            });
-
-                            clonedResults.querySelectorAll('.debt-card, .debt-summary').forEach(el => {
-                                el.style.backgroundColor = '#f1f5f9';
-                                el.style.borderColor = '#e2e8f0';
-                                el.style.color = '#1e293b';
-                            });
-
-                            // Text elements
-                            clonedResults.querySelectorAll('h1,h2,h3,h4,h5,h6,p,span,div,li,label').forEach(el => {
-                                if (!el.style.color || el.style.color === 'rgb(255, 255, 255)') {
-                                    el.style.color = '#1e293b';
-                                }
-                            });
-
-                            clonedResults.querySelectorAll('.section-title, .data-label, .stat-label').forEach(el => {
-                                el.style.color = '#64748b';
-                            });
-                        }
-                    }
+                    allowTaint: true
                 });
+
+                // Cleanup
+                document.body.removeChild(exportContainer);
 
                 // Restore hidden elements
                 buttons.forEach(b => b.style.display = '');
