@@ -2624,11 +2624,18 @@
                     return;
                 }
 
-                // SAVE current theme state
+                // SAVE current state
                 const wasLightTheme = document.documentElement.getAttribute('data-theme') === 'light';
+                const originalBodyBg = document.body.style.background;
+                const originalResultsBg = resultsArea.style.background;
+                const contentEl = document.querySelector('.content');
+                const originalContentBg = contentEl ? contentEl.style.background : '';
 
-                // SWITCH TO LIGHT THEME ON ACTUAL PAGE
+                // FORCE LIGHT THEME AND WHITE BACKGROUNDS EVERYWHERE
                 document.documentElement.setAttribute('data-theme', 'light');
+                document.body.style.background = '#ffffff';
+                if (contentEl) contentEl.style.background = '#ffffff';
+                resultsArea.style.background = '#ffffff';
 
                 // Force reflow
                 void document.body.offsetHeight;
@@ -2646,7 +2653,7 @@
                 // Wait for CSS to apply
                 await new Promise(r => setTimeout(r, 150));
 
-                // Capture directly - page is now in light theme
+                // Capture directly - page is now in light theme with white bg
                 const canvas = await html2canvas(resultsArea, {
                     scale: 2,
                     useCORS: true,
@@ -2655,10 +2662,13 @@
                     allowTaint: true
                 });
 
-                // RESTORE original theme
+                // RESTORE original theme and backgrounds
                 if (!wasLightTheme) {
                     document.documentElement.removeAttribute('data-theme');
                 }
+                document.body.style.background = originalBodyBg;
+                if (contentEl) contentEl.style.background = originalContentBg;
+                resultsArea.style.background = originalResultsBg;
 
                 // Restore hidden elements
                 buttons.forEach(b => b.style.display = '');
