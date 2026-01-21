@@ -2106,6 +2106,19 @@
                         <input type="range" id="rotationSlider" min="0" max="90" value="45">
                     </div>
                 </div>
+                <div class="control-row" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+                    <div class="control-group">
+                        <label>PDF Quality <span class="range-value" id="pdfQualityVal">90%</span></label>
+                        <input type="range" id="pdfQualitySidebar" min="30" max="100" value="90">
+                    </div>
+                    <div class="control-group">
+                        <label>PDF Scale <span class="range-value" id="pdfScaleVal">100%</span></label>
+                        <input type="range" id="pdfScaleSidebar" min="25" max="200" value="100" step="25">
+                    </div>
+                </div>
+                <button class="btn" style="width: 100%; margin-top: 12px;" onclick="saveWatermarkDefaults()">
+                    Save as Defaults
+                </button>
             </div>
 
         </aside>
@@ -2479,6 +2492,51 @@
                     });
                 }
             });
+
+            // PDF compression sidebar sliders
+            const pdfQualitySidebar = document.getElementById('pdfQualitySidebar');
+            const pdfScaleSidebar = document.getElementById('pdfScaleSidebar');
+
+            pdfQualitySidebar.addEventListener('input', () => {
+                document.getElementById('pdfQualityVal').textContent = pdfQualitySidebar.value + '%';
+            });
+
+            pdfScaleSidebar.addEventListener('input', () => {
+                document.getElementById('pdfScaleVal').textContent = pdfScaleSidebar.value + '%';
+            });
+
+            // Load saved PDF compression defaults
+            const savedQuality = localStorage.getItem('pdf_quality') || '90';
+            const savedScale = localStorage.getItem('pdf_scale') || '1';
+            pdfQualitySidebar.value = savedQuality;
+            document.getElementById('pdfQualityVal').textContent = savedQuality + '%';
+            pdfScaleSidebar.value = Math.round(parseFloat(savedScale) * 100);
+            document.getElementById('pdfScaleVal').textContent = Math.round(parseFloat(savedScale) * 100) + '%';
+
+            // Load saved watermark defaults
+            const savedWatermark = JSON.parse(localStorage.getItem('watermark_defaults') || 'null');
+            if (savedWatermark) {
+                if (savedWatermark.opacity) {
+                    document.getElementById('opacitySlider').value = savedWatermark.opacity * 100;
+                    document.getElementById('opacityVal').textContent = Math.round(savedWatermark.opacity * 100) + '%';
+                    settings.opacity = savedWatermark.opacity;
+                }
+                if (savedWatermark.size) {
+                    document.getElementById('sizeSlider').value = savedWatermark.size * 100;
+                    document.getElementById('sizeVal').textContent = Math.round(savedWatermark.size * 100) + '%';
+                    settings.size = savedWatermark.size;
+                }
+                if (savedWatermark.density) {
+                    document.getElementById('densitySlider').value = savedWatermark.density * 100;
+                    document.getElementById('densityVal').textContent = Math.round(savedWatermark.density * 100) + '%';
+                    settings.density = savedWatermark.density;
+                }
+                if (savedWatermark.rotation !== undefined) {
+                    document.getElementById('rotationSlider').value = savedWatermark.rotation;
+                    document.getElementById('rotationVal').textContent = savedWatermark.rotation + '°';
+                    settings.rotation = savedWatermark.rotation;
+                }
+            }
         }
 
         function toggleTheme() {
@@ -2503,11 +2561,39 @@
         }
 
         function getPdfQuality() {
-            return (parseInt(localStorage.getItem('pdf_quality')) || 90) / 100;
+            // Use sidebar slider value
+            const sidebarVal = document.getElementById('pdfQualitySidebar')?.value;
+            return (parseInt(sidebarVal) || 90) / 100;
         }
 
         function getPdfScale() {
-            return parseFloat(localStorage.getItem('pdf_scale')) || 1;
+            // Use sidebar slider value (stored as percentage, convert to decimal)
+            const sidebarVal = document.getElementById('pdfScaleSidebar')?.value;
+            return (parseInt(sidebarVal) || 100) / 100;
+        }
+
+        function saveWatermarkDefaults() {
+            // Save watermark settings
+            const defaults = {
+                opacity: settings.opacity,
+                size: settings.size,
+                density: settings.density,
+                rotation: settings.rotation
+            };
+            localStorage.setItem('watermark_defaults', JSON.stringify(defaults));
+
+            // Save PDF compression settings
+            localStorage.setItem('pdf_quality', document.getElementById('pdfQualitySidebar').value);
+            localStorage.setItem('pdf_scale', getPdfScale().toString());
+
+            // Also sync to settings modal
+            document.getElementById('pdfQualitySlider').value = document.getElementById('pdfQualitySidebar').value;
+            document.getElementById('qualityValue').textContent = document.getElementById('pdfQualitySidebar').value + '%';
+            const scalePercent = document.getElementById('pdfScaleSidebar').value;
+            const scaleDecimal = parseInt(scalePercent) / 100;
+            document.getElementById('pdfScaleSelect').value = scaleDecimal.toString();
+
+            showStatus('Defaults saved!', 'success');
         }
 
         function loadWatermark(url) {
