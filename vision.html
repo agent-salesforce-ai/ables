@@ -2657,20 +2657,26 @@
                             const drawWidth = wmWidth * wmScale;
                             const drawHeight = wmHeight * wmScale;
 
-                            // Calculate spacing based on density - ensure minimum spacing
-                            const spacing = Math.max(50, Math.max(drawWidth, drawHeight) * (2.5 - settings.density / 50));
+                            // Calculate spacing based on density - use larger spacing to keep file size small
+                            // density 0 = very sparse, density 100 = more dense (but still limited)
+                            const minSpacing = Math.max(drawWidth, drawHeight) * 1.5;
+                            const maxSpacing = Math.max(drawWidth, drawHeight) * 4;
+                            const spacing = maxSpacing - (settings.density / 100) * (maxSpacing - minSpacing);
 
-                            // Draw tiled watermarks
-                            for (let y = 0; y < height; y += spacing) {
-                                for (let x = 0; x < width; x += spacing) {
+                            // Draw tiled watermarks - limit total count to keep file size reasonable
+                            let count = 0;
+                            const maxWatermarks = 25; // Limit per page to prevent bloat
+                            for (let y = spacing/2; y < height && count < maxWatermarks; y += spacing) {
+                                for (let x = spacing/2; x < width && count < maxWatermarks; x += spacing) {
                                     page.drawImage(watermarkImage, {
-                                        x: x,
-                                        y: y,
+                                        x: x - drawWidth/2,
+                                        y: y - drawHeight/2,
                                         width: drawWidth,
                                         height: drawHeight,
                                         opacity: settings.opacity / 100,
                                         rotate: PDFLib.degrees(-settings.rotation)
                                     });
+                                    count++;
                                 }
                             }
                         }
