@@ -10,6 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
@@ -1529,40 +1530,6 @@
         }
         .range-value { color: var(--gold); font-weight: 600; }
 
-        /* PDF Preset Buttons */
-        .pdf-preset-btn {
-            flex: 1;
-            padding: 8px 4px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            background: var(--bg-tertiary);
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-        }
-        .pdf-preset-btn:hover {
-            border-color: var(--gold);
-            background: var(--bg-hover);
-        }
-        .pdf-preset-btn.active {
-            border-color: var(--gold);
-            background: var(--gold-bg);
-        }
-        .pdf-preset-btn .preset-label {
-            display: block;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text);
-            margin-bottom: 2px;
-        }
-        .pdf-preset-btn .preset-size {
-            display: block;
-            font-size: 9px;
-            color: var(--text-muted);
-        }
-        .pdf-preset-btn.active .preset-label {
-            color: var(--gold);
-        }
         .control-group input[type="range"] {
             width: 100%;
             height: 5px;
@@ -2141,25 +2108,6 @@
                         <input type="range" id="rotationSlider" min="0" max="90" value="45">
                     </div>
                 </div>
-                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
-                    <label style="display: block; margin-bottom: 8px; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">PDF Size</label>
-                    <div class="pdf-preset-buttons" style="display: flex; gap: 6px;">
-                        <button class="pdf-preset-btn" data-quality="50" data-scale="50" onclick="setPdfPreset(this)" title="~50% smaller files">
-                            <span class="preset-label">Small</span>
-                            <span class="preset-size">~1MB</span>
-                        </button>
-                        <button class="pdf-preset-btn active" data-quality="75" data-scale="75" onclick="setPdfPreset(this)" title="Balanced quality and size">
-                            <span class="preset-label">Medium</span>
-                            <span class="preset-size">~3MB</span>
-                        </button>
-                        <button class="pdf-preset-btn" data-quality="90" data-scale="100" onclick="setPdfPreset(this)" title="High quality, larger files">
-                            <span class="preset-label">Large</span>
-                            <span class="preset-size">~8MB</span>
-                        </button>
-                    </div>
-                    <input type="hidden" id="pdfQualitySidebar" value="75">
-                    <input type="hidden" id="pdfScaleSidebar" value="75">
-                </div>
                 <button class="btn" style="width: 100%; margin-top: 12px;" onclick="saveWatermarkDefaults()">
                     Save as Defaults
                 </button>
@@ -2396,25 +2344,6 @@
                     <input type="url" class="form-input" id="watermarkUrlInput" placeholder="https://example.com/logo.png">
                     <small style="color: var(--text-muted); font-size: 11px; margin-top: 4px; display: block;">PNG with transparency recommended</small>
                 </div>
-                <div style="border-top: 1px solid var(--border); margin: 16px 0; padding-top: 16px;">
-                    <label class="form-label" style="margin-bottom: 12px;">PDF Compression Settings</label>
-                    <div class="form-group">
-                        <label class="form-label" style="font-size: 12px;">Image Quality: <span id="qualityValue">90%</span></label>
-                        <input type="range" id="pdfQualitySlider" min="30" max="100" value="90" style="width: 100%;" oninput="document.getElementById('qualityValue').textContent = this.value + '%'">
-                        <small style="color: var(--text-muted); font-size: 11px; display: block;">Lower = smaller file, reduced quality</small>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" style="font-size: 12px;">Resolution Scale</label>
-                        <select class="form-input" id="pdfScaleSelect">
-                            <option value="0.5">50% (Smallest)</option>
-                            <option value="0.75">75% (Small)</option>
-                            <option value="1" selected>100% (Original)</option>
-                            <option value="1.5">150% (Large)</option>
-                            <option value="2">200% (Largest)</option>
-                        </select>
-                        <small style="color: var(--text-muted); font-size: 11px; display: block;">Lower = smaller file size</small>
-                    </div>
-                </div>
                 <button class="btn btn-primary" style="width: 100%;" onclick="saveSettings()">Save Settings</button>
             </div>
         </div>
@@ -2496,12 +2425,6 @@
             document.getElementById('watermarkUrlInput').value = localStorage.getItem('watermark_url') || 'https://i.imgur.com/MXMqYLc.png';
             loadWatermark(localStorage.getItem('watermark_url') || 'https://i.imgur.com/MXMqYLc.png');
 
-            // Load PDF compression settings
-            const savedQuality = localStorage.getItem('pdf_quality') || '90';
-            document.getElementById('pdfQualitySlider').value = savedQuality;
-            document.getElementById('qualityValue').textContent = savedQuality + '%';
-            document.getElementById('pdfScaleSelect').value = localStorage.getItem('pdf_scale') || '1';
-
             // Load theme
             const theme = localStorage.getItem('theme') || 'dark';
             document.documentElement.setAttribute('data-theme', theme);
@@ -2580,23 +2503,9 @@
             localStorage.setItem('gemini_key', document.getElementById('apiKeyInput').value);
             localStorage.setItem('gemini_model', document.getElementById('modelSelect').value);
             localStorage.setItem('watermark_url', document.getElementById('watermarkUrlInput').value);
-            localStorage.setItem('pdf_quality', document.getElementById('pdfQualitySlider').value);
-            localStorage.setItem('pdf_scale', document.getElementById('pdfScaleSelect').value);
             loadWatermark(document.getElementById('watermarkUrlInput').value);
             closeModal('settingsModal');
             showStatus('Settings saved!', 'success');
-        }
-
-        function getPdfQuality() {
-            // Use sidebar slider value
-            const sidebarVal = document.getElementById('pdfQualitySidebar')?.value;
-            return (parseInt(sidebarVal) || 90) / 100;
-        }
-
-        function getPdfScale() {
-            // Use sidebar slider value (stored as percentage, convert to decimal)
-            const sidebarVal = document.getElementById('pdfScaleSidebar')?.value;
-            return (parseInt(sidebarVal) || 100) / 100;
         }
 
         function saveWatermarkDefaults() {
@@ -2609,48 +2518,15 @@
             };
             localStorage.setItem('watermark_defaults', JSON.stringify(defaults));
 
-            // Save PDF compression settings
-            localStorage.setItem('pdf_quality', document.getElementById('pdfQualitySidebar').value);
-            localStorage.setItem('pdf_scale', getPdfScale().toString());
-
-            // Also sync to settings modal
-            document.getElementById('pdfQualitySlider').value = document.getElementById('pdfQualitySidebar').value;
-            document.getElementById('qualityValue').textContent = document.getElementById('pdfQualitySidebar').value + '%';
-            const scalePercent = document.getElementById('pdfScaleSidebar').value;
-            const scaleDecimal = parseInt(scalePercent) / 100;
-            document.getElementById('pdfScaleSelect').value = scaleDecimal.toString();
-
             showStatus('Defaults saved!', 'success');
         }
 
         function setPdfPreset(btn) {
-            // Update active state
-            document.querySelectorAll('.pdf-preset-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            // Set values from data attributes
-            const quality = btn.dataset.quality;
-            const scale = btn.dataset.scale;
-
-            document.getElementById('pdfQualitySidebar').value = quality;
-            document.getElementById('pdfScaleSidebar').value = scale;
+            // No longer used - PDFs export at full quality
         }
 
         function loadPdfPreset() {
-            const savedQuality = localStorage.getItem('pdf_quality') || '75';
-            const savedScale = localStorage.getItem('pdf_scale') || '0.75';
-            const scalePercent = Math.round(parseFloat(savedScale) * 100);
-
-            document.getElementById('pdfQualitySidebar').value = savedQuality;
-            document.getElementById('pdfScaleSidebar').value = scalePercent;
-
-            // Find and activate matching preset button
-            document.querySelectorAll('.pdf-preset-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.quality === savedQuality && btn.dataset.scale === scalePercent.toString()) {
-                    btn.classList.add('active');
-                }
-            });
+            // No longer used - PDFs export at full quality
         }
 
         function loadWatermark(url) {
@@ -2738,65 +2614,107 @@
 
         async function executeDownload() {
             closeModal('downloadModal');
-            const { jsPDF } = window.jspdf;
-            const quality = getPdfQuality();
-            const scale = getPdfScale();
-            showStatus(`Preparing watermarked downloads (${Math.round(quality * 100)}% quality, ${Math.round(scale * 100)}% scale)...`, 'info');
+            showStatus('Preparing watermarked downloads...', 'info');
+
+            // Get watermark image as PNG bytes for pdf-lib
+            let watermarkPngBytes = null;
+            if (logoImage && logoImage.complete && logoImage.naturalWidth > 0) {
+                try {
+                    const wmCanvas = document.createElement('canvas');
+                    wmCanvas.width = logoImage.naturalWidth;
+                    wmCanvas.height = logoImage.naturalHeight;
+                    const wmCtx = wmCanvas.getContext('2d');
+                    wmCtx.drawImage(logoImage, 0, 0);
+                    const dataUrl = wmCanvas.toDataURL('image/png');
+                    const base64 = dataUrl.split(',')[1];
+                    watermarkPngBytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+                } catch (e) {
+                    console.error('Error creating watermark bytes:', e);
+                }
+            }
 
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 const nameInput = document.getElementById(`downloadName_${i}`);
                 const safeLabel = (nameInput?.value || file.name.replace(/\.[^.]+$/, '')).replace(/[^a-z0-9_\-\s]/gi, '_');
 
-                if (file.pages.length === 1) {
+                if (file.isPdf && file.originalPdfBytes && watermarkPngBytes) {
+                    // Use pdf-lib to overlay watermark on original PDF (preserves vector content)
+                    try {
+                        const { PDFDocument } = PDFLib;
+                        const pdfDoc = await PDFDocument.load(file.originalPdfBytes.slice(0));
+                        const watermarkImage = await pdfDoc.embedPng(watermarkPngBytes);
+                        const pages = pdfDoc.getPages();
+
+                        for (const page of pages) {
+                            const { width, height } = page.getSize();
+                            const wmWidth = watermarkImage.width;
+                            const wmHeight = watermarkImage.height;
+
+                            // Calculate watermark size based on settings
+                            const baseSize = Math.min(width, height) * (settings.size / 100) * 0.5;
+                            const wmScale = baseSize / Math.max(wmWidth, wmHeight);
+                            const drawWidth = wmWidth * wmScale;
+                            const drawHeight = wmHeight * wmScale;
+
+                            // Calculate spacing based on density - ensure minimum spacing
+                            const spacing = Math.max(50, Math.max(drawWidth, drawHeight) * (2.5 - settings.density / 50));
+
+                            // Draw tiled watermarks
+                            for (let y = 0; y < height; y += spacing) {
+                                for (let x = 0; x < width; x += spacing) {
+                                    page.drawImage(watermarkImage, {
+                                        x: x,
+                                        y: y,
+                                        width: drawWidth,
+                                        height: drawHeight,
+                                        opacity: settings.opacity / 100,
+                                        rotate: PDFLib.degrees(-settings.rotation)
+                                    });
+                                }
+                            }
+                        }
+
+                        const pdfBytes = await pdfDoc.save();
+                        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.download = `${safeLabel}.pdf`;
+                        link.click();
+                        URL.revokeObjectURL(link.href);
+                        showStatus('Download complete!', 'success');
+                    } catch (err) {
+                        console.error('pdf-lib error:', err);
+                        showStatus('Error processing PDF: ' + err.message, 'error');
+                    }
+                } else if (file.pages.length === 1) {
+                    // Single image - download as PNG with watermark
                     activeFileIndex = i;
                     file.currentPage = 0;
                     renderPreview();
                     await new Promise(r => setTimeout(r, 150));
-
-                    // Apply scale for single page PNG
-                    const scaledCanvas = document.createElement('canvas');
-                    scaledCanvas.width = canvas.width * scale;
-                    scaledCanvas.height = canvas.height * scale;
-                    const scaledCtx = scaledCanvas.getContext('2d');
-                    scaledCtx.drawImage(canvas, 0, 0, scaledCanvas.width, scaledCanvas.height);
 
                     const link = document.createElement('a');
                     link.download = `${safeLabel}.png`;
-                    link.href = scaledCanvas.toDataURL('image/png');
+                    link.href = canvas.toDataURL('image/png');
                     link.click();
                 } else {
-                    // Render first page to get dimensions
+                    // Multi-page non-PDF (shouldn't happen, but fallback to jsPDF)
+                    const { jsPDF } = window.jspdf;
                     file.currentPage = 0;
                     activeFileIndex = i;
                     renderPreview();
                     await new Promise(r => setTimeout(r, 150));
 
-                    // Scale dimensions
-                    const scaledWidth = Math.round(canvas.width * scale);
-                    const scaledHeight = Math.round(canvas.height * scale);
-
-                    const pdf = new jsPDF({ orientation: scaledWidth > scaledHeight ? 'landscape' : 'portrait', unit: 'px', format: [scaledWidth, scaledHeight] });
-
-                    // Create scaled canvas for first page
-                    const scaledCanvas = document.createElement('canvas');
-                    scaledCanvas.width = scaledWidth;
-                    scaledCanvas.height = scaledHeight;
-                    const scaledCtx = scaledCanvas.getContext('2d');
-                    scaledCtx.drawImage(canvas, 0, 0, scaledWidth, scaledHeight);
-                    pdf.addImage(scaledCanvas.toDataURL('image/jpeg', quality), 'JPEG', 0, 0, scaledWidth, scaledHeight);
+                    const pdf = new jsPDF({ orientation: canvas.width > canvas.height ? 'landscape' : 'portrait', unit: 'px', format: [canvas.width, canvas.height] });
+                    pdf.addImage(canvas.toDataURL('image/jpeg', 0.85), 'JPEG', 0, 0, canvas.width, canvas.height);
 
                     for (let p = 1; p < file.pages.length; p++) {
                         file.currentPage = p;
                         renderPreview();
                         await new Promise(r => setTimeout(r, 150));
-
-                        // Scale each page
-                        scaledCtx.clearRect(0, 0, scaledWidth, scaledHeight);
-                        scaledCtx.drawImage(canvas, 0, 0, scaledWidth, scaledHeight);
-
-                        pdf.addPage([scaledWidth, scaledHeight]);
-                        pdf.addImage(scaledCanvas.toDataURL('image/jpeg', quality), 'JPEG', 0, 0, scaledWidth, scaledHeight);
+                        pdf.addPage([canvas.width, canvas.height]);
+                        pdf.addImage(canvas.toDataURL('image/jpeg', 0.85), 'JPEG', 0, 0, canvas.width, canvas.height);
                     }
                     pdf.save(`${safeLabel}.pdf`);
                 }
@@ -3046,30 +2964,41 @@
         }
 
         async function loadPDF(file) {
-            const arrayBuffer = await file.arrayBuffer();
-            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-            const pages = [];
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                // Make two separate copies - one for pdf.js, one to store for pdf-lib later
+                const bytesForPdfJs = new Uint8Array(arrayBuffer.slice(0));
+                const bytesForStorage = new Uint8Array(arrayBuffer.slice(0));
 
-            for (let i = 1; i <= pdf.numPages; i++) {
-                const page = await pdf.getPage(i);
-                const viewport = page.getViewport({ scale: 2 });
-                const canvas = document.createElement('canvas');
-                canvas.width = viewport.width;
-                canvas.height = viewport.height;
-                await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-                const img = new Image();
-                img.src = canvas.toDataURL();
-                await new Promise(r => img.onload = r);
-                pages.push(img);
+                const pdf = await pdfjsLib.getDocument({ data: bytesForPdfJs }).promise;
+                const pages = [];
+
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const viewport = page.getViewport({ scale: 1.5 });
+                    const pdfCanvas = document.createElement('canvas');
+                    pdfCanvas.width = viewport.width;
+                    pdfCanvas.height = viewport.height;
+                    await page.render({ canvasContext: pdfCanvas.getContext('2d'), viewport }).promise;
+                    const img = new Image();
+                    img.src = pdfCanvas.toDataURL();
+                    await new Promise(r => img.onload = r);
+                    pages.push(img);
+                }
+
+                files.push({
+                    name: file.name,
+                    pages,
+                    thumb: pages[0].src,
+                    status: null,
+                    fraudAnalysis: null,
+                    originalPdfBytes: bytesForStorage,
+                    isPdf: true
+                });
+            } catch (err) {
+                console.error('Error loading PDF:', err);
+                showStatus('Error loading PDF: ' + err.message, 'error');
             }
-
-            files.push({
-                name: file.name,
-                pages,
-                thumb: pages[0].src,
-                status: null,
-                fraudAnalysis: null
-            });
         }
 
         async function loadImage(file) {
@@ -3083,7 +3012,8 @@
                             pages: [img],
                             thumb: img.src,
                             status: null,
-                            fraudAnalysis: null
+                            fraudAnalysis: null,
+                            isPdf: false
                         });
                         resolve();
                     };
