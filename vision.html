@@ -2616,18 +2616,15 @@
             closeModal('downloadModal');
             showStatus('Preparing watermarked downloads...', 'info');
 
-            // Get watermark image as small PNG bytes for pdf-lib
+            // Get watermark image as PNG bytes for pdf-lib
             let watermarkPngBytes = null;
             if (logoImage && logoImage.complete && logoImage.naturalWidth > 0) {
                 try {
-                    // Scale down watermark to reduce file size (max 100px)
-                    const maxSize = 100;
-                    const scale = Math.min(maxSize / logoImage.naturalWidth, maxSize / logoImage.naturalHeight, 1);
                     const wmCanvas = document.createElement('canvas');
-                    wmCanvas.width = Math.round(logoImage.naturalWidth * scale);
-                    wmCanvas.height = Math.round(logoImage.naturalHeight * scale);
+                    wmCanvas.width = logoImage.naturalWidth;
+                    wmCanvas.height = logoImage.naturalHeight;
                     const wmCtx = wmCanvas.getContext('2d');
-                    wmCtx.drawImage(logoImage, 0, 0, wmCanvas.width, wmCanvas.height);
+                    wmCtx.drawImage(logoImage, 0, 0);
                     const dataUrl = wmCanvas.toDataURL('image/png');
                     const base64 = dataUrl.split(',')[1];
                     watermarkPngBytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
@@ -2641,26 +2638,55 @@
                 const nameInput = document.getElementById(`downloadName_${i}`);
                 const safeLabel = (nameInput?.value || file.name.replace(/\.[^.]+$/, '')).replace(/[^a-z0-9_\-\s]/gi, '_');
 
-                if (file.isPdf && file.pages.length > 1) {
-                    // Multi-page PDF - use jsPDF with watermarked canvas
-                    const { jsPDF } = window.jspdf;
-                    file.currentPage = 0;
-                    activeFileIndex = i;
-                    renderPreview();
-                    await new Promise(r => setTimeout(r, 150));
+                if (file.isPdf && file.originalPdfBytes && watermarkPngBytes) {
+                    // Use pdf-lib to overlay watermark on original PDF (preserves vector content)
+                    try {
+                        const { PDFDocument } = PDFLib;
+                        const pdfDoc = await PDFDocument.load(file.originalPdfBytes.slice(0));
+                        const watermarkImage = await pdfDoc.embedPng(watermarkPngBytes);
+                        const pages = pdfDoc.getPages();
 
-                    const pdf = new jsPDF({ orientation: canvas.width > canvas.height ? 'landscape' : 'portrait', unit: 'px', format: [canvas.width, canvas.height] });
-                    pdf.addImage(canvas.toDataURL('image/jpeg', 0.65), 'JPEG', 0, 0, canvas.width, canvas.height);
+                        for (const page of pages) {
+                            const { width, height } = page.getSize();
+                            const wmWidth = watermarkImage.width;
+                            const wmHeight = watermarkImage.height;
 
-                    for (let p = 1; p < file.pages.length; p++) {
-                        file.currentPage = p;
-                        renderPreview();
-                        await new Promise(r => setTimeout(r, 150));
-                        pdf.addPage([canvas.width, canvas.height]);
-                        pdf.addImage(canvas.toDataURL('image/jpeg', 0.65), 'JPEG', 0, 0, canvas.width, canvas.height);
+                            // Calculate watermark size based on settings
+                            const baseSize = Math.min(width, height) * (settings.size / 100) * 0.5;
+                            const wmScale = baseSize / Math.max(wmWidth, wmHeight);
+                            const drawWidth = wmWidth * wmScale;
+                            const drawHeight = wmHeight * wmScale;
+
+                            // Calculate spacing based on density - ensure minimum spacing
+                            const spacing = Math.max(50, Math.max(drawWidth, drawHeight) * (2.5 - settings.density / 50));
+
+                            // Draw tiled watermarks
+                            for (let y = 0; y < height; y += spacing) {
+                                for (let x = 0; x < width; x += spacing) {
+                                    page.drawImage(watermarkImage, {
+                                        x: x,
+                                        y: y,
+                                        width: drawWidth,
+                                        height: drawHeight,
+                                        opacity: settings.opacity / 100,
+                                        rotate: PDFLib.degrees(-settings.rotation)
+                                    });
+                                }
+                            }
+                        }
+
+                        const pdfBytes = await pdfDoc.save();
+                        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.download = `${safeLabel}.pdf`;
+                        link.click();
+                        URL.revokeObjectURL(link.href);
+                        showStatus('Download complete!', 'success');
+                    } catch (err) {
+                        console.error('pdf-lib error:', err);
+                        showStatus('Error processing PDF: ' + err.message, 'error');
                     }
-                    pdf.save(`${safeLabel}.pdf`);
-                    showStatus('Download complete!', 'success');
                 } else if (file.pages.length === 1) {
                     // Single image - download as PNG with watermark
                     activeFileIndex = i;
@@ -2949,7 +2975,7 @@
 
                 for (let i = 1; i <= pdf.numPages; i++) {
                     const page = await pdf.getPage(i);
-                    const viewport = page.getViewport({ scale: 1.2 });
+                    const viewport = page.getViewport({ scale: 1.5 });
                     const pdfCanvas = document.createElement('canvas');
                     pdfCanvas.width = viewport.width;
                     pdfCanvas.height = viewport.height;
