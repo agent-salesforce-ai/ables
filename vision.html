@@ -2693,8 +2693,26 @@
                         URL.revokeObjectURL(link.href);
                         showStatus('Download complete!', 'success');
                     } catch (err) {
-                        console.error('pdf-lib error:', err);
-                        showStatus('Error processing PDF: ' + err.message, 'error');
+                        // pdf-lib failed (likely encrypted PDF) - fall back to jsPDF rasterized approach
+                        console.warn('pdf-lib failed, falling back to jsPDF:', err.message);
+                        const { jsPDF } = window.jspdf;
+                        file.currentPage = 0;
+                        activeFileIndex = i;
+                        renderPreview();
+                        await new Promise(r => setTimeout(r, 150));
+
+                        const pdf = new jsPDF({ orientation: canvas.width > canvas.height ? 'landscape' : 'portrait', unit: 'px', format: [canvas.width, canvas.height] });
+                        pdf.addImage(canvas.toDataURL('image/jpeg', 0.85), 'JPEG', 0, 0, canvas.width, canvas.height);
+
+                        for (let p = 1; p < file.pages.length; p++) {
+                            file.currentPage = p;
+                            renderPreview();
+                            await new Promise(r => setTimeout(r, 150));
+                            pdf.addPage([canvas.width, canvas.height]);
+                            pdf.addImage(canvas.toDataURL('image/jpeg', 0.85), 'JPEG', 0, 0, canvas.width, canvas.height);
+                        }
+                        pdf.save(`${safeLabel}.pdf`);
+                        showStatus('Download complete!', 'success');
                     }
                 } else if (file.pages.length === 1) {
                     // Single image - download as PNG with watermark
