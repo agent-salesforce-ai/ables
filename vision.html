@@ -2616,15 +2616,18 @@
             closeModal('downloadModal');
             showStatus('Preparing watermarked downloads...', 'info');
 
-            // Get watermark image as PNG bytes for pdf-lib
+            // Get watermark image as small PNG bytes for pdf-lib
             let watermarkPngBytes = null;
             if (logoImage && logoImage.complete && logoImage.naturalWidth > 0) {
                 try {
+                    // Scale down watermark to reduce file size (max 100px)
+                    const maxSize = 100;
+                    const scale = Math.min(maxSize / logoImage.naturalWidth, maxSize / logoImage.naturalHeight, 1);
                     const wmCanvas = document.createElement('canvas');
-                    wmCanvas.width = logoImage.naturalWidth;
-                    wmCanvas.height = logoImage.naturalHeight;
+                    wmCanvas.width = Math.round(logoImage.naturalWidth * scale);
+                    wmCanvas.height = Math.round(logoImage.naturalHeight * scale);
                     const wmCtx = wmCanvas.getContext('2d');
-                    wmCtx.drawImage(logoImage, 0, 0);
+                    wmCtx.drawImage(logoImage, 0, 0, wmCanvas.width, wmCanvas.height);
                     const dataUrl = wmCanvas.toDataURL('image/png');
                     const base64 = dataUrl.split(',')[1];
                     watermarkPngBytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
@@ -2665,7 +2668,7 @@
 
                             // Draw tiled watermarks - limit total count to keep file size reasonable
                             let count = 0;
-                            const maxWatermarks = 25; // Limit per page to prevent bloat
+                            const maxWatermarks = 12; // Limit per page to prevent bloat
                             for (let y = spacing/2; y < height && count < maxWatermarks; y += spacing) {
                                 for (let x = spacing/2; x < width && count < maxWatermarks; x += spacing) {
                                     page.drawImage(watermarkImage, {
