@@ -3639,10 +3639,41 @@
             clone.querySelectorAll('.chart-container').forEach(c => c.style.cssText = 'background: #ffffff !important; border-radius: 8px; border: 1px solid #e5e7eb; padding: 12px;');
 
             // Research modules
-            clone.querySelectorAll('.research-module').forEach(m => m.style.cssText = 'background: #ffffff !important; border-radius: 8px; border: 1px solid #e5e7eb; overflow: hidden; margin-bottom: 12px;');
-            clone.querySelectorAll('.research-module-header').forEach(h => h.style.cssText = 'background: #f3f4f6 !important; color: #111827 !important; padding: 12px 16px; font-weight: 600; border-bottom: 1px solid #e5e7eb;');
+            clone.querySelectorAll('.research-module').forEach(m => {
+                const hasLow = m.classList.contains('risk-low');
+                const hasMed = m.classList.contains('risk-medium');
+                const hasHigh = m.classList.contains('risk-high');
+                let borderColor = '#e5e7eb';
+                if (hasLow) borderColor = '#22c55e';
+                if (hasMed) borderColor = '#eab308';
+                if (hasHigh) borderColor = '#ef4444';
+                m.style.cssText = `background: #ffffff !important; border-radius: 8px; border: 1px solid #e5e7eb; border-left: 3px solid ${borderColor}; overflow: hidden; margin-bottom: 12px;`;
+            });
+            clone.querySelectorAll('.research-module-header').forEach(h => h.style.cssText = 'display: flex !important; align-items: center !important; gap: 12px !important; background: #f9fafb !important; color: #111827 !important; padding: 12px 16px; font-weight: 600; border-bottom: 1px solid #e5e7eb; cursor: pointer;');
+            clone.querySelectorAll('.research-module-icon').forEach(icon => {
+                const parent = icon.closest('.research-module');
+                let bg = '#f3f4f6', color = '#6b7280';
+                if (parent?.classList.contains('risk-low')) { bg = '#dcfce7'; color = '#22c55e'; }
+                else if (parent?.classList.contains('risk-medium')) { bg = '#fef9c3'; color = '#eab308'; }
+                else if (parent?.classList.contains('risk-high')) { bg = '#fee2e2'; color = '#ef4444'; }
+                icon.style.cssText = `width: 40px !important; height: 40px !important; min-width: 40px !important; border-radius: 8px !important; background: ${bg} !important; display: flex !important; align-items: center !important; justify-content: center !important;`;
+                const svg = icon.querySelector('svg');
+                if (svg) svg.style.cssText = `stroke: ${color} !important; width: 20px !important; height: 20px !important;`;
+            });
+            clone.querySelectorAll('.research-module-info').forEach(info => info.style.cssText = 'flex: 1 !important; min-width: 0 !important;');
+            clone.querySelectorAll('.research-module-name').forEach(name => name.style.cssText = 'font-size: 14px !important; font-weight: 600 !important; color: #111827 !important;');
+            clone.querySelectorAll('.research-module-summary').forEach(sum => sum.style.cssText = 'font-size: 12px !important; color: #6b7280 !important; margin-top: 2px !important;');
+            clone.querySelectorAll('.research-module-status').forEach(status => {
+                const text = status.textContent?.toLowerCase() || '';
+                let bg = '#f3f4f6', color = '#6b7280';
+                if (text.includes('low')) { bg = '#dcfce7'; color = '#166534'; }
+                else if (text.includes('medium')) { bg = '#fef9c3'; color = '#854d0e'; }
+                else if (text.includes('high')) { bg = '#fee2e2'; color = '#991b1b'; }
+                else if (text.includes('complete') || text.includes('done')) { bg = '#dcfce7'; color = '#166534'; }
+                status.style.cssText = `background: ${bg} !important; color: ${color} !important; padding: 4px 10px !important; border-radius: 12px !important; font-size: 11px !important; font-weight: 600 !important; white-space: nowrap !important;`;
+            });
             clone.querySelectorAll('.research-module-body').forEach(b => b.style.cssText = 'background: #ffffff !important; color: #111827 !important; padding: 16px;');
-            clone.querySelectorAll('.research-module-content').forEach(c => c.style.cssText = 'background: #ffffff !important; color: #374151 !important;');
+            clone.querySelectorAll('.research-module-content').forEach(c => c.style.cssText = 'background: #ffffff !important; color: #374151 !important; padding: 16px !important;');
 
             // Research grid
             clone.querySelectorAll('.research-grid').forEach(g => g.style.cssText = 'display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;');
@@ -3686,14 +3717,27 @@
                 const bgColor = computed.backgroundColor;
                 const textColor = computed.color;
 
-                // If background is dark (near black), make it white
-                if (bgColor && (bgColor.includes('rgb(10') || bgColor.includes('rgb(17') || bgColor.includes('rgb(26') || bgColor.includes('rgb(0,'))) {
-                    el.style.backgroundColor = '#ffffff';
+                // Parse RGB values to check if dark
+                const rgbMatch = bgColor?.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+                if (rgbMatch) {
+                    const [_, r, g, b] = rgbMatch.map(Number);
+                    // If background is dark (all RGB components below 50), make it white
+                    if (r < 50 && g < 50 && b < 50) {
+                        el.style.backgroundColor = '#ffffff';
+                    }
+                    // If it's a dark gray (all components between 50-80), make it light gray
+                    else if (r < 80 && g < 80 && b < 80) {
+                        el.style.backgroundColor = '#f3f4f6';
+                    }
                 }
 
                 // If text is white/light, make it dark
-                if (textColor && (textColor.includes('rgb(255') || textColor.includes('rgba(255'))) {
-                    el.style.color = '#111827';
+                const textRgbMatch = textColor?.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+                if (textRgbMatch) {
+                    const [_, r, g, b] = textRgbMatch.map(Number);
+                    if (r > 200 && g > 200 && b > 200) {
+                        el.style.color = '#111827';
+                    }
                 }
             });
 
