@@ -6274,12 +6274,11 @@ Return ONLY valid JSON:
 
             try {
                 const model = getSelectedModel();
+                showStatus(`Calling ${model} API...`, 'info');
 
                 // Add timeout to prevent hanging
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minute timeout
-
-                console.log(`[Extract] Calling Gemini API with model: ${model}`);
 
                 const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
                     method: 'POST',
@@ -6292,20 +6291,16 @@ Return ONLY valid JSON:
                 });
 
                 clearTimeout(timeoutId);
-                console.log(`[Extract] Got response, status: ${resp.status}`);
 
                 if (!resp.ok) {
                     const errText = await resp.text();
-                    console.error(`API error ${resp.status}:`, errText);
-                    throw new Error(`API error: ${resp.status}`);
+                    throw new Error(`API error ${resp.status}: ${errText.substring(0, 100)}`);
                 }
 
                 const data = await resp.json();
-                console.log(`[Extract] Parsed response, has candidates: ${!!data.candidates}`);
 
                 // Check for API-level errors
                 if (data.error) {
-                    console.error('Gemini API error:', data.error);
                     throw new Error(data.error.message || 'API error');
                 }
 
@@ -6314,11 +6309,9 @@ Return ONLY valid JSON:
                 return JSON.parse(text);
             } catch (e) {
                 if (e.name === 'AbortError') {
-                    console.error(`Extract timeout for file ${fileIndex} - request took over 2 minutes`);
-                } else {
-                    console.error(`Extract error for file ${fileIndex}:`, e);
+                    throw new Error('Request timeout - API took over 2 minutes');
                 }
-                return null;
+                throw e;
             }
         }
 
@@ -6344,23 +6337,23 @@ Return ONLY valid JSON:
 
             // Extract each statement with retry logic - ONE AT A TIME for live updates
             const extractWithRetry = async (file, index, maxRetries = 2) => {
-                console.log(`[extractWithRetry] Processing file ${index + 1}: ${file?.name}`);
+                showStatus(`Processing statement ${index + 1}...`, 'info');
                 for (let attempt = 0; attempt <= maxRetries; attempt++) {
                     try {
                         const result = await extractSingleStatement(file, apiKey, index);
                         if (result && result.month) {
-                            console.log(`✓ Statement ${index + 1} extracted: ${result.month}`);
+                            showStatus(`Statement ${index + 1} extracted: ${result.month}`, 'success');
                             return result;
                         }
-                        console.warn(`Statement ${index + 1} attempt ${attempt + 1}: Invalid response, retrying...`);
+                        showStatus(`Statement ${index + 1} attempt ${attempt + 1}: Invalid response, retrying...`, 'info');
                     } catch (e) {
-                        console.error(`Statement ${index + 1} attempt ${attempt + 1} failed:`, e);
+                        showStatus(`Statement ${index + 1} attempt ${attempt + 1} failed: ${e.message}`, 'error');
                     }
                     if (attempt < maxRetries) {
-                        await new Promise(r => setTimeout(r, 1000)); // Wait 1s before retry
+                        await new Promise(r => setTimeout(r, 1000));
                     }
                 }
-                console.error(`✗ Statement ${index + 1} failed after ${maxRetries + 1} attempts`);
+                showStatus(`Statement ${index + 1} failed after ${maxRetries + 1} attempts`, 'error');
                 return null;
             };
 
