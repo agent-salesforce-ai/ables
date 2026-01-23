@@ -3583,18 +3583,235 @@
             return footer;
         }
 
-        // Export with custom settings from modal
+        // Generate completely fresh export HTML with hardcoded light styles
+        function generateExportHTML(options) {
+            const analysis = extractedData.full_analysis;
+            const agg = analysis.aggregated || {};
+            const months = analysis.months || [];
+            const mcaLenders = agg.detected_mca_lenders || [];
+            const flags = analysis.red_flags || [];
+
+            // Calculate totals
+            const totals = months.reduce((acc, m) => ({
+                deposits: acc.deposits + (m.total_deposits || 0),
+                trueRevenue: acc.trueRevenue + (m.true_revenue || m.total_deposits * 0.92 || 0),
+                withdrawals: acc.withdrawals + (m.total_withdrawals || 0),
+                numDeps: acc.numDeps + (m.num_deposits || 0),
+                nsf: acc.nsf + (m.nsf_count || 0),
+                negDays: acc.negDays + (m.days_negative || 0),
+                avgBalSum: acc.avgBalSum + (m.average_daily_balance || 0)
+            }), { deposits: 0, trueRevenue: 0, withdrawals: 0, numDeps: 0, nsf: 0, negDays: 0, avgBalSum: 0 });
+
+            const numMonths = months.length || 1;
+            const avgBalance = Math.round(totals.avgBalSum / numMonths);
+
+            const businessName = extractedBusinessInfo.name || 'Bank Analysis';
+            const dateStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+            let html = `
+                <!-- Header -->
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <svg viewBox="0 0 64 64" fill="none" style="width: 40px; height: 40px;">
+                            <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
+                            <circle cx="32" cy="32" r="12" fill="#eab308"/>
+                            <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
+                        </svg>
+                        <div>
+                            <div style="font-size: 20px; font-weight: 700; color: #ffffff;">Vision PRO</div>
+                            <div style="font-size: 12px; color: #94a3b8;">Bank Statement Analysis</div>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 14px; font-weight: 600; color: #ffffff;">${businessName}</div>
+                        <div style="font-size: 12px; color: #94a3b8;">${dateStr}</div>
+                    </div>
+                </div>
+            `;
+
+            // Fraud Analysis Section
+            if (options.includeFraud && files.length > 0) {
+                const clean = files.filter(f => f.status === 'clean').length;
+                const warning = files.filter(f => f.status === 'warning').length;
+                const danger = files.filter(f => f.status === 'danger').length;
+                const overallColor = danger > 0 ? '#ef4444' : warning > 0 ? '#f59e0b' : '#22c55e';
+                const overallText = danger > 0 ? 'Issues Detected' : warning > 0 ? 'Review Required' : 'All Clear';
+
+                html += `
+                    <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                        <div style="background: #f8fafc; padding: 16px 20px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 10px;">
+                            <svg viewBox="0 0 64 64" fill="none" style="width: 24px; height: 24px;">
+                                <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
+                                <circle cx="32" cy="32" r="12" fill="#eab308"/>
+                            </svg>
+                            <span style="font-weight: 600; font-size: 14px; color: #111827;">Fraud Analysis</span>
+                        </div>
+                        <div style="padding: 20px;">
+                            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="font-size: 20px; font-weight: 700; color: #22c55e;">${clean}</span>
+                                    <span style="font-size: 12px; color: #6b7280;">Clean</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="font-size: 20px; font-weight: 700; color: #f59e0b;">${warning}</span>
+                                    <span style="font-size: 12px; color: #6b7280;">Review</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="font-size: 20px; font-weight: 700; color: #ef4444;">${danger}</span>
+                                    <span style="font-size: 12px; color: #6b7280;">Risk</span>
+                                </div>
+                                <div style="flex: 1;"></div>
+                                <div style="padding: 6px 12px; background: ${overallColor}15; border-radius: 20px; font-size: 12px; font-weight: 600; color: ${overallColor};">${overallText}</div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; max-width: 700px; margin: 0 auto;">
+                                ${files.map(f => {
+                                    const statusText = f.status === 'danger' ? 'HIGH RISK' : f.status === 'warning' ? 'REVIEW' : 'CLEAN';
+                                    const borderColor = f.status === 'danger' ? '#ef4444' : f.status === 'warning' ? '#f59e0b' : '#22c55e';
+                                    const bgColor = f.status === 'danger' ? '#fef2f2' : f.status === 'warning' ? '#fffbeb' : '#f0fdf4';
+                                    const textColor = f.status === 'danger' ? '#991b1b' : f.status === 'warning' ? '#92400e' : '#166534';
+                                    const shortName = f.name.length > 30 ? f.name.substring(0, 27) + '...' : f.name;
+                                    return `
+                                        <div style="background: #ffffff; border: 1px solid #e5e7eb; border-left: 3px solid ${borderColor}; border-radius: 8px; padding: 12px;">
+                                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                <div style="font-size: 13px; font-weight: 600; color: #111827;">${shortName}</div>
+                                                <div style="padding: 3px 8px; background: ${bgColor}; color: ${textColor}; border-radius: 10px; font-size: 10px; font-weight: 600;">${statusText}</div>
+                                            </div>
+                                            <div style="font-size: 11px; color: #6b7280; margin-top: 4px;">${f.pages?.length || 0} page(s) analyzed</div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Bank Analysis Section
+            if (options.includeData) {
+                html += `
+                    <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                        <div style="background: #f8fafc; padding: 16px 20px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 10px;">
+                            <svg viewBox="0 0 64 64" fill="none" style="width: 24px; height: 24px;">
+                                <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
+                                <circle cx="32" cy="32" r="12" fill="#eab308"/>
+                            </svg>
+                            <span style="font-weight: 600; font-size: 14px; color: #111827;">Bank Analysis Worksheet</span>
+                        </div>
+                        <div style="padding: 20px;">
+                            <!-- Risk Summary -->
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;">
+                                <div style="background: ${totals.nsf === 0 ? '#f0fdf4' : totals.nsf <= 3 ? '#fffbeb' : '#fef2f2'}; border: 2px solid ${totals.nsf === 0 ? '#22c55e' : totals.nsf <= 3 ? '#f59e0b' : '#ef4444'}; border-radius: 8px; padding: 16px; text-align: center;">
+                                    <div style="font-size: 28px; font-weight: 700; color: ${totals.nsf === 0 ? '#166534' : totals.nsf <= 3 ? '#92400e' : '#991b1b'};">${totals.nsf}</div>
+                                    <div style="font-size: 11px; color: #6b7280;">NSF ITEMS</div>
+                                </div>
+                                <div style="background: ${totals.negDays === 0 ? '#f0fdf4' : totals.negDays <= 5 ? '#fffbeb' : '#fef2f2'}; border: 2px solid ${totals.negDays === 0 ? '#22c55e' : totals.negDays <= 5 ? '#f59e0b' : '#ef4444'}; border-radius: 8px; padding: 16px; text-align: center;">
+                                    <div style="font-size: 28px; font-weight: 700; color: ${totals.negDays === 0 ? '#166534' : totals.negDays <= 5 ? '#92400e' : '#991b1b'};">${totals.negDays}</div>
+                                    <div style="font-size: 11px; color: #6b7280;">NEG DAYS</div>
+                                </div>
+                                <div style="background: ${mcaLenders.length === 0 ? '#f0fdf4' : mcaLenders.length <= 2 ? '#fffbeb' : '#fef2f2'}; border: 2px solid ${mcaLenders.length === 0 ? '#22c55e' : mcaLenders.length <= 2 ? '#f59e0b' : '#ef4444'}; border-radius: 8px; padding: 16px; text-align: center;">
+                                    <div style="font-size: 28px; font-weight: 700; color: ${mcaLenders.length === 0 ? '#166534' : mcaLenders.length <= 2 ? '#92400e' : '#991b1b'};">${mcaLenders.length}</div>
+                                    <div style="font-size: 11px; color: #6b7280;">MCA FOUND</div>
+                                </div>
+                                <div style="background: #f8fafc; border: 2px solid #e5e7eb; border-radius: 8px; padding: 16px; text-align: center;">
+                                    <div style="font-size: 28px; font-weight: 700; color: #111827;">${Math.round(totals.numDeps / numMonths)}</div>
+                                    <div style="font-size: 11px; color: #6b7280;">DEPS/MONTH</div>
+                                </div>
+                            </div>
+
+                            <!-- Monthly Table -->
+                            ${months.length > 0 ? `
+                            <table style="width: 100%; border-collapse: collapse; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+                                <thead>
+                                    <tr style="background: #f8fafc;">
+                                        <th style="padding: 12px; text-align: left; font-size: 12px; font-weight: 600; color: #374151; border-bottom: 1px solid #e5e7eb;">Month</th>
+                                        <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; color: #374151; border-bottom: 1px solid #e5e7eb;">Deposits</th>
+                                        <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; color: #374151; border-bottom: 1px solid #e5e7eb;">True Rev</th>
+                                        <th style="padding: 12px; text-align: center; font-size: 12px; font-weight: 600; color: #374151; border-bottom: 1px solid #e5e7eb;">#</th>
+                                        <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; color: #374151; border-bottom: 1px solid #e5e7eb;">Withdrawals</th>
+                                        <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; color: #374151; border-bottom: 1px solid #e5e7eb;">Avg Bal</th>
+                                        <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; color: #374151; border-bottom: 1px solid #e5e7eb;">Open Bal</th>
+                                        <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; color: #374151; border-bottom: 1px solid #e5e7eb;">End Bal</th>
+                                        <th style="padding: 12px; text-align: center; font-size: 12px; font-weight: 600; color: #374151; border-bottom: 1px solid #e5e7eb;">NSF</th>
+                                        <th style="padding: 12px; text-align: center; font-size: 12px; font-weight: 600; color: #374151; border-bottom: 1px solid #e5e7eb;">Neg</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${months.map(m => `
+                                        <tr>
+                                            <td style="padding: 12px; font-size: 13px; font-weight: 500; color: #111827; border-bottom: 1px solid #f3f4f6;">${m.month || 'N/A'}</td>
+                                            <td style="padding: 12px; font-size: 13px; color: #16a34a; text-align: right; border-bottom: 1px solid #f3f4f6;">$${(m.total_deposits || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                            <td style="padding: 12px; font-size: 13px; color: #ca8a04; text-align: right; border-bottom: 1px solid #f3f4f6;">$${(m.true_revenue || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                            <td style="padding: 12px; font-size: 13px; color: #374151; text-align: center; border-bottom: 1px solid #f3f4f6;">${m.num_deposits || 0}</td>
+                                            <td style="padding: 12px; font-size: 13px; color: #dc2626; text-align: right; border-bottom: 1px solid #f3f4f6;">$${(m.total_withdrawals || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                            <td style="padding: 12px; font-size: 13px; color: #374151; text-align: right; border-bottom: 1px solid #f3f4f6;">$${(m.average_daily_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                            <td style="padding: 12px; font-size: 13px; color: ${(m.opening_balance || 0) < 0 ? '#dc2626' : '#374151'}; text-align: right; border-bottom: 1px solid #f3f4f6;">$${(m.opening_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                            <td style="padding: 12px; font-size: 13px; color: ${(m.ending_balance || 0) < 0 ? '#dc2626' : '#374151'}; text-align: right; border-bottom: 1px solid #f3f4f6;">$${(m.ending_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                            <td style="padding: 12px; font-size: 13px; color: ${(m.nsf_count || 0) > 0 ? '#dc2626' : '#374151'}; text-align: center; border-bottom: 1px solid #f3f4f6;">${m.nsf_count || 0}</td>
+                                            <td style="padding: 12px; font-size: 13px; color: ${(m.days_negative || 0) > 0 ? '#dc2626' : '#374151'}; text-align: center; border-bottom: 1px solid #f3f4f6;">${m.days_negative || 0}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                                <tfoot>
+                                    <tr style="background: #f8fafc;">
+                                        <td style="padding: 12px; font-size: 13px; font-weight: 700; color: #111827;">AVERAGE</td>
+                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: #16a34a; text-align: right;">$${(totals.deposits / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: #ca8a04; text-align: right;">$${(totals.trueRevenue / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: #374151; text-align: center;">${Math.round(totals.numDeps / numMonths)}</td>
+                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: #dc2626; text-align: right;">$${(totals.withdrawals / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: #374151; text-align: right;">$${avgBalance.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                        <td style="padding: 12px; font-size: 13px; color: #6b7280; text-align: right;">-</td>
+                                        <td style="padding: 12px; font-size: 13px; color: #6b7280; text-align: right;">-</td>
+                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: #374151; text-align: center;">${(totals.nsf / numMonths).toFixed(2)}</td>
+                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: #374151; text-align: center;">${(totals.negDays / numMonths).toFixed(2)}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                            ` : ''}
+
+                            ${mcaLenders.length > 0 ? `
+                            <div style="margin-top: 20px; background: #fef2f2; border: 2px solid #ef4444; border-radius: 8px; padding: 16px;">
+                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                                    <div style="width: 32px; height: 32px; background: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">!</div>
+                                    <div>
+                                        <div style="font-size: 14px; font-weight: 700; color: #991b1b;">EXISTING MCA POSITIONS DETECTED</div>
+                                        <div style="font-size: 12px; color: #b91c1c;">Active merchant cash advance obligations identified</div>
+                                    </div>
+                                    <div style="margin-left: auto; background: #ef4444; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">${mcaLenders.length} Lender${mcaLenders.length > 1 ? 's' : ''}</div>
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+                                    ${mcaLenders.map(l => {
+                                        const name = typeof l === 'object' ? (l.name || 'Unknown Lender') : l;
+                                        return `<div style="background: #ffffff; border: 1px solid #fecaca; border-radius: 6px; padding: 10px 12px; font-size: 13px; font-weight: 500; color: #991b1b;">${name}</div>`;
+                                    }).join('')}
+                                </div>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Footer
+            html += `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: #f8fafc; border-radius: 8px; border: 1px solid #e5e7eb; font-size: 11px; color: #6b7280;">
+                    <div>Generated by Vision PRO • ables.ai</div>
+                    <div>Confidential - For Internal Use Only</div>
+                </div>
+            `;
+
+            return html;
+        }
+
+        // Export with custom settings from modal - COMPLETE RE-RENDER approach
         async function exportWithSettings(format = 'png') {
             if (!extractedData.full_analysis) {
                 showStatus('No analysis data to export', 'error');
                 return;
             }
 
-            showStatus(`Generating ${format.toUpperCase()} with custom settings...`, 'info');
+            showStatus(`Generating ${format.toUpperCase()}...`, 'info');
 
             try {
-                const resultsArea = document.getElementById('resultsArea');
-
                 // Get selected sections
                 const includeFraud = document.getElementById('exportFraud')?.checked ?? true;
                 const includeData = document.getElementById('exportData')?.checked ?? true;
@@ -3603,80 +3820,37 @@
                 const includeResearch = document.getElementById('exportResearch')?.checked ?? true;
                 const includeLenders = document.getElementById('exportLenders')?.checked ?? true;
 
-                const isDark = exportSettings.theme === 'dark' || (exportSettings.theme === 'current' && document.documentElement.getAttribute('data-theme') !== 'light');
-                const useLight = exportSettings.theme !== 'dark';
+                // Generate completely fresh HTML with hardcoded light styles
+                const exportHTML = generateExportHTML({
+                    includeFraud, includeData, includeCharts, includeDebt, includeResearch, includeLenders
+                });
 
-                // TEMPORARILY switch to light theme before cloning
-                const originalTheme = document.documentElement.getAttribute('data-theme');
-                if (useLight) {
-                    document.documentElement.setAttribute('data-theme', 'light');
-                }
-
-                // Small delay to let CSS recompute
-                await new Promise(r => setTimeout(r, 100));
-
-                // Create wrapper with settings
+                // Create wrapper
                 const wrapper = document.createElement('div');
                 wrapper.style.cssText = `
                     position: absolute;
                     left: -9999px;
                     top: 0;
-                    background: ${exportSettings.background};
+                    background: #ffffff;
                     padding: ${exportSettings.padding}px;
                     width: ${exportSettings.width}px;
+                    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+                    color: #111827;
                 `;
+                wrapper.innerHTML = exportHTML;
 
-                // Add branded header
-                wrapper.appendChild(createExportHeader(isDark));
-
-                // Clone the results AFTER theme switch
-                const clone = resultsArea.cloneNode(true);
-
-                // Remove hidden class from all elements
-                clone.querySelectorAll('.hidden').forEach(el => el.classList.remove('hidden'));
-
-                // Remove all buttons
-                clone.querySelectorAll('button, .card-export-btn, .expand-toggle').forEach(el => el.remove());
-
-                // Hide/show sections based on checkboxes
-                if (!includeFraud) clone.querySelector('#fraudSection')?.remove();
-                if (!includeData) clone.querySelector('#dataSection')?.remove();
-                if (!includeCharts) clone.querySelector('#chartsSection')?.remove();
-                if (!includeDebt) clone.querySelector('#debtSection')?.remove();
-                if (!includeResearch) clone.querySelector('#researchSection')?.remove();
-                if (!includeLenders) clone.querySelector('#lenderSection')?.remove();
-
-                wrapper.appendChild(clone);
-
-                // Add footer
-                wrapper.appendChild(createExportFooter(isDark));
-
-                // IMPORTANT: Append to DOM FIRST so computed styles work
                 document.body.appendChild(wrapper);
-
-                // Now force all light styles AFTER it's in the DOM
-                if (useLight) {
-                    forceAllLightStyles(clone);
-                }
-
-                await new Promise(r => setTimeout(r, 300));
+                await new Promise(r => setTimeout(r, 200));
 
                 const canvas = await html2canvas(wrapper, {
                     scale: exportSettings.scale,
                     useCORS: true,
-                    backgroundColor: exportSettings.background === 'transparent' ? null : exportSettings.background,
+                    backgroundColor: '#ffffff',
                     logging: false,
                     allowTaint: true
                 });
 
                 document.body.removeChild(wrapper);
-
-                // Restore original theme
-                if (originalTheme) {
-                    document.documentElement.setAttribute('data-theme', originalTheme);
-                } else {
-                    document.documentElement.removeAttribute('data-theme');
-                }
 
                 if (format === 'pdf') {
                     // Create PDF
