@@ -209,28 +209,39 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
+        .btn-secondary {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--text-muted);
+        }
+
         .btn-primary {
-            background: linear-gradient(135deg, var(--gold) 0%, #f59e0b 100%);
-            border-color: var(--gold);
-            color: #000;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: none;
+            color: #ffffff;
             font-weight: 600;
-            box-shadow: 0 2px 8px rgba(234, 179, 8, 0.3);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .btn-primary::before {
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
         }
 
         .btn-primary:hover {
-            background: linear-gradient(135deg, #facc15 0%, #fbbf24 100%);
-            box-shadow: 0 8px 30px rgba(234, 179, 8, 0.5), 0 0 20px rgba(234, 179, 8, 0.3);
-            transform: translateY(-3px);
-            border-color: #facc15;
+            background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
         }
 
         .btn-primary:active {
-            transform: translateY(0) scale(0.97);
-            box-shadow: 0 2px 12px rgba(234, 179, 8, 0.4);
+            transform: translateY(0) scale(0.98);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .btn-primary:disabled {
@@ -238,12 +249,13 @@
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
-            background: var(--gold);
+            background: #64748b;
         }
 
         .btn-primary:disabled:hover {
             transform: none;
             box-shadow: none;
+            background: #64748b;
         }
 
         /* Main Layout */
@@ -598,19 +610,21 @@
             justify-content: center;
             gap: 8px;
             padding: 10px 16px;
-            background: linear-gradient(135deg, var(--gold) 0%, #d4a106 100%);
-            color: #000;
-            border: none;
+            background: var(--bg-secondary);
+            color: var(--text);
+            border: 1px solid var(--border);
             border-radius: var(--radius-md);
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
         }
 
         .export-menu-btn:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4);
+            background: var(--bg-tertiary);
+            border-color: var(--text-muted);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .export-menu-btn:disabled {
@@ -3815,8 +3829,8 @@
                                         <td style="padding: 12px; font-size: 13px; font-weight: 600; color: #374151; text-align: right;">$${avgBalance.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
                                         <td style="padding: 12px; font-size: 13px; color: #6b7280; text-align: right;">-</td>
                                         <td style="padding: 12px; font-size: 13px; color: #6b7280; text-align: right;">-</td>
-                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: #374151; text-align: center;">${(totals.nsf / numMonths).toFixed(2)}</td>
-                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: #374151; text-align: center;">${(totals.negDays / numMonths).toFixed(2)}</td>
+                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: #374151; text-align: center;">${totals.nsf}</td>
+                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: #374151; text-align: center;">${totals.negDays}</td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -4779,7 +4793,7 @@
         }
 
         async function exportReportAsPng() {
-            await exportPngClean();
+            await exportPngIframe();
         }
 
         async function exportCardAsPng(cardId, cardName) {
@@ -6230,8 +6244,8 @@ Return ONLY valid JSON:
                     <td style="padding: 14px 12px; text-align: right;"><span style="color: var(--text);">$${(totals.avgBalSum / extractedCount).toLocaleString('en-US', {minimumFractionDigits: 2})}</span></td>
                     <td style="padding: 14px 12px; text-align: right;"><span style="color: var(--text-muted);">-</span></td>
                     <td style="padding: 14px 12px; text-align: right;"><span style="color: var(--text-muted);">-</span></td>
-                    <td style="padding: 14px 12px; text-align: center;"><span style="color: ${totals.nsf > 0 ? 'var(--red)' : 'var(--text-muted)'};">${(totals.nsf / extractedCount).toFixed(1)}</span></td>
-                    <td style="padding: 14px 12px; text-align: center;"><span style="color: ${totals.negDays > 0 ? 'var(--red)' : 'var(--text-muted)'};">${(totals.negDays / extractedCount).toFixed(1)}</span></td>
+                    <td style="padding: 14px 12px; text-align: center;"><span style="color: ${totals.nsf > 0 ? 'var(--red)' : 'var(--text-muted)'};">${totals.nsf}</span></td>
+                    <td style="padding: 14px 12px; text-align: center;"><span style="color: ${totals.negDays > 0 ? 'var(--red)' : 'var(--text-muted)'};">${totals.negDays}</span></td>
                 </tr>
             ` : '';
 
@@ -6729,12 +6743,22 @@ Return ONLY valid JSON:
         }
 
         async function runSingleResearch(apiKey, module, businessName, ownerName, location) {
+            // Detect if this is a formal registered entity
+            const entityPatterns = /\b(inc\.?|corp\.?|llc|l\.l\.c\.?|ltd\.?|lp|l\.p\.?|llp|l\.l\.p\.?|pllc|pc|p\.c\.?|incorporated|corporation|company|co\.?)\b/i;
+            const isRegisteredEntity = entityPatterns.test(businessName);
+
+            // Extract state from location if available
+            const stateMatch = location?.match(/\b([A-Z]{2})\b|\b(California|Texas|Florida|New York|Illinois|Pennsylvania|Ohio|Georgia|North Carolina|Michigan|New Jersey|Virginia|Washington|Arizona|Massachusetts|Tennessee|Indiana|Missouri|Maryland|Wisconsin|Colorado|Minnesota|South Carolina|Alabama|Louisiana|Kentucky|Oregon|Oklahoma|Connecticut|Utah|Iowa|Nevada|Arkansas|Mississippi|Kansas|New Mexico|Nebraska|Idaho|West Virginia|Hawaii|New Hampshire|Maine|Montana|Rhode Island|Delaware|South Dakota|North Dakota|Alaska|Vermont|Wyoming)\b/i);
+            const state = stateMatch ? stateMatch[0] : '';
+
             const prompts = {
-                sos: `Research the Secretary of State registration for "${businessName}" ${location ? `in ${location}` : ''}. Determine: Is the business in good standing? When was it formed? Any name changes or mergers?`,
-                ucc: `Research UCC filings for "${businessName}". Look for: Existing liens, secured creditors, MCA positions, equipment financing.`,
+                sos: isRegisteredEntity
+                    ? `Search for the Secretary of State business registration for "${businessName}" ${state ? `in ${state}` : location ? `in ${location}` : ''}. This is a registered business entity. Find: Entity number, formation date, current status (Active/Inactive/Dissolved), registered agent, principal address, and any amendments or name changes. Search state corporation databases.`
+                    : `Research the Secretary of State registration for "${businessName}" ${location ? `in ${location}` : ''}. Determine: Is the business in good standing? When was it formed? Any name changes or mergers?`,
+                ucc: `Search for UCC filings against "${businessName}". Look for: Existing liens, secured creditors, MCA lenders like Credibly, Bluevine, OnDeck, Fundbox, Kabbage, equipment financing, factoring companies.`,
                 tax: `Research tax lien status for "${businessName}" ${ownerName ? `and owner ${ownerName}` : ''}. Look for: Federal tax liens, state tax liens, payment plans.`,
                 judgment: `Research court judgments and legal actions involving "${businessName}" ${ownerName ? `or ${ownerName}` : ''}. Look for: Civil judgments, lawsuits, collections.`,
-                bankruptcy: `Research bankruptcy history for "${businessName}" ${ownerName ? `and owner ${ownerName}` : ''}. Check: Chapter 7, 11, or 13 filings, discharge status.`,
+                bankruptcy: `Research bankruptcy history for "${businessName}" ${ownerName ? `and owner ${ownerName}` : ''}. Check federal bankruptcy court PACER records for Chapter 7, 11, or 13 filings, discharge status.`,
                 bbb: `Research the Better Business Bureau profile for "${businessName}". Determine: BBB rating, complaint history, years accredited.`,
                 reviews: `Research online reviews for "${businessName}". Analyze: Google rating, Yelp rating, common complaints, customer sentiment.`,
                 news: `Research recent news and press mentions for "${businessName}". Look for: Positive coverage, negative incidents, industry recognition.`,
@@ -6744,28 +6768,42 @@ Return ONLY valid JSON:
                 location: `Research the business location for "${businessName}" ${location ? `at ${location}` : ''}. Analyze: Area demographics, local competition, foot traffic potential.`
             };
 
-            const model = getSelectedModel();
-            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{
-                            text: `${prompts[module.id]}
+            // Use grounded search for key modules that need real data
+            const useGrounding = ['sos', 'ucc', 'tax', 'judgment', 'bankruptcy', 'bbb'].includes(module.id);
 
-Based on typical patterns for this type of business, provide a simulated research report. Format as JSON:
+            const model = useGrounding ? 'gemini-2.0-flash' : getSelectedModel();
+
+            const requestBody = {
+                contents: [{
+                    parts: [{
+                        text: `${prompts[module.id]}
+
+${useGrounding ? 'Search the web for current, factual information.' : 'Based on typical patterns for this type of business, provide a research report.'} Format response as JSON:
 {
   "risk": "low" | "medium" | "high" | "unknown",
-  "summary": "One sentence summary",
+  "summary": "One sentence summary of findings",
   "details": ["Key finding 1", "Key finding 2", "Key finding 3"],
-  "flags": ["Any red flags or concerns"]
+  "flags": ["Any red flags or concerns - leave empty array if none"],
+  "entity_number": "Entity/File number if found (for SOS)",
+  "formation_date": "Date formed if found",
+  "status": "Current status if found (Active, Inactive, Dissolved, etc.)"
 }
 
 Return ONLY valid JSON.`
-                        }]
-                    }],
-                    generationConfig: { temperature: 0.3, maxOutputTokens: 1024 }
-                })
+                    }]
+                }],
+                generationConfig: { temperature: 0.2, maxOutputTokens: 1500 }
+            };
+
+            // Add search grounding for key research modules
+            if (useGrounding) {
+                requestBody.tools = [{ googleSearchRetrieval: { dynamicRetrievalConfig: { mode: "MODE_DYNAMIC", dynamicThreshold: 0.3 } } }];
+            }
+
+            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestBody)
             });
 
             const data = await resp.json();
@@ -6804,7 +6842,20 @@ Return ONLY valid JSON.`
             const details = result.details || [];
             const flags = result.flags || [];
 
+            // Build entity info section for SOS results
+            const entityInfo = (result.entity_number || result.formation_date || result.status) ? `
+                <div class="research-detail-section" style="margin-bottom: 12px;">
+                    <div class="research-detail-label">Entity Information</div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin-top: 8px;">
+                        ${result.entity_number ? `<div style="background: var(--bg-tertiary); padding: 8px 12px; border-radius: 6px;"><div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Entity Number</div><div style="font-weight: 600; color: var(--text);">${result.entity_number}</div></div>` : ''}
+                        ${result.formation_date ? `<div style="background: var(--bg-tertiary); padding: 8px 12px; border-radius: 6px;"><div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Formed</div><div style="font-weight: 600; color: var(--text);">${result.formation_date}</div></div>` : ''}
+                        ${result.status ? `<div style="background: var(--bg-tertiary); padding: 8px 12px; border-radius: 6px;"><div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Status</div><div style="font-weight: 600; color: ${result.status.toLowerCase().includes('active') ? 'var(--green)' : result.status.toLowerCase().includes('dissolv') ? 'var(--red)' : 'var(--gold)'};">${result.status}</div></div>` : ''}
+                    </div>
+                </div>
+            ` : '';
+
             content.innerHTML = `
+                ${entityInfo}
                 ${details.length > 0 ? `
                     <div class="research-detail-section">
                         <div class="research-detail-label">Key Findings</div>
@@ -6819,7 +6870,7 @@ Return ONLY valid JSON.`
                         <div class="research-flags-list">${flags.join(' | ')}</div>
                     </div>
                 ` : ''}
-                ${details.length === 0 && flags.length === 0 ? `
+                ${details.length === 0 && flags.length === 0 && !entityInfo ? `
                     <div class="research-detail-section">
                         <p style="color: var(--text-muted); font-size: 13px;">No significant findings for this category.</p>
                     </div>
