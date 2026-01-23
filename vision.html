@@ -6887,9 +6887,10 @@ Return ONLY valid JSON:
                 `;
             }).join('');
 
-            // Calculate running totals
-            const extractedCount = extractedResults.length;
-            const totals = extractedResults.reduce((acc, m) => ({
+            // Calculate running totals - filter out null results
+            const validResults = extractedResults.filter(r => r !== null);
+            const extractedCount = validResults.length;
+            const totals = validResults.reduce((acc, m) => ({
                 deposits: acc.deposits + (m.total_deposits || 0),
                 trueRevenue: acc.trueRevenue + (m.true_revenue || 0),
                 withdrawals: acc.withdrawals + (m.total_withdrawals || 0),
