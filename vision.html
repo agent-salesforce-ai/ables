@@ -3162,8 +3162,8 @@
             document.getElementById('watermarkUrlInput').value = localStorage.getItem('watermark_url') || 'https://i.imgur.com/MXMqYLc.png';
             loadWatermark(localStorage.getItem('watermark_url') || 'https://i.imgur.com/MXMqYLc.png');
 
-            // Load theme
-            const theme = localStorage.getItem('theme') || 'dark';
+            // Load theme - default to light, save preference
+            const theme = localStorage.getItem('vision_theme') || 'light';
             document.documentElement.setAttribute('data-theme', theme);
 
             // Event listeners
@@ -3277,7 +3277,7 @@
             const current = document.documentElement.getAttribute('data-theme');
             const next = current === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', next);
-            localStorage.setItem('theme', next);
+            localStorage.setItem('vision_theme', next);
         }
 
         function openModal(id) { document.getElementById(id).classList.add('active'); }
@@ -5762,8 +5762,9 @@ Return ONLY valid JSON:
                 const result = await extractWithRetry(files[i], i);
                 results.push(result);
 
-                // Update live display after each extraction
-                renderExtractedDataLive(results.filter(r => r !== null));
+                // Update live display after each extraction - pass full results array (with nulls)
+                // so indices match up with files array
+                renderExtractedDataLive(results);
 
                 // After first successful extraction, check for business name and trigger research
                 if (result && !businessNameCallbackFired && onBusinessNameFound) {
@@ -5945,12 +5946,13 @@ Return ONLY valid JSON:
         // Store live extraction results globally for click handlers
         let liveExtractionResults = [];
 
-        // Show cell detail popup
+        // Show cell detail popup with transaction breakdown
         function showCellDetail(monthIndex, field) {
             const data = liveExtractionResults[monthIndex];
             if (!data) return;
 
             const fieldLabels = {
+                month: 'Statement Period',
                 deposits: 'Total Deposits',
                 true_revenue: 'True Revenue',
                 num_deposits: 'Number of Deposits',
@@ -5963,6 +5965,7 @@ Return ONLY valid JSON:
             };
 
             const fieldValues = {
+                month: data.month || 'Unknown',
                 deposits: `$${(data.total_deposits || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}`,
                 true_revenue: `$${(data.true_revenue || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}`,
                 num_deposits: data.num_deposits || 0,
@@ -5975,6 +5978,7 @@ Return ONLY valid JSON:
             };
 
             const fieldDetails = {
+                month: 'Bank statement period analyzed.',
                 deposits: 'Sum of all credits and deposits for this statement period.',
                 true_revenue: 'Deposits minus internal transfers, loan proceeds, and owner contributions.',
                 num_deposits: 'Total count of individual deposit transactions.',
@@ -5986,23 +5990,132 @@ Return ONLY valid JSON:
                 neg_days: 'Number of days the account had a negative balance.'
             };
 
+            // Build additional context based on field type
+            let additionalContent = '';
+
+            // Show MCA payments if viewing withdrawals
+            if (field === 'withdrawals' && data.detected_mca_payments && data.detected_mca_payments.length > 0) {
+                const mcaItems = data.detected_mca_payments.map(m => {
+                    const name = typeof m === 'object' ? (m.name || m.lender || 'Unknown') : m;
+                    const amt = typeof m === 'object' && m.amount ? `$${m.amount.toLocaleString()}` : '';
+                    return `<div style="display: flex; justify-content: space-between; padding: 8px 12px; background: var(--bg-tertiary); border-radius: 6px; margin-bottom: 6px;">
+                        <span style="color: var(--red); font-weight: 500;">${name}</span>
+                        ${amt ? `<span style="color: var(--text-muted);">${amt}</span>` : ''}
+                    </div>`;
+                }).join('');
+                additionalContent = `
+                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+                        <div style="font-size: 11px; color: var(--red); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; font-weight: 600;">MCA Payments Detected</div>
+                        ${mcaItems}
+                    </div>
+                `;
+            }
+
+            // Show breakdown for deposits
+            if (field === 'deposits' || field === 'true_revenue') {
+                const trueRev = data.true_revenue || 0;
+                const totalDep = data.total_deposits || 0;
+                const excluded = totalDep - trueRev;
+                additionalContent = `
+                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+                        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Deposit Breakdown</div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
+                            <span style="color: var(--text-secondary);">Gross Deposits</span>
+                            <span style="color: var(--green); font-weight: 500;">$${totalDep.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
+                            <span style="color: var(--text-secondary);">Excluded (Transfers/Loans)</span>
+                            <span style="color: var(--text-muted);">-$${excluded.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; font-weight: 600;">
+                            <span style="color: var(--text);">True Revenue</span>
+                            <span style="color: var(--gold);">$${trueRev.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Show balance analysis
+            if (field === 'avg_balance' || field === 'open_balance' || field === 'end_balance') {
+                additionalContent = `
+                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+                        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Balance Summary</div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
+                            <span style="color: var(--text-secondary);">Opening Balance</span>
+                            <span style="color: var(--text);">$${(data.opening_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
+                            <span style="color: var(--text-secondary);">Lowest Balance</span>
+                            <span style="color: ${(data.lowest_daily_balance || 0) < 0 ? 'var(--red)' : 'var(--text)'};">$${(data.lowest_daily_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
+                            <span style="color: var(--text-secondary);">Average Balance</span>
+                            <span style="color: var(--text); font-weight: 500;">$${(data.average_daily_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+                            <span style="color: var(--text-secondary);">Ending Balance</span>
+                            <span style="color: ${(data.ending_balance || 0) < 0 ? 'var(--red)' : 'var(--text)'};">$${(data.ending_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Show risk info for NSF/Neg days
+            if (field === 'nsf' || field === 'neg_days') {
+                const nsfCount = data.nsf_count || 0;
+                const negDays = data.days_negative || 0;
+                const riskLevel = (nsfCount > 3 || negDays > 5) ? 'High' : (nsfCount > 0 || negDays > 0) ? 'Medium' : 'Low';
+                const riskColor = riskLevel === 'High' ? 'var(--red)' : riskLevel === 'Medium' ? 'var(--gold)' : 'var(--green)';
+                additionalContent = `
+                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+                        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Risk Assessment</div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
+                            <span style="color: var(--text-secondary);">NSF/Overdraft Items</span>
+                            <span style="color: ${nsfCount > 0 ? 'var(--red)' : 'var(--green)'}; font-weight: 500;">${nsfCount}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
+                            <span style="color: var(--text-secondary);">Days Negative</span>
+                            <span style="color: ${negDays > 0 ? 'var(--red)' : 'var(--green)'}; font-weight: 500;">${negDays}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+                            <span style="color: var(--text-secondary);">Risk Level</span>
+                            <span style="color: ${riskColor}; font-weight: 600;">${riskLevel}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Saturn logo SVG
+            const saturnLogo = `<svg viewBox="0 0 64 64" fill="none" style="width: 32px; height: 32px;">
+                <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
+                <circle cx="32" cy="32" r="12" fill="#eab308"/>
+                <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
+            </svg>`;
+
             // Create popup
             const popup = document.createElement('div');
             popup.id = 'cellDetailPopup';
-            popup.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 24px; z-index: 10000; min-width: 320px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);';
+            popup.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 16px; padding: 24px; z-index: 10000; min-width: 380px; max-width: 450px; box-shadow: 0 25px 50px rgba(0,0,0,0.4);';
             popup.innerHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                    <div style="font-size: 12px; color: var(--gold); font-weight: 600;">${data.month}</div>
-                    <button onclick="document.getElementById('cellDetailPopup').remove(); document.getElementById('cellDetailOverlay').remove();" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 20px;">&times;</button>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        ${saturnLogo}
+                        <div>
+                            <div style="font-size: 14px; font-weight: 600; color: var(--text);">Ables AI</div>
+                            <div style="font-size: 12px; color: var(--gold); font-weight: 500;">${data.month}</div>
+                        </div>
+                    </div>
+                    <button onclick="document.getElementById('cellDetailPopup').remove(); document.getElementById('cellDetailOverlay').remove();" style="background: var(--bg-tertiary); border: none; color: var(--text-muted); cursor: pointer; font-size: 18px; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">&times;</button>
                 </div>
                 <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">${fieldLabels[field]}</div>
-                <div style="font-size: 28px; font-weight: 700; color: var(--text); margin-bottom: 12px;">${fieldValues[field]}</div>
-                <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">${fieldDetails[field]}</div>
+                <div style="font-size: 32px; font-weight: 700; color: var(--text); margin-bottom: 8px;">${fieldValues[field]}</div>
+                <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.6;">${fieldDetails[field]}</div>
+                ${additionalContent}
             `;
 
             const overlay = document.createElement('div');
             overlay.id = 'cellDetailOverlay';
-            overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999;';
+            overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 9999; backdrop-filter: blur(4px);';
             overlay.onclick = () => { popup.remove(); overlay.remove(); };
 
             document.body.appendChild(overlay);
@@ -6025,71 +6138,69 @@ Return ONLY valid JSON:
 
                 if (isPending) {
                     // Show skeleton row - animated if currently processing, dimmed if waiting
-                    const shimmerClass = isCurrentlyProcessing ? 'shimmer-active' : '';
-                    const rowOpacity = isCurrentlyProcessing ? '1' : '0.4';
-                    const fileName = f.name.length > 25 ? f.name.substring(0, 22) + '...' : f.name;
+                    const rowOpacity = isCurrentlyProcessing ? '1' : '0.5';
+                    const fileName = f.name.length > 20 ? f.name.substring(0, 17) + '...' : f.name;
+                    const shimmerStyle = isCurrentlyProcessing ? 'animation: shimmer 1.5s ease-in-out infinite;' : '';
 
                     return `
-                        <tr class="skeleton-row ${shimmerClass}" style="opacity: ${rowOpacity}; transition: opacity 0.3s ease;">
-                            <td style="padding: 14px 16px; border-bottom: 1px solid var(--border);">
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    ${isCurrentlyProcessing ? `
-                                        <div style="width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--blue); border-top-color: transparent; animation: spin 0.8s linear infinite;"></div>
-                                        <span style="font-size: 13px; color: var(--blue); font-weight: 500;">Processing...</span>
-                                    ` : `
-                                        <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--border);"></div>
-                                        <span style="font-size: 12px; color: var(--text-muted);">${fileName}</span>
-                                    `}
-                                </div>
+                        <tr style="opacity: ${rowOpacity}; transition: opacity 0.3s ease;">
+                            <td style="padding: 12px; border-bottom: 1px solid var(--border); white-space: nowrap;">
+                                ${isCurrentlyProcessing ? `
+                                    <span style="display: inline-flex; align-items: center; gap: 8px;">
+                                        <span style="width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--blue); border-top-color: transparent; animation: spin 0.8s linear infinite; display: inline-block;"></span>
+                                        <span style="color: var(--blue); font-weight: 500;">Processing...</span>
+                                    </span>
+                                ` : `
+                                    <span style="color: var(--text-muted); font-size: 12px;">${fileName}</span>
+                                `}
                             </td>
-                            <td style="padding: 14px 12px; text-align: right; border-bottom: 1px solid var(--border);"><div class="skeleton-bar" style="width: 70px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto; ${isCurrentlyProcessing ? 'animation: shimmer 1.5s ease-in-out infinite;' : ''}"></div></td>
-                            <td style="padding: 14px 12px; text-align: right; border-bottom: 1px solid var(--border);"><div class="skeleton-bar" style="width: 70px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto; ${isCurrentlyProcessing ? 'animation: shimmer 1.5s ease-in-out infinite; animation-delay: 0.1s;' : ''}"></div></td>
-                            <td style="padding: 14px 12px; text-align: center; border-bottom: 1px solid var(--border);"><div class="skeleton-bar" style="width: 24px; height: 16px; background: var(--border); border-radius: 4px; margin: 0 auto; ${isCurrentlyProcessing ? 'animation: shimmer 1.5s ease-in-out infinite; animation-delay: 0.2s;' : ''}"></div></td>
-                            <td style="padding: 14px 12px; text-align: right; border-bottom: 1px solid var(--border);"><div class="skeleton-bar" style="width: 70px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto; ${isCurrentlyProcessing ? 'animation: shimmer 1.5s ease-in-out infinite; animation-delay: 0.3s;' : ''}"></div></td>
-                            <td style="padding: 14px 12px; text-align: right; border-bottom: 1px solid var(--border);"><div class="skeleton-bar" style="width: 60px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto; ${isCurrentlyProcessing ? 'animation: shimmer 1.5s ease-in-out infinite; animation-delay: 0.4s;' : ''}"></div></td>
-                            <td style="padding: 14px 12px; text-align: right; border-bottom: 1px solid var(--border);"><div class="skeleton-bar" style="width: 60px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto; ${isCurrentlyProcessing ? 'animation: shimmer 1.5s ease-in-out infinite; animation-delay: 0.5s;' : ''}"></div></td>
-                            <td style="padding: 14px 12px; text-align: right; border-bottom: 1px solid var(--border);"><div class="skeleton-bar" style="width: 60px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto; ${isCurrentlyProcessing ? 'animation: shimmer 1.5s ease-in-out infinite; animation-delay: 0.6s;' : ''}"></div></td>
-                            <td style="padding: 14px 12px; text-align: center; border-bottom: 1px solid var(--border);"><div class="skeleton-bar" style="width: 24px; height: 16px; background: var(--border); border-radius: 4px; margin: 0 auto; ${isCurrentlyProcessing ? 'animation: shimmer 1.5s ease-in-out infinite; animation-delay: 0.7s;' : ''}"></div></td>
-                            <td style="padding: 14px 12px; text-align: center; border-bottom: 1px solid var(--border);"><div class="skeleton-bar" style="width: 24px; height: 16px; background: var(--border); border-radius: 4px; margin: 0 auto; ${isCurrentlyProcessing ? 'animation: shimmer 1.5s ease-in-out infinite; animation-delay: 0.8s;' : ''}"></div></td>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right;"><div style="width: 80px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto; ${shimmerStyle}"></div></td>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right;"><div style="width: 80px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto; ${shimmerStyle}"></div></td>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: center;"><div style="width: 30px; height: 16px; background: var(--border); border-radius: 4px; margin: 0 auto; ${shimmerStyle}"></div></td>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right;"><div style="width: 80px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto; ${shimmerStyle}"></div></td>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right;"><div style="width: 70px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto; ${shimmerStyle}"></div></td>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right;"><div style="width: 70px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto; ${shimmerStyle}"></div></td>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right;"><div style="width: 70px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto; ${shimmerStyle}"></div></td>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: center;"><div style="width: 30px; height: 16px; background: var(--border); border-radius: 4px; margin: 0 auto; ${shimmerStyle}"></div></td>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: center;"><div style="width: 30px; height: 16px; background: var(--border); border-radius: 4px; margin: 0 auto; ${shimmerStyle}"></div></td>
                         </tr>
                     `;
                 }
 
-                // Has data - show full row with clickable cells and smooth transition
+                // Has data - show full row with clickable cells
                 const hasNSF = (data.nsf_count || 0) > 0;
                 const hasNeg = (data.days_negative || 0) > 0;
-                const statusColor = hasNSF || hasNeg ? 'var(--red)' : 'var(--green)';
 
                 return `
-                    <tr class="data-row loaded" style="animation: slideInFadeIn 0.4s ease-out; border-left: 3px solid ${statusColor};">
-                        <td class="clickable-cell" data-month="${i}" data-field="month" style="padding: 14px 12px; border-bottom: 1px solid var(--border); cursor: pointer; font-weight: 600;">
+                    <tr style="animation: slideInFadeIn 0.3s ease-out;">
+                        <td class="clickable-cell" data-month="${i}" data-field="month" style="padding: 12px; border-bottom: 1px solid var(--border); border-left: 3px solid ${hasNSF || hasNeg ? 'var(--red)' : 'var(--green)'}; cursor: pointer; font-weight: 600; white-space: nowrap;">
                             <span style="color: var(--text);">${data.month || 'Unknown'}</span>
                         </td>
-                        <td class="clickable-cell" data-month="${i}" data-field="deposits" style="padding: 14px 12px; border-bottom: 1px solid var(--border); cursor: pointer; text-align: right;">
+                        <td class="clickable-cell" data-month="${i}" data-field="deposits" style="padding: 12px; border-bottom: 1px solid var(--border); cursor: pointer; text-align: right; white-space: nowrap;">
                             <span style="color: var(--green); font-weight: 500;">$${(data.total_deposits || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
                         </td>
-                        <td class="clickable-cell" data-month="${i}" data-field="true_revenue" style="padding: 14px 12px; border-bottom: 1px solid var(--border); cursor: pointer; text-align: right;">
+                        <td class="clickable-cell" data-month="${i}" data-field="true_revenue" style="padding: 12px; border-bottom: 1px solid var(--border); cursor: pointer; text-align: right; white-space: nowrap;">
                             <span style="color: var(--gold); font-weight: 500;">$${(data.true_revenue || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
                         </td>
-                        <td class="clickable-cell" data-month="${i}" data-field="num_deposits" style="padding: 14px 12px; border-bottom: 1px solid var(--border); cursor: pointer; text-align: center;">
+                        <td class="clickable-cell" data-month="${i}" data-field="num_deposits" style="padding: 12px; border-bottom: 1px solid var(--border); cursor: pointer; text-align: center;">
                             <span style="color: var(--text-secondary);">${data.num_deposits || 0}</span>
                         </td>
-                        <td class="clickable-cell" data-month="${i}" data-field="withdrawals" style="padding: 14px 12px; border-bottom: 1px solid var(--border); cursor: pointer; text-align: right;">
+                        <td class="clickable-cell" data-month="${i}" data-field="withdrawals" style="padding: 12px; border-bottom: 1px solid var(--border); cursor: pointer; text-align: right; white-space: nowrap;">
                             <span style="color: var(--red); font-weight: 500;">$${(data.total_withdrawals || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
                         </td>
-                        <td class="clickable-cell" data-month="${i}" data-field="avg_balance" style="padding: 14px 12px; border-bottom: 1px solid var(--border); cursor: pointer; text-align: right;">
-                            <span style="color: var(--text); font-weight: 500;">$${(data.average_daily_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                        <td class="clickable-cell" data-month="${i}" data-field="avg_balance" style="padding: 12px; border-bottom: 1px solid var(--border); cursor: pointer; text-align: right; white-space: nowrap;">
+                            <span style="color: var(--text);">$${(data.average_daily_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
                         </td>
-                        <td class="clickable-cell" data-month="${i}" data-field="open_balance" style="padding: 14px 12px; border-bottom: 1px solid var(--border); cursor: pointer; text-align: right;">
+                        <td class="clickable-cell" data-month="${i}" data-field="open_balance" style="padding: 12px; border-bottom: 1px solid var(--border); cursor: pointer; text-align: right; white-space: nowrap;">
                             <span style="color: var(--text-secondary);">$${(data.opening_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
                         </td>
-                        <td class="clickable-cell" data-month="${i}" data-field="end_balance" style="padding: 14px 12px; border-bottom: 1px solid var(--border); cursor: pointer; text-align: right;">
-                            <span style="color: ${(data.ending_balance || 0) < 0 ? 'var(--red)' : 'var(--text)'}; font-weight: 500;">$${(data.ending_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                        <td class="clickable-cell" data-month="${i}" data-field="end_balance" style="padding: 12px; border-bottom: 1px solid var(--border); cursor: pointer; text-align: right; white-space: nowrap;">
+                            <span style="color: ${(data.ending_balance || 0) < 0 ? 'var(--red)' : 'var(--text)'};">$${(data.ending_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
                         </td>
-                        <td class="clickable-cell" data-month="${i}" data-field="nsf" style="padding: 14px 12px; border-bottom: 1px solid var(--border); cursor: pointer; text-align: center;">
+                        <td class="clickable-cell" data-month="${i}" data-field="nsf" style="padding: 12px; border-bottom: 1px solid var(--border); cursor: pointer; text-align: center;">
                             <span style="color: ${hasNSF ? 'var(--red)' : 'var(--text-muted)'}; font-weight: ${hasNSF ? '700' : '400'};">${data.nsf_count || 0}</span>
                         </td>
-                        <td class="clickable-cell" data-month="${i}" data-field="neg_days" style="padding: 14px 12px; border-bottom: 1px solid var(--border); cursor: pointer; text-align: center;">
+                        <td class="clickable-cell" data-month="${i}" data-field="neg_days" style="padding: 12px; border-bottom: 1px solid var(--border); cursor: pointer; text-align: center;">
                             <span style="color: ${hasNeg ? 'var(--red)' : 'var(--text-muted)'}; font-weight: ${hasNeg ? '700' : '400'};">${data.days_negative || 0}</span>
                         </td>
                     </tr>
