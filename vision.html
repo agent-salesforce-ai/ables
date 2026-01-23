@@ -2278,6 +2278,13 @@
         .fraud-module.risk-low .fraud-module-status { background: var(--green-bg); color: var(--green); }
         .fraud-module.risk-medium .fraud-module-status { background: var(--yellow-bg); color: var(--yellow); }
         .fraud-module.risk-high .fraud-module-status { background: var(--red-bg); color: var(--red); }
+        .fraud-module.risk-pending { border-left: 3px solid var(--text-muted); opacity: 0.7; }
+        .fraud-module.risk-pending .fraud-module-icon { animation: pulse 1.5s ease-in-out infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
 
         .fraud-module .expand-icon {
             width: 20px;
@@ -4963,6 +4970,9 @@
                 });
                 document.getElementById('fraudSection').classList.remove('hidden');
 
+                // Show fraud section with empty grid immediately
+                renderFraudResultsLive();
+
                 for (let i = 0; i < files.length; i++) {
                     const scanProgress = 5 + Math.round((i / files.length) * 20);
                     showLoading(true, `Scanning document ${i + 1} of ${files.length}...`, {
@@ -4971,9 +4981,10 @@
                         subtext: `Checking for digital alterations and inconsistencies`
                     });
                     files[i].status = await scanForFraud(files[i], apiKey);
+                    // Update live as each document is scanned
+                    renderFraudResultsLive();
+                    updateFileList();
                 }
-                updateFileList();
-                renderFraudResults();
 
                 // Step 3: Extract Data
                 setStep(3);
@@ -5160,6 +5171,101 @@ End with exactly one: RISK_LEVEL:CLEAN or RISK_LEVEL:WARNING or RISK_LEVEL:DANGE
         function toggleFraudModule(index) {
             const module = document.getElementById('fraud-module-' + index);
             module.classList.toggle('expanded');
+        }
+
+        // Live rendering - shows each document as it's processed
+        function renderFraudResultsLive() {
+            const scanned = files.filter(f => f.status);
+            const pending = files.filter(f => !f.status);
+            const clean = scanned.filter(f => f.status === 'clean').length;
+            const warning = scanned.filter(f => f.status === 'warning').length;
+            const danger = scanned.filter(f => f.status === 'danger').length;
+
+            // Build modules for all files - show status or spinner
+            const documentModules = files.map((f, i) => {
+                if (!f.status) {
+                    // Not yet scanned - show pending state
+                    const shortName = f.name.length > 35 ? f.name.substring(0, 32) + '...' : f.name;
+                    return `
+                        <div class="fraud-module risk-pending" id="fraud-module-${i}">
+                            <div class="fraud-module-header">
+                                <div class="fraud-module-icon" style="animation: pulse 1.5s ease-in-out infinite;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                </div>
+                                <div class="fraud-module-info">
+                                    <div class="fraud-module-name">${shortName}</div>
+                                    <div class="fraud-module-summary" style="color: var(--text-muted);">Waiting to scan...</div>
+                                </div>
+                                <div class="fraud-module-status" style="background: var(--bg-tertiary); color: var(--text-muted);">PENDING</div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Already scanned - show full module
+                const statusText = f.status === 'danger' ? 'HIGH RISK' : f.status === 'warning' ? 'REVIEW' : 'CLEAN';
+                const riskClass = f.status === 'danger' ? 'risk-high' : f.status === 'warning' ? 'risk-medium' : 'risk-low';
+                const statusIcon = f.status === 'danger'
+                    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+                    : f.status === 'warning'
+                    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+                    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+
+                const shortName = f.name.length > 35 ? f.name.substring(0, 32) + '...' : f.name;
+                const analysis = f.fraudAnalysis || 'No analysis details available.';
+
+                return `
+                    <div class="fraud-module ${riskClass}" id="fraud-module-${i}" style="animation: fadeIn 0.3s ease-out;">
+                        <div class="fraud-module-header" onclick="toggleFraudModule(${i})">
+                            <div class="fraud-module-icon">${statusIcon}</div>
+                            <div class="fraud-module-info">
+                                <div class="fraud-module-name">${shortName}</div>
+                                <div class="fraud-module-summary">${f.pages?.length || 0} page(s) analyzed</div>
+                            </div>
+                            <div class="fraud-module-status">${statusText}</div>
+                            <div class="expand-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                            </div>
+                        </div>
+                        <div class="fraud-module-content" id="fraud-content-${i}">
+                            <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.6; margin: 0;">${analysis}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Status text changes based on progress
+            const statusText = pending.length > 0
+                ? `Scanning ${scanned.length}/${files.length}...`
+                : danger > 0 ? 'Issues Detected' : warning > 0 ? 'Review Required' : 'All Clear';
+            const statusColor = pending.length > 0
+                ? 'var(--blue)'
+                : danger > 0 ? 'var(--red)' : warning > 0 ? 'var(--yellow)' : 'var(--green)';
+
+            document.getElementById('fraudResults').innerHTML = `
+                <!-- Summary Stats Row -->
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span style="font-size: 20px; font-weight: 700; color: var(--green);">${clean}</span>
+                        <span style="font-size: 12px; color: var(--text-muted);">Clean</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span style="font-size: 20px; font-weight: 700; color: var(--yellow);">${warning}</span>
+                        <span style="font-size: 12px; color: var(--text-muted);">Review</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span style="font-size: 20px; font-weight: 700; color: var(--red);">${danger}</span>
+                        <span style="font-size: 12px; color: var(--text-muted);">Risk</span>
+                    </div>
+                    <div style="flex: 1;"></div>
+                    <div style="padding: 6px 12px; background: ${statusColor}15; border-radius: 20px; font-size: 12px; font-weight: 600; color: ${statusColor};">${statusText}</div>
+                </div>
+
+                <!-- Document Modules Grid -->
+                <div class="fraud-modules-grid">
+                    ${documentModules}
+                </div>
+            `;
         }
 
         // Extract data from a single bank statement file
