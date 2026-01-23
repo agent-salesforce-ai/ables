@@ -6328,6 +6328,8 @@ Return ONLY valid JSON:
         }
 
         async function extractBankData(apiKey, onBusinessNameFound = null) {
+            console.log(`[extractBankData] Starting extraction for ${files.length} files`);
+
             // Process statements SEQUENTIALLY for live updates
             showLoading(true, `Extracting data from ${files.length} statements...`, {
                 step: 'extract',
@@ -6342,6 +6344,7 @@ Return ONLY valid JSON:
 
             // Extract each statement with retry logic - ONE AT A TIME for live updates
             const extractWithRetry = async (file, index, maxRetries = 2) => {
+                console.log(`[extractWithRetry] Processing file ${index + 1}: ${file?.name}`);
                 for (let attempt = 0; attempt <= maxRetries; attempt++) {
                     try {
                         const result = await extractSingleStatement(file, apiKey, index);
@@ -6363,7 +6366,9 @@ Return ONLY valid JSON:
 
             // Process sequentially for live updates
             const results = [];
+            console.log(`[extractBankData] Starting loop for ${files.length} files`);
             for (let i = 0; i < files.length; i++) {
+                console.log(`[extractBankData] Loop iteration ${i + 1}`);
                 const progress = 35 + Math.round((i / files.length) * 30);
                 showLoading(true, `Extracting statement ${i + 1} of ${files.length}...`, {
                     step: 'extract',
