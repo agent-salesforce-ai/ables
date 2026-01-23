@@ -3639,19 +3639,20 @@
                 if (!includeResearch) clone.querySelector('#researchSection')?.remove();
                 if (!includeLenders) clone.querySelector('#lenderSection')?.remove();
 
-                // FORCE all backgrounds to be light - this is the nuclear option
-                if (useLight) {
-                    forceAllLightStyles(clone);
-                }
-
                 wrapper.appendChild(clone);
 
                 // Add footer
                 wrapper.appendChild(createExportFooter(isDark));
 
+                // IMPORTANT: Append to DOM FIRST so computed styles work
                 document.body.appendChild(wrapper);
 
-                await new Promise(r => setTimeout(r, 200));
+                // Now force all light styles AFTER it's in the DOM
+                if (useLight) {
+                    forceAllLightStyles(clone);
+                }
+
+                await new Promise(r => setTimeout(r, 300));
 
                 const canvas = await html2canvas(wrapper, {
                     scale: exportSettings.scale,
@@ -3724,22 +3725,28 @@
 
         // Nuclear option - force ALL elements to light styles
         function forceAllLightStyles(clone) {
+            // Set wrapper background explicitly
+            clone.style.background = '#ffffff';
+            clone.style.backgroundColor = '#ffffff';
+
             // First, iterate through ALL elements and force light colors
             clone.querySelectorAll('*').forEach(el => {
                 const style = el.style;
                 const computed = window.getComputedStyle(el);
 
-                // Force background colors
+                // Force background colors - check actual computed value
                 const bg = computed.backgroundColor;
-                if (bg) {
+                if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') {
                     const rgb = bg.match(/\d+/g);
                     if (rgb && rgb.length >= 3) {
                         const [r, g, b] = rgb.map(Number);
-                        // If dark background, make it white or light gray
-                        if (r < 40 && g < 40 && b < 40) {
-                            style.backgroundColor = '#ffffff';
-                        } else if (r < 80 && g < 80 && b < 80) {
-                            style.backgroundColor = '#f9fafb';
+                        // If dark background (r,g,b all below threshold), make it white/light
+                        if (r < 50 && g < 50 && b < 50) {
+                            style.setProperty('background-color', '#ffffff', 'important');
+                            style.setProperty('background', '#ffffff', 'important');
+                        } else if (r < 100 && g < 100 && b < 100) {
+                            style.setProperty('background-color', '#f9fafb', 'important');
+                            style.setProperty('background', '#f9fafb', 'important');
                         }
                     }
                 }
@@ -3750,9 +3757,11 @@
                     const rgb = color.match(/\d+/g);
                     if (rgb && rgb.length >= 3) {
                         const [r, g, b] = rgb.map(Number);
-                        // If light text, make it dark
-                        if (r > 200 && g > 200 && b > 200) {
-                            style.color = '#111827';
+                        // If light text (white/gray), make it dark
+                        if (r > 180 && g > 180 && b > 180) {
+                            style.setProperty('color', '#111827', 'important');
+                        } else if (r > 140 && g > 140 && b > 140) {
+                            style.setProperty('color', '#374151', 'important');
                         }
                     }
                 }
@@ -3763,8 +3772,8 @@
                     const rgb = borderColor.match(/\d+/g);
                     if (rgb && rgb.length >= 3) {
                         const [r, g, b] = rgb.map(Number);
-                        if (r < 60 && g < 60 && b < 60) {
-                            style.borderColor = '#e5e7eb';
+                        if (r < 80 && g < 80 && b < 80) {
+                            style.setProperty('border-color', '#d1d5db', 'important');
                         }
                     }
                 }
