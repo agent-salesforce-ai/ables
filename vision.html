@@ -6203,21 +6203,16 @@ End with exactly one: RISK_LEVEL:CLEAN or RISK_LEVEL:WARNING or RISK_LEVEL:DANGE
         async function extractSingleStatement(file, apiKey, fileIndex) {
             console.log(`[Extract] Starting statement ${fileIndex + 1}, file: ${file.name}, pages: ${file.pages?.length || 0}`);
 
-            // Limit pages to avoid API payload limits - bank summaries are on first pages
-            const maxPages = Math.min(file.pages.length, 5);
             const images = [];
-            for (let i = 0; i < maxPages; i++) {
-                const page = file.pages[i];
+            for (const page of file.pages) {
                 const canvas = document.createElement('canvas');
                 canvas.width = page.width;
                 canvas.height = page.height;
                 canvas.getContext('2d').drawImage(page, 0, 0);
-                // Lower quality for large docs to reduce payload size
-                const quality = file.pages.length > 5 ? 0.7 : 0.85;
-                images.push(canvas.toDataURL('image/jpeg', quality).split(',')[1]);
+                images.push(canvas.toDataURL('image/jpeg', 0.85).split(',')[1]);
             }
 
-            console.log(`[Extract] Prepared ${images.length}/${file.pages.length} pages, total size: ${Math.round(images.reduce((a,b) => a + b.length, 0) / 1024)}KB`);
+            console.log(`[Extract] Prepared ${images.length} images, total size: ${Math.round(images.reduce((a,b) => a + b.length, 0) / 1024)}KB`);
 
             const parts = [
                 { text: `You are analyzing a SINGLE bank statement for MCA underwriting. This is statement ${fileIndex + 1}.
