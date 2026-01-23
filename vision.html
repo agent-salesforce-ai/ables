@@ -543,6 +543,37 @@
             padding: 20px;
         }
 
+        .card-export-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 6px 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .card-export-btn:hover {
+            background: var(--bg-hover);
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .card-export-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .section-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         /* Status Message */
         .status-message {
             padding: 12px 16px;
@@ -2186,6 +2217,10 @@
             <div class="section-card hidden" id="fraudSection">
                 <div class="section-header">
                     <span>Fraud Analysis</span>
+                    <button class="card-export-btn" onclick="exportCardAsPng('fraudSection', 'Fraud_Analysis')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PNG
+                    </button>
                 </div>
                 <div class="section-body" id="fraudResults"></div>
             </div>
@@ -2194,6 +2229,10 @@
             <div class="section-card hidden" id="dataSection">
                 <div class="section-header">
                     <span>Bank Analysis Worksheet</span>
+                    <button class="card-export-btn" onclick="exportCardAsPng('dataSection', 'Bank_Analysis')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PNG
+                    </button>
                 </div>
                 <div class="section-body" id="extractedData"></div>
             </div>
@@ -2202,6 +2241,10 @@
             <div class="section-card hidden" id="chartsSection">
                 <div class="section-header">
                     <span>Cash Flow Analysis</span>
+                    <button class="card-export-btn" onclick="exportCardAsPng('chartsSection', 'Cash_Flow')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PNG
+                    </button>
                 </div>
                 <div class="section-body">
                     <div class="chart-row">
@@ -2219,7 +2262,13 @@
             <div class="section-card hidden" id="debtSection">
                 <div class="section-header">
                     <span>Existing Debt Obligations</span>
-                    <span class="debt-total-badge" id="debtTotalBadge">$0/mo</span>
+                    <div class="section-header-actions">
+                        <span class="debt-total-badge" id="debtTotalBadge">$0/mo</span>
+                        <button class="card-export-btn" onclick="exportCardAsPng('debtSection', 'Debt_Obligations')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            PNG
+                        </button>
+                    </div>
                 </div>
                 <div class="section-body">
                     <div class="debt-summary" id="debtSummary">
@@ -2251,7 +2300,13 @@
             <div class="section-card hidden" id="researchSection">
                 <div class="section-header">
                     <span>Background Research: <span id="researchBusinessName">-</span></span>
-                    <button class="btn" id="expandAllBtn" onclick="toggleAllModules()" style="font-size: 12px; padding: 6px 12px;">Expand All</button>
+                    <div class="section-header-actions">
+                        <button class="btn" id="expandAllBtn" onclick="toggleAllModules()" style="font-size: 12px; padding: 6px 12px;">Expand All</button>
+                        <button class="card-export-btn" onclick="exportCardAsPng('researchSection', 'Background_Research')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            PNG
+                        </button>
+                    </div>
                 </div>
                 <div class="section-body">
                     <!-- Progress Bar -->
@@ -2292,7 +2347,13 @@
             <div class="section-card hidden" id="lenderSection">
                 <div class="section-header">
                     <span>Lender Matches</span>
-                    <span class="file-count" id="lenderCount"></span>
+                    <div class="section-header-actions">
+                        <span class="file-count" id="lenderCount"></span>
+                        <button class="card-export-btn" onclick="exportCardAsPng('lenderSection', 'Lender_Matches')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            PNG
+                        </button>
+                    </div>
                 </div>
                 <div class="section-body">
                     <div class="lender-grid" id="lenderResults"></div>
@@ -2303,6 +2364,10 @@
             <div class="section-card hidden" id="submitSection">
                 <div class="section-header">
                     <span>Submission Instructions</span>
+                    <button class="card-export-btn" onclick="exportCardAsPng('submitSection', 'Submit_Instructions')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PNG
+                    </button>
                 </div>
                 <div class="section-body" id="submitInstructions"></div>
             </div>
@@ -2729,6 +2794,103 @@
 
         async function exportReportAsPng() {
             await exportReportAs('png');
+        }
+
+        async function exportCardAsPng(cardId, cardName) {
+            const card = document.getElementById(cardId);
+            if (!card) {
+                showStatus('Card not found', 'error');
+                return;
+            }
+
+            showStatus('Generating PNG...', 'info');
+
+            try {
+                // Hide the export button during capture
+                const exportBtn = card.querySelector('.card-export-btn');
+                if (exportBtn) exportBtn.style.display = 'none';
+
+                // Expand any hidden content within the card
+                const hiddenEls = card.querySelectorAll('.hidden');
+                hiddenEls.forEach(el => el.classList.remove('hidden'));
+
+                const canvas = await html2canvas(card, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    allowTaint: true,
+                    onclone: (clonedDoc) => {
+                        const clonedCard = clonedDoc.getElementById(cardId);
+                        if (!clonedCard) return;
+
+                        // Hide export button in clone
+                        const clonedBtn = clonedCard.querySelector('.card-export-btn');
+                        if (clonedBtn) clonedBtn.style.display = 'none';
+
+                        // Inject light theme CSS
+                        const style = clonedDoc.createElement('style');
+                        style.textContent = `
+                            :root, html, body, * {
+                                --bg: #f8fafc !important;
+                                --bg-secondary: #ffffff !important;
+                                --bg-tertiary: #f1f5f9 !important;
+                                --bg-hover: #e2e8f0 !important;
+                                --text: #0f172a !important;
+                                --text-secondary: #475569 !important;
+                                --text-tertiary: #64748b !important;
+                                --border: #e2e8f0 !important;
+                                --border-secondary: #cbd5e1 !important;
+                            }
+                            .section-card {
+                                background: #ffffff !important;
+                                border: 1px solid #e2e8f0 !important;
+                            }
+                            .section-header {
+                                background: #f8fafc !important;
+                                color: #0f172a !important;
+                                border-bottom: 1px solid #e2e8f0 !important;
+                            }
+                            .section-body {
+                                background: #ffffff !important;
+                            }
+                            .risk-chip {
+                                background: #f1f5f9 !important;
+                            }
+                            .risk-chip.good { background: rgba(34, 197, 94, 0.15) !important; }
+                            .risk-chip.warn { background: rgba(234, 179, 8, 0.15) !important; }
+                            .risk-chip.bad { background: rgba(239, 68, 68, 0.15) !important; }
+                            table { background: #ffffff !important; }
+                            th { background: #f8fafc !important; color: #0f172a !important; }
+                            td { color: #0f172a !important; border-color: #e2e8f0 !important; }
+                            .mca-section, .mca-alert { background: rgba(239, 68, 68, 0.1) !important; }
+                            .debt-stat, .research-stat { background: #f8fafc !important; }
+                            .chart-container { background: #ffffff !important; }
+                        `;
+                        clonedDoc.head.appendChild(style);
+                        clonedDoc.documentElement.setAttribute('data-theme', 'light');
+                    }
+                });
+
+                // Restore button visibility
+                if (exportBtn) exportBtn.style.display = '';
+
+                // Restore hidden elements
+                hiddenEls.forEach(el => el.classList.add('hidden'));
+
+                const businessName = extractedBusinessInfo.name || 'Report';
+                const filename = `${businessName.replace(/[^a-z0-9]/gi, '_')}_${cardName}_${new Date().toISOString().split('T')[0]}.png`;
+
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png', 1.0);
+                link.click();
+
+                showStatus(`${cardName.replace(/_/g, ' ')} exported!`, 'success');
+            } catch (error) {
+                console.error('Export error:', error);
+                showStatus('Error exporting PNG: ' + error.message, 'error');
+            }
         }
 
         async function exportReportAs(format = 'png') {
