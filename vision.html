@@ -5810,132 +5810,209 @@ Return ONLY valid JSON:
             };
         }
 
-        // Live rendering - shows each statement as it's extracted
+        // Store live extraction results globally for click handlers
+        let liveExtractionResults = [];
+
+        // Show cell detail popup
+        function showCellDetail(monthIndex, field) {
+            const data = liveExtractionResults[monthIndex];
+            if (!data) return;
+
+            const fieldLabels = {
+                deposits: 'Total Deposits',
+                true_revenue: 'True Revenue',
+                num_deposits: 'Number of Deposits',
+                withdrawals: 'Total Withdrawals',
+                avg_balance: 'Average Daily Balance',
+                open_balance: 'Opening Balance',
+                end_balance: 'Ending Balance',
+                nsf: 'NSF/Overdraft Items',
+                neg_days: 'Days Negative'
+            };
+
+            const fieldValues = {
+                deposits: `$${(data.total_deposits || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}`,
+                true_revenue: `$${(data.true_revenue || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}`,
+                num_deposits: data.num_deposits || 0,
+                withdrawals: `$${(data.total_withdrawals || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}`,
+                avg_balance: `$${(data.average_daily_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}`,
+                open_balance: `$${(data.opening_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}`,
+                end_balance: `$${(data.ending_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}`,
+                nsf: data.nsf_count || 0,
+                neg_days: data.days_negative || 0
+            };
+
+            const fieldDetails = {
+                deposits: 'Sum of all credits and deposits for this statement period.',
+                true_revenue: 'Deposits minus internal transfers, loan proceeds, and owner contributions.',
+                num_deposits: 'Total count of individual deposit transactions.',
+                withdrawals: 'Sum of all debits and withdrawals for this statement period.',
+                avg_balance: 'Average of all daily ending balances throughout the month.',
+                open_balance: 'Account balance at the start of the statement period.',
+                end_balance: 'Account balance at the end of the statement period.',
+                nsf: 'Non-sufficient funds fees and overdraft charges detected.',
+                neg_days: 'Number of days the account had a negative balance.'
+            };
+
+            // Create popup
+            const popup = document.createElement('div');
+            popup.id = 'cellDetailPopup';
+            popup.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 24px; z-index: 10000; min-width: 320px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);';
+            popup.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <div style="font-size: 12px; color: var(--gold); font-weight: 600;">${data.month}</div>
+                    <button onclick="document.getElementById('cellDetailPopup').remove(); document.getElementById('cellDetailOverlay').remove();" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 20px;">&times;</button>
+                </div>
+                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">${fieldLabels[field]}</div>
+                <div style="font-size: 28px; font-weight: 700; color: var(--text); margin-bottom: 12px;">${fieldValues[field]}</div>
+                <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">${fieldDetails[field]}</div>
+            `;
+
+            const overlay = document.createElement('div');
+            overlay.id = 'cellDetailOverlay';
+            overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999;';
+            overlay.onclick = () => { popup.remove(); overlay.remove(); };
+
+            document.body.appendChild(overlay);
+            document.body.appendChild(popup);
+        }
+
+        // Live rendering - shows each statement as horizontal table rows with clickable cells
         function renderExtractedDataLive(extractedResults) {
+            liveExtractionResults = extractedResults;
             const container = document.getElementById('extractedData');
 
-            if (extractedResults.length === 0) {
-                container.innerHTML = `
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; max-width: 800px; margin: 0 auto;">
-                        ${files.map((f, i) => `
-                            <div class="statement-card pending" style="background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 10px; padding: 16px; opacity: 0.6;">
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <div style="width: 32px; height: 32px; border-radius: 6px; background: var(--bg-secondary); display: flex; align-items: center; justify-content: center; animation: pulse 1.5s ease-in-out infinite;">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; color: var(--text-muted);"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                    </div>
-                                    <div style="flex: 1; min-width: 0;">
-                                        <div style="font-size: 13px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${f.name.length > 25 ? f.name.substring(0, 22) + '...' : f.name}</div>
-                                        <div style="font-size: 11px; color: var(--text-muted);">Waiting...</div>
-                                    </div>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-                return;
-            }
-
-            // Build cards for each statement - showing extracted data as it comes in
-            const statementCards = files.map((f, i) => {
+            // Build rows for each statement
+            const statementRows = files.map((f, i) => {
                 const data = extractedResults[i];
                 if (!data) {
-                    // Still pending
+                    // Still pending - show skeleton row with pulsing indicator
                     return `
-                        <div class="statement-card pending" style="background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 10px; padding: 16px; opacity: 0.6;">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <div style="width: 32px; height: 32px; border-radius: 6px; background: var(--bg-secondary); display: flex; align-items: center; justify-content: center; animation: pulse 1.5s ease-in-out infinite;">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; color: var(--text-muted);"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <tr style="opacity: 0.5;">
+                            <td style="padding: 14px 16px; border-bottom: 1px solid var(--border);">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--blue); animation: pulse 1.5s ease-in-out infinite;"></div>
+                                    <span style="font-size: 13px; color: var(--text-muted);">Extracting...</span>
                                 </div>
-                                <div style="flex: 1; min-width: 0;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${f.name.length > 25 ? f.name.substring(0, 22) + '...' : f.name}</div>
-                                    <div style="font-size: 11px; color: var(--text-muted);">Waiting...</div>
-                                </div>
-                            </div>
-                        </div>
+                            </td>
+                            <td style="padding: 14px 12px; text-align: right; color: var(--text-muted); border-bottom: 1px solid var(--border);">—</td>
+                            <td style="padding: 14px 12px; text-align: right; color: var(--text-muted); border-bottom: 1px solid var(--border);">—</td>
+                            <td style="padding: 14px 12px; text-align: center; color: var(--text-muted); border-bottom: 1px solid var(--border);">—</td>
+                            <td style="padding: 14px 12px; text-align: right; color: var(--text-muted); border-bottom: 1px solid var(--border);">—</td>
+                            <td style="padding: 14px 12px; text-align: right; color: var(--text-muted); border-bottom: 1px solid var(--border);">—</td>
+                            <td style="padding: 14px 12px; text-align: right; color: var(--text-muted); border-bottom: 1px solid var(--border);">—</td>
+                            <td style="padding: 14px 12px; text-align: center; color: var(--text-muted); border-bottom: 1px solid var(--border);">—</td>
+                            <td style="padding: 14px 12px; text-align: center; color: var(--text-muted); border-bottom: 1px solid var(--border);">—</td>
+                        </tr>
                     `;
                 }
 
-                // Has data - show extracted info
+                // Has data - show full row with clickable cells
                 const hasNSF = (data.nsf_count || 0) > 0;
                 const hasNeg = (data.days_negative || 0) > 0;
-                const borderColor = hasNSF || hasNeg ? 'var(--red)' : 'var(--green)';
+                const statusColor = hasNSF || hasNeg ? 'var(--red)' : 'var(--green)';
+                const cellStyle = 'padding: 14px 12px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s;';
+                const cellHover = 'onmouseenter="this.style.background=\'var(--bg-tertiary)\'" onmouseleave="this.style.background=\'transparent\'"';
 
                 return `
-                    <div class="statement-card extracted" style="background: var(--bg-secondary); border: 1px solid var(--border); border-left: 3px solid ${borderColor}; border-radius: 10px; padding: 16px; animation: fadeIn 0.3s ease-out;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                            <div style="font-size: 14px; font-weight: 700; color: var(--gold);">${data.month || 'Unknown'}</div>
-                            <div style="display: flex; gap: 6px;">
-                                ${hasNSF ? `<span style="background: var(--red-bg); color: var(--red); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600;">${data.nsf_count} NSF</span>` : ''}
-                                ${hasNeg ? `<span style="background: var(--red-bg); color: var(--red); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600;">${data.days_negative}d NEG</span>` : ''}
-                                ${!hasNSF && !hasNeg ? `<span style="background: var(--green-bg); color: var(--green); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600;">CLEAN</span>` : ''}
-                            </div>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px;">
-                            <div>
-                                <div style="color: var(--text-muted); font-size: 10px;">DEPOSITS</div>
-                                <div style="color: var(--green); font-weight: 600;">$${(data.total_deposits || 0).toLocaleString()}</div>
-                            </div>
-                            <div>
-                                <div style="color: var(--text-muted); font-size: 10px;">TRUE REV</div>
-                                <div style="color: var(--gold); font-weight: 600;">$${(data.true_revenue || 0).toLocaleString()}</div>
-                            </div>
-                            <div>
-                                <div style="color: var(--text-muted); font-size: 10px;">AVG BAL</div>
-                                <div style="color: var(--text); font-weight: 600;">$${(data.average_daily_balance || 0).toLocaleString()}</div>
-                            </div>
-                            <div>
-                                <div style="color: var(--text-muted); font-size: 10px;">END BAL</div>
-                                <div style="color: ${(data.ending_balance || 0) < 0 ? 'var(--red)' : 'var(--text)'}; font-weight: 600;">$${(data.ending_balance || 0).toLocaleString()}</div>
-                            </div>
-                        </div>
-                    </div>
+                    <tr style="animation: fadeIn 0.3s ease-out; border-left: 3px solid ${statusColor};">
+                        <td style="${cellStyle} font-weight: 600;" onclick="showCellDetail(${i}, 'deposits')" ${cellHover}>
+                            <span style="color: var(--text);">${data.month || 'Unknown'}</span>
+                        </td>
+                        <td style="${cellStyle} text-align: right;" onclick="showCellDetail(${i}, 'deposits')" ${cellHover}>
+                            <span style="color: var(--green); font-weight: 500;">$${(data.total_deposits || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                        </td>
+                        <td style="${cellStyle} text-align: right;" onclick="showCellDetail(${i}, 'true_revenue')" ${cellHover}>
+                            <span style="color: var(--gold); font-weight: 500;">$${(data.true_revenue || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                        </td>
+                        <td style="${cellStyle} text-align: center;" onclick="showCellDetail(${i}, 'num_deposits')" ${cellHover}>
+                            <span style="color: var(--text-secondary);">${data.num_deposits || 0}</span>
+                        </td>
+                        <td style="${cellStyle} text-align: right;" onclick="showCellDetail(${i}, 'withdrawals')" ${cellHover}>
+                            <span style="color: var(--red); font-weight: 500;">$${(data.total_withdrawals || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                        </td>
+                        <td style="${cellStyle} text-align: right;" onclick="showCellDetail(${i}, 'avg_balance')" ${cellHover}>
+                            <span style="color: var(--text); font-weight: 500;">$${(data.average_daily_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                        </td>
+                        <td style="${cellStyle} text-align: right;" onclick="showCellDetail(${i}, 'open_balance')" ${cellHover}>
+                            <span style="color: var(--text-secondary);">$${(data.opening_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                        </td>
+                        <td style="${cellStyle} text-align: right;" onclick="showCellDetail(${i}, 'end_balance')" ${cellHover}>
+                            <span style="color: ${(data.ending_balance || 0) < 0 ? 'var(--red)' : 'var(--text)'}; font-weight: 500;">$${(data.ending_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                        </td>
+                        <td style="${cellStyle} text-align: center;" onclick="showCellDetail(${i}, 'nsf')" ${cellHover}>
+                            <span style="color: ${hasNSF ? 'var(--red)' : 'var(--text-muted)'}; font-weight: ${hasNSF ? '700' : '400'};">${data.nsf_count || 0}</span>
+                        </td>
+                    </tr>
                 `;
             }).join('');
 
-            // Calculate running totals from extracted data
+            // Calculate running totals
             const extractedCount = extractedResults.length;
             const totals = extractedResults.reduce((acc, m) => ({
                 deposits: acc.deposits + (m.total_deposits || 0),
                 trueRevenue: acc.trueRevenue + (m.true_revenue || 0),
+                withdrawals: acc.withdrawals + (m.total_withdrawals || 0),
                 avgBalSum: acc.avgBalSum + (m.average_daily_balance || 0),
+                numDeps: acc.numDeps + (m.num_deposits || 0),
                 nsf: acc.nsf + (m.nsf_count || 0),
                 negDays: acc.negDays + (m.days_negative || 0)
-            }), { deposits: 0, trueRevenue: 0, avgBalSum: 0, nsf: 0, negDays: 0 });
+            }), { deposits: 0, trueRevenue: 0, withdrawals: 0, avgBalSum: 0, numDeps: 0, nsf: 0, negDays: 0 });
+
+            // Averages row
+            const avgRow = extractedCount > 0 ? `
+                <tr style="background: var(--bg-tertiary); font-weight: 600;">
+                    <td style="padding: 14px 16px;"><span style="color: var(--text); text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px;">AVERAGE</span></td>
+                    <td style="padding: 14px 12px; text-align: right;"><span style="color: var(--green);">$${(totals.deposits / extractedCount).toLocaleString('en-US', {minimumFractionDigits: 2})}</span></td>
+                    <td style="padding: 14px 12px; text-align: right;"><span style="color: var(--gold);">$${(totals.trueRevenue / extractedCount).toLocaleString('en-US', {minimumFractionDigits: 2})}</span></td>
+                    <td style="padding: 14px 12px; text-align: center;"><span style="color: var(--text-secondary);">${Math.round(totals.numDeps / extractedCount)}</span></td>
+                    <td style="padding: 14px 12px; text-align: right;"><span style="color: var(--red);">$${(totals.withdrawals / extractedCount).toLocaleString('en-US', {minimumFractionDigits: 2})}</span></td>
+                    <td style="padding: 14px 12px; text-align: right;"><span style="color: var(--text);">$${(totals.avgBalSum / extractedCount).toLocaleString('en-US', {minimumFractionDigits: 2})}</span></td>
+                    <td style="padding: 14px 12px; text-align: right;"><span style="color: var(--text-muted);">-</span></td>
+                    <td style="padding: 14px 12px; text-align: right;"><span style="color: var(--text-muted);">-</span></td>
+                    <td style="padding: 14px 12px; text-align: center;"><span style="color: ${totals.nsf > 0 ? 'var(--red)' : 'var(--text-muted)'};">${(totals.nsf / extractedCount).toFixed(2)}</span></td>
+                </tr>
+            ` : '';
 
             container.innerHTML = `
                 <!-- Progress indicator -->
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding: 12px; background: var(--bg-tertiary); border-radius: 8px;">
-                    <div style="font-size: 13px; font-weight: 600; color: var(--text);">
-                        Extracted ${extractedCount} of ${files.length} statements
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding: 14px 18px; background: var(--bg-tertiary); border-radius: 10px; border: 1px solid var(--border);">
+                    <div style="font-size: 14px; font-weight: 600; color: var(--text);">
+                        ${extractedCount < files.length ? 'Extracting' : 'Extracted'} ${extractedCount} of ${files.length} statements
                     </div>
-                    <div style="flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden;">
-                        <div style="width: ${(extractedCount / files.length) * 100}%; height: 100%; background: var(--green); transition: width 0.3s ease;"></div>
+                    <div style="flex: 1; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden;">
+                        <div style="width: ${(extractedCount / files.length) * 100}%; height: 100%; background: ${extractedCount === files.length ? 'var(--green)' : 'var(--blue)'}; transition: width 0.3s ease;"></div>
                     </div>
+                    ${extractedCount === files.length ? '<div style="color: var(--green); font-size: 12px; font-weight: 600;">✓ Complete</div>' : ''}
                 </div>
 
-                <!-- Live Running Totals -->
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px;">
-                    <div style="background: var(--green-bg); border: 1px solid var(--green); border-radius: 8px; padding: 12px; text-align: center;">
-                        <div style="font-size: 10px; color: var(--green); margin-bottom: 4px;">AVG DEPOSITS</div>
-                        <div style="font-size: 18px; font-weight: 700; color: var(--green);">$${extractedCount > 0 ? Math.round(totals.deposits / extractedCount).toLocaleString() : '0'}</div>
-                    </div>
-                    <div style="background: var(--gold-bg); border: 1px solid var(--gold); border-radius: 8px; padding: 12px; text-align: center;">
-                        <div style="font-size: 10px; color: var(--gold); margin-bottom: 4px;">AVG TRUE REV</div>
-                        <div style="font-size: 18px; font-weight: 700; color: var(--gold);">$${extractedCount > 0 ? Math.round(totals.trueRevenue / extractedCount).toLocaleString() : '0'}</div>
-                    </div>
-                    <div style="background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center;">
-                        <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">AVG BALANCE</div>
-                        <div style="font-size: 18px; font-weight: 700; color: var(--text);">$${extractedCount > 0 ? Math.round(totals.avgBalSum / extractedCount).toLocaleString() : '0'}</div>
-                    </div>
-                    <div style="background: ${totals.nsf > 0 ? 'var(--red-bg)' : 'var(--green-bg)'}; border: 1px solid ${totals.nsf > 0 ? 'var(--red)' : 'var(--green)'}; border-radius: 8px; padding: 12px; text-align: center;">
-                        <div style="font-size: 10px; color: ${totals.nsf > 0 ? 'var(--red)' : 'var(--green)'}; margin-bottom: 4px;">TOTAL NSF</div>
-                        <div style="font-size: 18px; font-weight: 700; color: ${totals.nsf > 0 ? 'var(--red)' : 'var(--green)'};">${totals.nsf}</div>
-                    </div>
+                <!-- Data Table -->
+                <div style="overflow-x: auto; border: 1px solid var(--border); border-radius: 10px;">
+                    <table style="width: 100%; border-collapse: collapse; min-width: 900px;">
+                        <thead>
+                            <tr style="background: var(--bg-tertiary);">
+                                <th style="padding: 14px 16px; text-align: left; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Month</th>
+                                <th style="padding: 14px 12px; text-align: right; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Deposits</th>
+                                <th style="padding: 14px 12px; text-align: right; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">True Rev</th>
+                                <th style="padding: 14px 12px; text-align: center; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">#</th>
+                                <th style="padding: 14px 12px; text-align: right; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Withdrawals</th>
+                                <th style="padding: 14px 12px; text-align: right; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Avg Bal</th>
+                                <th style="padding: 14px 12px; text-align: right; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Open Bal</th>
+                                <th style="padding: 14px 12px; text-align: right; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">End Bal</th>
+                                <th style="padding: 14px 12px; text-align: center; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">NSF</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${statementRows}
+                        </tbody>
+                        <tfoot>
+                            ${avgRow}
+                        </tfoot>
+                    </table>
                 </div>
 
-                <!-- Statement Cards Grid -->
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; max-width: 800px; margin: 0 auto;">
-                    ${statementCards}
+                <div style="margin-top: 12px; font-size: 11px; color: var(--text-muted); text-align: center;">
+                    Click any cell to view details
                 </div>
             `;
         }
