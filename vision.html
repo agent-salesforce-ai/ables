@@ -3559,7 +3559,7 @@
 
             switch(method) {
                 case 'png-clean':
-                    await exportPngClean();
+                    await exportPngIframe(); // Use iframe for consistent light theme rendering
                     break;
                 case 'png-iframe':
                     await exportPngIframe();
@@ -3857,6 +3857,181 @@
                         </div>
                     </div>
                 `;
+            }
+
+            // Cash Flow Analysis Section (charts are not exportable to static HTML, show summary instead)
+            if (options.includeCharts && months.length > 0) {
+                const avgDeposits = totals.deposits / numMonths;
+                const avgWithdrawals = totals.withdrawals / numMonths;
+                const cashFlow = avgDeposits - avgWithdrawals;
+
+                html += `
+                    <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                        <div style="background: #f8fafc; padding: 16px 20px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 10px;">
+                            <svg viewBox="0 0 64 64" fill="none" style="width: 24px; height: 24px;">
+                                <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
+                                <circle cx="32" cy="32" r="12" fill="#eab308"/>
+                            </svg>
+                            <span style="font-weight: 600; font-size: 14px; color: #111827;">Cash Flow Analysis</span>
+                        </div>
+                        <div style="padding: 20px;">
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+                                <div style="background: #f0fdf4; border: 1px solid #22c55e; border-radius: 8px; padding: 16px; text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 700; color: #16a34a;">$${avgDeposits.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</div>
+                                    <div style="font-size: 11px; color: #6b7280; margin-top: 4px;">AVG MONTHLY DEPOSITS</div>
+                                </div>
+                                <div style="background: #fef2f2; border: 1px solid #ef4444; border-radius: 8px; padding: 16px; text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 700; color: #dc2626;">$${avgWithdrawals.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</div>
+                                    <div style="font-size: 11px; color: #6b7280; margin-top: 4px;">AVG MONTHLY WITHDRAWALS</div>
+                                </div>
+                                <div style="background: ${cashFlow >= 0 ? '#f0fdf4' : '#fef2f2'}; border: 1px solid ${cashFlow >= 0 ? '#22c55e' : '#ef4444'}; border-radius: 8px; padding: 16px; text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 700; color: ${cashFlow >= 0 ? '#16a34a' : '#dc2626'};">${cashFlow >= 0 ? '+' : ''}$${cashFlow.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</div>
+                                    <div style="font-size: 11px; color: #6b7280; margin-top: 4px;">NET CASH FLOW</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Existing Debt Section
+            if (options.includeDebt && existingDebt && existingDebt.length > 0) {
+                const debts = existingDebt.filter(d => d.creditor_name && d.payment_amount > 0);
+                if (debts.length > 0) {
+                    const totalMonthly = debts.reduce((sum, d) => sum + (d.payment_amount || 0), 0);
+
+                    html += `
+                        <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                            <div style="background: #f8fafc; padding: 16px 20px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <svg viewBox="0 0 64 64" fill="none" style="width: 24px; height: 24px;">
+                                        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
+                                        <circle cx="32" cy="32" r="12" fill="#eab308"/>
+                                    </svg>
+                                    <span style="font-weight: 600; font-size: 14px; color: #111827;">Existing Debt Obligations</span>
+                                </div>
+                                <div style="background: #fef2f2; color: #dc2626; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">$${totalMonthly.toLocaleString()}/mo</div>
+                            </div>
+                            <div style="padding: 20px;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="background: #f8fafc;">
+                                            <th style="padding: 10px; text-align: left; font-size: 11px; font-weight: 600; color: #6b7280; border-bottom: 1px solid #e5e7eb;">CREDITOR</th>
+                                            <th style="padding: 10px; text-align: center; font-size: 11px; font-weight: 600; color: #6b7280; border-bottom: 1px solid #e5e7eb;">TYPE</th>
+                                            <th style="padding: 10px; text-align: right; font-size: 11px; font-weight: 600; color: #6b7280; border-bottom: 1px solid #e5e7eb;">PAYMENT</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${debts.map(d => `
+                                            <tr>
+                                                <td style="padding: 10px; font-size: 13px; color: #111827; border-bottom: 1px solid #f3f4f6;">${d.creditor_name}</td>
+                                                <td style="padding: 10px; font-size: 12px; color: #6b7280; text-align: center; border-bottom: 1px solid #f3f4f6;">${d.debt_type || 'MCA'}</td>
+                                                <td style="padding: 10px; font-size: 13px; font-weight: 600; color: #dc2626; text-align: right; border-bottom: 1px solid #f3f4f6;">$${(d.payment_amount || 0).toLocaleString()}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            // Background Research Section
+            if (options.includeResearch && Object.keys(researchResults).length > 0) {
+                const lowRisk = Object.values(researchResults).filter(r => r.risk === 'low').length;
+                const medRisk = Object.values(researchResults).filter(r => r.risk === 'medium').length;
+                const highRisk = Object.values(researchResults).filter(r => r.risk === 'high').length;
+                const totalFlags = Object.values(researchResults).reduce((sum, r) => sum + (r.flags?.length || 0), 0);
+
+                html += `
+                    <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                        <div style="background: #f8fafc; padding: 16px 20px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 10px;">
+                            <svg viewBox="0 0 64 64" fill="none" style="width: 24px; height: 24px;">
+                                <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
+                                <circle cx="32" cy="32" r="12" fill="#eab308"/>
+                            </svg>
+                            <span style="font-weight: 600; font-size: 14px; color: #111827;">Background Research: ${businessName}</span>
+                        </div>
+                        <div style="padding: 20px;">
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;">
+                                <div style="background: #f0fdf4; border: 1px solid #22c55e; border-radius: 8px; padding: 12px; text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 700; color: #16a34a;">${lowRisk}</div>
+                                    <div style="font-size: 10px; color: #6b7280;">LOW RISK</div>
+                                </div>
+                                <div style="background: #fffbeb; border: 1px solid #f59e0b; border-radius: 8px; padding: 12px; text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 700; color: #d97706;">${medRisk}</div>
+                                    <div style="font-size: 10px; color: #6b7280;">MEDIUM RISK</div>
+                                </div>
+                                <div style="background: #fef2f2; border: 1px solid #ef4444; border-radius: 8px; padding: 12px; text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 700; color: #dc2626;">${highRisk}</div>
+                                    <div style="font-size: 10px; color: #6b7280;">HIGH RISK</div>
+                                </div>
+                                <div style="background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 700; color: #111827;">${totalFlags}</div>
+                                    <div style="font-size: 10px; color: #6b7280;">RED FLAGS</div>
+                                </div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                                ${Object.entries(researchResults).map(([id, result]) => {
+                                    const moduleNames = {
+                                        sos: 'Secretary of State', ucc: 'UCC Filings', tax: 'Tax Liens',
+                                        judgment: 'Judgments', bankruptcy: 'Bankruptcy', bbb: 'BBB Profile',
+                                        reviews: 'Online Reviews', news: 'News & Press', social: 'Social Media',
+                                        industry: 'Industry Analysis', owner: 'Owner Background', location: 'Location Analysis'
+                                    };
+                                    const riskColors = { low: '#22c55e', medium: '#f59e0b', high: '#ef4444', unknown: '#6b7280' };
+                                    const riskBg = { low: '#f0fdf4', medium: '#fffbeb', high: '#fef2f2', unknown: '#f8fafc' };
+                                    return `
+                                        <div style="background: #ffffff; border: 1px solid #e5e7eb; border-left: 3px solid ${riskColors[result.risk] || '#6b7280'}; border-radius: 6px; padding: 12px;">
+                                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                                <span style="font-size: 12px; font-weight: 600; color: #111827;">${moduleNames[id] || id}</span>
+                                                <span style="font-size: 10px; padding: 2px 8px; background: ${riskBg[result.risk] || '#f8fafc'}; color: ${riskColors[result.risk] || '#6b7280'}; border-radius: 10px; font-weight: 500;">${(result.risk || 'unknown').toUpperCase()}</span>
+                                            </div>
+                                            <div style="font-size: 11px; color: #6b7280; line-height: 1.4;">${result.summary || 'No data'}</div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Lender Matching Section
+            if (options.includeLenders && matchedLenders && matchedLenders.length > 0) {
+                const topLenders = matchedLenders.filter(l => l.score >= 50).slice(0, 6);
+                if (topLenders.length > 0) {
+                    html += `
+                        <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                            <div style="background: #f8fafc; padding: 16px 20px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 10px;">
+                                <svg viewBox="0 0 64 64" fill="none" style="width: 24px; height: 24px;">
+                                    <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
+                                    <circle cx="32" cy="32" r="12" fill="#eab308"/>
+                                </svg>
+                                <span style="font-weight: 600; font-size: 14px; color: #111827;">Lender Matching</span>
+                            </div>
+                            <div style="padding: 20px;">
+                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                                    ${topLenders.map(l => {
+                                        const scoreColor = l.score >= 80 ? '#22c55e' : l.score >= 60 ? '#f59e0b' : '#ef4444';
+                                        return `
+                                            <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px;">
+                                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                                    <span style="font-size: 14px; font-weight: 600; color: #111827;">${l.name}</span>
+                                                    <span style="font-size: 16px; font-weight: 700; color: ${scoreColor};">${l.score}%</span>
+                                                </div>
+                                                <div style="height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden;">
+                                                    <div style="width: ${l.score}%; height: 100%; background: ${scoreColor};"></div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
             }
 
             // Footer
