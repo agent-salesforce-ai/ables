@@ -2725,6 +2725,164 @@
         </div>
     </div>
 
+    <!-- Export Modal -->
+    <div class="modal-overlay" id="exportModal">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <span class="modal-title">Export Report</span>
+                <button class="modal-close" onclick="closeModal('exportModal')">×</button>
+            </div>
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                <!-- Export Settings Section -->
+                <div style="margin-bottom: 24px;">
+                    <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 12px;">Export Settings</div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label">Scale (DPI)</label>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <input type="range" id="exportScaleSlider" min="1" max="4" step="0.5" value="2" style="flex: 1;">
+                                <span id="exportScaleVal" style="font-size: 13px; color: var(--text); min-width: 30px;">2x</span>
+                            </div>
+                            <small style="color: var(--text-muted); font-size: 10px;">Higher = better quality, larger file</small>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label">Padding (px)</label>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <input type="range" id="exportPaddingSlider" min="0" max="48" step="4" value="24" style="flex: 1;">
+                                <span id="exportPaddingVal" style="font-size: 13px; color: var(--text); min-width: 30px;">24px</span>
+                            </div>
+                            <small style="color: var(--text-muted); font-size: 10px;">Whitespace around content</small>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label">Image Quality</label>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <input type="range" id="exportQualitySlider" min="0.5" max="1" step="0.1" value="1" style="flex: 1;">
+                                <span id="exportQualityVal" style="font-size: 13px; color: var(--text); min-width: 40px;">100%</span>
+                            </div>
+                            <small style="color: var(--text-muted); font-size: 10px;">JPEG/PNG compression</small>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label">Max Width (px)</label>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <input type="range" id="exportWidthSlider" min="800" max="1920" step="80" value="1200" style="flex: 1;">
+                                <span id="exportWidthVal" style="font-size: 13px; color: var(--text); min-width: 50px;">1200</span>
+                            </div>
+                            <small style="color: var(--text-muted); font-size: 10px;">Content area width</small>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label">Background</label>
+                            <select class="form-input" id="exportBgSelect" style="padding: 8px 12px;">
+                                <option value="#ffffff">White</option>
+                                <option value="#f8fafc">Light Gray</option>
+                                <option value="#f3f4f6">Gray</option>
+                                <option value="transparent">Transparent (PNG only)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label">Theme</label>
+                            <select class="form-input" id="exportThemeSelect" style="padding: 8px 12px;">
+                                <option value="light">Light (Recommended)</option>
+                                <option value="dark">Dark</option>
+                                <option value="current">Current Theme</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Export Buttons -->
+                <div style="margin-bottom: 20px;">
+                    <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 12px;">Quick Export</div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                        <button class="btn" onclick="exportMethod('png-clean'); closeModal('exportModal');" style="padding: 12px 8px; font-size: 12px;">
+                            <div style="font-size: 18px; margin-bottom: 4px;">🖼️</div>
+                            PNG Light
+                        </button>
+                        <button class="btn" onclick="exportMethod('png-native'); closeModal('exportModal');" style="padding: 12px 8px; font-size: 12px;">
+                            <div style="font-size: 18px; margin-bottom: 4px;">🌙</div>
+                            PNG Native
+                        </button>
+                        <button class="btn" onclick="exportMethod('pdf'); closeModal('exportModal');" style="padding: 12px 8px; font-size: 12px;">
+                            <div style="font-size: 18px; margin-bottom: 4px;">📄</div>
+                            PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sections to Export -->
+                <div style="margin-bottom: 20px;">
+                    <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 12px;">Sections to Include</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <label style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: var(--bg-tertiary); border-radius: var(--radius-sm); cursor: pointer; font-size: 13px;">
+                            <input type="checkbox" id="exportFraud" checked style="accent-color: var(--gold);">
+                            Fraud Analysis
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: var(--bg-tertiary); border-radius: var(--radius-sm); cursor: pointer; font-size: 13px;">
+                            <input type="checkbox" id="exportData" checked style="accent-color: var(--gold);">
+                            Bank Analysis
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: var(--bg-tertiary); border-radius: var(--radius-sm); cursor: pointer; font-size: 13px;">
+                            <input type="checkbox" id="exportCharts" checked style="accent-color: var(--gold);">
+                            Cash Flow Charts
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: var(--bg-tertiary); border-radius: var(--radius-sm); cursor: pointer; font-size: 13px;">
+                            <input type="checkbox" id="exportDebt" checked style="accent-color: var(--gold);">
+                            Debt Obligations
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: var(--bg-tertiary); border-radius: var(--radius-sm); cursor: pointer; font-size: 13px;">
+                            <input type="checkbox" id="exportResearch" checked style="accent-color: var(--gold);">
+                            Background Research
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: var(--bg-tertiary); border-radius: var(--radius-sm); cursor: pointer; font-size: 13px;">
+                            <input type="checkbox" id="exportLenders" checked style="accent-color: var(--gold);">
+                            Lender Matches
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Export All Sections -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                    <button class="btn btn-primary" onclick="exportWithSettings('png'); closeModal('exportModal');" style="padding: 14px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px; margin-right: 8px; display: inline;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                        Export as PNG
+                    </button>
+                    <button class="btn btn-primary" onclick="exportWithSettings('pdf'); closeModal('exportModal');" style="padding: 14px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px; margin-right: 8px; display: inline;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+                        Export as PDF
+                    </button>
+                </div>
+
+                <!-- Other Export Options -->
+                <div style="border-top: 1px solid var(--border); padding-top: 16px;">
+                    <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 12px;">Other Formats</div>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                        <button class="btn" onclick="exportMethod('print'); closeModal('exportModal');" style="padding: 10px 8px; font-size: 11px;">
+                            🖨️ Print
+                        </button>
+                        <button class="btn" onclick="exportMethod('json'); closeModal('exportModal');" style="padding: 10px 8px; font-size: 11px;">
+                            📋 JSON
+                        </button>
+                        <button class="btn" onclick="exportMethod('csv'); closeModal('exportModal');" style="padding: 10px 8px; font-size: 11px;">
+                            📊 CSV
+                        </button>
+                        <button class="btn" onclick="exportMethod('clipboard'); closeModal('exportModal');" style="padding: 10px 8px; font-size: 11px;">
+                            📎 Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // PDF.js worker
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -2761,6 +2919,16 @@
         let ctx = null;
         const settings = { opacity: 0.25, size: 0.15, density: 0.50, rotation: 45 };
 
+        // Export settings
+        const exportSettings = {
+            scale: 2,
+            padding: 24,
+            quality: 1,
+            width: 1200,
+            background: '#ffffff',
+            theme: 'light'
+        };
+
         // Initialize
         function init() {
             // Initialize canvas
@@ -2793,7 +2961,7 @@
             document.getElementById('downloadAllBtn').addEventListener('click', downloadAll);
             document.getElementById('settingsBtn').addEventListener('click', () => openModal('settingsModal'));
             document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-            document.getElementById('exportBtn').addEventListener('click', () => window.print());
+            document.getElementById('exportBtn').addEventListener('click', () => openModal('exportModal'));
 
             // Watermark slider controls
             ['opacity', 'size', 'density', 'rotation'].forEach(key => {
@@ -2807,6 +2975,53 @@
                     });
                 }
             });
+
+            // Export slider controls
+            const exportScaleSlider = document.getElementById('exportScaleSlider');
+            if (exportScaleSlider) {
+                exportScaleSlider.addEventListener('input', () => {
+                    exportSettings.scale = parseFloat(exportScaleSlider.value);
+                    document.getElementById('exportScaleVal').textContent = exportSettings.scale + 'x';
+                });
+            }
+
+            const exportPaddingSlider = document.getElementById('exportPaddingSlider');
+            if (exportPaddingSlider) {
+                exportPaddingSlider.addEventListener('input', () => {
+                    exportSettings.padding = parseInt(exportPaddingSlider.value);
+                    document.getElementById('exportPaddingVal').textContent = exportSettings.padding + 'px';
+                });
+            }
+
+            const exportQualitySlider = document.getElementById('exportQualitySlider');
+            if (exportQualitySlider) {
+                exportQualitySlider.addEventListener('input', () => {
+                    exportSettings.quality = parseFloat(exportQualitySlider.value);
+                    document.getElementById('exportQualityVal').textContent = Math.round(exportSettings.quality * 100) + '%';
+                });
+            }
+
+            const exportWidthSlider = document.getElementById('exportWidthSlider');
+            if (exportWidthSlider) {
+                exportWidthSlider.addEventListener('input', () => {
+                    exportSettings.width = parseInt(exportWidthSlider.value);
+                    document.getElementById('exportWidthVal').textContent = exportSettings.width;
+                });
+            }
+
+            const exportBgSelect = document.getElementById('exportBgSelect');
+            if (exportBgSelect) {
+                exportBgSelect.addEventListener('change', () => {
+                    exportSettings.background = exportBgSelect.value;
+                });
+            }
+
+            const exportThemeSelect = document.getElementById('exportThemeSelect');
+            if (exportThemeSelect) {
+                exportThemeSelect.addEventListener('change', () => {
+                    exportSettings.theme = exportThemeSelect.value;
+                });
+            }
 
             // Load saved PDF compression preset
             loadPdfPreset();
@@ -3121,6 +3336,218 @@
                     await exportClipboard();
                     break;
             }
+        }
+
+        // Export with custom settings from modal
+        async function exportWithSettings(format = 'png') {
+            if (!extractedData.full_analysis) {
+                showStatus('No analysis data to export', 'error');
+                return;
+            }
+
+            showStatus(`Generating ${format.toUpperCase()} with custom settings...`, 'info');
+
+            try {
+                const resultsArea = document.getElementById('resultsArea');
+
+                // Get selected sections
+                const includeFraud = document.getElementById('exportFraud')?.checked ?? true;
+                const includeData = document.getElementById('exportData')?.checked ?? true;
+                const includeCharts = document.getElementById('exportCharts')?.checked ?? true;
+                const includeDebt = document.getElementById('exportDebt')?.checked ?? true;
+                const includeResearch = document.getElementById('exportResearch')?.checked ?? true;
+                const includeLenders = document.getElementById('exportLenders')?.checked ?? true;
+
+                // Create wrapper with settings
+                const wrapper = document.createElement('div');
+                wrapper.style.cssText = `
+                    position: absolute;
+                    left: -9999px;
+                    top: 0;
+                    background: ${exportSettings.background};
+                    padding: ${exportSettings.padding}px;
+                    width: ${exportSettings.width}px;
+                `;
+
+                // Clone the results
+                const clone = resultsArea.cloneNode(true);
+
+                // Remove hidden class from all elements
+                clone.querySelectorAll('.hidden').forEach(el => el.classList.remove('hidden'));
+
+                // Remove all buttons
+                clone.querySelectorAll('button, .card-export-btn, .expand-toggle').forEach(el => el.remove());
+
+                // Hide/show sections based on checkboxes
+                if (!includeFraud) clone.querySelector('#fraudSection')?.remove();
+                if (!includeData) clone.querySelector('#dataSection')?.remove();
+                if (!includeCharts) clone.querySelector('#chartsSection')?.remove();
+                if (!includeDebt) clone.querySelector('#debtSection')?.remove();
+                if (!includeResearch) clone.querySelector('#researchSection')?.remove();
+                if (!includeLenders) clone.querySelector('#lenderSection')?.remove();
+
+                // Apply theme styles
+                if (exportSettings.theme === 'light' || exportSettings.theme === 'current' && document.documentElement.getAttribute('data-theme') === 'light') {
+                    applyExportLightStyles(clone);
+                }
+
+                wrapper.appendChild(clone);
+                document.body.appendChild(wrapper);
+
+                await new Promise(r => setTimeout(r, 200));
+
+                const canvas = await html2canvas(wrapper, {
+                    scale: exportSettings.scale,
+                    useCORS: true,
+                    backgroundColor: exportSettings.background === 'transparent' ? null : exportSettings.background,
+                    logging: false,
+                    allowTaint: true
+                });
+
+                document.body.removeChild(wrapper);
+
+                if (format === 'pdf') {
+                    // Create PDF
+                    const { jsPDF } = window.jspdf;
+                    const imgWidth = canvas.width;
+                    const imgHeight = canvas.height;
+                    const pdfWidth = 612;
+                    const pdfHeight = (imgHeight * pdfWidth) / imgWidth;
+                    const maxPageHeight = 792;
+
+                    if (pdfHeight <= maxPageHeight) {
+                        const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: [pdfWidth, pdfHeight] });
+                        pdf.addImage(canvas.toDataURL('image/png', exportSettings.quality), 'PNG', 0, 0, pdfWidth, pdfHeight);
+                        pdf.save(getFilename('pdf'));
+                    } else {
+                        const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'letter' });
+                        const pageHeightInCanvasPixels = (maxPageHeight * imgWidth) / pdfWidth;
+                        let position = 0;
+                        let pageNum = 0;
+
+                        while (position < imgHeight) {
+                            if (pageNum > 0) pdf.addPage();
+
+                            const pageCanvas = document.createElement('canvas');
+                            pageCanvas.width = imgWidth;
+                            pageCanvas.height = Math.min(pageHeightInCanvasPixels, imgHeight - position);
+                            const ctx = pageCanvas.getContext('2d');
+                            ctx.drawImage(canvas, 0, position, imgWidth, pageCanvas.height, 0, 0, imgWidth, pageCanvas.height);
+
+                            const scaledHeight = (pageCanvas.height * pdfWidth) / imgWidth;
+                            pdf.addImage(pageCanvas.toDataURL('image/png', exportSettings.quality), 'PNG', 0, 0, pdfWidth, scaledHeight);
+
+                            position += pageHeightInCanvasPixels;
+                            pageNum++;
+                        }
+
+                        pdf.save(getFilename('pdf'));
+                    }
+                    showStatus('PDF exported!', 'success');
+                } else {
+                    // PNG download
+                    const link = document.createElement('a');
+                    link.download = getFilename('png');
+                    link.href = canvas.toDataURL('image/png', exportSettings.quality);
+                    link.click();
+                    showStatus('PNG exported!', 'success');
+                }
+            } catch (error) {
+                console.error('Export error:', error);
+                showStatus('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Helper function to apply light styles
+        function applyExportLightStyles(clone) {
+            // Style section cards
+            clone.querySelectorAll('.section-card').forEach(card => {
+                card.style.cssText = 'background: #ffffff !important; border: 1px solid #d1d5db !important; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);';
+            });
+
+            clone.querySelectorAll('.section-header').forEach(header => {
+                header.style.cssText = 'background: #f3f4f6 !important; color: #111827 !important; padding: 16px 20px; border-bottom: 1px solid #d1d5db !important; font-weight: 600; font-size: 14px;';
+            });
+
+            clone.querySelectorAll('.section-body').forEach(body => {
+                body.style.cssText = 'background: #ffffff !important; padding: 20px; color: #111827 !important;';
+            });
+
+            // Data cards
+            clone.querySelectorAll('.data-card').forEach(card => {
+                const borderStyle = card.getAttribute('style') || '';
+                let borderColor = '#d1d5db', bgColor = '#f9fafb';
+                if (borderStyle.includes('green')) { borderColor = '#22c55e'; bgColor = '#dcfce7'; }
+                else if (borderStyle.includes('yellow')) { borderColor = '#eab308'; bgColor = '#fef9c3'; }
+                else if (borderStyle.includes('red')) { borderColor = '#ef4444'; bgColor = '#fee2e2'; }
+                card.style.cssText = `background: ${bgColor} !important; border: 2px solid ${borderColor} !important; border-radius: 8px; padding: 16px; text-align: center;`;
+            });
+
+            // Data values
+            clone.querySelectorAll('.data-label').forEach(l => l.style.cssText = 'font-size: 11px; color: #6b7280 !important;');
+            clone.querySelectorAll('.data-value').forEach(val => {
+                let color = '#111827';
+                if (val.classList.contains('green')) color = '#16a34a';
+                if (val.classList.contains('red')) color = '#dc2626';
+                if (val.classList.contains('gold')) color = '#ca8a04';
+                val.style.cssText = `font-size: 24px; font-weight: 700; color: ${color} !important;`;
+            });
+
+            // Fraud items
+            clone.querySelectorAll('.fraud-item').forEach(item => {
+                const s = item.getAttribute('style') || '';
+                let borderColor = '#d1d5db', bgColor = '#f9fafb';
+                if (s.includes('green')) { borderColor = '#22c55e'; bgColor = '#f0fdf4'; }
+                else if (s.includes('yellow')) { borderColor = '#eab308'; bgColor = '#fefce8'; }
+                else if (s.includes('red')) { borderColor = '#ef4444'; bgColor = '#fef2f2'; }
+                item.style.cssText = `padding: 12px 16px; border-radius: 8px; background: ${bgColor} !important; margin-bottom: 8px; border-left: 4px solid ${borderColor} !important;`;
+            });
+
+            // Risk chips
+            clone.querySelectorAll('.risk-chip').forEach(chip => {
+                const isGood = chip.classList.contains('good');
+                const isWarn = chip.classList.contains('warn');
+                const isBad = chip.classList.contains('bad');
+                let bg = '#f3f4f6', border = '#d1d5db';
+                if (isGood) { bg = '#dcfce7'; border = '#22c55e'; }
+                if (isWarn) { bg = '#fef9c3'; border = '#eab308'; }
+                if (isBad) { bg = '#fee2e2'; border = '#ef4444'; }
+                chip.style.cssText = `background: ${bg} !important; border: 2px solid ${border} !important; padding: 12px; border-radius: 8px; text-align: center;`;
+            });
+
+            clone.querySelectorAll('.risk-chip-value').forEach(val => {
+                const parent = val.closest('.risk-chip');
+                let color = '#111827';
+                if (parent?.classList.contains('good')) color = '#166534';
+                if (parent?.classList.contains('warn')) color = '#854d0e';
+                if (parent?.classList.contains('bad')) color = '#991b1b';
+                val.style.cssText = `font-size: 28px; font-weight: 700; color: ${color} !important;`;
+            });
+            clone.querySelectorAll('.risk-chip-label').forEach(l => l.style.cssText = 'font-size: 11px; color: #6b7280 !important;');
+
+            // Tables
+            clone.querySelectorAll('table').forEach(t => t.style.cssText = 'background: #ffffff !important; border-collapse: collapse; width: 100%; border: 1px solid #e5e7eb;');
+            clone.querySelectorAll('th').forEach(th => th.style.cssText = 'background: #f3f4f6 !important; color: #111827 !important; padding: 12px; border: 1px solid #e5e7eb !important;');
+            clone.querySelectorAll('td').forEach(td => td.style.cssText = 'background: #ffffff !important; color: #111827 !important; padding: 12px; border: 1px solid #e5e7eb !important;');
+
+            // Stats
+            clone.querySelectorAll('.debt-stat, .research-stat').forEach(s => s.style.cssText = 'background: #f3f4f6 !important; padding: 16px; border-radius: 8px; border: 1px solid #e5e7eb;');
+            clone.querySelectorAll('.debt-stat-value, .research-stat-value').forEach(v => v.style.cssText = 'color: #111827 !important; font-size: 24px; font-weight: 700;');
+            clone.querySelectorAll('.debt-stat-label, .research-stat-label').forEach(l => l.style.cssText = 'color: #6b7280 !important; font-size: 12px;');
+
+            // MCA sections
+            clone.querySelectorAll('.mca-section, .mca-alert').forEach(m => m.style.cssText = 'background: #fee2e2 !important; border: 2px solid #ef4444 !important; border-radius: 8px; padding: 16px; color: #991b1b !important;');
+
+            // Charts
+            clone.querySelectorAll('.chart-container').forEach(c => c.style.cssText = 'background: #ffffff !important; border-radius: 8px; border: 1px solid #e5e7eb; padding: 12px;');
+
+            // Text colors
+            clone.querySelectorAll('span, div, p, h1, h2, h3, h4, h5, h6, strong').forEach(el => {
+                const c = el.style.color;
+                if (!c || c === '' || c.includes('var(') || c.includes('rgba(255')) {
+                    el.style.color = '#111827';
+                }
+            });
         }
 
         // Method 1: PNG Clean - DOM Clone with forced light styles
