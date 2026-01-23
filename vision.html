@@ -5212,6 +5212,14 @@
             }
 
             try {
+                // Show BOTH sections immediately
+                document.getElementById('fraudSection').classList.remove('hidden');
+                document.getElementById('dataSection').classList.remove('hidden');
+
+                // Initialize both with empty/pending states
+                renderFraudResultsLive();
+                renderExtractedDataLive([]);
+
                 // Step 2: Fraud Scan
                 setStep(2);
                 showLoading(true, 'Scanning for fraud indicators...', {
@@ -5219,10 +5227,6 @@
                     progress: 5,
                     subtext: `Analyzing ${files.length} document${files.length > 1 ? 's' : ''} for manipulation`
                 });
-                document.getElementById('fraudSection').classList.remove('hidden');
-
-                // Show fraud section with empty grid immediately
-                renderFraudResultsLive();
 
                 for (let i = 0; i < files.length; i++) {
                     const scanProgress = 5 + Math.round((i / files.length) * 20);
@@ -5244,7 +5248,6 @@
                     progress: 30,
                     subtext: 'Reading transaction data and account details'
                 });
-                document.getElementById('dataSection').classList.remove('hidden');
 
                 extractedData = await extractBankData(apiKey);
                 renderExtractedData();
