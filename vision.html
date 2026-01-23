@@ -5250,7 +5250,7 @@
                 });
 
                 extractedData = await extractBankData(apiKey);
-                renderExtractedData();
+                // Keep the live table - don't replace it with renderExtractedData()
                 renderCharts();
 
                 // Display extracted business info
