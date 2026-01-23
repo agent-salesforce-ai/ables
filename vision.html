@@ -6201,6 +6201,8 @@ End with exactly one: RISK_LEVEL:CLEAN or RISK_LEVEL:WARNING or RISK_LEVEL:DANGE
 
         // Extract data from a single bank statement file
         async function extractSingleStatement(file, apiKey, fileIndex) {
+            console.log(`[Extract] Starting statement ${fileIndex + 1}, file: ${file.name}, pages: ${file.pages?.length || 0}`);
+
             const images = [];
             for (const page of file.pages) {
                 const canvas = document.createElement('canvas');
@@ -6209,6 +6211,8 @@ End with exactly one: RISK_LEVEL:CLEAN or RISK_LEVEL:WARNING or RISK_LEVEL:DANGE
                 canvas.getContext('2d').drawImage(page, 0, 0);
                 images.push(canvas.toDataURL('image/jpeg', 0.85).split(',')[1]);
             }
+
+            console.log(`[Extract] Prepared ${images.length} images, total size: ${Math.round(images.reduce((a,b) => a + b.length, 0) / 1024)}KB`);
 
             const parts = [
                 { text: `You are analyzing a SINGLE bank statement for MCA underwriting. This is statement ${fileIndex + 1}.
@@ -6275,6 +6279,8 @@ Return ONLY valid JSON:
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minute timeout
 
+                console.log(`[Extract] Calling Gemini API with model: ${model}`);
+
                 const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -6286,6 +6292,7 @@ Return ONLY valid JSON:
                 });
 
                 clearTimeout(timeoutId);
+                console.log(`[Extract] Got response, status: ${resp.status}`);
 
                 if (!resp.ok) {
                     const errText = await resp.text();
@@ -6294,6 +6301,7 @@ Return ONLY valid JSON:
                 }
 
                 const data = await resp.json();
+                console.log(`[Extract] Parsed response, has candidates: ${!!data.candidates}`);
 
                 // Check for API-level errors
                 if (data.error) {
