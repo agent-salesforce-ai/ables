@@ -3578,26 +3578,19 @@
                 val.style.cssText = `font-size: 24px; font-weight: 700; color: ${color} !important;`;
             });
 
-            // Fraud items - new grid layout
+            // Fraud items - compact box layout
             clone.querySelectorAll('.fraud-item').forEach(item => {
                 const s = item.getAttribute('style') || '';
                 let borderColor = '#d1d5db', bgColor = '#f9fafb';
-                if (s.includes('green') || s.includes('#22c55e')) { borderColor = '#22c55e'; bgColor = '#f0fdf4'; }
-                else if (s.includes('yellow') || s.includes('#eab308')) { borderColor = '#eab308'; bgColor = '#fefce8'; }
-                else if (s.includes('red') || s.includes('#ef4444')) { borderColor = '#ef4444'; bgColor = '#fef2f2'; }
-                item.style.cssText = `display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: start; padding: 16px; border-radius: 10px; background: ${bgColor} !important; margin-bottom: 10px; border-left: 4px solid ${borderColor} !important;`;
+                if (s.includes('green') || s.includes('#22c55e')) { borderColor = '#22c55e'; bgColor = '#dcfce7'; }
+                else if (s.includes('yellow') || s.includes('#eab308')) { borderColor = '#eab308'; bgColor = '#fef9c3'; }
+                else if (s.includes('red') || s.includes('#ef4444')) { borderColor = '#ef4444'; bgColor = '#fee2e2'; }
+                item.style.cssText = `background: ${bgColor} !important; border: 1px solid ${borderColor} !important; border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; gap: 8px;`;
             });
 
-            // Fraud status badges
-            clone.querySelectorAll('.fraud-item > div:last-child').forEach(badge => {
-                const text = badge.textContent?.toLowerCase() || '';
-                let bg = '#f3f4f6', color = '#374151';
-                if (text.includes('clean')) { bg = '#dcfce7'; color = '#166534'; }
-                else if (text.includes('review')) { bg = '#fef9c3'; color = '#854d0e'; }
-                else if (text.includes('risk')) { bg = '#fee2e2'; color = '#991b1b'; }
-                if (badge.style.cssText.includes('border-radius: 6px')) {
-                    badge.style.cssText = `background: ${bg} !important; color: ${color} !important; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; white-space: nowrap;`;
-                }
+            // Fraud details grid
+            clone.querySelectorAll('.fraud-details').forEach(grid => {
+                grid.style.cssText = 'display: grid !important; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important; gap: 8px !important;';
             });
 
             // Risk chips
@@ -4861,86 +4854,68 @@ End with exactly one: RISK_LEVEL:CLEAN or RISK_LEVEL:WARNING or RISK_LEVEL:DANGE
             const warning = files.filter(f => f.status === 'warning').length;
             const danger = files.filter(f => f.status === 'danger').length;
 
-            // Build file-by-file results with explanations
-            const fileResults = files.map((f, i) => {
-                const statusClass = f.status === 'danger' ? 'red' : f.status === 'warning' ? 'yellow' : 'green';
+            // Build compact file boxes
+            const fileBoxes = files.map((f, i) => {
                 const statusText = f.status === 'danger' ? 'RISK' : f.status === 'warning' ? 'REVIEW' : 'CLEAN';
                 const statusBg = f.status === 'danger' ? 'var(--red-bg)' : f.status === 'warning' ? 'var(--yellow-bg)' : 'var(--green-bg)';
                 const statusColor = f.status === 'danger' ? 'var(--red)' : f.status === 'warning' ? 'var(--yellow)' : 'var(--green)';
-                const statusIconSvg = f.status === 'danger'
-                    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+                const borderColor = f.status === 'danger' ? 'var(--red)' : f.status === 'warning' ? 'var(--yellow)' : 'var(--green)';
+                const statusIcon = f.status === 'danger'
+                    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
                     : f.status === 'warning'
-                    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
-                    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+                    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+                    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
 
-                // Truncate filename for display
-                const displayName = f.name.length > 40 ? f.name.substring(0, 37) + '...' : f.name;
+                // Short filename
+                const shortName = f.name.length > 25 ? f.name.substring(0, 22) + '...' : f.name;
 
                 return `
-                    <div class="fraud-item" style="display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: start; padding: 16px; border-radius: 10px; background: var(--bg-tertiary); margin-bottom: 10px; border-left: 4px solid ${statusColor};">
-                        <div style="width: 40px; height: 40px; border-radius: 8px; background: ${statusBg}; display: flex; align-items: center; justify-content: center; color: ${statusColor}; flex-shrink: 0;">
-                            ${statusIconSvg}
+                    <div class="fraud-item" style="background: ${statusBg}; border: 1px solid ${borderColor}; border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; gap: 8px;" title="${f.fraudAnalysis || 'No details'}">
+                        <div style="color: ${statusColor}; display: flex; align-items: center;">${statusIcon}</div>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="font-size: 11px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${f.name}">${shortName}</div>
                         </div>
-                        <div style="min-width: 0;">
-                            <div style="font-weight: 600; color: var(--text); font-size: 13px; margin-bottom: 4px; word-break: break-word;" title="${f.name}">${displayName}</div>
-                            <p style="color: var(--text-muted); font-size: 12px; margin: 0; line-height: 1.5;">${f.fraudAnalysis || 'No analysis available'}</p>
-                        </div>
-                        <div style="background: ${statusBg}; color: ${statusColor}; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; white-space: nowrap;">
-                            ${statusText}
-                        </div>
+                        <div style="background: ${statusColor}; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700; letter-spacing: 0.3px;">${statusText}</div>
                     </div>
                 `;
             }).join('');
 
-            // Calculate overall status
-            const overallStatus = danger > 0 ? 'risk' : warning > 0 ? 'review' : 'clean';
+            // Overall status
             const overallColor = danger > 0 ? 'var(--red)' : warning > 0 ? 'var(--yellow)' : 'var(--green)';
             const overallBg = danger > 0 ? 'var(--red-bg)' : warning > 0 ? 'var(--yellow-bg)' : 'var(--green-bg)';
-            const overallText = danger > 0 ? 'Issues Detected' : warning > 0 ? 'Review Required' : 'All Clear';
+            const overallText = danger > 0 ? 'Issues Found' : warning > 0 ? 'Review Needed' : 'All Clear';
             const overallIcon = danger > 0
-                ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:24px;height:24px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+                ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
                 : warning > 0
-                ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:24px;height:24px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
-                : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:24px;height:24px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+                ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+                : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
 
             document.getElementById('fraudResults').innerHTML = `
-                <!-- Overall Status Banner -->
-                <div style="display: flex; align-items: center; gap: 16px; padding: 16px 20px; background: ${overallBg}; border-radius: 10px; margin-bottom: 20px; border: 1px solid ${overallColor}20;">
-                    <div style="width: 48px; height: 48px; border-radius: 12px; background: ${overallColor}20; display: flex; align-items: center; justify-content: center; color: ${overallColor};">
-                        ${overallIcon}
+                <!-- Compact Header Row -->
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                    <div style="display: flex; align-items: center; gap: 8px; padding: 8px 14px; background: ${overallBg}; border: 1px solid ${overallColor}; border-radius: 8px;">
+                        <div style="color: ${overallColor};">${overallIcon}</div>
+                        <span style="font-weight: 600; font-size: 13px; color: ${overallColor};">${overallText}</span>
                     </div>
-                    <div style="flex: 1;">
-                        <div style="font-size: 18px; font-weight: 700; color: ${overallColor};">${overallText}</div>
-                        <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">${files.length} document${files.length !== 1 ? 's' : ''} analyzed</div>
-                    </div>
-                </div>
-
-                <!-- Stats Grid -->
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;">
-                    <div style="background: var(--green-bg); border: 1px solid var(--green); border-radius: 10px; padding: 16px; text-align: center;">
-                        <div style="font-size: 28px; font-weight: 700; color: var(--green);">${clean}</div>
-                        <div style="font-size: 11px; color: var(--green); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Clean</div>
-                    </div>
-                    <div style="background: var(--yellow-bg); border: 1px solid var(--yellow); border-radius: 10px; padding: 16px; text-align: center;">
-                        <div style="font-size: 28px; font-weight: 700; color: var(--yellow);">${warning}</div>
-                        <div style="font-size: 11px; color: var(--yellow); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Review</div>
-                    </div>
-                    <div style="background: var(--red-bg); border: 1px solid var(--red); border-radius: 10px; padding: 16px; text-align: center;">
-                        <div style="font-size: 28px; font-weight: 700; color: var(--red);">${danger}</div>
-                        <div style="font-size: 11px; color: var(--red); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Risk</div>
-                    </div>
-                    <div style="background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center;">
-                        <div style="font-size: 28px; font-weight: 700; color: var(--text);">${files.length}</div>
-                        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Total</div>
+                    <div style="display: flex; gap: 8px; flex: 1;">
+                        <div style="background: var(--green-bg); border: 1px solid var(--green); border-radius: 6px; padding: 6px 12px; text-align: center; flex: 1;">
+                            <span style="font-size: 16px; font-weight: 700; color: var(--green);">${clean}</span>
+                            <span style="font-size: 10px; color: var(--green); margin-left: 4px;">Clean</span>
+                        </div>
+                        <div style="background: var(--yellow-bg); border: 1px solid var(--yellow); border-radius: 6px; padding: 6px 12px; text-align: center; flex: 1;">
+                            <span style="font-size: 16px; font-weight: 700; color: var(--yellow);">${warning}</span>
+                            <span style="font-size: 10px; color: var(--yellow); margin-left: 4px;">Review</span>
+                        </div>
+                        <div style="background: var(--red-bg); border: 1px solid var(--red); border-radius: 6px; padding: 6px 12px; text-align: center; flex: 1;">
+                            <span style="font-size: 16px; font-weight: 700; color: var(--red);">${danger}</span>
+                            <span style="font-size: 10px; color: var(--red); margin-left: 4px;">Risk</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- File Details Header -->
-                <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; padding-left: 4px;">Document Details</div>
-
-                <!-- File List -->
-                <div class="fraud-details" style="display: flex; flex-direction: column; gap: 0;">
-                    ${fileResults}
+                <!-- Document Grid -->
+                <div class="fraud-details" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px;">
+                    ${fileBoxes}
                 </div>
             `;
         }
