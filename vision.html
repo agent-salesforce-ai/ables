@@ -5291,14 +5291,22 @@
                 return;
             }
 
+            // Track if background research has started
+            let researchPromise = null;
+            let researchStarted = false;
+
             try {
-                // Show BOTH sections immediately
+                // Show ALL sections immediately with skeleton states
                 document.getElementById('fraudSection').classList.remove('hidden');
                 document.getElementById('dataSection').classList.remove('hidden');
+                document.getElementById('researchSection').classList.remove('hidden');
+                document.getElementById('lenderSection').classList.remove('hidden');
 
-                // Initialize both with empty/pending states
+                // Initialize with skeleton/pending states
                 renderFraudResultsLive();
                 renderExtractedDataLive([]);
+                renderResearchSkeleton(); // Show research skeleton immediately
+                renderLenderSkeleton(); // Show lender skeleton immediately
 
                 // Step 2: Fraud Scan
                 setStep(2);
@@ -5321,7 +5329,7 @@
                     updateFileList();
                 }
 
-                // Step 3: Extract Data
+                // Step 3: Extract Data - with parallel research kickoff
                 setStep(3);
                 showLoading(true, 'Extracting bank data...', {
                     step: 'extract',
@@ -5329,7 +5337,22 @@
                     subtext: 'Reading transaction data and account details'
                 });
 
-                extractedData = await extractBankData(apiKey);
+                // Modified extractBankData that can trigger research after first statement
+                extractedData = await extractBankDataWithResearch(apiKey, (businessName) => {
+                    // Callback when we get business name from first statement
+                    if (businessName && !researchStarted) {
+                        researchStarted = true;
+                        extractedBusinessInfo.name = businessName;
+
+                        // Update research section header
+                        document.getElementById('researchBusinessName').textContent = businessName;
+
+                        // Start research in parallel - don't await
+                        console.log(`🔍 Starting background research for: ${businessName}`);
+                        researchPromise = runBackgroundResearch(apiKey);
+                    }
+                });
+
                 // Keep the live table - don't replace it with renderExtractedData()
                 renderCharts();
 
@@ -5341,15 +5364,21 @@
                     document.getElementById('displayBusinessAddress').textContent = extractedBusinessInfo.address || '';
                 }
 
-                // Step 4: Background Research
+                // Step 4: Wait for research if it started, or start it now
                 setStep(4);
-                if (extractedBusinessInfo.name) {
+                if (researchPromise) {
+                    showLoading(true, `Completing research for ${extractedBusinessInfo.name}...`, {
+                        step: 'analyze',
+                        progress: 55,
+                        subtext: 'Finishing background checks'
+                    });
+                    await researchPromise;
+                } else if (extractedBusinessInfo.name) {
                     showLoading(true, `Researching ${extractedBusinessInfo.name}...`, {
                         step: 'analyze',
                         progress: 55,
                         subtext: 'Running comprehensive background checks'
                     });
-                    document.getElementById('researchSection').classList.remove('hidden');
                     document.getElementById('researchBusinessName').textContent = extractedBusinessInfo.name;
                     await runBackgroundResearch(apiKey);
                 }
@@ -5361,7 +5390,6 @@
                     progress: 90,
                     subtext: 'Comparing against lender criteria'
                 });
-                document.getElementById('lenderSection').classList.remove('hidden');
                 document.getElementById('submitSection').classList.remove('hidden');
 
                 matchedLenders = matchLenders(extractedData);
@@ -5682,7 +5710,12 @@ Return ONLY valid JSON:
             }
         }
 
-        async function extractBankData(apiKey) {
+        // Wrapper that calls extractBankData with a callback for research
+        async function extractBankDataWithResearch(apiKey, onBusinessNameFound) {
+            return extractBankData(apiKey, onBusinessNameFound);
+        }
+
+        async function extractBankData(apiKey, onBusinessNameFound = null) {
             // Process statements SEQUENTIALLY for live updates
             showLoading(true, `Extracting data from ${files.length} statements...`, {
                 step: 'extract',
@@ -5692,6 +5725,8 @@ Return ONLY valid JSON:
 
             // Initialize live data display
             renderExtractedDataLive([]);
+
+            let businessNameCallbackFired = false;
 
             // Extract each statement with retry logic - ONE AT A TIME for live updates
             const extractWithRetry = async (file, index, maxRetries = 2) => {
@@ -5729,6 +5764,20 @@ Return ONLY valid JSON:
 
                 // Update live display after each extraction
                 renderExtractedDataLive(results.filter(r => r !== null));
+
+                // After first successful extraction, check for business name and trigger research
+                if (result && !businessNameCallbackFired && onBusinessNameFound) {
+                    const businessName = result.business_name || result.account_holder || '';
+                    if (businessName) {
+                        businessNameCallbackFired = true;
+                        // Store it early
+                        extractedBusinessInfo.name = businessName;
+                        extractedBusinessInfo.owner = result.owner_name || '';
+                        extractedBusinessInfo.address = result.business_address || '';
+                        // Fire callback to start research in parallel
+                        onBusinessNameFound(businessName);
+                    }
+                }
             }
 
             // Log extraction summary
@@ -6059,7 +6108,7 @@ Return ONLY valid JSON:
                 negDays: acc.negDays + (m.days_negative || 0)
             }), { deposits: 0, trueRevenue: 0, withdrawals: 0, avgBalSum: 0, numDeps: 0, nsf: 0, negDays: 0 });
 
-            // Averages row
+            // Averages row - must have 10 columns to match headers and data rows
             const avgRow = extractedCount > 0 ? `
                 <tr style="background: var(--bg-tertiary); font-weight: 600;">
                     <td style="padding: 14px 16px;"><span style="color: var(--text); text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px;">AVERAGE</span></td>
@@ -6070,7 +6119,8 @@ Return ONLY valid JSON:
                     <td style="padding: 14px 12px; text-align: right;"><span style="color: var(--text);">$${(totals.avgBalSum / extractedCount).toLocaleString('en-US', {minimumFractionDigits: 2})}</span></td>
                     <td style="padding: 14px 12px; text-align: right;"><span style="color: var(--text-muted);">-</span></td>
                     <td style="padding: 14px 12px; text-align: right;"><span style="color: var(--text-muted);">-</span></td>
-                    <td style="padding: 14px 12px; text-align: center;"><span style="color: ${totals.nsf > 0 ? 'var(--red)' : 'var(--text-muted)'};">${(totals.nsf / extractedCount).toFixed(2)}</span></td>
+                    <td style="padding: 14px 12px; text-align: center;"><span style="color: ${totals.nsf > 0 ? 'var(--red)' : 'var(--text-muted)'};">${(totals.nsf / extractedCount).toFixed(1)}</span></td>
+                    <td style="padding: 14px 12px; text-align: center;"><span style="color: ${totals.negDays > 0 ? 'var(--red)' : 'var(--text-muted)'};">${(totals.negDays / extractedCount).toFixed(1)}</span></td>
                 </tr>
             ` : '';
 
@@ -6088,7 +6138,7 @@ Return ONLY valid JSON:
 
                 <!-- Data Table -->
                 <div style="overflow-x: auto; border: 1px solid var(--border); border-radius: 10px;">
-                    <table style="width: 100%; border-collapse: collapse; min-width: 900px;">
+                    <table style="width: 100%; border-collapse: collapse; min-width: 1000px;">
                         <thead>
                             <tr style="background: var(--bg-tertiary);">
                                 <th style="padding: 14px 16px; text-align: left; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Month</th>
@@ -6100,6 +6150,7 @@ Return ONLY valid JSON:
                                 <th style="padding: 14px 12px; text-align: right; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Open Bal</th>
                                 <th style="padding: 14px 12px; text-align: right; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">End Bal</th>
                                 <th style="padding: 14px 12px; text-align: center; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">NSF</th>
+                                <th style="padding: 14px 12px; text-align: center; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Neg</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -6421,6 +6472,52 @@ Return ONLY valid JSON:
         };
 
         let researchResults = {};
+
+        // Render skeleton state for research section
+        function renderResearchSkeleton() {
+            const resultsGrid = document.getElementById('researchResults');
+            document.getElementById('researchBusinessName').textContent = 'Loading...';
+            document.getElementById('researchProgressFill').style.width = '0%';
+            document.getElementById('researchProgressText').textContent = '0 / 12';
+
+            resultsGrid.innerHTML = researchModules.map(m => `
+                <div class="research-module loading" id="module-${m.id}">
+                    <div class="research-module-header">
+                        <div class="research-module-icon">
+                            <div class="skeleton-bar" style="width: 40px; height: 40px; background: var(--border); border-radius: 8px; animation: shimmer 1.5s ease-in-out infinite;"></div>
+                        </div>
+                        <div class="research-module-info">
+                            <div class="research-module-name" style="color: var(--text-muted);">${m.name}</div>
+                            <div class="research-module-summary" style="color: var(--text-muted); opacity: 0.5;">Waiting to start...</div>
+                        </div>
+                        <div class="research-module-status">
+                            <span class="risk-badge pending">Pending</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render skeleton state for lender section
+        function renderLenderSkeleton() {
+            const grid = document.getElementById('lenderGrid');
+            if (!grid) return;
+
+            // Create 6 skeleton lender cards
+            grid.innerHTML = Array(6).fill(0).map(() => `
+                <div class="lender-card" style="opacity: 0.5;">
+                    <div class="lender-header">
+                        <div class="skeleton-bar" style="width: 100px; height: 20px; background: var(--border); border-radius: 4px;"></div>
+                        <div class="skeleton-bar" style="width: 60px; height: 24px; background: var(--border); border-radius: 12px;"></div>
+                    </div>
+                    <div class="lender-criteria" style="margin-top: 12px;">
+                        <div class="skeleton-bar" style="width: 100%; height: 12px; background: var(--border); border-radius: 4px; margin-bottom: 8px;"></div>
+                        <div class="skeleton-bar" style="width: 80%; height: 12px; background: var(--border); border-radius: 4px; margin-bottom: 8px;"></div>
+                        <div class="skeleton-bar" style="width: 90%; height: 12px; background: var(--border); border-radius: 4px;"></div>
+                    </div>
+                </div>
+            `).join('');
+        }
 
         function toggleModule(moduleId) {
             const module = document.getElementById(`module-${moduleId}`);
