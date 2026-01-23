@@ -2187,45 +2187,45 @@
         .fraud-modules-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            max-width: 800px;
-            margin: 0 auto;
+            gap: 16px;
+            padding: 8px;
         }
 
         .fraud-module {
-            background: var(--bg-secondary);
+            background: var(--bg-tertiary);
             border: 1px solid var(--border);
-            border-radius: var(--radius-md);
+            border-radius: 12px;
             overflow: hidden;
             transition: all 0.2s ease;
         }
 
         .fraud-module:hover {
             border-color: var(--text-muted);
+            transform: translateY(-1px);
         }
 
-        .fraud-module.risk-low { border-left: 3px solid var(--green); }
-        .fraud-module.risk-medium { border-left: 3px solid var(--yellow); }
-        .fraud-module.risk-high { border-left: 3px solid var(--red); }
+        .fraud-module.risk-low { border-left: 4px solid var(--green); }
+        .fraud-module.risk-medium { border-left: 4px solid var(--yellow); }
+        .fraud-module.risk-high { border-left: 4px solid var(--red); }
 
         .fraud-module-header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 12px 14px;
+            gap: 14px;
+            padding: 16px 18px;
             cursor: pointer;
             user-select: none;
         }
 
         .fraud-module-header:hover {
-            background: var(--bg-tertiary);
+            background: var(--bg-secondary);
         }
 
         .fraud-module-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
-            background: var(--bg-tertiary);
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--bg-secondary);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -2233,8 +2233,8 @@
         }
 
         .fraud-module-icon svg {
-            width: 16px;
-            height: 16px;
+            width: 20px;
+            height: 20px;
             stroke: var(--text-muted);
         }
 
@@ -2252,43 +2252,44 @@
 
         .fraud-module-name {
             font-weight: 600;
-            font-size: 13px;
+            font-size: 14px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: var(--text);
         }
 
         .fraud-module-summary {
-            font-size: 11px;
+            font-size: 12px;
             color: var(--text-muted);
-            margin-top: 2px;
+            margin-top: 4px;
         }
 
         .fraud-module-status {
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 10px;
-            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.3px;
-            background: var(--bg-tertiary);
+            letter-spacing: 0.5px;
+            background: var(--bg-secondary);
             color: var(--text-muted);
         }
 
         .fraud-module.risk-low .fraud-module-status { background: var(--green-bg); color: var(--green); }
         .fraud-module.risk-medium .fraud-module-status { background: var(--yellow-bg); color: var(--yellow); }
         .fraud-module.risk-high .fraud-module-status { background: var(--red-bg); color: var(--red); }
-        .fraud-module.risk-pending { border-left: 3px solid var(--text-muted); opacity: 0.7; }
+        .fraud-module.risk-pending { border-left: 4px solid var(--border); }
         .fraud-module.risk-pending .fraud-module-icon { animation: pulse 1.5s ease-in-out infinite; }
 
         @keyframes pulse {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
+            0%, 100% { opacity: 0.4; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1); }
         }
 
         .fraud-module .expand-icon {
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -2296,8 +2297,8 @@
         }
 
         .fraud-module .expand-icon svg {
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             stroke: var(--text-muted);
         }
 
