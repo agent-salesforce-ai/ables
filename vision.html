@@ -539,6 +539,18 @@
             background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 100%);
         }
 
+        .section-header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-logo {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
         .section-body {
             padding: 20px;
         }
@@ -1607,7 +1619,34 @@
             flex-shrink: 0;
         }
         .watermark-preview.expanded {
-            max-height: 500px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90vw;
+            max-width: 1200px;
+            height: 85vh;
+            max-height: 85vh;
+            z-index: 1000;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            margin: 0;
+        }
+        .watermark-preview-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .watermark-preview-overlay.visible {
+            opacity: 1;
+            visibility: visible;
         }
         .watermark-preview canvas {
             max-width: 100%;
@@ -1616,7 +1655,8 @@
             transition: max-height 0.3s ease;
         }
         .watermark-preview.expanded canvas {
-            max-height: 480px;
+            max-width: 95%;
+            max-height: calc(85vh - 40px);
         }
         .expand-btn {
             position: absolute;
@@ -2390,6 +2430,9 @@
                 </div>
             </div>
 
+            <!-- Watermark Preview Overlay -->
+            <div class="watermark-preview-overlay" id="previewOverlay" onclick="togglePreviewSize()"></div>
+
             <!-- Watermark Preview -->
             <div class="watermark-preview" id="previewContainer">
                 <div class="watermark-placeholder" id="watermarkPlaceholder">
@@ -2499,7 +2542,7 @@
             <!-- Fraud Results -->
             <div class="section-card hidden" id="fraudSection">
                 <div class="section-header">
-                    <span>Fraud Analysis</span>
+                    <div class="section-header-title"><svg class="section-logo" viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/><circle cx="32" cy="32" r="12" fill="#eab308"/><ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/></svg><span>Fraud Analysis</span></div>
                     <button class="card-export-btn" onclick="exportCardAsPng('fraudSection', 'Fraud_Analysis')">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                         PNG
@@ -2511,7 +2554,7 @@
             <!-- Extracted Data -->
             <div class="section-card hidden" id="dataSection">
                 <div class="section-header">
-                    <span>Bank Analysis Worksheet</span>
+                    <div class="section-header-title"><svg class="section-logo" viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/><circle cx="32" cy="32" r="12" fill="#eab308"/><ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/></svg><span>Bank Analysis Worksheet</span></div>
                     <button class="card-export-btn" onclick="exportCardAsPng('dataSection', 'Bank_Analysis')">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                         PNG
@@ -2523,7 +2566,7 @@
             <!-- Charts Section -->
             <div class="section-card hidden" id="chartsSection">
                 <div class="section-header">
-                    <span>Cash Flow Analysis</span>
+                    <div class="section-header-title"><svg class="section-logo" viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/><circle cx="32" cy="32" r="12" fill="#eab308"/><ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/></svg><span>Cash Flow Analysis</span></div>
                     <button class="card-export-btn" onclick="exportCardAsPng('chartsSection', 'Cash_Flow')">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                         PNG
@@ -2544,7 +2587,7 @@
             <!-- Existing Debt Obligations -->
             <div class="section-card hidden" id="debtSection">
                 <div class="section-header">
-                    <span>Existing Debt Obligations</span>
+                    <div class="section-header-title"><svg class="section-logo" viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/><circle cx="32" cy="32" r="12" fill="#eab308"/><ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/></svg><span>Existing Debt Obligations</span></div>
                     <div class="section-header-actions">
                         <span class="debt-total-badge" id="debtTotalBadge">$0/mo</span>
                         <button class="card-export-btn" onclick="exportCardAsPng('debtSection', 'Debt_Obligations')">
@@ -2582,7 +2625,7 @@
             <!-- Background Research -->
             <div class="section-card hidden" id="researchSection">
                 <div class="section-header">
-                    <span>Background Research: <span id="researchBusinessName">-</span></span>
+                    <div class="section-header-title"><svg class="section-logo" viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/><circle cx="32" cy="32" r="12" fill="#eab308"/><ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/></svg><span>Background Research: <span id="researchBusinessName">-</span></span></div>
                     <div class="section-header-actions">
                         <button class="btn" id="expandAllBtn" onclick="toggleAllModules()" style="font-size: 12px; padding: 6px 12px;">Expand All</button>
                         <button class="card-export-btn" onclick="exportCardAsPng('researchSection', 'Background_Research')">
@@ -2629,7 +2672,7 @@
             <!-- Lender Results -->
             <div class="section-card hidden" id="lenderSection">
                 <div class="section-header">
-                    <span>Lender Matches</span>
+                    <div class="section-header-title"><svg class="section-logo" viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/><circle cx="32" cy="32" r="12" fill="#eab308"/><ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/></svg><span>Lender Matches</span></div>
                     <div class="section-header-actions">
                         <span class="file-count" id="lenderCount"></span>
                         <button class="card-export-btn" onclick="exportCardAsPng('lenderSection', 'Lender_Matches')">
@@ -2646,7 +2689,7 @@
             <!-- Submit Instructions -->
             <div class="section-card hidden" id="submitSection">
                 <div class="section-header">
-                    <span>Submission Instructions</span>
+                    <div class="section-header-title"><svg class="section-logo" viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/><circle cx="32" cy="32" r="12" fill="#eab308"/><ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/></svg><span>Submission Instructions</span></div>
                     <button class="card-export-btn" onclick="exportCardAsPng('submitSection', 'Submit_Instructions')">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                         PNG
@@ -3137,7 +3180,9 @@
 
         function togglePreviewSize() {
             const container = document.getElementById('previewContainer');
+            const overlay = document.getElementById('previewOverlay');
             container.classList.toggle('expanded');
+            overlay.classList.toggle('visible');
         }
 
         function selectFile(idx) {
@@ -3434,7 +3479,7 @@
                 }
 
                 // Small delay to let CSS recompute
-                await new Promise(r => setTimeout(r, 50));
+                await new Promise(r => setTimeout(r, 100));
 
                 // Create wrapper with settings
                 const wrapper = document.createElement('div');
@@ -3467,9 +3512,9 @@
                 if (!includeResearch) clone.querySelector('#researchSection')?.remove();
                 if (!includeLenders) clone.querySelector('#lenderSection')?.remove();
 
-                // Apply additional light styles for elements using inline var() styles
+                // FORCE all backgrounds to be light - this is the nuclear option
                 if (useLight) {
-                    applyExportLightStyles(clone);
+                    forceAllLightStyles(clone);
                 }
 
                 wrapper.appendChild(clone);
@@ -3490,6 +3535,13 @@
                 });
 
                 document.body.removeChild(wrapper);
+
+                // Restore original theme
+                if (originalTheme) {
+                    document.documentElement.setAttribute('data-theme', originalTheme);
+                } else {
+                    document.documentElement.removeAttribute('data-theme');
+                }
 
                 if (format === 'pdf') {
                     // Create PDF
@@ -3541,6 +3593,58 @@
                 console.error('Export error:', error);
                 showStatus('Error: ' + error.message, 'error');
             }
+        }
+
+        // Nuclear option - force ALL elements to light styles
+        function forceAllLightStyles(clone) {
+            // First, iterate through ALL elements and force light colors
+            clone.querySelectorAll('*').forEach(el => {
+                const style = el.style;
+                const computed = window.getComputedStyle(el);
+
+                // Force background colors
+                const bg = computed.backgroundColor;
+                if (bg) {
+                    const rgb = bg.match(/\d+/g);
+                    if (rgb && rgb.length >= 3) {
+                        const [r, g, b] = rgb.map(Number);
+                        // If dark background, make it white or light gray
+                        if (r < 40 && g < 40 && b < 40) {
+                            style.backgroundColor = '#ffffff';
+                        } else if (r < 80 && g < 80 && b < 80) {
+                            style.backgroundColor = '#f9fafb';
+                        }
+                    }
+                }
+
+                // Force text colors
+                const color = computed.color;
+                if (color) {
+                    const rgb = color.match(/\d+/g);
+                    if (rgb && rgb.length >= 3) {
+                        const [r, g, b] = rgb.map(Number);
+                        // If light text, make it dark
+                        if (r > 200 && g > 200 && b > 200) {
+                            style.color = '#111827';
+                        }
+                    }
+                }
+
+                // Force border colors
+                const borderColor = computed.borderColor;
+                if (borderColor && borderColor.includes('rgb')) {
+                    const rgb = borderColor.match(/\d+/g);
+                    if (rgb && rgb.length >= 3) {
+                        const [r, g, b] = rgb.map(Number);
+                        if (r < 60 && g < 60 && b < 60) {
+                            style.borderColor = '#e5e7eb';
+                        }
+                    }
+                }
+            });
+
+            // Now apply specific component styles
+            applyExportLightStyles(clone);
         }
 
         // Helper function to apply light styles
