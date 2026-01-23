@@ -574,6 +574,195 @@
             gap: 8px;
         }
 
+        /* Export Menu */
+        .export-menu-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .export-menu-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: linear-gradient(135deg, var(--gold) 0%, #d4a106 100%);
+            color: #000;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .export-menu-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4);
+        }
+
+        .export-menu-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .export-menu-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .export-dropdown {
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            right: 0;
+            margin-bottom: 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.2s ease;
+            z-index: 1000;
+            min-width: 280px;
+        }
+
+        .export-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .export-dropdown-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+        }
+
+        .export-dropdown-section {
+            padding: 8px;
+        }
+
+        .export-dropdown-section-title {
+            padding: 8px 12px 4px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+        }
+
+        .export-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            color: var(--text);
+        }
+
+        .export-option:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .export-option-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .export-option-icon.png { background: rgba(34, 197, 94, 0.15); color: var(--green); }
+        .export-option-icon.pdf { background: rgba(239, 68, 68, 0.15); color: var(--red); }
+        .export-option-icon.print { background: rgba(59, 130, 246, 0.15); color: var(--blue); }
+        .export-option-icon.json { background: rgba(168, 85, 247, 0.15); color: var(--purple); }
+        .export-option-icon.csv { background: rgba(234, 179, 8, 0.15); color: var(--gold); }
+        .export-option-icon.clipboard { background: rgba(99, 102, 241, 0.15); color: #6366f1; }
+
+        .export-option-icon svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .export-option-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .export-option-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .export-option-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .export-option-badge {
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: var(--gold-bg);
+            color: var(--gold);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Print styles for clean export */
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+            }
+            .header, .sidebar, .export-menu-container, .card-export-btn,
+            .expand-toggle, button, .loading, .empty-state, .modal-overlay {
+                display: none !important;
+            }
+            .content {
+                margin: 0 !important;
+                padding: 20px !important;
+            }
+            .section-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                background: #ffffff !important;
+                border: 1px solid #e0e0e0 !important;
+                box-shadow: none !important;
+                margin-bottom: 20px !important;
+            }
+            .section-header {
+                background: #f5f5f5 !important;
+                color: #000000 !important;
+            }
+            .hidden {
+                display: block !important;
+            }
+            * {
+                color-adjust: exact !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+
         /* Status Message */
         .status-message {
             padding: 12px 16px;
@@ -2096,12 +2285,104 @@
                 <button class="btn btn-primary" id="processBtn" style="width: 100%;" disabled>
                     Analyze Documents
                 </button>
-                <button class="btn" id="exportReportBtn" style="width: 100%;" disabled onclick="exportReport()">
-                    Export PDF Report
-                </button>
-                <button class="btn" id="exportPngBtn" style="width: 100%;" disabled onclick="exportReportAsPng()">
-                    Export PNG Screenshot
-                </button>
+                <div class="export-menu-container" style="width: 100%;">
+                    <button class="export-menu-btn" id="exportMenuBtn" style="width: 100%;" disabled onclick="toggleExportMenu()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Export Report
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px; margin-left: auto;">
+                            <polyline points="18 15 12 9 6 15"/>
+                        </svg>
+                    </button>
+                    <div class="export-dropdown" id="exportDropdown">
+                        <div class="export-dropdown-header">Export Options</div>
+                        <div class="export-dropdown-section">
+                            <div class="export-dropdown-section-title">Images</div>
+                            <button class="export-option" onclick="exportMethod('png-clean')">
+                                <div class="export-option-icon png">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                                </div>
+                                <div class="export-option-info">
+                                    <div class="export-option-title">PNG (Light Theme)</div>
+                                    <div class="export-option-desc">Clean white background, DOM clone method</div>
+                                </div>
+                                <span class="export-option-badge">Best</span>
+                            </button>
+                            <button class="export-option" onclick="exportMethod('png-iframe')">
+                                <div class="export-option-icon png">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                                </div>
+                                <div class="export-option-info">
+                                    <div class="export-option-title">PNG (Iframe Render)</div>
+                                    <div class="export-option-desc">Isolated render, avoids style conflicts</div>
+                                </div>
+                            </button>
+                            <button class="export-option" onclick="exportMethod('png-native')">
+                                <div class="export-option-icon png">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                                </div>
+                                <div class="export-option-info">
+                                    <div class="export-option-title">PNG (Current Theme)</div>
+                                    <div class="export-option-desc">Exports as-is with current dark/light theme</div>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="export-dropdown-section">
+                            <div class="export-dropdown-section-title">Documents</div>
+                            <button class="export-option" onclick="exportMethod('pdf')">
+                                <div class="export-option-icon pdf">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+                                </div>
+                                <div class="export-option-info">
+                                    <div class="export-option-title">PDF Document</div>
+                                    <div class="export-option-desc">Multi-page PDF with light theme</div>
+                                </div>
+                            </button>
+                            <button class="export-option" onclick="exportMethod('print')">
+                                <div class="export-option-icon print">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                                </div>
+                                <div class="export-option-info">
+                                    <div class="export-option-title">Print / Save as PDF</div>
+                                    <div class="export-option-desc">Uses browser print dialog, best quality</div>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="export-dropdown-section">
+                            <div class="export-dropdown-section-title">Data</div>
+                            <button class="export-option" onclick="exportMethod('json')">
+                                <div class="export-option-icon json">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M8 13h2M8 17h2M12 13h4M12 17h4"/></svg>
+                                </div>
+                                <div class="export-option-info">
+                                    <div class="export-option-title">JSON Data</div>
+                                    <div class="export-option-desc">Raw analysis data for integration</div>
+                                </div>
+                            </button>
+                            <button class="export-option" onclick="exportMethod('csv')">
+                                <div class="export-option-icon csv">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8M8 9h1"/></svg>
+                                </div>
+                                <div class="export-option-info">
+                                    <div class="export-option-title">CSV Spreadsheet</div>
+                                    <div class="export-option-desc">Monthly data for Excel/Sheets</div>
+                                </div>
+                            </button>
+                            <button class="export-option" onclick="exportMethod('clipboard')">
+                                <div class="export-option-icon clipboard">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
+                                </div>
+                                <div class="export-option-info">
+                                    <div class="export-option-title">Copy to Clipboard</div>
+                                    <div class="export-option-desc">Formatted summary text</div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 <button class="btn btn-secondary" id="downloadAllBtn" style="width: 100%;" disabled>
                     Download Watermarked
                 </button>
@@ -2788,12 +3069,545 @@
             showStatus('Downloads complete!', 'success');
         }
 
+        // Export Menu Functions
+        function toggleExportMenu() {
+            const dropdown = document.getElementById('exportDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const container = document.querySelector('.export-menu-container');
+            const dropdown = document.getElementById('exportDropdown');
+            if (container && dropdown && !container.contains(e.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        async function exportMethod(method) {
+            const dropdown = document.getElementById('exportDropdown');
+            dropdown.classList.remove('show');
+
+            if (!extractedData.full_analysis) {
+                showStatus('No analysis data to export', 'error');
+                return;
+            }
+
+            switch(method) {
+                case 'png-clean':
+                    await exportPngClean();
+                    break;
+                case 'png-iframe':
+                    await exportPngIframe();
+                    break;
+                case 'png-native':
+                    await exportPngNative();
+                    break;
+                case 'pdf':
+                    await exportPdf();
+                    break;
+                case 'print':
+                    exportPrint();
+                    break;
+                case 'json':
+                    exportJson();
+                    break;
+                case 'csv':
+                    exportCsv();
+                    break;
+                case 'clipboard':
+                    await exportClipboard();
+                    break;
+            }
+        }
+
+        // Method 1: PNG Clean - DOM Clone with forced light styles
+        async function exportPngClean() {
+            showStatus('Generating PNG (Clean)...', 'info');
+
+            try {
+                const resultsArea = document.getElementById('resultsArea');
+
+                // Create a wrapper div with explicit light styles
+                const wrapper = document.createElement('div');
+                wrapper.style.cssText = `
+                    position: absolute;
+                    left: -9999px;
+                    top: 0;
+                    background: #ffffff;
+                    padding: 24px;
+                    width: ${resultsArea.offsetWidth}px;
+                `;
+
+                // Clone the results
+                const clone = resultsArea.cloneNode(true);
+
+                // Remove hidden class from all elements
+                clone.querySelectorAll('.hidden').forEach(el => el.classList.remove('hidden'));
+
+                // Remove all buttons
+                clone.querySelectorAll('button, .card-export-btn, .expand-toggle').forEach(el => el.remove());
+
+                // Apply light theme inline styles to everything
+                const applyLightStyles = (el) => {
+                    el.style.setProperty('background-color', '#ffffff', 'important');
+                    el.style.setProperty('background-image', 'none', 'important');
+                    el.style.setProperty('background', '#ffffff', 'important');
+                    el.style.setProperty('color', '#1e293b', 'important');
+                    el.style.setProperty('border-color', '#e2e8f0', 'important');
+                };
+
+                // Style section cards
+                clone.querySelectorAll('.section-card').forEach(card => {
+                    card.style.cssText = 'background: #ffffff !important; border: 1px solid #e2e8f0 !important; border-radius: 12px; margin-bottom: 20px; overflow: hidden;';
+                });
+
+                clone.querySelectorAll('.section-header').forEach(header => {
+                    header.style.cssText = 'background: #f8fafc !important; color: #1e293b !important; padding: 16px 20px; border-bottom: 1px solid #e2e8f0 !important; font-weight: 600;';
+                });
+
+                clone.querySelectorAll('.section-body').forEach(body => {
+                    body.style.cssText = 'background: #ffffff !important; padding: 20px; color: #1e293b !important;';
+                });
+
+                // Style tables
+                clone.querySelectorAll('table').forEach(table => {
+                    table.style.cssText = 'background: #ffffff !important; border-collapse: collapse; width: 100%;';
+                });
+                clone.querySelectorAll('th').forEach(th => {
+                    th.style.cssText = 'background: #f8fafc !important; color: #1e293b !important; padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0 !important;';
+                });
+                clone.querySelectorAll('td').forEach(td => {
+                    td.style.cssText = 'background: #ffffff !important; color: #1e293b !important; padding: 12px; border-bottom: 1px solid #f1f5f9 !important;';
+                });
+
+                // Style risk chips
+                clone.querySelectorAll('.risk-chip').forEach(chip => {
+                    const isGood = chip.classList.contains('good');
+                    const isWarn = chip.classList.contains('warn');
+                    const isBad = chip.classList.contains('bad');
+                    let bg = '#f1f5f9';
+                    let color = '#475569';
+                    if (isGood) { bg = 'rgba(34, 197, 94, 0.15)'; color = '#16a34a'; }
+                    if (isWarn) { bg = 'rgba(234, 179, 8, 0.15)'; color = '#ca8a04'; }
+                    if (isBad) { bg = 'rgba(239, 68, 68, 0.15)'; color = '#dc2626'; }
+                    chip.style.cssText = `background: ${bg} !important; color: ${color} !important; padding: 12px; border-radius: 8px; text-align: center;`;
+                });
+
+                // Style stats
+                clone.querySelectorAll('.debt-stat, .research-stat, .data-card').forEach(stat => {
+                    stat.style.cssText = 'background: #f8fafc !important; padding: 16px; border-radius: 8px; text-align: center;';
+                });
+                clone.querySelectorAll('.debt-stat-value, .research-stat-value, .data-card-value').forEach(val => {
+                    val.style.cssText = 'color: #1e293b !important; font-size: 24px; font-weight: 700;';
+                });
+                clone.querySelectorAll('.debt-stat-label, .research-stat-label, .data-card-label').forEach(label => {
+                    label.style.cssText = 'color: #64748b !important; font-size: 12px;';
+                });
+
+                // Style MCA sections
+                clone.querySelectorAll('.mca-section, .mca-alert').forEach(mca => {
+                    mca.style.cssText = 'background: rgba(239, 68, 68, 0.1) !important; border: 1px solid rgba(239, 68, 68, 0.3) !important; border-radius: 8px; padding: 16px; color: #dc2626 !important;';
+                });
+
+                // Style charts container
+                clone.querySelectorAll('.chart-container').forEach(chart => {
+                    chart.style.cssText = 'background: #ffffff !important; border-radius: 8px;';
+                });
+
+                // Apply to all other text elements
+                clone.querySelectorAll('span, div, p, h1, h2, h3, h4, h5, h6').forEach(el => {
+                    if (!el.style.color || el.style.color.includes('var(')) {
+                        el.style.color = '#1e293b';
+                    }
+                });
+
+                wrapper.appendChild(clone);
+                document.body.appendChild(wrapper);
+
+                // Wait for any images/charts to render
+                await new Promise(r => setTimeout(r, 100));
+
+                const canvas = await html2canvas(wrapper, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    allowTaint: true
+                });
+
+                document.body.removeChild(wrapper);
+
+                downloadCanvas(canvas, 'png');
+                showStatus('PNG exported!', 'success');
+            } catch (error) {
+                console.error('Export error:', error);
+                showStatus('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Method 2: PNG Iframe - Render in isolated iframe
+        async function exportPngIframe() {
+            showStatus('Generating PNG (Iframe)...', 'info');
+
+            try {
+                const resultsArea = document.getElementById('resultsArea');
+
+                // Create iframe
+                const iframe = document.createElement('iframe');
+                iframe.style.cssText = 'position: absolute; left: -9999px; top: 0; width: 900px; height: 5000px; border: none;';
+                document.body.appendChild(iframe);
+
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+                // Write complete HTML with light theme
+                iframeDoc.open();
+                iframeDoc.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+                        <style>
+                            * { margin: 0; padding: 0; box-sizing: border-box; }
+                            body {
+                                font-family: 'Inter', sans-serif;
+                                background: #ffffff;
+                                color: #1e293b;
+                                padding: 24px;
+                                line-height: 1.5;
+                            }
+                            .section-card {
+                                background: #ffffff;
+                                border: 1px solid #e2e8f0;
+                                border-radius: 12px;
+                                margin-bottom: 20px;
+                                overflow: hidden;
+                            }
+                            .section-header {
+                                background: #f8fafc;
+                                padding: 16px 20px;
+                                font-weight: 600;
+                                border-bottom: 1px solid #e2e8f0;
+                            }
+                            .section-body { padding: 20px; }
+                            table { width: 100%; border-collapse: collapse; }
+                            th { background: #f8fafc; padding: 12px; text-align: left; font-weight: 600; border-bottom: 1px solid #e2e8f0; }
+                            td { padding: 12px; border-bottom: 1px solid #f1f5f9; }
+                            .risk-summary, .debt-summary, .research-summary, .data-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+                            .risk-chip, .debt-stat, .research-stat, .data-card { background: #f8fafc; padding: 16px; border-radius: 8px; text-align: center; }
+                            .risk-chip.good { background: rgba(34, 197, 94, 0.15); }
+                            .risk-chip.warn { background: rgba(234, 179, 8, 0.15); }
+                            .risk-chip.bad { background: rgba(239, 68, 68, 0.15); }
+                            .risk-chip-value, .debt-stat-value, .research-stat-value, .data-card-value { font-size: 24px; font-weight: 700; color: #1e293b; }
+                            .risk-chip-label, .debt-stat-label, .research-stat-label, .data-card-label { font-size: 12px; color: #64748b; margin-top: 4px; }
+                            .mca-section, .mca-alert { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 16px; margin: 16px 0; }
+                            .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+                            .chart-container { background: #ffffff; border-radius: 8px; padding: 16px; }
+                            .hidden { display: block !important; }
+                            button, .card-export-btn, .expand-toggle { display: none !important; }
+                            .fraud-item { padding: 12px; border-bottom: 1px solid #f1f5f9; }
+                            .lender-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+                            .lender-card { background: #f8fafc; padding: 16px; border-radius: 8px; }
+                            .research-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+                            .research-module { background: #f8fafc; border-radius: 8px; overflow: hidden; }
+                            .research-module-header { padding: 12px 16px; background: #f1f5f9; font-weight: 600; }
+                            .research-module-body { padding: 16px; }
+                        </style>
+                    </head>
+                    <body>${resultsArea.innerHTML}</body>
+                    </html>
+                `);
+                iframeDoc.close();
+
+                // Wait for fonts and content to load
+                await new Promise(r => setTimeout(r, 500));
+
+                const canvas = await html2canvas(iframeDoc.body, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    logging: false
+                });
+
+                document.body.removeChild(iframe);
+
+                downloadCanvas(canvas, 'png');
+                showStatus('PNG exported!', 'success');
+            } catch (error) {
+                console.error('Export error:', error);
+                showStatus('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Method 3: PNG Native - Export current theme as-is
+        async function exportPngNative() {
+            showStatus('Generating PNG (Native)...', 'info');
+
+            try {
+                const resultsArea = document.getElementById('resultsArea');
+
+                // Hide buttons
+                const buttons = resultsArea.querySelectorAll('button, .card-export-btn');
+                buttons.forEach(b => b.style.display = 'none');
+
+                // Expand hidden sections
+                const hiddenEls = resultsArea.querySelectorAll('.hidden');
+                hiddenEls.forEach(el => el.classList.remove('hidden'));
+
+                const canvas = await html2canvas(resultsArea, {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    allowTaint: true
+                });
+
+                // Restore
+                buttons.forEach(b => b.style.display = '');
+                hiddenEls.forEach(el => el.classList.add('hidden'));
+
+                downloadCanvas(canvas, 'png');
+                showStatus('PNG exported!', 'success');
+            } catch (error) {
+                console.error('Export error:', error);
+                showStatus('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Method 4: PDF Export
+        async function exportPdf() {
+            showStatus('Generating PDF...', 'info');
+
+            try {
+                const resultsArea = document.getElementById('resultsArea');
+
+                // Use the clean method for capturing
+                const wrapper = document.createElement('div');
+                wrapper.style.cssText = `position: absolute; left: -9999px; top: 0; background: #ffffff; padding: 24px; width: ${resultsArea.offsetWidth}px;`;
+
+                const clone = resultsArea.cloneNode(true);
+                clone.querySelectorAll('.hidden').forEach(el => el.classList.remove('hidden'));
+                clone.querySelectorAll('button, .card-export-btn').forEach(el => el.remove());
+
+                // Apply light styles (same as exportPngClean)
+                clone.querySelectorAll('.section-card').forEach(card => {
+                    card.style.cssText = 'background: #ffffff !important; border: 1px solid #e2e8f0 !important; border-radius: 12px; margin-bottom: 20px; overflow: hidden;';
+                });
+                clone.querySelectorAll('.section-header').forEach(h => {
+                    h.style.cssText = 'background: #f8fafc !important; color: #1e293b !important; padding: 16px 20px; border-bottom: 1px solid #e2e8f0 !important;';
+                });
+                clone.querySelectorAll('.section-body').forEach(b => {
+                    b.style.cssText = 'background: #ffffff !important; padding: 20px; color: #1e293b !important;';
+                });
+                clone.querySelectorAll('th').forEach(th => {
+                    th.style.cssText = 'background: #f8fafc !important; color: #1e293b !important; padding: 12px;';
+                });
+                clone.querySelectorAll('td').forEach(td => {
+                    td.style.cssText = 'background: #ffffff !important; color: #1e293b !important; padding: 12px;';
+                });
+
+                wrapper.appendChild(clone);
+                document.body.appendChild(wrapper);
+                await new Promise(r => setTimeout(r, 100));
+
+                const canvas = await html2canvas(wrapper, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    logging: false
+                });
+
+                document.body.removeChild(wrapper);
+
+                // Create PDF
+                const { jsPDF } = window.jspdf;
+                const imgWidth = canvas.width;
+                const imgHeight = canvas.height;
+                const pdfWidth = 612;
+                const pdfHeight = (imgHeight * pdfWidth) / imgWidth;
+                const maxPageHeight = 792;
+
+                if (pdfHeight <= maxPageHeight) {
+                    const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: [pdfWidth, pdfHeight] });
+                    pdf.addImage(canvas.toDataURL('image/png', 1.0), 'PNG', 0, 0, pdfWidth, pdfHeight);
+                    pdf.save(getFilename('pdf'));
+                } else {
+                    const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'letter' });
+                    const pageHeightInCanvasPixels = (maxPageHeight * imgWidth) / pdfWidth;
+                    let position = 0;
+                    let pageNum = 0;
+
+                    while (position < imgHeight) {
+                        if (pageNum > 0) pdf.addPage();
+
+                        const pageCanvas = document.createElement('canvas');
+                        pageCanvas.width = imgWidth;
+                        pageCanvas.height = Math.min(pageHeightInCanvasPixels, imgHeight - position);
+                        const ctx = pageCanvas.getContext('2d');
+                        ctx.drawImage(canvas, 0, position, imgWidth, pageCanvas.height, 0, 0, imgWidth, pageCanvas.height);
+
+                        const scaledHeight = (pageCanvas.height * pdfWidth) / imgWidth;
+                        pdf.addImage(pageCanvas.toDataURL('image/png', 1.0), 'PNG', 0, 0, pdfWidth, scaledHeight);
+
+                        position += pageHeightInCanvasPixels;
+                        pageNum++;
+                    }
+
+                    pdf.save(getFilename('pdf'));
+                }
+
+                showStatus('PDF exported!', 'success');
+            } catch (error) {
+                console.error('Export error:', error);
+                showStatus('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Method 5: Print - Use browser print
+        function exportPrint() {
+            window.print();
+        }
+
+        // Method 6: JSON Export
+        function exportJson() {
+            const data = {
+                business: extractedBusinessInfo,
+                analysis: extractedData.full_analysis,
+                exportDate: new Date().toISOString()
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.download = getFilename('json');
+            link.href = url;
+            link.click();
+            URL.revokeObjectURL(url);
+
+            showStatus('JSON exported!', 'success');
+        }
+
+        // Method 7: CSV Export
+        function exportCsv() {
+            const analysis = extractedData.full_analysis;
+            if (!analysis || !analysis.monthly_data) {
+                showStatus('No monthly data to export', 'error');
+                return;
+            }
+
+            const rows = [
+                ['Month', 'Total Deposits', 'True Revenue', 'Deposit Count', 'Total Withdrawals', 'Avg Balance', 'Low Balance', 'NSF Items', 'Negative Days']
+            ];
+
+            analysis.monthly_data.forEach(month => {
+                rows.push([
+                    month.month || '',
+                    month.total_deposits || 0,
+                    month.true_revenue || month.total_deposits || 0,
+                    month.deposit_count || 0,
+                    month.total_withdrawals || 0,
+                    month.average_balance || 0,
+                    month.low_balance || 0,
+                    month.nsf_items || 0,
+                    month.negative_days || 0
+                ]);
+            });
+
+            // Add summary row
+            if (analysis.summary) {
+                rows.push([]);
+                rows.push(['Summary']);
+                rows.push(['Average Monthly Deposits', analysis.summary.avg_monthly_deposits || 0]);
+                rows.push(['Average True Revenue', analysis.summary.avg_true_revenue || analysis.summary.avg_monthly_deposits || 0]);
+                rows.push(['Total NSF Items', analysis.summary.total_nsf || 0]);
+                rows.push(['Total Negative Days', analysis.summary.total_negative_days || 0]);
+            }
+
+            const csv = rows.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.download = getFilename('csv');
+            link.href = url;
+            link.click();
+            URL.revokeObjectURL(url);
+
+            showStatus('CSV exported!', 'success');
+        }
+
+        // Method 8: Clipboard - Copy summary text
+        async function exportClipboard() {
+            const analysis = extractedData.full_analysis;
+            const business = extractedBusinessInfo;
+
+            let text = `VISION Analysis Report\n`;
+            text += `========================\n\n`;
+            text += `Business: ${business.name || 'Unknown'}\n`;
+            text += `Export Date: ${new Date().toLocaleDateString()}\n\n`;
+
+            if (analysis.summary) {
+                text += `SUMMARY\n`;
+                text += `-------\n`;
+                text += `Avg Monthly Deposits: $${(analysis.summary.avg_monthly_deposits || 0).toLocaleString()}\n`;
+                text += `Avg True Revenue: $${(analysis.summary.avg_true_revenue || analysis.summary.avg_monthly_deposits || 0).toLocaleString()}\n`;
+                text += `Total NSF Items: ${analysis.summary.total_nsf || 0}\n`;
+                text += `Total Negative Days: ${analysis.summary.total_negative_days || 0}\n`;
+                text += `MCA Positions Found: ${analysis.summary.mca_lenders_found || 0}\n\n`;
+            }
+
+            if (analysis.monthly_data && analysis.monthly_data.length > 0) {
+                text += `MONTHLY DATA\n`;
+                text += `------------\n`;
+                analysis.monthly_data.forEach(m => {
+                    text += `${m.month}: Deposits $${(m.total_deposits || 0).toLocaleString()}, True Rev $${(m.true_revenue || m.total_deposits || 0).toLocaleString()}, NSF ${m.nsf_items || 0}, Neg Days ${m.negative_days || 0}\n`;
+                });
+                text += `\n`;
+            }
+
+            if (analysis.red_flags && analysis.red_flags.length > 0) {
+                text += `RED FLAGS\n`;
+                text += `---------\n`;
+                analysis.red_flags.forEach(flag => {
+                    text += `• ${flag}\n`;
+                });
+            }
+
+            try {
+                await navigator.clipboard.writeText(text);
+                showStatus('Copied to clipboard!', 'success');
+            } catch (error) {
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showStatus('Copied to clipboard!', 'success');
+            }
+        }
+
+        // Helper: Download canvas as file
+        function downloadCanvas(canvas, format) {
+            const link = document.createElement('a');
+            link.download = getFilename(format);
+            link.href = canvas.toDataURL('image/png', 1.0);
+            link.click();
+        }
+
+        // Helper: Generate filename
+        function getFilename(extension) {
+            const businessName = extractedBusinessInfo.name || 'Report';
+            const safeName = businessName.replace(/[^a-z0-9]/gi, '_');
+            const date = new Date().toISOString().split('T')[0];
+            return `${safeName}_Analysis_${date}.${extension}`;
+        }
+
         async function exportReport() {
-            await exportReportAs('pdf');
+            await exportPdf();
         }
 
         async function exportReportAsPng() {
-            await exportReportAs('png');
+            await exportPngClean();
         }
 
         async function exportCardAsPng(cardId, cardName) {
@@ -3346,8 +4160,7 @@
 
                 showLoading(false);
                 showStatus('Analysis complete!', 'success');
-                document.getElementById('exportReportBtn').disabled = false;
-                document.getElementById('exportPngBtn').disabled = false;
+                document.getElementById('exportMenuBtn').disabled = false;
 
             } catch (error) {
                 console.error(error);
