@@ -3425,6 +3425,16 @@
                 const includeLenders = document.getElementById('exportLenders')?.checked ?? true;
 
                 const isDark = exportSettings.theme === 'dark' || (exportSettings.theme === 'current' && document.documentElement.getAttribute('data-theme') !== 'light');
+                const useLight = exportSettings.theme !== 'dark';
+
+                // TEMPORARILY switch to light theme before cloning
+                const originalTheme = document.documentElement.getAttribute('data-theme');
+                if (useLight) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                }
+
+                // Small delay to let CSS recompute
+                await new Promise(r => setTimeout(r, 50));
 
                 // Create wrapper with settings
                 const wrapper = document.createElement('div');
@@ -3440,7 +3450,7 @@
                 // Add branded header
                 wrapper.appendChild(createExportHeader(isDark));
 
-                // Clone the results
+                // Clone the results AFTER theme switch
                 const clone = resultsArea.cloneNode(true);
 
                 // Remove hidden class from all elements
@@ -3457,15 +3467,15 @@
                 if (!includeResearch) clone.querySelector('#researchSection')?.remove();
                 if (!includeLenders) clone.querySelector('#lenderSection')?.remove();
 
-                // Apply theme styles (default to light for clean exports)
-                if (exportSettings.theme !== 'dark') {
+                // Apply additional light styles for elements using inline var() styles
+                if (useLight) {
                     applyExportLightStyles(clone);
                 }
 
                 wrapper.appendChild(clone);
 
                 // Add footer
-                wrapper.appendChild(createExportFooter(exportSettings.theme === 'dark'));
+                wrapper.appendChild(createExportFooter(isDark));
 
                 document.body.appendChild(wrapper);
 
@@ -4911,7 +4921,9 @@ Extract the data for THIS ONE MONTH only:
 - true_revenue: Deposits minus internal transfers, loans, owner deposits
 - total_withdrawals: Sum of all debits/withdrawals
 - average_daily_balance: Average daily balance
-- lowest_daily_balance: Minimum/lowest balance
+- opening_balance: Balance at the start of the month (first day's beginning balance)
+- ending_balance: Balance at the end of the month (last day's ending balance)
+- lowest_daily_balance: Minimum/lowest balance during the month
 - num_deposits: Count of deposit transactions
 - nsf_count: Number of NSF/overdraft fees
 - days_negative: Days with negative balance
@@ -4931,6 +4943,8 @@ Return ONLY valid JSON:
   "true_revenue": 0,
   "total_withdrawals": 0,
   "average_daily_balance": 0,
+  "opening_balance": 0,
+  "ending_balance": 0,
   "lowest_daily_balance": 0,
   "num_deposits": 0,
   "nsf_count": 0,
@@ -5017,6 +5031,8 @@ Return ONLY valid JSON:
                 true_revenue: r.true_revenue || 0,
                 total_withdrawals: r.total_withdrawals || 0,
                 average_daily_balance: r.average_daily_balance || 0,
+                opening_balance: r.opening_balance || 0,
+                ending_balance: r.ending_balance || 0,
                 lowest_daily_balance: r.lowest_daily_balance || 0,
                 num_deposits: r.num_deposits || 0,
                 nsf_count: r.nsf_count || 0,
@@ -5211,7 +5227,7 @@ Return ONLY valid JSON:
 
                 <!-- Monthly Table -->
                 ${months.length > 0 ? `
-                <div style="overflow-x: auto;"><table><thead><tr><th>Month</th><th>Deposits</th><th>True Rev</th><th>#</th><th>Withdrawals</th><th>Avg Bal</th><th>Low Bal</th><th>NSF</th><th>Neg</th></tr></thead><tbody>${months.map(m => `<tr><td style="font-weight: 500;">${m.month || 'N/A'}</td><td class="text-green">$${(m.total_deposits || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td class="text-gold">$${(m.true_revenue || (m.total_deposits || 0) * 0.92).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>${m.num_deposits || 0}</td><td class="text-red">$${(m.total_withdrawals || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>$${(m.average_daily_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td class="${(m.lowest_daily_balance || 0) < 0 ? 'text-red' : ''}">$${(m.lowest_daily_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td class="${(m.nsf_count || 0) > 0 ? 'text-red' : ''}">${m.nsf_count || 0}</td><td class="${(m.days_negative || 0) > 0 ? 'text-red' : ''}">${m.days_negative || 0}</td></tr>`).join('')}</tbody><tfoot><tr><td><strong>AVERAGE</strong></td><td>$${(totals.deposits / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>$${(totals.trueRevenue / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>${Math.round(totals.numDeps / numMonths)}</td><td>$${(totals.withdrawals / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>$${avgBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>-</td><td>${(totals.nsf / numMonths).toFixed(2)}</td><td>${(totals.negDays / numMonths).toFixed(2)}</td></tr></tfoot></table></div>
+                <div style="overflow-x: auto;"><table><thead><tr><th>Month</th><th>Deposits</th><th>True Rev</th><th>#</th><th>Withdrawals</th><th>Avg Bal</th><th>Open Bal</th><th>End Bal</th><th>NSF</th><th>Neg</th></tr></thead><tbody>${months.map(m => `<tr><td style="font-weight: 500;">${m.month || 'N/A'}</td><td class="text-green">$${(m.total_deposits || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td class="text-gold">$${(m.true_revenue || (m.total_deposits || 0) * 0.92).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>${m.num_deposits || 0}</td><td class="text-red">$${(m.total_withdrawals || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>$${(m.average_daily_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td class="${(m.opening_balance || 0) < 0 ? 'text-red' : ''}">$${(m.opening_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td class="${(m.ending_balance || 0) < 0 ? 'text-red' : ''}">$${(m.ending_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td class="${(m.nsf_count || 0) > 0 ? 'text-red' : ''}">${m.nsf_count || 0}</td><td class="${(m.days_negative || 0) > 0 ? 'text-red' : ''}">${m.days_negative || 0}</td></tr>`).join('')}</tbody><tfoot><tr><td><strong>AVERAGE</strong></td><td>$${(totals.deposits / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>$${(totals.trueRevenue / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>${Math.round(totals.numDeps / numMonths)}</td><td>$${(totals.withdrawals / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>$${avgBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>-</td><td>-</td><td>${(totals.nsf / numMonths).toFixed(2)}</td><td>${(totals.negDays / numMonths).toFixed(2)}</td></tr></tfoot></table></div>
                 ` : '<p style="color: var(--text-muted); text-align: center;">No monthly data extracted</p>'}
 
                 ${mcaLenders.length > 0 ? `
