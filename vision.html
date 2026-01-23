@@ -2284,6 +2284,9 @@
             <!-- Action Buttons -->
             <div class="sidebar-actions">
                 <div class="file-count" id="fileCount">0 files</div>
+                <button class="btn btn-secondary" id="downloadAllBtn" style="width: 100%; display: none;">
+                    Download Watermarked
+                </button>
                 <button class="btn btn-primary" id="processBtn" style="width: 100%;" disabled>
                     Analyze Documents
                 </button>
@@ -2385,9 +2388,6 @@
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-secondary" id="downloadAllBtn" style="width: 100%;" disabled>
-                    Download Watermarked
-                </button>
             </div>
 
             <!-- Watermark Preview -->
@@ -4518,7 +4518,7 @@
             }
             updateFileList();
             document.getElementById('processBtn').disabled = files.length === 0;
-            document.getElementById('downloadAllBtn').disabled = files.length === 0;
+            document.getElementById('downloadAllBtn').style.display = files.length > 0 ? 'block' : 'none';
             document.getElementById('emptyState').classList.toggle('hidden', files.length > 0);
 
             // Auto-select first file for preview
@@ -4604,7 +4604,7 @@
                 </div>
             `).join('');
             document.getElementById('fileCount').textContent = `${files.length} file${files.length !== 1 ? 's' : ''}`;
-            document.getElementById('downloadAllBtn').disabled = files.length === 0;
+            document.getElementById('downloadAllBtn').style.display = files.length > 0 ? 'block' : 'none';
         }
 
         function updateFileName(idx, newName) {
@@ -4618,7 +4618,7 @@
             if (activeFileIndex >= files.length) activeFileIndex = files.length - 1;
             updateFileList();
             document.getElementById('processBtn').disabled = files.length === 0;
-            document.getElementById('downloadAllBtn').disabled = files.length === 0;
+            document.getElementById('downloadAllBtn').style.display = files.length > 0 ? 'block' : 'none';
             document.getElementById('emptyState').classList.toggle('hidden', files.length > 0);
             if (files.length === 0) {
                 document.getElementById('watermarkPlaceholder').style.display = 'block';
