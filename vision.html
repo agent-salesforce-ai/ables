@@ -5311,14 +5311,19 @@
 
             try {
                 // Show ALL sections immediately with skeleton states
+                document.getElementById('emptyState').style.display = 'none';
                 document.getElementById('fraudSection').classList.remove('hidden');
                 document.getElementById('dataSection').classList.remove('hidden');
+                document.getElementById('chartsSection').classList.remove('hidden');
+                document.getElementById('debtSection').classList.remove('hidden');
                 document.getElementById('researchSection').classList.remove('hidden');
                 document.getElementById('lenderSection').classList.remove('hidden');
 
                 // Initialize with skeleton/pending states
                 renderFraudResultsLive();
                 renderExtractedDataLive([]);
+                renderChartsSkeleton(); // Show charts skeleton immediately
+                renderDebtSkeleton(); // Show debt skeleton immediately
                 renderResearchSkeleton(); // Show research skeleton immediately
                 renderLenderSkeleton(); // Show lender skeleton immediately
 
@@ -5671,13 +5676,19 @@ Extract the data for THIS ONE MONTH only:
 - nsf_count: Number of NSF/overdraft fees
 - days_negative: Days with negative balance
 
+IMPORTANT - Extract ALL individual transactions:
+- deposit_list: Array of ALL deposit/credit transactions with date, description, and amount
+- exclusion_list: Array of deposits that were EXCLUDED from true revenue (internal transfers, loan proceeds, owner contributions) with date, description, amount, and reason for exclusion
+- withdrawal_list: Array of significant withdrawals (over $500) with date, description, and amount
+
 Also extract:
 - business_name: Business name on the account
+- business_address: Business address if visible
 - owner_name: Owner/account holder name
 - bank_name: Name of the bank
 - account_number_last4: Last 4 digits of account
 
-Detect any MCA/debt payments - look for recurring debits to: LIBERTAS, YELLOWSTONE, CREDIBLY, ONDECK, KAPITUS, FUNDFI, BITTY, CLEARFUND, etc.
+Detect any MCA/debt payments - look for recurring debits to: LIBERTAS, YELLOWSTONE, CREDIBLY, ONDECK, KAPITUS, FUNDFI, BITTY, CLEARFUND, BLUEVINE, FUNDBOX, KABBAGE, CAN CAPITAL, FORWARD FINANCING, etc.
 
 Return ONLY valid JSON:
 {
@@ -5692,11 +5703,15 @@ Return ONLY valid JSON:
   "num_deposits": 0,
   "nsf_count": 0,
   "days_negative": 0,
+  "deposit_list": [{"date": "MM/DD", "description": "DEPOSIT DESC", "amount": 0}],
+  "exclusion_list": [{"date": "MM/DD", "description": "TRANSFER DESC", "amount": 0, "reason": "internal transfer"}],
+  "withdrawal_list": [{"date": "MM/DD", "description": "WITHDRAWAL DESC", "amount": 0}],
   "business_name": "",
+  "business_address": "",
   "owner_name": "",
   "bank_name": "",
   "account_number_last4": "",
-  "detected_mca_payments": [],
+  "detected_mca_payments": [{"name": "LENDER NAME", "amount": 0}],
   "existing_debt": [],
   "red_flags": []
 }` },
@@ -6007,45 +6022,115 @@ Return ONLY valid JSON:
             // Build additional context based on field type
             let additionalContent = '';
 
-            // Show MCA payments if viewing withdrawals
-            if (field === 'withdrawals' && data.detected_mca_payments && data.detected_mca_payments.length > 0) {
-                const mcaItems = data.detected_mca_payments.map(m => {
+            // Show withdrawals with itemized list and MCA payments
+            if (field === 'withdrawals') {
+                const withdrawals = data.withdrawal_list || [];
+                const mcaPayments = data.detected_mca_payments || [];
+
+                // Build itemized withdrawal list (show top 15)
+                const withdrawalItems = withdrawals.slice(0, 15).map(w => `
+                    <div style="display: flex; justify-content: space-between; padding: 6px 8px; background: var(--bg-tertiary); border-radius: 4px; margin-bottom: 4px; font-size: 12px;">
+                        <div style="flex: 1; min-width: 0;">
+                            <span style="color: var(--text-muted); margin-right: 8px;">${w.date || ''}</span>
+                            <span style="color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${(w.description || '').substring(0, 30)}</span>
+                        </div>
+                        <span style="color: var(--red); font-weight: 500; margin-left: 8px;">$${(w.amount || 0).toLocaleString()}</span>
+                    </div>
+                `).join('');
+
+                // Build MCA payment items
+                const mcaItems = mcaPayments.map(m => {
                     const name = typeof m === 'object' ? (m.name || m.lender || 'Unknown') : m;
                     const amt = typeof m === 'object' && m.amount ? `$${m.amount.toLocaleString()}` : '';
-                    return `<div style="display: flex; justify-content: space-between; padding: 8px 12px; background: var(--bg-tertiary); border-radius: 6px; margin-bottom: 6px;">
-                        <span style="color: var(--red); font-weight: 500;">${name}</span>
-                        ${amt ? `<span style="color: var(--text-muted);">${amt}</span>` : ''}
+                    return `<div style="display: flex; justify-content: space-between; padding: 8px 12px; background: rgba(239, 68, 68, 0.15); border-left: 3px solid var(--red); border-radius: 4px; margin-bottom: 6px;">
+                        <span style="color: var(--red); font-weight: 600;">${name}</span>
+                        ${amt ? `<span style="color: var(--text);">${amt}</span>` : ''}
                     </div>`;
                 }).join('');
+
                 additionalContent = `
-                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
-                        <div style="font-size: 11px; color: var(--red); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; font-weight: 600;">MCA Payments Detected</div>
-                        ${mcaItems}
-                    </div>
+                    ${mcaPayments.length > 0 ? `
+                        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+                            <div style="font-size: 11px; color: var(--red); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; font-weight: 600;">⚠️ MCA Payments Detected (${mcaPayments.length})</div>
+                            ${mcaItems}
+                        </div>
+                    ` : ''}
+                    ${withdrawals.length > 0 ? `
+                        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+                            <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Significant Withdrawals (${withdrawals.length})</div>
+                            <div style="max-height: 250px; overflow-y: auto;">
+                                ${withdrawalItems}
+                                ${withdrawals.length > 15 ? `<div style="text-align: center; color: var(--text-muted); font-size: 11px; padding: 8px;">... and ${withdrawals.length - 15} more</div>` : ''}
+                            </div>
+                        </div>
+                    ` : ''}
                 `;
             }
 
-            // Show breakdown for deposits
+            // Show breakdown for deposits with itemized lists
             if (field === 'deposits' || field === 'true_revenue') {
                 const trueRev = data.true_revenue || 0;
                 const totalDep = data.total_deposits || 0;
                 const excluded = totalDep - trueRev;
+                const deposits = data.deposit_list || [];
+                const exclusions = data.exclusion_list || [];
+
+                // Build itemized deposit list (show top 10)
+                const depositItems = deposits.slice(0, 10).map(d => `
+                    <div style="display: flex; justify-content: space-between; padding: 6px 8px; background: var(--bg-tertiary); border-radius: 4px; margin-bottom: 4px; font-size: 12px;">
+                        <div style="flex: 1; min-width: 0;">
+                            <span style="color: var(--text-muted); margin-right: 8px;">${d.date || ''}</span>
+                            <span style="color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${(d.description || '').substring(0, 30)}</span>
+                        </div>
+                        <span style="color: var(--green); font-weight: 500; margin-left: 8px;">$${(d.amount || 0).toLocaleString()}</span>
+                    </div>
+                `).join('');
+
+                // Build exclusion list
+                const exclusionItems = exclusions.map(e => `
+                    <div style="display: flex; justify-content: space-between; padding: 6px 8px; background: rgba(239, 68, 68, 0.1); border-radius: 4px; margin-bottom: 4px; font-size: 12px;">
+                        <div style="flex: 1; min-width: 0;">
+                            <span style="color: var(--text-muted); margin-right: 8px;">${e.date || ''}</span>
+                            <span style="color: var(--text-secondary);">${(e.description || '').substring(0, 25)}</span>
+                            <span style="color: var(--gold); font-size: 10px; margin-left: 4px;">(${e.reason || 'excluded'})</span>
+                        </div>
+                        <span style="color: var(--red); font-weight: 500; margin-left: 8px;">-$${(e.amount || 0).toLocaleString()}</span>
+                    </div>
+                `).join('');
+
                 additionalContent = `
                     <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
-                        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Deposit Breakdown</div>
+                        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Summary</div>
                         <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
-                            <span style="color: var(--text-secondary);">Gross Deposits</span>
+                            <span style="color: var(--text-secondary);">Gross Deposits (${deposits.length} items)</span>
                             <span style="color: var(--green); font-weight: 500;">$${totalDep.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
-                            <span style="color: var(--text-secondary);">Excluded (Transfers/Loans)</span>
-                            <span style="color: var(--text-muted);">-$${excluded.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                            <span style="color: var(--text-secondary);">Excluded (${exclusions.length} items)</span>
+                            <span style="color: var(--red);">-$${excluded.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; padding: 8px 0; font-weight: 600;">
                             <span style="color: var(--text);">True Revenue</span>
                             <span style="color: var(--gold);">$${trueRev.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
                         </div>
                     </div>
+                    ${deposits.length > 0 ? `
+                        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+                            <div style="font-size: 11px; color: var(--green); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; font-weight: 600;">Deposits (${deposits.length} transactions)</div>
+                            <div style="max-height: 200px; overflow-y: auto;">
+                                ${depositItems}
+                                ${deposits.length > 10 ? `<div style="text-align: center; color: var(--text-muted); font-size: 11px; padding: 8px;">... and ${deposits.length - 10} more</div>` : ''}
+                            </div>
+                        </div>
+                    ` : ''}
+                    ${exclusions.length > 0 ? `
+                        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+                            <div style="font-size: 11px; color: var(--red); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; font-weight: 600;">Excluded from True Revenue (${exclusions.length})</div>
+                            <div style="max-height: 150px; overflow-y: auto;">
+                                ${exclusionItems}
+                            </div>
+                        </div>
+                    ` : ''}
                 `;
             }
 
@@ -6109,7 +6194,7 @@ Return ONLY valid JSON:
             // Create popup
             const popup = document.createElement('div');
             popup.id = 'cellDetailPopup';
-            popup.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 16px; padding: 24px; z-index: 10000; min-width: 380px; max-width: 450px; box-shadow: 0 25px 50px rgba(0,0,0,0.4);';
+            popup.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 16px; padding: 24px; z-index: 10000; min-width: 420px; max-width: 520px; max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.4);';
             popup.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
                     <div style="display: flex; align-items: center; gap: 12px;">
@@ -6642,6 +6727,56 @@ Return ONLY valid JSON:
                     </div>
                 </div>
             `).join('');
+        }
+
+        // Render skeleton state for charts/cash flow section
+        function renderChartsSkeleton() {
+            const chartsContainer = document.querySelector('#chartsSection .section-body');
+            if (!chartsContainer) return;
+
+            chartsContainer.innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="chart-container" style="position: relative; height: 250px; background: var(--bg-tertiary); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                        <div style="text-align: center;">
+                            <div class="skeleton-bar" style="width: 150px; height: 16px; background: var(--border); border-radius: 4px; margin: 0 auto 12px; animation: shimmer 1.5s ease-in-out infinite;"></div>
+                            <div style="color: var(--text-muted); font-size: 12px;">Loading balance chart...</div>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="position: relative; height: 250px; background: var(--bg-tertiary); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                        <div style="text-align: center;">
+                            <div class="skeleton-bar" style="width: 150px; height: 16px; background: var(--border); border-radius: 4px; margin: 0 auto 12px; animation: shimmer 1.5s ease-in-out infinite;"></div>
+                            <div style="color: var(--text-muted); font-size: 12px;">Loading flow chart...</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render skeleton state for debt section
+        function renderDebtSkeleton() {
+            const debtContainer = document.querySelector('#debtSection .section-body');
+            if (!debtContainer) return;
+
+            document.getElementById('debtTotalBadge').textContent = 'Calculating...';
+
+            debtContainer.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px;">
+                    ${Array(4).fill(0).map(() => `
+                        <div class="debt-stat" style="text-align: center; padding: 16px; background: var(--bg-tertiary); border-radius: 8px;">
+                            <div class="skeleton-bar" style="width: 60px; height: 28px; background: var(--border); border-radius: 4px; margin: 0 auto 8px; animation: shimmer 1.5s ease-in-out infinite;"></div>
+                            <div class="skeleton-bar" style="width: 80px; height: 12px; background: var(--border); border-radius: 4px; margin: 0 auto;"></div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 2;">
+                        <div class="skeleton-bar" style="width: 100%; height: 200px; background: var(--bg-tertiary); border-radius: 8px; animation: shimmer 1.5s ease-in-out infinite;"></div>
+                    </div>
+                    <div style="flex: 1;">
+                        <div class="skeleton-bar" style="width: 100%; height: 200px; background: var(--bg-tertiary); border-radius: 8px; animation: shimmer 1.5s ease-in-out infinite;"></div>
+                    </div>
+                </div>
+            `;
         }
 
         function toggleModule(moduleId) {
