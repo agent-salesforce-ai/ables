@@ -3735,11 +3735,13 @@
             // Set wrapper background explicitly
             clone.style.background = '#ffffff';
             clone.style.backgroundColor = '#ffffff';
+            clone.style.color = '#111827';
 
             // First, iterate through ALL elements and force light colors
             clone.querySelectorAll('*').forEach(el => {
                 const style = el.style;
                 const computed = window.getComputedStyle(el);
+                const tagName = el.tagName.toLowerCase();
 
                 // Force background colors - check actual computed value
                 const bg = computed.backgroundColor;
@@ -3758,17 +3760,37 @@
                     }
                 }
 
-                // Force text colors
+                // Force text colors - be very aggressive
                 const color = computed.color;
                 if (color) {
                     const rgb = color.match(/\d+/g);
                     if (rgb && rgb.length >= 3) {
                         const [r, g, b] = rgb.map(Number);
-                        // If light text (white/gray), make it dark
-                        if (r > 180 && g > 180 && b > 180) {
+                        // Any gray text above 100 becomes dark
+                        // This catches light grays like #a1a1aa (161, 161, 170)
+                        if (r > 100 && g > 100 && b > 100 && r < 200 && g < 200 && b < 200) {
+                            // Gray text - make it medium gray for contrast
+                            style.setProperty('color', '#4b5563', 'important');
+                        } else if (r > 200 && g > 200 && b > 200) {
+                            // White/near-white text - make it dark
                             style.setProperty('color', '#111827', 'important');
-                        } else if (r > 140 && g > 140 && b > 140) {
-                            style.setProperty('color', '#374151', 'important');
+                        }
+                    }
+                }
+
+                // Force ALL text elements to have dark text
+                if (['span', 'p', 'div', 'td', 'th', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'label', 'li'].includes(tagName)) {
+                    const currentColor = computed.color;
+                    const rgb = currentColor?.match(/\d+/g);
+                    if (rgb && rgb.length >= 3) {
+                        const [r, g, b] = rgb.map(Number);
+                        // If not already dark (less than 100), force dark
+                        if (r > 80 || g > 80 || b > 80) {
+                            // Check if it's a colored text (green, red, etc) - preserve those
+                            const isGray = Math.abs(r - g) < 30 && Math.abs(g - b) < 30;
+                            if (isGray && r > 100) {
+                                style.setProperty('color', '#374151', 'important');
+                            }
                         }
                     }
                 }
@@ -3951,6 +3973,43 @@
             clone.querySelectorAll('.research-progress-bar').forEach(b => b.style.cssText = 'background: #e5e7eb !important; border-radius: 4px; height: 8px; overflow: hidden;');
             clone.querySelectorAll('.research-progress-fill').forEach(f => f.style.cssText = 'background: #22c55e !important; height: 100%;');
 
+            // Fraud modules (new design)
+            clone.querySelectorAll('.fraud-modules-grid').forEach(g => g.style.cssText = 'display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; max-width: 800px !important; margin: 0 auto !important;');
+            clone.querySelectorAll('.fraud-module').forEach(m => {
+                const hasLow = m.classList.contains('risk-low');
+                const hasMed = m.classList.contains('risk-medium');
+                const hasHigh = m.classList.contains('risk-high');
+                let borderColor = '#e5e7eb';
+                if (hasLow) borderColor = '#22c55e';
+                if (hasMed) borderColor = '#eab308';
+                if (hasHigh) borderColor = '#ef4444';
+                m.style.cssText = `background: #ffffff !important; border-radius: 10px !important; border: 1px solid #e5e7eb !important; border-left: 3px solid ${borderColor} !important; overflow: hidden !important;`;
+            });
+            clone.querySelectorAll('.fraud-module-header').forEach(h => h.style.cssText = 'display: flex !important; align-items: center !important; gap: 10px !important; padding: 12px 14px !important; background: #f9fafb !important;');
+            clone.querySelectorAll('.fraud-module-icon').forEach(icon => {
+                const parent = icon.closest('.fraud-module');
+                let bg = '#f3f4f6', color = '#6b7280';
+                if (parent?.classList.contains('risk-low')) { bg = '#dcfce7'; color = '#22c55e'; }
+                else if (parent?.classList.contains('risk-medium')) { bg = '#fef9c3'; color = '#eab308'; }
+                else if (parent?.classList.contains('risk-high')) { bg = '#fee2e2'; color = '#ef4444'; }
+                icon.style.cssText = `width: 32px !important; height: 32px !important; border-radius: 6px !important; background: ${bg} !important; display: flex !important; align-items: center !important; justify-content: center !important;`;
+                const svg = icon.querySelector('svg');
+                if (svg) svg.style.cssText = `stroke: ${color} !important; width: 16px !important; height: 16px !important;`;
+            });
+            clone.querySelectorAll('.fraud-module-info').forEach(i => i.style.cssText = 'flex: 1 !important; min-width: 0 !important;');
+            clone.querySelectorAll('.fraud-module-name').forEach(n => n.style.cssText = 'font-size: 13px !important; font-weight: 600 !important; color: #111827 !important;');
+            clone.querySelectorAll('.fraud-module-summary').forEach(s => s.style.cssText = 'font-size: 11px !important; color: #6b7280 !important;');
+            clone.querySelectorAll('.fraud-module-status').forEach(status => {
+                const parent = status.closest('.fraud-module');
+                let bg = '#f3f4f6', color = '#374151';
+                if (parent?.classList.contains('risk-low')) { bg = '#dcfce7'; color = '#166534'; }
+                else if (parent?.classList.contains('risk-medium')) { bg = '#fef9c3'; color = '#854d0e'; }
+                else if (parent?.classList.contains('risk-high')) { bg = '#fee2e2'; color = '#991b1b'; }
+                status.style.cssText = `background: ${bg} !important; color: ${color} !important; padding: 4px 10px !important; border-radius: 12px !important; font-size: 11px !important; font-weight: 600 !important;`;
+            });
+            clone.querySelectorAll('.fraud-module-content').forEach(c => c.style.cssText = 'background: #ffffff !important; padding: 0 14px 14px 14px !important;');
+            clone.querySelectorAll('.fraud-module-content p').forEach(p => p.style.cssText = 'color: #374151 !important; font-size: 13px !important; line-height: 1.6 !important; margin: 0 !important;');
+
             // Apply to ALL elements - nuclear option for any remaining var() references
             clone.querySelectorAll('*').forEach(el => {
                 const computed = window.getComputedStyle(el);
@@ -3982,10 +4041,27 @@
             });
 
             // Final pass - ensure all text is readable
-            clone.querySelectorAll('span, div, p, h1, h2, h3, h4, h5, h6, strong, em, label, td, th').forEach(el => {
-                const c = el.style.color;
-                if (!c || c === '' || c.includes('var(') || c.includes('rgba(255') || c.includes('rgb(255')) {
-                    el.style.color = '#111827';
+            clone.querySelectorAll('span, div, p, h1, h2, h3, h4, h5, h6, strong, em, label, td, th, li, a').forEach(el => {
+                const computed = window.getComputedStyle(el);
+                const c = computed.color;
+                const rgb = c?.match(/\d+/g);
+                if (rgb && rgb.length >= 3) {
+                    const [r, g, b] = rgb.map(Number);
+                    // If text is gray (not a distinct color like green/red/yellow)
+                    const isGray = Math.abs(r - g) < 40 && Math.abs(g - b) < 40;
+                    // If it's a light gray (above 100 brightness), make it darker
+                    if (isGray && r > 100) {
+                        el.style.setProperty('color', '#374151', 'important');
+                    }
+                    // If it's white/near-white, make it dark
+                    if (r > 200 && g > 200 && b > 200) {
+                        el.style.setProperty('color', '#111827', 'important');
+                    }
+                }
+                // Also check if style has var() references
+                const inlineColor = el.style.color;
+                if (inlineColor && inlineColor.includes('var(')) {
+                    el.style.setProperty('color', '#111827', 'important');
                 }
             });
         }
