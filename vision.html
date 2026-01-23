@@ -3148,77 +3148,156 @@
                 // Remove all buttons
                 clone.querySelectorAll('button, .card-export-btn, .expand-toggle').forEach(el => el.remove());
 
-                // Apply light theme inline styles to everything
-                const applyLightStyles = (el) => {
-                    el.style.setProperty('background-color', '#ffffff', 'important');
-                    el.style.setProperty('background-image', 'none', 'important');
-                    el.style.setProperty('background', '#ffffff', 'important');
-                    el.style.setProperty('color', '#1e293b', 'important');
-                    el.style.setProperty('border-color', '#e2e8f0', 'important');
-                };
-
-                // Style section cards
+                // Style section cards - WHITE backgrounds
                 clone.querySelectorAll('.section-card').forEach(card => {
-                    card.style.cssText = 'background: #ffffff !important; border: 1px solid #e2e8f0 !important; border-radius: 12px; margin-bottom: 20px; overflow: hidden;';
+                    card.style.cssText = 'background: #ffffff !important; border: 1px solid #d1d5db !important; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);';
                 });
 
                 clone.querySelectorAll('.section-header').forEach(header => {
-                    header.style.cssText = 'background: #f8fafc !important; color: #1e293b !important; padding: 16px 20px; border-bottom: 1px solid #e2e8f0 !important; font-weight: 600;';
+                    header.style.cssText = 'background: #f3f4f6 !important; color: #111827 !important; padding: 16px 20px; border-bottom: 1px solid #d1d5db !important; font-weight: 600; font-size: 14px;';
                 });
 
                 clone.querySelectorAll('.section-body').forEach(body => {
-                    body.style.cssText = 'background: #ffffff !important; padding: 20px; color: #1e293b !important;';
+                    body.style.cssText = 'background: #ffffff !important; padding: 20px; color: #111827 !important;';
+                });
+
+                // Style data-grid (fraud summary cards)
+                clone.querySelectorAll('.data-grid').forEach(grid => {
+                    grid.style.cssText = 'display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px;';
+                });
+
+                // Style individual data-cards with SOLID colored borders
+                clone.querySelectorAll('.data-card').forEach(card => {
+                    const borderStyle = card.getAttribute('style') || '';
+                    let borderColor = '#d1d5db';
+                    let bgColor = '#f9fafb';
+
+                    if (borderStyle.includes('--green') || borderStyle.includes('green')) {
+                        borderColor = '#22c55e';
+                        bgColor = '#dcfce7';
+                    } else if (borderStyle.includes('--yellow') || borderStyle.includes('yellow')) {
+                        borderColor = '#eab308';
+                        bgColor = '#fef9c3';
+                    } else if (borderStyle.includes('--red') || borderStyle.includes('red')) {
+                        borderColor = '#ef4444';
+                        bgColor = '#fee2e2';
+                    }
+
+                    card.style.cssText = `background: ${bgColor} !important; border: 2px solid ${borderColor} !important; border-radius: 8px; padding: 16px; text-align: center;`;
+                });
+
+                // Style data-label and data-value
+                clone.querySelectorAll('.data-label').forEach(label => {
+                    label.style.cssText = 'font-size: 11px; color: #6b7280 !important; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;';
+                });
+
+                clone.querySelectorAll('.data-value').forEach(val => {
+                    let color = '#111827';
+                    if (val.classList.contains('green')) color = '#16a34a';
+                    if (val.classList.contains('red')) color = '#dc2626';
+                    if (val.classList.contains('gold')) color = '#ca8a04';
+                    val.style.cssText = `font-size: 24px; font-weight: 700; color: ${color} !important;`;
+                });
+
+                // Style fraud items with SOLID left border
+                clone.querySelectorAll('.fraud-item').forEach(item => {
+                    const itemStyle = item.getAttribute('style') || '';
+                    let borderColor = '#d1d5db';
+                    let bgColor = '#f9fafb';
+
+                    if (itemStyle.includes('--green') || itemStyle.includes('green')) {
+                        borderColor = '#22c55e';
+                        bgColor = '#f0fdf4';
+                    } else if (itemStyle.includes('--yellow') || itemStyle.includes('yellow')) {
+                        borderColor = '#eab308';
+                        bgColor = '#fefce8';
+                    } else if (itemStyle.includes('--red') || itemStyle.includes('red')) {
+                        borderColor = '#ef4444';
+                        bgColor = '#fef2f2';
+                    }
+
+                    item.style.cssText = `padding: 12px 16px; border-radius: 8px; background: ${bgColor} !important; margin-bottom: 8px; border-left: 4px solid ${borderColor} !important;`;
+                });
+
+                // Style fraud status badges
+                clone.querySelectorAll('.fraud-status').forEach(status => {
+                    const text = status.textContent.toLowerCase();
+                    let color = '#6b7280';
+                    let bg = '#f3f4f6';
+
+                    if (text.includes('clean')) { color = '#16a34a'; bg = '#dcfce7'; }
+                    if (text.includes('review')) { color = '#ca8a04'; bg = '#fef9c3'; }
+                    if (text.includes('risk')) { color = '#dc2626'; bg = '#fee2e2'; }
+
+                    status.style.cssText = `color: ${color} !important; background: ${bg} !important; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;`;
                 });
 
                 // Style tables
                 clone.querySelectorAll('table').forEach(table => {
-                    table.style.cssText = 'background: #ffffff !important; border-collapse: collapse; width: 100%;';
+                    table.style.cssText = 'background: #ffffff !important; border-collapse: collapse; width: 100%; border: 1px solid #e5e7eb;';
                 });
                 clone.querySelectorAll('th').forEach(th => {
-                    th.style.cssText = 'background: #f8fafc !important; color: #1e293b !important; padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0 !important;';
+                    th.style.cssText = 'background: #f3f4f6 !important; color: #111827 !important; padding: 12px; text-align: left; border: 1px solid #e5e7eb !important; font-weight: 600;';
                 });
                 clone.querySelectorAll('td').forEach(td => {
-                    td.style.cssText = 'background: #ffffff !important; color: #1e293b !important; padding: 12px; border-bottom: 1px solid #f1f5f9 !important;';
+                    td.style.cssText = 'background: #ffffff !important; color: #111827 !important; padding: 12px; border: 1px solid #e5e7eb !important;';
                 });
 
-                // Style risk chips
+                // Style risk chips with SOLID backgrounds
                 clone.querySelectorAll('.risk-chip').forEach(chip => {
                     const isGood = chip.classList.contains('good');
                     const isWarn = chip.classList.contains('warn');
                     const isBad = chip.classList.contains('bad');
-                    let bg = '#f1f5f9';
-                    let color = '#475569';
-                    if (isGood) { bg = 'rgba(34, 197, 94, 0.15)'; color = '#16a34a'; }
-                    if (isWarn) { bg = 'rgba(234, 179, 8, 0.15)'; color = '#ca8a04'; }
-                    if (isBad) { bg = 'rgba(239, 68, 68, 0.15)'; color = '#dc2626'; }
-                    chip.style.cssText = `background: ${bg} !important; color: ${color} !important; padding: 12px; border-radius: 8px; text-align: center;`;
+                    let bg = '#f3f4f6';
+                    let color = '#374151';
+                    let border = '#d1d5db';
+
+                    if (isGood) { bg = '#dcfce7'; color = '#166534'; border = '#22c55e'; }
+                    if (isWarn) { bg = '#fef9c3'; color = '#854d0e'; border = '#eab308'; }
+                    if (isBad) { bg = '#fee2e2'; color = '#991b1b'; border = '#ef4444'; }
+
+                    chip.style.cssText = `background: ${bg} !important; color: ${color} !important; border: 2px solid ${border} !important; padding: 12px; border-radius: 8px; text-align: center;`;
                 });
 
-                // Style stats
-                clone.querySelectorAll('.debt-stat, .research-stat, .data-card').forEach(stat => {
-                    stat.style.cssText = 'background: #f8fafc !important; padding: 16px; border-radius: 8px; text-align: center;';
-                });
-                clone.querySelectorAll('.debt-stat-value, .research-stat-value, .data-card-value').forEach(val => {
-                    val.style.cssText = 'color: #1e293b !important; font-size: 24px; font-weight: 700;';
-                });
-                clone.querySelectorAll('.debt-stat-label, .research-stat-label, .data-card-label').forEach(label => {
-                    label.style.cssText = 'color: #64748b !important; font-size: 12px;';
+                clone.querySelectorAll('.risk-chip-value').forEach(val => {
+                    const parent = val.closest('.risk-chip');
+                    let color = '#111827';
+                    if (parent && parent.classList.contains('good')) color = '#166534';
+                    if (parent && parent.classList.contains('warn')) color = '#854d0e';
+                    if (parent && parent.classList.contains('bad')) color = '#991b1b';
+                    val.style.cssText = `font-size: 28px; font-weight: 700; color: ${color} !important;`;
                 });
 
-                // Style MCA sections
+                clone.querySelectorAll('.risk-chip-label').forEach(label => {
+                    label.style.cssText = 'font-size: 11px; color: #6b7280 !important; text-transform: uppercase; margin-top: 4px;';
+                });
+
+                // Style debt/research stats
+                clone.querySelectorAll('.debt-stat, .research-stat').forEach(stat => {
+                    stat.style.cssText = 'background: #f3f4f6 !important; padding: 16px; border-radius: 8px; text-align: center; border: 1px solid #e5e7eb;';
+                });
+                clone.querySelectorAll('.debt-stat-value, .research-stat-value').forEach(val => {
+                    val.style.cssText = 'color: #111827 !important; font-size: 24px; font-weight: 700;';
+                });
+                clone.querySelectorAll('.debt-stat-label, .research-stat-label').forEach(label => {
+                    label.style.cssText = 'color: #6b7280 !important; font-size: 12px; margin-top: 4px;';
+                });
+
+                // Style MCA sections - SOLID red
                 clone.querySelectorAll('.mca-section, .mca-alert').forEach(mca => {
-                    mca.style.cssText = 'background: rgba(239, 68, 68, 0.1) !important; border: 1px solid rgba(239, 68, 68, 0.3) !important; border-radius: 8px; padding: 16px; color: #dc2626 !important;';
+                    mca.style.cssText = 'background: #fee2e2 !important; border: 2px solid #ef4444 !important; border-radius: 8px; padding: 16px; color: #991b1b !important;';
                 });
 
                 // Style charts container
                 clone.querySelectorAll('.chart-container').forEach(chart => {
-                    chart.style.cssText = 'background: #ffffff !important; border-radius: 8px;';
+                    chart.style.cssText = 'background: #ffffff !important; border-radius: 8px; border: 1px solid #e5e7eb; padding: 12px;';
                 });
 
-                // Apply to all other text elements
-                clone.querySelectorAll('span, div, p, h1, h2, h3, h4, h5, h6').forEach(el => {
-                    if (!el.style.color || el.style.color.includes('var(')) {
-                        el.style.color = '#1e293b';
+                // Apply text color to all remaining elements
+                clone.querySelectorAll('span, div, p, h1, h2, h3, h4, h5, h6, strong, em').forEach(el => {
+                    const computed = el.style.color;
+                    if (!computed || computed === '' || computed.includes('var(') || computed.includes('rgba(255') || computed.includes('rgb(255')) {
+                        el.style.color = '#111827';
                     }
                 });
 
@@ -3226,7 +3305,7 @@
                 document.body.appendChild(wrapper);
 
                 // Wait for any images/charts to render
-                await new Promise(r => setTimeout(r, 100));
+                await new Promise(r => setTimeout(r, 200));
 
                 const canvas = await html2canvas(wrapper, {
                     scale: 2,
@@ -3260,7 +3339,7 @@
 
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 
-                // Write complete HTML with light theme
+                // Write complete HTML with light theme - SOLID COLORS
                 iframeDoc.open();
                 iframeDoc.write(`
                     <!DOCTYPE html>
@@ -3272,46 +3351,82 @@
                             body {
                                 font-family: 'Inter', sans-serif;
                                 background: #ffffff;
-                                color: #1e293b;
+                                color: #111827;
                                 padding: 24px;
                                 line-height: 1.5;
                             }
                             .section-card {
                                 background: #ffffff;
-                                border: 1px solid #e2e8f0;
+                                border: 1px solid #d1d5db;
                                 border-radius: 12px;
                                 margin-bottom: 20px;
                                 overflow: hidden;
+                                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
                             }
                             .section-header {
-                                background: #f8fafc;
+                                background: #f3f4f6;
                                 padding: 16px 20px;
                                 font-weight: 600;
-                                border-bottom: 1px solid #e2e8f0;
+                                border-bottom: 1px solid #d1d5db;
+                                color: #111827;
                             }
-                            .section-body { padding: 20px; }
-                            table { width: 100%; border-collapse: collapse; }
-                            th { background: #f8fafc; padding: 12px; text-align: left; font-weight: 600; border-bottom: 1px solid #e2e8f0; }
-                            td { padding: 12px; border-bottom: 1px solid #f1f5f9; }
-                            .risk-summary, .debt-summary, .research-summary, .data-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
-                            .risk-chip, .debt-stat, .research-stat, .data-card { background: #f8fafc; padding: 16px; border-radius: 8px; text-align: center; }
-                            .risk-chip.good { background: rgba(34, 197, 94, 0.15); }
-                            .risk-chip.warn { background: rgba(234, 179, 8, 0.15); }
-                            .risk-chip.bad { background: rgba(239, 68, 68, 0.15); }
-                            .risk-chip-value, .debt-stat-value, .research-stat-value, .data-card-value { font-size: 24px; font-weight: 700; color: #1e293b; }
-                            .risk-chip-label, .debt-stat-label, .research-stat-label, .data-card-label { font-size: 12px; color: #64748b; margin-top: 4px; }
-                            .mca-section, .mca-alert { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 16px; margin: 16px 0; }
+                            .section-body { padding: 20px; background: #ffffff; }
+                            table { width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb; }
+                            th { background: #f3f4f6; padding: 12px; text-align: left; font-weight: 600; border: 1px solid #e5e7eb; color: #111827; }
+                            td { padding: 12px; border: 1px solid #e5e7eb; color: #111827; background: #ffffff; }
+
+                            /* Data grid for fraud summary */
+                            .data-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+                            .data-card { background: #f9fafb; padding: 16px; border-radius: 8px; text-align: center; border: 2px solid #d1d5db; }
+                            .data-card[style*="green"] { background: #dcfce7 !important; border-color: #22c55e !important; }
+                            .data-card[style*="yellow"] { background: #fef9c3 !important; border-color: #eab308 !important; }
+                            .data-card[style*="red"] { background: #fee2e2 !important; border-color: #ef4444 !important; }
+                            .data-label { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+                            .data-value { font-size: 24px; font-weight: 700; color: #111827; }
+                            .data-value.green { color: #16a34a !important; }
+                            .data-value.red { color: #dc2626 !important; }
+                            .data-value.gold { color: #ca8a04 !important; }
+
+                            /* Fraud items */
+                            .fraud-item { padding: 12px 16px; border-radius: 8px; background: #f9fafb; margin-bottom: 8px; border-left: 4px solid #d1d5db; }
+                            .fraud-item[style*="green"] { background: #f0fdf4 !important; border-left-color: #22c55e !important; }
+                            .fraud-item[style*="yellow"] { background: #fefce8 !important; border-left-color: #eab308 !important; }
+                            .fraud-item[style*="red"] { background: #fef2f2 !important; border-left-color: #ef4444 !important; }
+
+                            /* Risk chips */
+                            .risk-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+                            .risk-chip { background: #f3f4f6; padding: 16px; border-radius: 8px; text-align: center; border: 2px solid #d1d5db; }
+                            .risk-chip.good { background: #dcfce7 !important; border-color: #22c55e !important; }
+                            .risk-chip.warn { background: #fef9c3 !important; border-color: #eab308 !important; }
+                            .risk-chip.bad { background: #fee2e2 !important; border-color: #ef4444 !important; }
+                            .risk-chip-value { font-size: 28px; font-weight: 700; color: #111827; }
+                            .risk-chip.good .risk-chip-value { color: #166534 !important; }
+                            .risk-chip.warn .risk-chip-value { color: #854d0e !important; }
+                            .risk-chip.bad .risk-chip-value { color: #991b1b !important; }
+                            .risk-chip-label { font-size: 11px; color: #6b7280; text-transform: uppercase; margin-top: 4px; }
+
+                            /* Debt stats */
+                            .debt-summary, .research-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+                            .debt-stat, .research-stat { background: #f3f4f6; padding: 16px; border-radius: 8px; text-align: center; border: 1px solid #e5e7eb; }
+                            .debt-stat-value, .research-stat-value { font-size: 24px; font-weight: 700; color: #111827; }
+                            .debt-stat-label, .research-stat-label { font-size: 12px; color: #6b7280; margin-top: 4px; }
+
+                            /* MCA alert sections */
+                            .mca-section, .mca-alert { background: #fee2e2 !important; border: 2px solid #ef4444 !important; border-radius: 8px; padding: 16px; margin: 16px 0; color: #991b1b !important; }
+
+                            /* Charts */
                             .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-                            .chart-container { background: #ffffff; border-radius: 8px; padding: 16px; }
+                            .chart-container { background: #ffffff; border-radius: 8px; padding: 16px; border: 1px solid #e5e7eb; }
+
+                            /* Misc */
                             .hidden { display: block !important; }
                             button, .card-export-btn, .expand-toggle { display: none !important; }
-                            .fraud-item { padding: 12px; border-bottom: 1px solid #f1f5f9; }
                             .lender-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-                            .lender-card { background: #f8fafc; padding: 16px; border-radius: 8px; }
+                            .lender-card { background: #f3f4f6; padding: 16px; border-radius: 8px; border: 1px solid #e5e7eb; }
                             .research-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-                            .research-module { background: #f8fafc; border-radius: 8px; overflow: hidden; }
-                            .research-module-header { padding: 12px 16px; background: #f1f5f9; font-weight: 600; }
-                            .research-module-body { padding: 16px; }
+                            .research-module { background: #f3f4f6; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb; }
+                            .research-module-header { padding: 12px 16px; background: #e5e7eb; font-weight: 600; color: #111827; }
+                            .research-module-body { padding: 16px; background: #ffffff; }
                         </style>
                     </head>
                     <body>${resultsArea.innerHTML}</body>
@@ -3642,44 +3757,75 @@
                         const clonedBtn = clonedCard.querySelector('.card-export-btn');
                         if (clonedBtn) clonedBtn.style.display = 'none';
 
-                        // Inject light theme CSS
+                        // Inject SOLID COLOR light theme CSS
                         const style = clonedDoc.createElement('style');
                         style.textContent = `
                             :root, html, body, * {
-                                --bg: #f8fafc !important;
+                                --bg: #f3f4f6 !important;
                                 --bg-secondary: #ffffff !important;
-                                --bg-tertiary: #f1f5f9 !important;
-                                --bg-hover: #e2e8f0 !important;
-                                --text: #0f172a !important;
-                                --text-secondary: #475569 !important;
-                                --text-tertiary: #64748b !important;
-                                --border: #e2e8f0 !important;
-                                --border-secondary: #cbd5e1 !important;
+                                --bg-tertiary: #f3f4f6 !important;
+                                --text: #111827 !important;
+                                --text-secondary: #374151 !important;
+                                --text-muted: #6b7280 !important;
+                                --border: #d1d5db !important;
+                                --green: #22c55e !important;
+                                --red: #ef4444 !important;
+                                --yellow: #eab308 !important;
+                                --gold: #ca8a04 !important;
                             }
                             .section-card {
                                 background: #ffffff !important;
-                                border: 1px solid #e2e8f0 !important;
+                                border: 1px solid #d1d5db !important;
+                                box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
                             }
                             .section-header {
-                                background: #f8fafc !important;
-                                color: #0f172a !important;
-                                border-bottom: 1px solid #e2e8f0 !important;
+                                background: #f3f4f6 !important;
+                                color: #111827 !important;
+                                border-bottom: 1px solid #d1d5db !important;
                             }
                             .section-body {
                                 background: #ffffff !important;
+                                color: #111827 !important;
                             }
-                            .risk-chip {
-                                background: #f1f5f9 !important;
+                            /* Data cards with SOLID backgrounds */
+                            .data-card {
+                                background: #f9fafb !important;
+                                border: 2px solid #d1d5db !important;
                             }
-                            .risk-chip.good { background: rgba(34, 197, 94, 0.15) !important; }
-                            .risk-chip.warn { background: rgba(234, 179, 8, 0.15) !important; }
-                            .risk-chip.bad { background: rgba(239, 68, 68, 0.15) !important; }
-                            table { background: #ffffff !important; }
-                            th { background: #f8fafc !important; color: #0f172a !important; }
-                            td { color: #0f172a !important; border-color: #e2e8f0 !important; }
-                            .mca-section, .mca-alert { background: rgba(239, 68, 68, 0.1) !important; }
-                            .debt-stat, .research-stat { background: #f8fafc !important; }
-                            .chart-container { background: #ffffff !important; }
+                            .data-card[style*="green"] { background: #dcfce7 !important; border-color: #22c55e !important; }
+                            .data-card[style*="yellow"] { background: #fef9c3 !important; border-color: #eab308 !important; }
+                            .data-card[style*="red"] { background: #fee2e2 !important; border-color: #ef4444 !important; }
+                            .data-label { color: #6b7280 !important; }
+                            .data-value { color: #111827 !important; }
+                            .data-value.green { color: #16a34a !important; }
+                            .data-value.red { color: #dc2626 !important; }
+                            .data-value.gold { color: #ca8a04 !important; }
+                            /* Fraud items with SOLID left borders */
+                            .fraud-item { background: #f9fafb !important; border-left: 4px solid #d1d5db !important; }
+                            .fraud-item[style*="green"] { background: #f0fdf4 !important; border-left-color: #22c55e !important; }
+                            .fraud-item[style*="yellow"] { background: #fefce8 !important; border-left-color: #eab308 !important; }
+                            .fraud-item[style*="red"] { background: #fef2f2 !important; border-left-color: #ef4444 !important; }
+                            /* Risk chips with SOLID colors */
+                            .risk-chip { background: #f3f4f6 !important; border: 2px solid #d1d5db !important; }
+                            .risk-chip.good { background: #dcfce7 !important; border-color: #22c55e !important; }
+                            .risk-chip.warn { background: #fef9c3 !important; border-color: #eab308 !important; }
+                            .risk-chip.bad { background: #fee2e2 !important; border-color: #ef4444 !important; }
+                            .risk-chip-value { color: #111827 !important; }
+                            .risk-chip.good .risk-chip-value { color: #166534 !important; }
+                            .risk-chip.warn .risk-chip-value { color: #854d0e !important; }
+                            .risk-chip.bad .risk-chip-value { color: #991b1b !important; }
+                            .risk-chip-label { color: #6b7280 !important; }
+                            /* Tables */
+                            table { background: #ffffff !important; border: 1px solid #e5e7eb !important; }
+                            th { background: #f3f4f6 !important; color: #111827 !important; border: 1px solid #e5e7eb !important; }
+                            td { color: #111827 !important; border: 1px solid #e5e7eb !important; background: #ffffff !important; }
+                            /* MCA sections */
+                            .mca-section, .mca-alert { background: #fee2e2 !important; border: 2px solid #ef4444 !important; color: #991b1b !important; }
+                            /* Stats */
+                            .debt-stat, .research-stat { background: #f3f4f6 !important; border: 1px solid #e5e7eb !important; }
+                            .debt-stat-value, .research-stat-value { color: #111827 !important; }
+                            .debt-stat-label, .research-stat-label { color: #6b7280 !important; }
+                            .chart-container { background: #ffffff !important; border: 1px solid #e5e7eb !important; }
                         `;
                         clonedDoc.head.appendChild(style);
                         clonedDoc.documentElement.setAttribute('data-theme', 'light');
