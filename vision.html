@@ -2183,6 +2183,131 @@
             background: transparent;
         }
 
+        /* Fraud Analysis Modules */
+        .fraud-modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+        }
+
+        .fraud-module {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .fraud-module:hover {
+            border-color: var(--text-muted);
+        }
+
+        .fraud-module.risk-low { border-left: 3px solid var(--green); }
+        .fraud-module.risk-medium { border-left: 3px solid var(--yellow); }
+        .fraud-module.risk-high { border-left: 3px solid var(--red); }
+
+        .fraud-module-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .fraud-module-header:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .fraud-module-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .fraud-module-icon svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--text-muted);
+        }
+
+        .fraud-module.risk-low .fraud-module-icon { background: var(--green-bg); }
+        .fraud-module.risk-low .fraud-module-icon svg { stroke: var(--green); }
+        .fraud-module.risk-medium .fraud-module-icon { background: var(--yellow-bg); }
+        .fraud-module.risk-medium .fraud-module-icon svg { stroke: var(--yellow); }
+        .fraud-module.risk-high .fraud-module-icon { background: var(--red-bg); }
+        .fraud-module.risk-high .fraud-module-icon svg { stroke: var(--red); }
+
+        .fraud-module-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .fraud-module-name {
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .fraud-module-summary {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .fraud-module-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            background: var(--bg-tertiary);
+            color: var(--text-muted);
+        }
+
+        .fraud-module.risk-low .fraud-module-status { background: var(--green-bg); color: var(--green); }
+        .fraud-module.risk-medium .fraud-module-status { background: var(--yellow-bg); color: var(--yellow); }
+        .fraud-module.risk-high .fraud-module-status { background: var(--red-bg); color: var(--red); }
+
+        .fraud-module .expand-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+        }
+
+        .fraud-module .expand-icon svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--text-muted);
+        }
+
+        .fraud-module.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .fraud-module-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 14px;
+        }
+
+        .fraud-module.expanded .fraud-module-content {
+            max-height: 200px;
+            padding: 0 14px 14px 14px;
+        }
+
         /* Research Progress */
         .research-progress {
             display: flex;
@@ -4958,70 +5083,72 @@ End with exactly one: RISK_LEVEL:CLEAN or RISK_LEVEL:WARNING or RISK_LEVEL:DANGE
             const warning = files.filter(f => f.status === 'warning').length;
             const danger = files.filter(f => f.status === 'danger').length;
 
-            // Build compact file boxes
-            const fileBoxes = files.map((f, i) => {
-                const statusText = f.status === 'danger' ? 'RISK' : f.status === 'warning' ? 'REVIEW' : 'CLEAN';
-                const statusBg = f.status === 'danger' ? 'var(--red-bg)' : f.status === 'warning' ? 'var(--yellow-bg)' : 'var(--green-bg)';
-                const statusColor = f.status === 'danger' ? 'var(--red)' : f.status === 'warning' ? 'var(--yellow)' : 'var(--green)';
-                const borderColor = f.status === 'danger' ? 'var(--red)' : f.status === 'warning' ? 'var(--yellow)' : 'var(--green)';
+            // Build expandable document modules (like research modules)
+            const documentModules = files.map((f, i) => {
+                const statusText = f.status === 'danger' ? 'HIGH RISK' : f.status === 'warning' ? 'REVIEW' : 'CLEAN';
+                const riskClass = f.status === 'danger' ? 'risk-high' : f.status === 'warning' ? 'risk-medium' : 'risk-low';
                 const statusIcon = f.status === 'danger'
-                    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+                    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
                     : f.status === 'warning'
-                    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
-                    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+                    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+                    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
 
-                // Short filename
-                const shortName = f.name.length > 25 ? f.name.substring(0, 22) + '...' : f.name;
+                const shortName = f.name.length > 35 ? f.name.substring(0, 32) + '...' : f.name;
+                const analysis = f.fraudAnalysis || 'No analysis details available.';
 
                 return `
-                    <div class="fraud-item" style="background: ${statusBg}; border: 1px solid ${borderColor}; border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; gap: 8px;" title="${f.fraudAnalysis || 'No details'}">
-                        <div style="color: ${statusColor}; display: flex; align-items: center;">${statusIcon}</div>
-                        <div style="flex: 1; min-width: 0;">
-                            <div style="font-size: 11px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${f.name}">${shortName}</div>
+                    <div class="fraud-module ${riskClass}" id="fraud-module-${i}">
+                        <div class="fraud-module-header" onclick="toggleFraudModule(${i})">
+                            <div class="fraud-module-icon">${statusIcon}</div>
+                            <div class="fraud-module-info">
+                                <div class="fraud-module-name">${shortName}</div>
+                                <div class="fraud-module-summary">${f.pages?.length || 0} page(s) analyzed</div>
+                            </div>
+                            <div class="fraud-module-status">${statusText}</div>
+                            <div class="expand-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                            </div>
                         </div>
-                        <div style="background: ${statusColor}; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700; letter-spacing: 0.3px;">${statusText}</div>
+                        <div class="fraud-module-content" id="fraud-content-${i}">
+                            <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.6; margin: 0;">${analysis}</p>
+                        </div>
                     </div>
                 `;
             }).join('');
 
-            // Overall status
+            // Overall status - minimal badge
             const overallColor = danger > 0 ? 'var(--red)' : warning > 0 ? 'var(--yellow)' : 'var(--green)';
-            const overallBg = danger > 0 ? 'var(--red-bg)' : warning > 0 ? 'var(--yellow-bg)' : 'var(--green-bg)';
-            const overallText = danger > 0 ? 'Issues Found' : warning > 0 ? 'Review Needed' : 'All Clear';
-            const overallIcon = danger > 0
-                ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
-                : warning > 0
-                ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
-                : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+            const overallText = danger > 0 ? 'Issues Detected' : warning > 0 ? 'Review Required' : 'All Clear';
 
             document.getElementById('fraudResults').innerHTML = `
-                <!-- Compact Header Row -->
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                    <div style="display: flex; align-items: center; gap: 8px; padding: 8px 14px; background: ${overallBg}; border: 1px solid ${overallColor}; border-radius: 8px;">
-                        <div style="color: ${overallColor};">${overallIcon}</div>
-                        <span style="font-weight: 600; font-size: 13px; color: ${overallColor};">${overallText}</span>
+                <!-- Summary Stats Row -->
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span style="font-size: 20px; font-weight: 700; color: var(--green);">${clean}</span>
+                        <span style="font-size: 12px; color: var(--text-muted);">Clean</span>
                     </div>
-                    <div style="display: flex; gap: 8px; flex: 1;">
-                        <div style="background: var(--green-bg); border: 1px solid var(--green); border-radius: 6px; padding: 6px 12px; text-align: center; flex: 1;">
-                            <span style="font-size: 16px; font-weight: 700; color: var(--green);">${clean}</span>
-                            <span style="font-size: 10px; color: var(--green); margin-left: 4px;">Clean</span>
-                        </div>
-                        <div style="background: var(--yellow-bg); border: 1px solid var(--yellow); border-radius: 6px; padding: 6px 12px; text-align: center; flex: 1;">
-                            <span style="font-size: 16px; font-weight: 700; color: var(--yellow);">${warning}</span>
-                            <span style="font-size: 10px; color: var(--yellow); margin-left: 4px;">Review</span>
-                        </div>
-                        <div style="background: var(--red-bg); border: 1px solid var(--red); border-radius: 6px; padding: 6px 12px; text-align: center; flex: 1;">
-                            <span style="font-size: 16px; font-weight: 700; color: var(--red);">${danger}</span>
-                            <span style="font-size: 10px; color: var(--red); margin-left: 4px;">Risk</span>
-                        </div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span style="font-size: 20px; font-weight: 700; color: var(--yellow);">${warning}</span>
+                        <span style="font-size: 12px; color: var(--text-muted);">Review</span>
                     </div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span style="font-size: 20px; font-weight: 700; color: var(--red);">${danger}</span>
+                        <span style="font-size: 12px; color: var(--text-muted);">Risk</span>
+                    </div>
+                    <div style="flex: 1;"></div>
+                    <div style="padding: 6px 12px; background: ${overallColor}15; border-radius: 20px; font-size: 12px; font-weight: 600; color: ${overallColor};">${overallText}</div>
                 </div>
 
-                <!-- Document Grid -->
-                <div class="fraud-details" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px;">
-                    ${fileBoxes}
+                <!-- Document Modules Grid -->
+                <div class="fraud-modules-grid">
+                    ${documentModules}
                 </div>
             `;
+        }
+
+        function toggleFraudModule(index) {
+            const module = document.getElementById('fraud-module-' + index);
+            module.classList.toggle('expanded');
         }
 
         // Extract data from a single bank statement file
