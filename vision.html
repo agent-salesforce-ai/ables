@@ -8465,6 +8465,26 @@ Return ONLY valid JSON.`
                 }
 
                 text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+
+                // Try to fix truncated/malformed JSON
+                if (!text.endsWith('}')) {
+                    console.warn(`Research ${module.id} JSON appears truncated, attempting to fix...`);
+                    // Fix unterminated strings by finding last quote and closing
+                    const lastQuote = text.lastIndexOf('"');
+                    const lastColon = text.lastIndexOf(':');
+                    if (lastColon > lastQuote) {
+                        // Value is incomplete, add empty string
+                        text += '""';
+                    }
+                    // Close any open brackets/braces
+                    const openBraces = (text.match(/\{/g) || []).length;
+                    const closeBraces = (text.match(/\}/g) || []).length;
+                    const openBrackets = (text.match(/\[/g) || []).length;
+                    const closeBrackets = (text.match(/\]/g) || []).length;
+                    for (let i = 0; i < openBrackets - closeBrackets; i++) text += ']';
+                    for (let i = 0; i < openBraces - closeBraces; i++) text += '}';
+                }
+
                 const result = JSON.parse(text);
 
                 // Validate result has meaningful content
