@@ -6437,7 +6437,7 @@ Return ONLY valid JSON:
             const successCount = results.filter(r => r !== null).length;
             console.log(`Extraction complete: ${successCount}/${files.length} statements successful`);
 
-            // Build months array from successful extractions
+            // Build months array from successful extractions (include itemized lists for popups)
             const months = results.filter(r => r !== null).map(r => ({
                 month: r.month || 'Unknown',
                 total_deposits: r.total_deposits || 0,
@@ -6449,7 +6449,12 @@ Return ONLY valid JSON:
                 lowest_daily_balance: r.lowest_daily_balance || 0,
                 num_deposits: r.num_deposits || 0,
                 nsf_count: r.nsf_count || 0,
-                days_negative: r.days_negative || 0
+                days_negative: r.days_negative || 0,
+                // Include itemized transaction lists for popup detail views
+                deposit_list: r.deposit_list || [],
+                exclusion_list: r.exclusion_list || [],
+                withdrawal_list: r.withdrawal_list || [],
+                mca_payments: r.detected_mca_payments || []
             }));
 
             // Sort chronologically
