@@ -7779,27 +7779,37 @@ Return ONLY valid JSON:
             // Use Gemini 3 Flash for all research (supports google_search grounding)
             const model = 'gemini-3-flash-preview';
 
+            // Only include entity fields for legal/SOS modules
+            const entityModulesForPrompt = ['sos', 'ucc', 'tax', 'judgment', 'bankruptcy'];
+            const includeEntityFields = entityModulesForPrompt.includes(module.id);
+
+            const jsonSchema = includeEntityFields ? `{
+  "risk": "low" | "medium" | "high" | "unknown",
+  "summary": "One sentence summary",
+  "details": ["Finding 1", "Finding 2", "Finding 3"],
+  "flags": ["Red flags if any"],
+  "entity_number": "Entity/File number if found",
+  "formation_date": "Date formed if found",
+  "status": "Active/Inactive/Dissolved"
+}` : `{
+  "risk": "low" | "medium" | "high" | "unknown",
+  "summary": "One sentence summary",
+  "details": ["Finding 1", "Finding 2", "Finding 3"],
+  "flags": ["Red flags if any"]
+}`;
+
             const requestBody = {
                 contents: [{
                     parts: [{
                         text: `${prompts[module.id]}
 
-${useGrounding ? 'Search the web for current, factual information. You MUST provide substantive findings even if limited data is available - estimate risk level based on business type and industry patterns.' : 'Based on typical patterns for this type of business, provide a research report with your best assessment.'} Format response as JSON:
-{
-  "risk": "low" | "medium" | "high" | "unknown",
-  "summary": "One sentence summary of findings - NEVER say 'no data available', always provide an assessment",
-  "details": ["Key finding 1", "Key finding 2", "Key finding 3"],
-  "flags": ["Any red flags or concerns - leave empty array if none"],
-  "entity_number": "Entity/File number if found (for SOS)",
-  "formation_date": "Date formed if found",
-  "status": "Current status if found (Active, Inactive, Dissolved, etc.)"
-}
+${useGrounding ? 'Search the web for current information.' : 'Provide assessment based on typical patterns.'} Format as JSON:
+${jsonSchema}
 
-IMPORTANT: Always provide meaningful analysis. If specific records aren't found, explain what that likely means for this business type.
 Return ONLY valid JSON.`
                     }]
                 }],
-                generationConfig: { temperature: 0.3, maxOutputTokens: 32768 }
+                generationConfig: { temperature: 0.3, maxOutputTokens: 2048 }
             };
 
             // Add search grounding for key research modules
