@@ -8207,18 +8207,17 @@ Return ONLY valid JSON:
             // Use Gemini 3 Flash for all research (supports google_search grounding)
             const model = 'gemini-3-flash-preview';
 
-            // Only include entity fields for legal/SOS modules
-            const entityModulesForPrompt = ['sos', 'ucc', 'tax', 'judgment', 'bankruptcy'];
-            const includeEntityFields = entityModulesForPrompt.includes(module.id);
+            // Only include entity fields for SOS module (other modules don't have entity registrations)
+            const includeEntityFields = module.id === 'sos';
 
             const jsonSchema = includeEntityFields ? `{
   "risk": "low" | "medium" | "high" | "unknown",
   "summary": "One sentence summary",
   "details": ["Finding 1", "Finding 2", "Finding 3"],
   "flags": ["Red flags if any"],
-  "entity_number": "Entity/File number if found",
-  "formation_date": "Date formed if found",
-  "status": "Active/Inactive/Dissolved"
+  "entity_number": "Entity/File number from Secretary of State",
+  "formation_date": "Date business was formed/incorporated",
+  "status": "Active/Inactive/Dissolved status"
 }` : `{
   "risk": "low" | "medium" | "high" | "unknown",
   "summary": "One sentence summary",
@@ -8336,9 +8335,8 @@ Return ONLY valid JSON.`
             const details = result.details || [];
             const flags = result.flags || [];
 
-            // Build entity info section for SOS/UCC/legal modules only
-            const entityModules = ['sos', 'ucc', 'tax', 'judgment', 'bankruptcy'];
-            const entityInfo = (entityModules.includes(module.id) && (result.entity_number || result.formation_date || result.status)) ? `
+            // Build entity info section ONLY for SOS module (Secretary of State has entity registrations)
+            const entityInfo = (module.id === 'sos' && (result.entity_number || result.formation_date || result.status)) ? `
                 <div class="research-detail-section" style="margin-bottom: 12px;">
                     <div class="research-detail-label">Entity Information</div>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin-top: 8px;">
