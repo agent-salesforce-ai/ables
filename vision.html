@@ -3287,6 +3287,30 @@
         </div>
     </div>
 
+    <!-- Statement Viewer Modal -->
+    <div class="modal-overlay" id="statementViewerModal">
+        <div class="modal" style="max-width: 900px; max-height: 90vh;">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="modal-title" id="statementViewerTitle">Bank Statement</span>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <button class="btn btn-secondary" id="prevPageBtn" onclick="navigateStatementPage(-1)" style="padding: 6px 12px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                    </button>
+                    <span id="pageIndicator" style="font-size: 13px; color: var(--text-secondary);">Page 1 of 1</span>
+                    <button class="btn btn-secondary" id="nextPageBtn" onclick="navigateStatementPage(1)" style="padding: 6px 12px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                    </button>
+                    <button class="modal-close" onclick="closeModal('statementViewerModal')">×</button>
+                </div>
+            </div>
+            <div class="modal-body" style="padding: 0; overflow: auto; max-height: calc(90vh - 60px); background: var(--bg-tertiary);">
+                <div id="statementViewerContent" style="display: flex; justify-content: center; align-items: flex-start; min-height: 400px;">
+                    <!-- Statement pages will be rendered here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Export Modal -->
     <div class="modal-overlay" id="exportModal">
         <div class="modal" style="max-width: 600px;">
@@ -6545,10 +6569,84 @@ Return ONLY valid JSON:
         // Store live extraction results globally for click handlers
         let liveExtractionResults = [];
 
+        // Statement viewer state
+        let currentViewerFileIndex = -1;
+        let currentViewerPage = 0;
+
+        // Open statement PDF/image viewer for a specific month
+        function openStatementViewer(monthIndex) {
+            // The files array index should correspond to the extraction order
+            // but we need to match by month data since extractions happen in parallel
+            const monthData = liveExtractionResults[monthIndex];
+            if (!monthData) return;
+
+            // Find the corresponding file by index (files are processed in order)
+            // Note: After parallel extraction, results maintain file order
+            const fileIndex = monthIndex;
+            const file = files[fileIndex];
+
+            if (!file) {
+                showStatus('Statement file not found', 'error');
+                return;
+            }
+
+            currentViewerFileIndex = fileIndex;
+            currentViewerPage = 0;
+
+            // Update modal title
+            document.getElementById('statementViewerTitle').textContent =
+                `${monthData.month || 'Bank Statement'} - ${file.name}`;
+
+            // Render the page
+            renderStatementPage();
+
+            // Open the modal
+            openModal('statementViewerModal');
+        }
+
+        function renderStatementPage() {
+            const file = files[currentViewerFileIndex];
+            if (!file || !file.pages || file.pages.length === 0) return;
+
+            const content = document.getElementById('statementViewerContent');
+            const page = file.pages[currentViewerPage];
+
+            // Update page indicator
+            document.getElementById('pageIndicator').textContent =
+                `Page ${currentViewerPage + 1} of ${file.pages.length}`;
+
+            // Enable/disable navigation buttons
+            document.getElementById('prevPageBtn').disabled = currentViewerPage === 0;
+            document.getElementById('nextPageBtn').disabled = currentViewerPage >= file.pages.length - 1;
+
+            // Render the page image
+            content.innerHTML = `
+                <img src="${page.src}" alt="Statement page ${currentViewerPage + 1}"
+                     style="max-width: 100%; height: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+            `;
+        }
+
+        function navigateStatementPage(direction) {
+            const file = files[currentViewerFileIndex];
+            if (!file || !file.pages) return;
+
+            const newPage = currentViewerPage + direction;
+            if (newPage >= 0 && newPage < file.pages.length) {
+                currentViewerPage = newPage;
+                renderStatementPage();
+            }
+        }
+
         // Show cell detail popup with transaction breakdown
         function showCellDetail(monthIndex, field) {
             const data = liveExtractionResults[monthIndex];
             if (!data) return;
+
+            // If clicking on month, open the PDF viewer for that statement
+            if (field === 'month') {
+                openStatementViewer(monthIndex);
+                return;
+            }
 
             const fieldLabels = {
                 month: 'Statement Period',
