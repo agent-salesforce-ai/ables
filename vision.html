@@ -1509,6 +1509,183 @@
             .debt-summary { grid-template-columns: repeat(2, 1fr); }
         }
 
+        /* Credit Engine Scoring Card */
+        .credit-engine-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .credit-engine-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .credit-engine-title {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .credit-engine-version {
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        .credit-engine-body {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 0;
+        }
+
+        .credit-engine-score-panel {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid var(--border);
+            position: relative;
+        }
+
+        .credit-engine-score-bg {
+            position: absolute;
+            inset: 0;
+            opacity: 0.08;
+            transition: background 0.3s;
+        }
+
+        .credit-engine-score-value {
+            font-size: 56px;
+            font-weight: 800;
+            line-height: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .credit-engine-score-max {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .credit-engine-grade {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .credit-engine-grade-letter {
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .credit-engine-grade-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .credit-engine-breakdown {
+            padding: 24px;
+        }
+
+        .credit-engine-breakdown-title {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .credit-engine-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .credit-engine-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .credit-engine-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            min-width: 100px;
+        }
+
+        .credit-engine-bar-track {
+            flex: 1;
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .credit-engine-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease, background 0.3s;
+        }
+
+        .credit-engine-points {
+            font-size: 13px;
+            font-weight: 700;
+            min-width: 48px;
+            text-align: right;
+        }
+
+        .credit-engine-scale {
+            display: flex;
+            gap: 4px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .credit-engine-scale-item {
+            flex: 1;
+            padding: 8px 4px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .credit-engine-scale-item.active {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 640px) {
+            .credit-engine-body {
+                grid-template-columns: 1fr;
+            }
+            .credit-engine-score-panel {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+        }
+
         /* Modal */
         .modal-overlay {
             position: fixed;
@@ -2776,6 +2953,83 @@
                 </div>
             </div>
 
+            <!-- Credit Engine Scoring -->
+            <div class="section-card hidden" id="scoreSection">
+                <div class="section-header">
+                    <div class="section-header-title"><svg class="section-logo" viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/><circle cx="32" cy="32" r="12" fill="#eab308"/><ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/></svg><span>Credit Engine</span></div>
+                    <button class="card-export-btn" onclick="exportCardAsPng('scoreSection', 'Credit_Score')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PNG
+                    </button>
+                </div>
+                <div class="section-body" style="padding: 0;">
+                    <div class="credit-engine-card">
+                        <div class="credit-engine-header">
+                            <div>
+                                <div class="credit-engine-title">ABLESAI CREDIT ENGINE</div>
+                                <div class="credit-engine-version">V4.2</div>
+                            </div>
+                        </div>
+                        <div class="credit-engine-body">
+                            <div class="credit-engine-score-panel">
+                                <div class="credit-engine-score-bg" id="scoreHeaderBg"></div>
+                                <div class="credit-engine-score-value" id="scoreValue">--<span class="credit-engine-score-max">/100</span></div>
+                                <div class="credit-engine-grade">
+                                    <span class="credit-engine-grade-letter" id="scoreGradeLetter">-</span>
+                                    <span class="credit-engine-grade-label" id="scoreGradeLabel">Calculating...</span>
+                                </div>
+                            </div>
+                            <div class="credit-engine-breakdown">
+                                <div class="credit-engine-breakdown-title">Score Breakdown</div>
+                                <!-- Credit Score -->
+                                <div class="credit-engine-row">
+                                    <div class="credit-engine-dot" id="dotCredit" style="background: #6b7280;"></div>
+                                    <span class="credit-engine-label">Credit Score</span>
+                                    <div class="credit-engine-bar-track"><div class="credit-engine-bar-fill" id="barCredit" style="width: 0%;"></div></div>
+                                    <span class="credit-engine-points" id="scoreCredit">0/20</span>
+                                </div>
+                                <!-- Behavior -->
+                                <div class="credit-engine-row">
+                                    <div class="credit-engine-dot" id="dotBehavior" style="background: #6b7280;"></div>
+                                    <span class="credit-engine-label">Behavior (<span id="eventsLabel">0</span>)</span>
+                                    <div class="credit-engine-bar-track"><div class="credit-engine-bar-fill" id="barBehavior" style="width: 0%;"></div></div>
+                                    <span class="credit-engine-points" id="scoreBehavior">0/15</span>
+                                </div>
+                                <!-- Revenue -->
+                                <div class="credit-engine-row">
+                                    <div class="credit-engine-dot" id="dotRevenue" style="background: #6b7280;"></div>
+                                    <span class="credit-engine-label">Revenue</span>
+                                    <div class="credit-engine-bar-track"><div class="credit-engine-bar-fill" id="barRevenue" style="width: 0%;"></div></div>
+                                    <span class="credit-engine-points" id="scoreRevenue">0/30</span>
+                                </div>
+                                <!-- Stability -->
+                                <div class="credit-engine-row">
+                                    <div class="credit-engine-dot" id="dotStability" style="background: #6b7280;"></div>
+                                    <span class="credit-engine-label">Stability</span>
+                                    <div class="credit-engine-bar-track"><div class="credit-engine-bar-fill" id="barStability" style="width: 0%;"></div></div>
+                                    <span class="credit-engine-points" id="scoreStability">0/20</span>
+                                </div>
+                                <!-- Buffer -->
+                                <div class="credit-engine-row">
+                                    <div class="credit-engine-dot" id="dotBuffer" style="background: #6b7280;"></div>
+                                    <span class="credit-engine-label">Buffer (<span id="bufferPct">0</span>%)</span>
+                                    <div class="credit-engine-bar-track"><div class="credit-engine-bar-fill" id="barBuffer" style="width: 0%;"></div></div>
+                                    <span class="credit-engine-points" id="scoreBuffer">0/15</span>
+                                </div>
+                                <!-- Grade Scale -->
+                                <div class="credit-engine-scale">
+                                    <div class="credit-engine-scale-item" id="scaleE" style="background: #fee2e2; color: #dc2626;">E &lt;35</div>
+                                    <div class="credit-engine-scale-item" id="scaleD" style="background: #ffedd5; color: #ea580c;">D 35+</div>
+                                    <div class="credit-engine-scale-item" id="scaleC" style="background: #fef9c3; color: #ca8a04;">C 50+</div>
+                                    <div class="credit-engine-scale-item" id="scaleB" style="background: #dcfce7; color: #16a34a;">B 65+</div>
+                                    <div class="credit-engine-scale-item" id="scaleA" style="background: #d1fae5; color: #059669;">A 80+</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Existing Debt Obligations -->
             <div class="section-card hidden" id="debtSection">
                 <div class="section-header">
@@ -3894,6 +4148,72 @@
                 `;
             }
 
+            // Credit Engine Section
+            if (options.includeScore && extractedData.credit_score) {
+                const cs = extractedData.credit_score;
+                const tierColors = {
+                    A: '#10b981', B: '#22c55e', C: '#eab308', D: '#f97316', E: '#ef4444'
+                };
+                const tierBg = {
+                    A: '#d1fae5', B: '#dcfce7', C: '#fef9c3', D: '#ffedd5', E: '#fee2e2'
+                };
+                const color = tierColors[cs.tier] || '#6b7280';
+
+                const getScoreBarColor = (pct) => {
+                    if (pct >= 70) return '#10b981';
+                    if (pct >= 40) return '#eab308';
+                    return '#ef4444';
+                };
+
+                html += `
+                    <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                        <div style="background: #f8fafc; padding: 12px 20px; border-bottom: 1px solid #e5e7eb;">
+                            <div style="font-size: 10px; font-weight: 800; letter-spacing: 0.15em; color: #6b7280;">ABLESAI CREDIT ENGINE</div>
+                            <div style="font-size: 9px; color: #9ca3af;">V4.2</div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 180px 1fr;">
+                            <div style="padding: 24px; border-right: 1px solid #e5e7eb; text-align: center; background: ${color}10;">
+                                <div style="font-size: 48px; font-weight: 800; color: ${color}; line-height: 1;">${cs.total}<span style="font-size: 18px; color: #6b7280;">/100</span></div>
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px;">
+                                    <span style="font-size: 24px; font-weight: 800; color: ${color};">${cs.tier}</span>
+                                    <span style="font-size: 11px; font-weight: 600; color: #374151; text-transform: uppercase;">${cs.label}</span>
+                                </div>
+                            </div>
+                            <div style="padding: 20px;">
+                                <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280; margin-bottom: 12px;">Score Breakdown</div>
+                                ${[
+                                    { label: 'Credit Score', pts: cs.components.credit, max: 20 },
+                                    { label: `Behavior (${cs.inputs.avgNsf + cs.inputs.avgNegDays})`, pts: cs.components.behavior, max: 15 },
+                                    { label: 'Revenue', pts: cs.components.revenue, max: 30 },
+                                    { label: 'Stability', pts: cs.components.stability, max: 20 },
+                                    { label: `Buffer (${cs.inputs.bufferRatio}%)`, pts: cs.components.buffer, max: 15 }
+                                ].map(item => {
+                                    const pct = (item.pts / item.max) * 100;
+                                    const barColor = getScoreBarColor(pct);
+                                    return `
+                                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                            <div style="width: 8px; height: 8px; border-radius: 50%; background: ${barColor};"></div>
+                                            <span style="font-size: 12px; font-weight: 600; color: #374151; min-width: 90px;">${item.label}</span>
+                                            <div style="flex: 1; height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden;">
+                                                <div style="width: ${pct}%; height: 100%; background: ${barColor}; border-radius: 3px;"></div>
+                                            </div>
+                                            <span style="font-size: 12px; font-weight: 700; min-width: 40px; text-align: right;">${item.pts}/${item.max}</span>
+                                        </div>
+                                    `;
+                                }).join('')}
+                                <div style="display: flex; gap: 4px; margin-top: 16px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
+                                    <div style="flex: 1; padding: 6px; background: #fee2e2; color: #dc2626; text-align: center; border-radius: 4px; font-size: 9px; font-weight: 700; ${cs.tier === 'E' ? 'box-shadow: 0 2px 6px rgba(0,0,0,0.15);' : ''}">E &lt;35</div>
+                                    <div style="flex: 1; padding: 6px; background: #ffedd5; color: #ea580c; text-align: center; border-radius: 4px; font-size: 9px; font-weight: 700; ${cs.tier === 'D' ? 'box-shadow: 0 2px 6px rgba(0,0,0,0.15);' : ''}">D 35+</div>
+                                    <div style="flex: 1; padding: 6px; background: #fef9c3; color: #ca8a04; text-align: center; border-radius: 4px; font-size: 9px; font-weight: 700; ${cs.tier === 'C' ? 'box-shadow: 0 2px 6px rgba(0,0,0,0.15);' : ''}">C 50+</div>
+                                    <div style="flex: 1; padding: 6px; background: #dcfce7; color: #16a34a; text-align: center; border-radius: 4px; font-size: 9px; font-weight: 700; ${cs.tier === 'B' ? 'box-shadow: 0 2px 6px rgba(0,0,0,0.15);' : ''}">B 65+</div>
+                                    <div style="flex: 1; padding: 6px; background: #d1fae5; color: #059669; text-align: center; border-radius: 4px; font-size: 9px; font-weight: 700; ${cs.tier === 'A' ? 'box-shadow: 0 2px 6px rgba(0,0,0,0.15);' : ''}">A 80+</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
             // Existing Debt Section
             if (options.includeDebt && existingDebt && existingDebt.length > 0) {
                 const debts = existingDebt.filter(d => d.creditor_name && d.payment_amount > 0);
@@ -4059,13 +4379,14 @@
                 const includeFraud = document.getElementById('exportFraud')?.checked ?? true;
                 const includeData = document.getElementById('exportData')?.checked ?? true;
                 const includeCharts = document.getElementById('exportCharts')?.checked ?? true;
+                const includeScore = document.getElementById('exportScore')?.checked ?? true;
                 const includeDebt = document.getElementById('exportDebt')?.checked ?? true;
                 const includeResearch = document.getElementById('exportResearch')?.checked ?? true;
                 const includeLenders = document.getElementById('exportLenders')?.checked ?? true;
 
                 // Generate completely fresh HTML with hardcoded light styles
                 const exportHTML = generateExportHTML({
-                    includeFraud, includeData, includeCharts, includeDebt, includeResearch, includeLenders
+                    includeFraud, includeData, includeCharts, includeScore, includeDebt, includeResearch, includeLenders
                 });
 
                 // Create overlay to hide from user
@@ -4605,6 +4926,7 @@
                     includeFraud: true,
                     includeData: true,
                     includeCharts: false,
+                    includeScore: true,
                     includeDebt: true,
                     includeResearch: true,
                     includeLenders: true
@@ -4739,47 +5061,95 @@
             showStatus('Generating PDF...', 'info');
 
             try {
-                const resultsArea = document.getElementById('resultsArea');
-
-                // Use the clean method for capturing
-                const wrapper = document.createElement('div');
-                wrapper.style.cssText = `position: absolute; left: -9999px; top: 0; background: #ffffff; padding: 24px; width: ${resultsArea.offsetWidth}px;`;
-
-                const clone = resultsArea.cloneNode(true);
-                clone.querySelectorAll('.hidden').forEach(el => el.classList.remove('hidden'));
-                clone.querySelectorAll('button, .card-export-btn').forEach(el => el.remove());
-
-                // Apply light styles (same as exportPngClean)
-                clone.querySelectorAll('.section-card').forEach(card => {
-                    card.style.cssText = 'background: #ffffff !important; border: 1px solid #e2e8f0 !important; border-radius: 12px; margin-bottom: 20px; overflow: hidden;';
-                });
-                clone.querySelectorAll('.section-header').forEach(h => {
-                    h.style.cssText = 'background: #f8fafc !important; color: #1e293b !important; padding: 16px 20px; border-bottom: 1px solid #e2e8f0 !important;';
-                });
-                clone.querySelectorAll('.section-body').forEach(b => {
-                    b.style.cssText = 'background: #ffffff !important; padding: 20px; color: #1e293b !important;';
-                });
-                clone.querySelectorAll('th').forEach(th => {
-                    th.style.cssText = 'background: #f8fafc !important; color: #1e293b !important; padding: 12px;';
-                });
-                clone.querySelectorAll('td').forEach(td => {
-                    td.style.cssText = 'background: #ffffff !important; color: #1e293b !important; padding: 12px;';
+                // Use iframe method for proper color rendering
+                const exportHTML = generateExportHTML({
+                    includeFraud: true,
+                    includeData: true,
+                    includeCharts: false,
+                    includeScore: true,
+                    includeDebt: true,
+                    includeResearch: true,
+                    includeLenders: true
                 });
 
-                wrapper.appendChild(clone);
-                document.body.appendChild(wrapper);
-                await new Promise(r => setTimeout(r, 100));
+                // Create iframe - must be visible for html2canvas to work properly
+                const iframe = document.createElement('iframe');
+                iframe.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 900px;
+                    height: 100vh;
+                    border: none;
+                    z-index: 99999;
+                    background: white;
+                `;
 
-                const canvas = await html2canvas(wrapper, {
+                // Create overlay to hide from user
+                const overlay = document.createElement('div');
+                overlay.id = 'exportOverlay';
+                overlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0,0,0,0.9);
+                    z-index: 99998;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-size: 18px;
+                    font-family: 'Inter', sans-serif;
+                `;
+                overlay.innerHTML = '<div style="text-align: center;"><div style="margin-bottom: 12px;">Generating PDF...</div><div style="font-size: 14px; opacity: 0.7;">Please wait</div></div>';
+
+                document.body.appendChild(overlay);
+                document.body.appendChild(iframe);
+
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+                // Write complete self-contained HTML - NO CSS VARIABLES
+                iframeDoc.open();
+                iframeDoc.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <style>
+                            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+                            * { margin: 0; padding: 0; box-sizing: border-box; }
+                            body {
+                                font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+                                background: #ffffff;
+                                color: #111827;
+                                padding: 24px;
+                                line-height: 1.5;
+                            }
+                        </style>
+                    </head>
+                    <body>${exportHTML}</body>
+                    </html>
+                `);
+                iframeDoc.close();
+
+                // Wait for fonts and content to load
+                await new Promise(r => setTimeout(r, 800));
+
+                const canvas = await html2canvas(iframeDoc.body, {
                     scale: 2,
                     useCORS: true,
                     backgroundColor: '#ffffff',
-                    logging: false
+                    logging: false,
+                    allowTaint: true,
+                    width: 900,
+                    windowWidth: 900
                 });
 
-                document.body.removeChild(wrapper);
+                document.body.removeChild(iframe);
+                document.body.removeChild(overlay);
 
-                // Create PDF
+                // Create PDF from canvas
                 const { jsPDF } = window.jspdf;
                 const imgWidth = canvas.width;
                 const imgHeight = canvas.height;
@@ -4819,6 +5189,11 @@
                 showStatus('PDF exported!', 'success');
             } catch (error) {
                 console.error('Export error:', error);
+                // Clean up
+                document.getElementById('exportOverlay')?.remove();
+                document.querySelectorAll('iframe').forEach(f => {
+                    if (f.style.zIndex === '99999') f.remove();
+                });
                 showStatus('Error: ' + error.message, 'error');
             }
         }
@@ -6398,10 +6773,6 @@ Return ONLY valid JSON:
 
         // Live rendering - shows each statement as horizontal table rows with clickable cells
         function renderExtractedDataLive(extractedResults) {
-            console.log('renderExtractedDataLive called with:', extractedResults.length, 'results');
-            extractedResults.forEach((r, i) => {
-                if (r) console.log(`Result ${i}: month=${r.month}, deposits=${r.total_deposits}, trueRev=${r.true_revenue}`);
-            });
             liveExtractionResults = extractedResults;
             const container = document.getElementById('extractedData');
 
@@ -6722,6 +7093,179 @@ Return ONLY valid JSON:
 
             // Render debt obligations
             renderDebtObligations();
+
+            // Calculate and render credit score
+            calculateCreditScore();
+        }
+
+        // Credit Engine V4.2 Scoring Model
+        const SCORE_WEIGHTS = {
+            credit: 20,      // FICO score weight
+            behavior: 15,    // NSF + negative days
+            revenue: 30,     // Monthly revenue
+            stability: 20,   // Time in business
+            buffer: 15       // Avg balance / revenue ratio
+        };
+
+        const TIER_CONFIG = {
+            A: { min: 80, color: '#10b981', label: 'Prime' },
+            B: { min: 65, color: '#22c55e', label: 'Near-Prime' },
+            C: { min: 50, color: '#eab308', label: 'Mid-Prime' },
+            D: { min: 35, color: '#f97316', label: 'Sub-Prime' },
+            E: { min: 0, color: '#ef4444', label: 'High-Risk' }
+        };
+
+        function getBarColor(pct) {
+            if (pct >= 70) return '#10b981';
+            if (pct >= 40) return '#eab308';
+            return '#ef4444';
+        }
+
+        function calculateCreditScore() {
+            const analysis = extractedData.full_analysis;
+            if (!analysis) return;
+
+            // Get input values from analysis
+            const avgRevenue = analysis.aggregated?.avg_monthly_deposits || 0;
+            const avgBalance = analysis.aggregated?.avg_ending_balance || 0;
+
+            // Sum up NSF and negative days across all months
+            const months = analysis.months || [];
+            let totalNsf = 0;
+            let totalNegDays = 0;
+            months.forEach(m => {
+                totalNsf += m.nsf_count || 0;
+                totalNegDays += m.negative_days || 0;
+            });
+            const avgNsf = months.length > 0 ? totalNsf / months.length : 0;
+            const avgNegDays = months.length > 0 ? totalNegDays / months.length : 0;
+
+            // Get time in business (use months of statements as proxy, assume 12+ months)
+            const tibMonths = Math.max(12, months.length * 3); // Estimate TIB
+
+            // Estimate FICO from bank behavior (650 default, adjust for NSF/neg days)
+            let estimatedFico = 650;
+            estimatedFico -= Math.min(100, totalNsf * 15);
+            estimatedFico -= Math.min(50, totalNegDays * 5);
+            estimatedFico = Math.max(450, Math.min(850, estimatedFico));
+
+            // Calculate score components using SCORE_WEIGHTS
+            // Credit score component (smooth linear scale 450-850)
+            const creditPts = estimatedFico < 450 ? 0 : Math.min(SCORE_WEIGHTS.credit, ((estimatedFico - 450) / 400) * SCORE_WEIGHTS.credit);
+
+            // Behavior component (NSF + negative days) - smooth decay
+            const events = avgNsf + avgNegDays;
+            const behavePts = Math.max(0, SCORE_WEIGHTS.behavior * Math.pow(0.85, events));
+
+            // Revenue component (smooth log scale)
+            const revNorm = Math.min(1, Math.log10(Math.max(avgRevenue, 5000) / 5000) / Math.log10(100));
+            const revPts = revNorm * SCORE_WEIGHTS.revenue;
+
+            // Stability component (time in business)
+            const tibNorm = Math.min(1, tibMonths / 120);
+            const stabPts = tibNorm * SCORE_WEIGHTS.stability;
+
+            // Buffer component (avg balance / revenue ratio)
+            const bufferRatio = avgRevenue > 0 ? avgBalance / avgRevenue : 0;
+            const bufferNorm = Math.min(1, bufferRatio / 0.20);
+            const bufferPts = bufferNorm * SCORE_WEIGHTS.buffer;
+
+            // Total score
+            let totalScore = Math.round(creditPts + behavePts + revPts + stabPts + bufferPts);
+            totalScore = Math.max(0, Math.min(100, totalScore));
+
+            // Determine tier with safety valves
+            let tier = 'E';
+            if (totalScore >= 80) tier = 'A';
+            else if (totalScore >= 65) tier = 'B';
+            else if (totalScore >= 50) tier = 'C';
+            else if (totalScore >= 35) tier = 'D';
+
+            // Credit score safety valves
+            if (estimatedFico < 520) tier = 'E';
+            else if (estimatedFico < 550 && ['A', 'B', 'C'].includes(tier)) tier = 'D';
+            else if (estimatedFico < 600 && ['A', 'B'].includes(tier)) tier = 'C';
+
+            const tierConfig = TIER_CONFIG[tier];
+
+            // Show section
+            document.getElementById('scoreSection').classList.remove('hidden');
+
+            // Update main score display
+            document.getElementById('scoreValue').innerHTML = `${totalScore}<span class="credit-engine-score-max">/100</span>`;
+            document.getElementById('scoreValue').style.color = tierConfig.color;
+            document.getElementById('scoreGradeLetter').textContent = tier;
+            document.getElementById('scoreGradeLetter').style.color = tierConfig.color;
+            document.getElementById('scoreGradeLabel').textContent = tierConfig.label.toUpperCase();
+            document.getElementById('scoreHeaderBg').style.background = tierConfig.color;
+
+            // Update breakdown bars
+            document.getElementById('eventsLabel').textContent = Math.round(events * 10) / 10;
+            document.getElementById('bufferPct').textContent = Math.round(bufferRatio * 100);
+
+            // Credit bar
+            const creditPct = (creditPts / SCORE_WEIGHTS.credit) * 100;
+            document.getElementById('barCredit').style.width = creditPct + '%';
+            document.getElementById('barCredit').style.background = getBarColor(creditPct);
+            document.getElementById('dotCredit').style.background = getBarColor(creditPct);
+            document.getElementById('scoreCredit').textContent = Math.round(creditPts) + '/' + SCORE_WEIGHTS.credit;
+
+            // Behavior bar
+            const behavePct = (behavePts / SCORE_WEIGHTS.behavior) * 100;
+            document.getElementById('barBehavior').style.width = behavePct + '%';
+            document.getElementById('barBehavior').style.background = getBarColor(behavePct);
+            document.getElementById('dotBehavior').style.background = getBarColor(behavePct);
+            document.getElementById('scoreBehavior').textContent = Math.round(behavePts) + '/' + SCORE_WEIGHTS.behavior;
+
+            // Revenue bar
+            const revPct = (revPts / SCORE_WEIGHTS.revenue) * 100;
+            document.getElementById('barRevenue').style.width = revPct + '%';
+            document.getElementById('barRevenue').style.background = getBarColor(revPct);
+            document.getElementById('dotRevenue').style.background = getBarColor(revPct);
+            document.getElementById('scoreRevenue').textContent = Math.round(revPts) + '/' + SCORE_WEIGHTS.revenue;
+
+            // Stability bar
+            const stabPct = (stabPts / SCORE_WEIGHTS.stability) * 100;
+            document.getElementById('barStability').style.width = stabPct + '%';
+            document.getElementById('barStability').style.background = getBarColor(stabPct);
+            document.getElementById('dotStability').style.background = getBarColor(stabPct);
+            document.getElementById('scoreStability').textContent = Math.round(stabPts) + '/' + SCORE_WEIGHTS.stability;
+
+            // Buffer bar
+            const bufferPctBar = (bufferPts / SCORE_WEIGHTS.buffer) * 100;
+            document.getElementById('barBuffer').style.width = bufferPctBar + '%';
+            document.getElementById('barBuffer').style.background = getBarColor(bufferPctBar);
+            document.getElementById('dotBuffer').style.background = getBarColor(bufferPctBar);
+            document.getElementById('scoreBuffer').textContent = Math.round(bufferPts) + '/' + SCORE_WEIGHTS.buffer;
+
+            // Highlight active tier on scale
+            ['E', 'D', 'C', 'B', 'A'].forEach(t => {
+                const el = document.getElementById('scale' + t);
+                el.classList.toggle('active', t === tier);
+            });
+
+            // Store score data
+            extractedData.credit_score = {
+                total: totalScore,
+                tier: tier,
+                label: tierConfig.label,
+                components: {
+                    credit: Math.round(creditPts),
+                    behavior: Math.round(behavePts),
+                    revenue: Math.round(revPts),
+                    stability: Math.round(stabPts),
+                    buffer: Math.round(bufferPts)
+                },
+                inputs: {
+                    estimatedFico,
+                    avgRevenue,
+                    avgBalance,
+                    avgNsf,
+                    avgNegDays,
+                    tibMonths,
+                    bufferRatio: Math.round(bufferRatio * 100)
+                }
+            };
         }
 
         function renderDebtObligations() {
@@ -7056,7 +7600,7 @@ Return ONLY valid JSON:
             }
         }
 
-        async function runSingleResearch(apiKey, module, businessName, ownerName, location) {
+        async function runSingleResearch(apiKey, module, businessName, ownerName, location, retryCount = 0) {
             // Detect if this is a formal registered entity
             const entityPatterns = /\b(inc\.?|corp\.?|llc|l\.l\.c\.?|ltd\.?|lp|l\.p\.?|llp|l\.l\.p\.?|pllc|pc|p\.c\.?|incorporated|corporation|company|co\.?)\b/i;
             const isRegisteredEntity = entityPatterns.test(businessName);
@@ -7083,19 +7627,21 @@ Return ONLY valid JSON:
             };
 
             // Use grounded search for key modules that need real data
-            const useGrounding = ['sos', 'ucc', 'tax', 'judgment', 'bankruptcy', 'bbb'].includes(module.id);
+            const groundedModules = ['sos', 'ucc', 'tax', 'judgment', 'bankruptcy', 'bbb'];
+            const useGrounding = groundedModules.includes(module.id) && retryCount < 2;
 
-            const model = useGrounding ? 'gemini-2.0-flash' : getSelectedModel();
+            // Use gemini-2.0-flash-exp which supports grounding better
+            const model = useGrounding ? 'gemini-2.0-flash-exp' : getSelectedModel();
 
             const requestBody = {
                 contents: [{
                     parts: [{
                         text: `${prompts[module.id]}
 
-${useGrounding ? 'Search the web for current, factual information.' : 'Based on typical patterns for this type of business, provide a research report.'} Format response as JSON:
+${useGrounding ? 'Search the web for current, factual information. You MUST provide substantive findings even if limited data is available - estimate risk level based on business type and industry patterns.' : 'Based on typical patterns for this type of business, provide a research report with your best assessment.'} Format response as JSON:
 {
   "risk": "low" | "medium" | "high" | "unknown",
-  "summary": "One sentence summary of findings",
+  "summary": "One sentence summary of findings - NEVER say 'no data available', always provide an assessment",
   "details": ["Key finding 1", "Key finding 2", "Key finding 3"],
   "flags": ["Any red flags or concerns - leave empty array if none"],
   "entity_number": "Entity/File number if found (for SOS)",
@@ -7103,27 +7649,82 @@ ${useGrounding ? 'Search the web for current, factual information.' : 'Based on 
   "status": "Current status if found (Active, Inactive, Dissolved, etc.)"
 }
 
+IMPORTANT: Always provide meaningful analysis. If specific records aren't found, explain what that likely means for this business type.
 Return ONLY valid JSON.`
                     }]
                 }],
-                generationConfig: { temperature: 0.2, maxOutputTokens: 1500 }
+                generationConfig: { temperature: 0.3, maxOutputTokens: 1500 }
             };
 
             // Add search grounding for key research modules
             if (useGrounding) {
-                requestBody.tools = [{ googleSearchRetrieval: { dynamicRetrievalConfig: { mode: "MODE_DYNAMIC", dynamicThreshold: 0.3 } } }];
+                requestBody.tools = [{
+                    google_search_retrieval: {
+                        dynamic_retrieval_config: {
+                            mode: "MODE_DYNAMIC",
+                            dynamic_threshold: 0.2
+                        }
+                    }
+                }];
             }
 
-            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(requestBody)
-            });
+            try {
+                const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
+                });
 
-            const data = await resp.json();
-            let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
-            text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-            return JSON.parse(text);
+                const data = await resp.json();
+
+                // Check for API errors
+                if (data.error) {
+                    console.warn(`Research API error for ${module.id}:`, data.error);
+                    if (retryCount < 2) {
+                        await new Promise(r => setTimeout(r, 1000 * (retryCount + 1)));
+                        return runSingleResearch(apiKey, module, businessName, ownerName, location, retryCount + 1);
+                    }
+                    throw new Error(data.error.message);
+                }
+
+                let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+                // If no text response, retry
+                if (!text || text.trim() === '{}' || text.trim() === '') {
+                    console.warn(`Empty response for ${module.id}, retry ${retryCount + 1}`);
+                    if (retryCount < 2) {
+                        await new Promise(r => setTimeout(r, 1000 * (retryCount + 1)));
+                        return runSingleResearch(apiKey, module, businessName, ownerName, location, retryCount + 1);
+                    }
+                }
+
+                text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+                const result = JSON.parse(text);
+
+                // Validate result has meaningful content
+                if (!result.summary || result.summary === 'No data available' || result.summary.toLowerCase().includes('no data')) {
+                    if (retryCount < 2) {
+                        console.warn(`Invalid response for ${module.id}, retry ${retryCount + 1}`);
+                        await new Promise(r => setTimeout(r, 1000 * (retryCount + 1)));
+                        return runSingleResearch(apiKey, module, businessName, ownerName, location, retryCount + 1);
+                    }
+                }
+
+                return result;
+            } catch (e) {
+                console.error(`Research error for ${module.id}:`, e);
+                if (retryCount < 2) {
+                    await new Promise(r => setTimeout(r, 1000 * (retryCount + 1)));
+                    return runSingleResearch(apiKey, module, businessName, ownerName, location, retryCount + 1);
+                }
+                // Return a default assessment on final failure
+                return {
+                    risk: 'unknown',
+                    summary: `Unable to verify ${module.name} - manual review recommended`,
+                    details: [`Automated search did not return results for "${businessName}"`, 'Consider checking state databases directly', 'This may indicate a new business or DBA not yet registered'],
+                    flags: []
+                };
+            }
         }
 
         function renderResearchModule(module, result) {
