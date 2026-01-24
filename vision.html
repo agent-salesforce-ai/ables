@@ -7776,8 +7776,8 @@ Return ONLY valid JSON:
             const groundedModules = ['sos', 'ucc', 'tax', 'judgment', 'bankruptcy', 'bbb'];
             const useGrounding = groundedModules.includes(module.id) && retryCount < 2;
 
-            // Use gemini-2.5-flash for grounding (supports google_search)
-            const model = useGrounding ? 'gemini-2.5-flash-preview-05-20' : getSelectedModel();
+            // Use Gemini 3 Flash for all research (supports google_search grounding)
+            const model = 'gemini-3-flash-preview';
 
             const requestBody = {
                 contents: [{
