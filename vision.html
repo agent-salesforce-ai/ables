@@ -5848,11 +5848,26 @@
             try {
                 document.getElementById('emptyState').style.display = 'none';
 
+                // ===== SHOW ALL SECTIONS WITH SKELETONS IMMEDIATELY =====
+                document.getElementById('fraudSection').classList.remove('hidden');
+                document.getElementById('dataSection').classList.remove('hidden');
+                document.getElementById('chartsSection').classList.remove('hidden');
+                document.getElementById('debtSection').classList.remove('hidden');
+                document.getElementById('researchSection').classList.remove('hidden');
+                document.getElementById('scoreSection').classList.remove('hidden');
+                document.getElementById('lenderSection').classList.remove('hidden');
+
+                // Initialize all skeletons
+                renderFraudSkeleton();
+                renderBankDataSkeleton();
+                renderChartsSkeleton();
+                renderDebtSkeleton();
+                renderResearchSkeleton();
+                renderScoreSkeleton();
+                renderLenderSkeleton();
+
                 // ===== STEP 2: FRAUD SCAN =====
                 setStep(2);
-                document.getElementById('fraudSection').classList.remove('hidden');
-                renderFraudSkeleton(); // Show skeleton while scanning
-
                 showLoading(true, 'Scanning for fraud indicators...', {
                     step: 'scan',
                     progress: 5,
@@ -5875,11 +5890,6 @@
 
                 // ===== STEP 3: EXTRACT BANK DATA =====
                 setStep(3);
-                document.getElementById('dataSection').classList.remove('hidden');
-                document.getElementById('chartsSection').classList.remove('hidden');
-                renderBankDataSkeleton(); // Show skeleton while extracting
-                renderChartsSkeleton();
-
                 showLoading(true, 'Extracting bank data...', {
                     step: 'extract',
                     progress: 30,
@@ -5891,6 +5901,7 @@
                 // Bank data complete - render results
                 renderExtractedData();
                 renderCharts();
+                renderDebtResults();
 
                 // Display extracted business info
                 if (extractedBusinessInfo.name) {
@@ -5900,15 +5911,8 @@
                     document.getElementById('displayBusinessAddress').textContent = extractedBusinessInfo.address || '';
                 }
 
-                // ===== EXISTING DEBT (from extracted data) =====
-                document.getElementById('debtSection').classList.remove('hidden');
-                renderDebtResults();
-
                 // ===== STEP 4: RESEARCH =====
                 setStep(4);
-                document.getElementById('researchSection').classList.remove('hidden');
-                renderResearchSkeleton();
-
                 if (extractedBusinessInfo.name) {
                     showLoading(true, `Researching ${extractedBusinessInfo.name}...`, {
                         step: 'analyze',
@@ -5920,14 +5924,11 @@
                 }
 
                 // ===== ABLES CREDIT SCORE =====
-                document.getElementById('scoreSection').classList.remove('hidden');
                 calculateCreditScore();
 
                 // ===== STEP 5: MATCH LENDERS =====
                 setStep(5);
-                document.getElementById('lenderSection').classList.remove('hidden');
                 document.getElementById('submitSection').classList.remove('hidden');
-                renderLenderSkeleton();
 
                 showLoading(true, 'Finding best lender matches...', {
                     step: 'match',
@@ -7344,6 +7345,31 @@ Return ONLY valid JSON:
                     </div>
                 </div>
             `).join('');
+        }
+
+        // Render skeleton state for credit score section
+        function renderScoreSkeleton() {
+            const scoreValue = document.getElementById('scoreValue');
+            const gradeLetter = document.getElementById('scoreGradeLetter');
+            const gradeLabel = document.getElementById('scoreGradeLabel');
+
+            if (scoreValue) scoreValue.innerHTML = '<span style="color: var(--text-muted);">--</span>';
+            if (gradeLetter) {
+                gradeLetter.textContent = '-';
+                gradeLetter.style.color = 'var(--text-muted)';
+            }
+            if (gradeLabel) gradeLabel.textContent = 'CALCULATING';
+
+            // Set bars to skeleton state
+            ['Credit', 'Behavior', 'Revenue', 'Stability', 'Buffer'].forEach(name => {
+                const bar = document.getElementById('bar' + name);
+                const score = document.getElementById('score' + name);
+                if (bar) {
+                    bar.style.width = '0%';
+                    bar.style.background = 'var(--border)';
+                }
+                if (score) score.textContent = '--';
+            });
         }
 
         // Render skeleton state for lender section
