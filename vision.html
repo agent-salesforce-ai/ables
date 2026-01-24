@@ -1340,50 +1340,49 @@
         /* Lender Cards */
         .lender-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
         }
 
         .lender-card {
             background: var(--bg-tertiary);
             border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 16px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            animation: fadeSlideIn 0.4s ease-out;
+            border-radius: 8px;
+            padding: 10px 12px;
+            transition: all 0.2s ease;
         }
 
         .lender-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
             border-color: var(--text-muted);
         }
 
-        .lender-card.high { border-left: 4px solid var(--green); }
-        .lender-card.medium { border-left: 4px solid var(--yellow); }
-        .lender-card.low { border-left: 4px solid var(--text-muted); }
+        .lender-card.high { border-left: 3px solid var(--green); }
+        .lender-card.medium { border-left: 3px solid var(--yellow); }
+        .lender-card.low { border-left: 3px solid var(--text-muted); }
 
         .lender-card.high:hover {
-            box-shadow: 0 12px 35px rgba(34, 197, 94, 0.15);
+            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.15);
         }
         .lender-card.medium:hover {
-            box-shadow: 0 12px 35px rgba(245, 158, 11, 0.15);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.15);
         }
 
         .lender-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
+            align-items: center;
+            margin-bottom: 6px;
         }
 
         .lender-name {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 600;
         }
 
         .lender-score {
-            font-size: 18px;
+            font-size: 14px;
             font-weight: 700;
         }
 
@@ -1394,21 +1393,24 @@
         .lender-meta {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 12px;
+            gap: 4px;
+            margin-bottom: 6px;
         }
 
         .lender-tag {
-            font-size: 10px;
-            padding: 3px 8px;
+            font-size: 9px;
+            padding: 2px 6px;
             background: var(--bg-secondary);
             border-radius: 4px;
             color: var(--text-secondary);
         }
 
         .lender-submit {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .lender-submit a {
