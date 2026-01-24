@@ -6245,6 +6245,8 @@ Return ONLY valid JSON:
 
             try {
                 const model = getSelectedModel();
+                console.log(`Extracting statement ${fileIndex + 1} with model: ${model}, pages: ${images.length}`);
+
                 const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -6255,9 +6257,23 @@ Return ONLY valid JSON:
                 });
 
                 const data = await resp.json();
-                let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+
+                // Check for API errors
+                if (data.error) {
+                    console.error(`API error for statement ${fileIndex + 1}:`, data.error);
+                    return null;
+                }
+
+                let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                if (!text) {
+                    console.error(`Empty response for statement ${fileIndex + 1}:`, data);
+                    return null;
+                }
+
                 text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-                return JSON.parse(text);
+                const result = JSON.parse(text);
+                console.log(`Statement ${fileIndex + 1} parsed successfully:`, result.month);
+                return result;
             } catch (e) {
                 console.error(`Extract error for file ${fileIndex}:`, e);
                 return null;
@@ -6845,8 +6861,9 @@ Return ONLY valid JSON:
         }
 
         function renderExtractedData() {
-            if (!extractedData.full_analysis) {
-                document.getElementById('extractedData').innerHTML = '<div class="placeholder">No data extracted</div>';
+            if (!extractedData || !extractedData.full_analysis) {
+                console.error('renderExtractedData: No extracted data available', extractedData);
+                document.getElementById('extractedData').innerHTML = '<div class="placeholder" style="text-align: center; padding: 40px; color: var(--text-muted);">No data extracted. Check console for errors.</div>';
                 return;
             }
 
