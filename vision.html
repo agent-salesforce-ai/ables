@@ -4009,6 +4009,7 @@
             const months = analysis.months || [];
             const mcaLenders = agg.detected_mca_lenders || [];
             const flags = analysis.red_flags || [];
+            const existingDebt = analysis.existing_debt || [];
 
             // Calculate totals
             const totals = months.reduce((acc, m) => ({
@@ -8328,22 +8329,18 @@ Return ONLY valid JSON:
                 updateProgress();
             }
 
-            // Step 2: Run remaining modules in parallel batches, passing verified entity context
-            const batchSize = 3;
-            for (let i = 0; i < otherModules.length; i += batchSize) {
-                const batch = otherModules.slice(i, i + batchSize);
-                await Promise.all(batch.map(async (module) => {
-                    try {
-                        const result = await runSingleResearch(apiKey, module, businessName, ownerName, location, 0, verifiedEntity);
-                        researchResults[module.id] = result;
-                        renderResearchModule(module, result);
-                    } catch (e) {
-                        researchResults[module.id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
-                        renderResearchModule(module, researchResults[module.id]);
-                    }
-                    updateProgress();
-                }));
-            }
+            // Step 2: Run ALL remaining modules in parallel (no batching for speed)
+            await Promise.all(otherModules.map(async (module) => {
+                try {
+                    const result = await runSingleResearch(apiKey, module, businessName, ownerName, location, 0, verifiedEntity);
+                    researchResults[module.id] = result;
+                    renderResearchModule(module, result);
+                } catch (e) {
+                    researchResults[module.id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
+                    renderResearchModule(module, researchResults[module.id]);
+                }
+                updateProgress();
+            }));
         }
 
         async function runSingleResearch(apiKey, module, businessName, ownerName, location, retryCount = 0, verifiedEntity = null) {
@@ -8424,12 +8421,18 @@ Return ONLY valid JSON.`
             }
 
             try {
+                // Use AbortController for fetch timeout (60 seconds for research)
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 60000);
+
                 const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(requestBody)
+                    body: JSON.stringify(requestBody),
+                    signal: controller.signal
                 });
 
+                clearTimeout(timeoutId);
                 const data = await resp.json();
 
                 // Check for API errors
