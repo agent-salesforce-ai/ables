@@ -3913,10 +3913,11 @@
             const mcaLenders = agg.detected_mca_lenders || [];
             const flags = analysis.red_flags || [];
 
-            // Calculate totals
-            const totals = months.reduce((acc, m) => ({
+            // Calculate totals - filter nulls first
+            const validMonths = (months || []).filter(m => m != null);
+            const totals = validMonths.reduce((acc, m) => ({
                 deposits: acc.deposits + (m.total_deposits || 0),
-                trueRevenue: acc.trueRevenue + (m.true_revenue || m.total_deposits * 0.92 || 0),
+                trueRevenue: acc.trueRevenue + (m.true_revenue || (m.total_deposits || 0) * 0.92 || 0),
                 withdrawals: acc.withdrawals + (m.total_withdrawals || 0),
                 numDeps: acc.numDeps + (m.num_deposits || 0),
                 nsf: acc.nsf + (m.nsf_count || 0),
@@ -4058,7 +4059,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    ${months.map(m => `
+                                    ${months.filter(m => m != null).map(m => `
                                         <tr>
                                             <td style="padding: 12px; font-size: 13px; font-weight: 500; color: #111827; border-bottom: 1px solid #f3f4f6;">${m.month || 'N/A'}</td>
                                             <td style="padding: 12px; font-size: 13px; color: #16a34a; text-align: right; border-bottom: 1px solid #f3f4f6;">$${(m.total_deposits || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
@@ -6972,10 +6973,11 @@ Return ONLY valid JSON:
             const mcaLenders = agg.detected_mca_lenders || [];
             const flags = analysis.red_flags || [];
 
-            // Calculate totals
-            const totals = months.reduce((acc, m) => ({
+            // Calculate totals - filter nulls first
+            const validMonths = (months || []).filter(m => m != null);
+            const totals = validMonths.reduce((acc, m) => ({
                 deposits: acc.deposits + (m.total_deposits || 0),
-                trueRevenue: acc.trueRevenue + (m.true_revenue || m.total_deposits * 0.92 || 0),
+                trueRevenue: acc.trueRevenue + (m.true_revenue || (m.total_deposits || 0) * 0.92 || 0),
                 withdrawals: acc.withdrawals + (m.total_withdrawals || 0),
                 numDeps: acc.numDeps + (m.num_deposits || 0),
                 nsf: acc.nsf + (m.nsf_count || 0),
@@ -7068,10 +7070,11 @@ Return ONLY valid JSON:
             if (charts.balance) charts.balance.destroy();
             if (charts.flow) charts.flow.destroy();
 
-            const labels = months.map(m => m.month || '');
-            const deposits = months.map(m => m.total_deposits || 0);
-            const withdrawals = months.map(m => m.total_withdrawals || 0);
-            const balances = months.map(m => m.average_daily_balance || 0);
+            const safeMonths = (months || []).filter(m => m != null);
+            const labels = safeMonths.map(m => m.month || '');
+            const deposits = safeMonths.map(m => m.total_deposits || 0);
+            const withdrawals = safeMonths.map(m => m.total_withdrawals || 0);
+            const balances = safeMonths.map(m => m.average_daily_balance || 0);
 
             const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
             const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
@@ -7162,7 +7165,7 @@ Return ONLY valid JSON:
             const avgBalance = analysis.aggregated?.avg_ending_balance || 0;
 
             // Sum up NSF and negative days across all months
-            const months = analysis.months || [];
+            const months = (analysis.months || []).filter(m => m != null);
             let totalNsf = 0;
             let totalNegDays = 0;
             months.forEach(m => {
