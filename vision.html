@@ -5930,6 +5930,9 @@
 
                 extractedData = await extractBankDataSimple(apiKey);
 
+                // Store months data for clickable cell popups
+                liveExtractionResults = extractedData?.full_analysis?.months || [];
+
                 // Bank data complete - render results
                 renderExtractedData();
                 renderCharts();
@@ -6959,9 +6962,56 @@ Return ONLY valid JSON:
                     </div>
                 </div>
 
-                <!-- Monthly Table -->
+                <!-- Monthly Table with Clickable Cells -->
                 ${months.length > 0 ? `
-                <div style="overflow-x: auto;"><table><thead><tr><th>Month</th><th>Deposits</th><th>True Rev</th><th>#</th><th>Withdrawals</th><th>Avg Bal</th><th>Open Bal</th><th>End Bal</th><th>NSF</th><th>Neg</th></tr></thead><tbody>${months.map(m => `<tr><td style="font-weight: 500;">${m.month || 'N/A'}</td><td class="text-green">$${(m.total_deposits || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td class="text-gold">$${(m.true_revenue || (m.total_deposits || 0) * 0.92).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>${m.num_deposits || 0}</td><td class="text-red">$${(m.total_withdrawals || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>$${(m.average_daily_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td class="${(m.opening_balance || 0) < 0 ? 'text-red' : ''}">$${(m.opening_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td class="${(m.ending_balance || 0) < 0 ? 'text-red' : ''}">$${(m.ending_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td class="${(m.nsf_count || 0) > 0 ? 'text-red' : ''}">${m.nsf_count || 0}</td><td class="${(m.days_negative || 0) > 0 ? 'text-red' : ''}">${m.days_negative || 0}</td></tr>`).join('')}</tbody><tfoot><tr><td><strong>AVERAGE</strong></td><td>$${(totals.deposits / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>$${(totals.trueRevenue / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>${Math.round(totals.numDeps / numMonths)}</td><td>$${(totals.withdrawals / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>$${avgBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td><td>-</td><td>-</td><td>${(totals.nsf / numMonths).toFixed(2)}</td><td>${(totals.negDays / numMonths).toFixed(2)}</td></tr></tfoot></table></div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>Deposits</th>
+                                <th>True Rev</th>
+                                <th>#</th>
+                                <th>Withdrawals</th>
+                                <th>Avg Bal</th>
+                                <th>Open Bal</th>
+                                <th>End Bal</th>
+                                <th>NSF</th>
+                                <th>Neg</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${months.map((m, idx) => `
+                                <tr>
+                                    <td class="clickable-cell" data-month="${idx}" data-field="month" style="font-weight: 500; cursor: pointer;">${m.month || 'N/A'}</td>
+                                    <td class="clickable-cell text-green" data-month="${idx}" data-field="deposits" style="cursor: pointer;">$${(m.total_deposits || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                    <td class="clickable-cell text-gold" data-month="${idx}" data-field="true_revenue" style="cursor: pointer;">$${(m.true_revenue || (m.total_deposits || 0) * 0.92).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                    <td class="clickable-cell" data-month="${idx}" data-field="num_deposits" style="cursor: pointer;">${m.num_deposits || 0}</td>
+                                    <td class="clickable-cell text-red" data-month="${idx}" data-field="withdrawals" style="cursor: pointer;">$${(m.total_withdrawals || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                    <td class="clickable-cell" data-month="${idx}" data-field="avg_balance" style="cursor: pointer;">$${(m.average_daily_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                    <td class="clickable-cell ${(m.opening_balance || 0) < 0 ? 'text-red' : ''}" data-month="${idx}" data-field="open_balance" style="cursor: pointer;">$${(m.opening_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                    <td class="clickable-cell ${(m.ending_balance || 0) < 0 ? 'text-red' : ''}" data-month="${idx}" data-field="end_balance" style="cursor: pointer;">$${(m.ending_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                    <td class="clickable-cell ${(m.nsf_count || 0) > 0 ? 'text-red' : ''}" data-month="${idx}" data-field="nsf" style="cursor: pointer;">${m.nsf_count || 0}</td>
+                                    <td class="clickable-cell ${(m.days_negative || 0) > 0 ? 'text-red' : ''}" data-month="${idx}" data-field="neg_days" style="cursor: pointer;">${m.days_negative || 0}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td><strong>AVERAGE</strong></td>
+                                <td>$${(totals.deposits / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                <td>$${(totals.trueRevenue / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                <td>${Math.round(totals.numDeps / numMonths)}</td>
+                                <td>$${(totals.withdrawals / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                <td>$${avgBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>${(totals.nsf / numMonths).toFixed(2)}</td>
+                                <td>${(totals.negDays / numMonths).toFixed(2)}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
                 ` : '<p style="color: var(--text-muted); text-align: center;">No monthly data extracted</p>'}
 
                 ${mcaLenders.length > 0 ? `
