@@ -5939,24 +5939,25 @@
                 renderScoreSkeleton();
                 renderLenderSkeleton();
 
-                // ===== STEP 2: FRAUD SCAN =====
+                // ===== STEP 2: FRAUD SCAN (parallel) =====
                 setStep(2);
-                showLoading(true, 'Scanning for fraud indicators...', {
+                showLoading(true, `Scanning ${files.length} documents for fraud in parallel...`, {
                     step: 'scan',
-                    progress: 5,
-                    subtext: `Analyzing ${files.length} document${files.length > 1 ? 's' : ''} for manipulation`
+                    progress: 10,
+                    subtext: `Analyzing all documents simultaneously for manipulation`
                 });
 
-                for (let i = 0; i < files.length; i++) {
-                    const scanProgress = 5 + Math.round((i / files.length) * 25);
-                    showLoading(true, `Scanning document ${i + 1} of ${files.length}...`, {
+                let fraudScanned = 0;
+                await Promise.all(files.map(async (file, i) => {
+                    file.status = await scanForFraud(file, apiKey);
+                    fraudScanned++;
+                    showLoading(true, `Scanned ${fraudScanned} of ${files.length} documents...`, {
                         step: 'scan',
-                        progress: scanProgress,
-                        subtext: `Checking for digital alterations`
+                        progress: 5 + Math.round((fraudScanned / files.length) * 25),
+                        subtext: `${files.length - fraudScanned} remaining`
                     });
-                    files[i].status = await scanForFraud(files[i], apiKey);
                     updateFileList();
-                }
+                }));
 
                 // Fraud complete - render results
                 renderFraudResults();
@@ -6397,28 +6398,41 @@ Return ONLY valid JSON:
                 return null;
             };
 
-            const results = [];
-            for (let i = 0; i < files.length; i++) {
-                const progress = 30 + Math.round((i / files.length) * 25);
-                showLoading(true, `Extracting statement ${i + 1} of ${files.length}...`, {
+            // Extract all statements in parallel for speed
+            showLoading(true, `Extracting ${files.length} statements in parallel...`, {
+                step: 'extract',
+                progress: 35,
+                subtext: `Processing all documents simultaneously`
+            });
+
+            let completedCount = 0;
+            const updateExtractionProgress = () => {
+                completedCount++;
+                const progress = 30 + Math.round((completedCount / files.length) * 25);
+                showLoading(true, `Extracted ${completedCount} of ${files.length} statements...`, {
                     step: 'extract',
                     progress: progress,
-                    subtext: `Reading ${files[i].name.substring(0, 30)}...`
+                    subtext: `${files.length - completedCount} remaining`
                 });
+            };
 
-                const result = await extractWithRetry(files[i], i);
-                results.push(result);
+            const results = await Promise.all(
+                files.map(async (file, i) => {
+                    const result = await extractWithRetry(file, i);
+                    updateExtractionProgress();
 
-                // Store business info from first successful result
-                if (result && !extractedBusinessInfo.name) {
-                    const businessName = result.business_name || result.account_holder || '';
-                    if (businessName) {
-                        extractedBusinessInfo.name = businessName;
-                        extractedBusinessInfo.owner = result.owner_name || '';
-                        extractedBusinessInfo.address = result.business_address || '';
+                    // Store business info from first successful result
+                    if (result && !extractedBusinessInfo.name) {
+                        const businessName = result.business_name || result.account_holder || '';
+                        if (businessName) {
+                            extractedBusinessInfo.name = businessName;
+                            extractedBusinessInfo.owner = result.owner_name || '';
+                            extractedBusinessInfo.address = result.business_address || '';
+                        }
                     }
-                }
-            }
+                    return result;
+                })
+            );
 
             const successCount = results.filter(r => r !== null).length;
             console.log(`Extraction complete: ${successCount}/${files.length} statements successful`);
