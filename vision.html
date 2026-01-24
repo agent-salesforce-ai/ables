@@ -6186,36 +6186,9 @@ End with exactly one: RISK_LEVEL:CLEAN or RISK_LEVEL:WARNING or RISK_LEVEL:DANGE
             }
 
             const parts = [
-                { text: `You are analyzing a SINGLE bank statement for MCA underwriting. This is statement ${fileIndex + 1}.
+                { text: `Analyze this bank statement for MCA underwriting. Extract ONLY these summary values:
 
-Extract the data for THIS ONE MONTH only:
-- month: Month name and year (e.g., "January 2024")
-- total_deposits: Sum of all credits/deposits
-- true_revenue: Deposits minus internal transfers, loans, owner deposits
-- total_withdrawals: Sum of all debits/withdrawals
-- average_daily_balance: Average daily balance
-- opening_balance: Balance at the start of the month (first day's beginning balance)
-- ending_balance: Balance at the end of the month (last day's ending balance)
-- lowest_daily_balance: Minimum/lowest balance during the month
-- num_deposits: Count of deposit transactions
-- nsf_count: Number of NSF/overdraft fees
-- days_negative: Days with negative balance
-
-IMPORTANT - Extract ALL individual transactions:
-- deposit_list: Array of ALL deposit/credit transactions with date, description, and amount
-- exclusion_list: Array of deposits that were EXCLUDED from true revenue (internal transfers, loan proceeds, owner contributions) with date, description, amount, and reason for exclusion
-- withdrawal_list: Array of significant withdrawals (over $500) with date, description, and amount
-
-Also extract:
-- business_name: Business name on the account
-- business_address: Business address if visible
-- owner_name: Owner/account holder name
-- bank_name: Name of the bank
-- account_number_last4: Last 4 digits of account
-
-Detect any MCA/debt payments - look for recurring debits to: LIBERTAS, YELLOWSTONE, CREDIBLY, ONDECK, KAPITUS, FUNDFI, BITTY, CLEARFUND, BLUEVINE, FUNDBOX, KABBAGE, CAN CAPITAL, FORWARD FINANCING, etc.
-
-Return ONLY valid JSON:
+Return ONLY valid JSON with these exact fields:
 {
   "month": "Month Year",
   "total_deposits": 0,
@@ -6228,18 +6201,28 @@ Return ONLY valid JSON:
   "num_deposits": 0,
   "nsf_count": 0,
   "days_negative": 0,
-  "deposit_list": [{"date": "MM/DD", "description": "DEPOSIT DESC", "amount": 0}],
-  "exclusion_list": [{"date": "MM/DD", "description": "TRANSFER DESC", "amount": 0, "reason": "internal transfer"}],
-  "withdrawal_list": [{"date": "MM/DD", "description": "WITHDRAWAL DESC", "amount": 0}],
   "business_name": "",
-  "business_address": "",
   "owner_name": "",
   "bank_name": "",
   "account_number_last4": "",
-  "detected_mca_payments": [{"name": "LENDER NAME", "amount": 0}],
-  "existing_debt": [],
-  "red_flags": []
-}` },
+  "detected_mca_payments": []
+}
+
+Instructions:
+- month: Statement period (e.g., "June 2025")
+- total_deposits: Sum of ALL credits/deposits
+- true_revenue: Deposits MINUS transfers, loans, owner deposits
+- total_withdrawals: Sum of ALL debits
+- average_daily_balance: Average balance across the month
+- opening_balance: First day's beginning balance
+- ending_balance: Last day's ending balance
+- lowest_daily_balance: Minimum balance during month
+- num_deposits: Count of deposit transactions
+- nsf_count: Count of NSF/overdraft fees (look for "NSF", "OVERDRAFT", "OD FEE")
+- days_negative: Days with negative balance
+- detected_mca_payments: Array of MCA lenders found (LIBERTAS, YELLOWSTONE, CREDIBLY, ONDECK, KAPITUS, etc.) with name and amount
+
+Return ONLY the JSON, no other text.` },
                 ...images.map(d => ({ inlineData: { mimeType: 'image/jpeg', data: d } }))
             ];
 
@@ -6252,7 +6235,7 @@ Return ONLY valid JSON:
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         contents: [{ parts }],
-                        generationConfig: { temperature: 0.1, maxOutputTokens: 8192 }
+                        generationConfig: { temperature: 0.1, maxOutputTokens: 16384 }
                     })
                 });
 
