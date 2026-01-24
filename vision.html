@@ -5845,10 +5845,6 @@
                 return;
             }
 
-            // Track if background research has started
-            let researchPromise = null;
-            let researchStarted = false;
-
             try {
                 // Show ALL sections immediately with skeleton states
                 document.getElementById('emptyState').style.display = 'none';
@@ -5888,29 +5884,7 @@
                     updateFileList();
                 }
 
-                // Try to extract business name from filename to start research early
-                // Filename format: "BUSINESS NAME account_number_date.pdf"
-                if (!researchStarted && files.length > 0) {
-                    const filename = files[0].name || '';
-                    // Remove common suffixes and extensions
-                    let businessFromFilename = filename
-                        .replace(/\.(pdf|png|jpg|jpeg)$/i, '')
-                        .replace(/\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\s*\d{0,4}/gi, '')
-                        .replace(/\s*\d{4,}.*$/i, '') // Remove trailing numbers (account numbers, dates)
-                        .replace(/_/g, ' ')
-                        .trim();
-
-                    // Only use if we got something meaningful (at least 3 chars)
-                    if (businessFromFilename.length >= 3) {
-                        researchStarted = true;
-                        extractedBusinessInfo.name = businessFromFilename;
-                        document.getElementById('researchBusinessName').textContent = businessFromFilename;
-                        console.log(`🔍 Starting early research from filename: ${businessFromFilename}`);
-                        researchPromise = runBackgroundResearch(apiKey);
-                    }
-                }
-
-                // Step 3: Extract Data - with parallel research kickoff
+                // Step 3: Extract Data
                 setStep(3);
                 showLoading(true, 'Extracting bank data...', {
                     step: 'extract',
@@ -5918,21 +5892,8 @@
                     subtext: 'Reading transaction data and account details'
                 });
 
-                // Modified extractBankData that can trigger research after first statement
-                extractedData = await extractBankDataWithResearch(apiKey, (businessName) => {
-                    // Callback when we get business name from first statement
-                    if (businessName && !researchStarted) {
-                        researchStarted = true;
-                        extractedBusinessInfo.name = businessName;
-
-                        // Update research section header
-                        document.getElementById('researchBusinessName').textContent = businessName;
-
-                        // Start research in parallel - don't await
-                        console.log(`🔍 Starting background research for: ${businessName}`);
-                        researchPromise = runBackgroundResearch(apiKey);
-                    }
-                });
+                // Extract bank data (research will start after this completes)
+                extractedData = await extractBankData(apiKey);
 
                 // Keep the live table - don't replace it with renderExtractedData()
                 renderCharts();
@@ -5945,16 +5906,9 @@
                     document.getElementById('displayBusinessAddress').textContent = extractedBusinessInfo.address || '';
                 }
 
-                // Step 4: Wait for research if it started, or start it now
+                // Step 4: Run background research (after bank statement extraction is complete)
                 setStep(4);
-                if (researchPromise) {
-                    showLoading(true, `Completing research for ${extractedBusinessInfo.name}...`, {
-                        step: 'analyze',
-                        progress: 55,
-                        subtext: 'Finishing background checks'
-                    });
-                    await researchPromise;
-                } else if (extractedBusinessInfo.name) {
+                if (extractedBusinessInfo.name) {
                     showLoading(true, `Researching ${extractedBusinessInfo.name}...`, {
                         step: 'analyze',
                         progress: 55,
