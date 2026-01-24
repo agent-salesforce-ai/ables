@@ -7128,55 +7128,191 @@ Return ONLY valid JSON:
 
             const labels = months.map(m => m.month || '');
             const deposits = months.map(m => m.total_deposits || 0);
+            const trueRevenue = months.map(m => m.true_revenue || 0);
             const withdrawals = months.map(m => m.total_withdrawals || 0);
             const balances = months.map(m => m.average_daily_balance || 0);
+            const endingBalances = months.map(m => m.ending_balance || 0);
+            const openingBalances = months.map(m => m.opening_balance || 0);
 
             const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
             const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
             const textColor = isDark ? '#a1a1aa' : '#64748b';
 
-            // Balance Chart
+            // Shared tooltip configuration
+            const tooltipConfig = {
+                backgroundColor: isDark ? 'rgba(30, 30, 30, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+                titleColor: isDark ? '#fff' : '#1f2937',
+                bodyColor: isDark ? '#d1d5db' : '#4b5563',
+                borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+                borderWidth: 1,
+                padding: 12,
+                displayColors: true,
+                titleFont: { size: 13, weight: 'bold' },
+                bodyFont: { size: 12 },
+                callbacks: {
+                    label: function(context) {
+                        let label = context.dataset.label || '';
+                        if (label) label += ': ';
+                        if (context.parsed.y !== null) {
+                            label += '$' + context.parsed.y.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                        }
+                        return label;
+                    }
+                }
+            };
+
+            // Balance Chart - Multi-line with avg, opening, ending
             charts.balance = new Chart(document.getElementById('balanceChart'), {
                 type: 'line',
                 data: {
                     labels,
-                    datasets: [{
-                        label: 'Avg Daily Balance',
-                        data: balances,
-                        borderColor: '#eab308',
-                        backgroundColor: 'rgba(234, 179, 8, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { labels: { color: textColor } } },
-                    scales: {
-                        x: { grid: { color: gridColor }, ticks: { color: textColor } },
-                        y: { grid: { color: gridColor }, ticks: { color: textColor } }
-                    }
-                }
-            });
-
-            // Flow Chart
-            charts.flow = new Chart(document.getElementById('flowChart'), {
-                type: 'bar',
-                data: {
-                    labels,
                     datasets: [
-                        { label: 'Deposits', data: deposits, backgroundColor: '#22c55e' },
-                        { label: 'Withdrawals', data: withdrawals, backgroundColor: '#ef4444' }
+                        {
+                            label: 'Avg Daily Balance',
+                            data: balances,
+                            borderColor: '#eab308',
+                            backgroundColor: 'rgba(234, 179, 8, 0.15)',
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 3,
+                            pointRadius: 6,
+                            pointHoverRadius: 9,
+                            pointBackgroundColor: '#eab308',
+                            pointBorderColor: isDark ? '#1f1f1f' : '#fff',
+                            pointBorderWidth: 2
+                        },
+                        {
+                            label: 'Ending Balance',
+                            data: endingBalances,
+                            borderColor: '#22c55e',
+                            backgroundColor: 'transparent',
+                            fill: false,
+                            tension: 0.4,
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointRadius: 4,
+                            pointHoverRadius: 7,
+                            pointBackgroundColor: '#22c55e',
+                            pointBorderColor: isDark ? '#1f1f1f' : '#fff',
+                            pointBorderWidth: 2
+                        }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { labels: { color: textColor } } },
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: {
+                            labels: { color: textColor, usePointStyle: true, pointStyle: 'circle' },
+                            onClick: (e, legendItem, legend) => {
+                                const index = legendItem.datasetIndex;
+                                const ci = legend.chart;
+                                ci.getDatasetMeta(index).hidden = !ci.getDatasetMeta(index).hidden;
+                                ci.update();
+                            }
+                        },
+                        tooltip: tooltipConfig
+                    },
                     scales: {
                         x: { grid: { color: gridColor }, ticks: { color: textColor } },
-                        y: { grid: { color: gridColor }, ticks: { color: textColor } }
+                        y: {
+                            grid: { color: gridColor },
+                            ticks: {
+                                color: textColor,
+                                callback: (value) => '$' + value.toLocaleString()
+                            }
+                        }
+                    },
+                    onClick: (event, elements) => {
+                        if (elements.length > 0) {
+                            const monthIndex = elements[0].index;
+                            showCellDetail(monthIndex, 'avg_balance');
+                        }
+                    }
+                }
+            });
+
+            // Flow Chart - Stacked bar with deposits, true revenue, withdrawals
+            charts.flow = new Chart(document.getElementById('flowChart'), {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: 'Total Deposits',
+                            data: deposits,
+                            backgroundColor: 'rgba(34, 197, 94, 0.7)',
+                            borderColor: '#22c55e',
+                            borderWidth: 2,
+                            borderRadius: 4,
+                            hoverBackgroundColor: '#22c55e'
+                        },
+                        {
+                            label: 'True Revenue',
+                            data: trueRevenue,
+                            backgroundColor: 'rgba(234, 179, 8, 0.7)',
+                            borderColor: '#eab308',
+                            borderWidth: 2,
+                            borderRadius: 4,
+                            hoverBackgroundColor: '#eab308'
+                        },
+                        {
+                            label: 'Withdrawals',
+                            data: withdrawals,
+                            backgroundColor: 'rgba(239, 68, 68, 0.7)',
+                            borderColor: '#ef4444',
+                            borderWidth: 2,
+                            borderRadius: 4,
+                            hoverBackgroundColor: '#ef4444'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: {
+                            labels: { color: textColor, usePointStyle: true, pointStyle: 'rect' },
+                            onClick: (e, legendItem, legend) => {
+                                const index = legendItem.datasetIndex;
+                                const ci = legend.chart;
+                                ci.getDatasetMeta(index).hidden = !ci.getDatasetMeta(index).hidden;
+                                ci.update();
+                            }
+                        },
+                        tooltip: {
+                            ...tooltipConfig,
+                            callbacks: {
+                                ...tooltipConfig.callbacks,
+                                afterBody: function(context) {
+                                    const idx = context[0].dataIndex;
+                                    const dep = deposits[idx];
+                                    const rev = trueRevenue[idx];
+                                    const diff = dep - rev;
+                                    return diff > 0 ? `\nExcluded: $${diff.toLocaleString('en-US', { minimumFractionDigits: 2 })}` : '';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { grid: { color: gridColor }, ticks: { color: textColor } },
+                        y: {
+                            grid: { color: gridColor },
+                            ticks: {
+                                color: textColor,
+                                callback: (value) => '$' + (value / 1000).toFixed(0) + 'k'
+                            }
+                        }
+                    },
+                    onClick: (event, elements) => {
+                        if (elements.length > 0) {
+                            const monthIndex = elements[0].index;
+                            const datasetIndex = elements[0].datasetIndex;
+                            const field = datasetIndex === 0 ? 'deposits' : datasetIndex === 1 ? 'true_revenue' : 'withdrawals';
+                            showCellDetail(monthIndex, field);
+                        }
                     }
                 }
             });
