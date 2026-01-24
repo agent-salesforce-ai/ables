@@ -8156,13 +8156,43 @@ Return ONLY valid JSON:
                 }
             };
 
-            // Run research in parallel batches of 3
+            // Run SOS module FIRST to get verified entity info, then pass to other modules
+            const sosModule = researchModules.find(m => m.id === 'sos');
+            const otherModules = researchModules.filter(m => m.id !== 'sos');
+
+            let verifiedEntity = null;
+
+            // Step 1: Run SOS first to identify the correct entity
+            if (sosModule) {
+                try {
+                    const sosResult = await runSingleResearch(apiKey, sosModule, businessName, ownerName, location, 0, null);
+                    researchResults[sosModule.id] = sosResult;
+                    renderResearchModule(sosModule, sosResult);
+
+                    // Extract verified entity info to pass to other modules
+                    if (sosResult.entity_number || sosResult.formation_date || sosResult.status) {
+                        verifiedEntity = {
+                            entity_number: sosResult.entity_number,
+                            formation_date: sosResult.formation_date,
+                            status: sosResult.status,
+                            verified_name: businessName
+                        };
+                        console.log('Verified entity from SOS:', verifiedEntity);
+                    }
+                } catch (e) {
+                    researchResults[sosModule.id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
+                    renderResearchModule(sosModule, researchResults[sosModule.id]);
+                }
+                updateProgress();
+            }
+
+            // Step 2: Run remaining modules in parallel batches, passing verified entity context
             const batchSize = 3;
-            for (let i = 0; i < researchModules.length; i += batchSize) {
-                const batch = researchModules.slice(i, i + batchSize);
+            for (let i = 0; i < otherModules.length; i += batchSize) {
+                const batch = otherModules.slice(i, i + batchSize);
                 await Promise.all(batch.map(async (module) => {
                     try {
-                        const result = await runSingleResearch(apiKey, module, businessName, ownerName, location);
+                        const result = await runSingleResearch(apiKey, module, businessName, ownerName, location, 0, verifiedEntity);
                         researchResults[module.id] = result;
                         renderResearchModule(module, result);
                     } catch (e) {
@@ -8174,7 +8204,7 @@ Return ONLY valid JSON:
             }
         }
 
-        async function runSingleResearch(apiKey, module, businessName, ownerName, location, retryCount = 0) {
+        async function runSingleResearch(apiKey, module, businessName, ownerName, location, retryCount = 0, verifiedEntity = null) {
             // Detect if this is a formal registered entity
             const entityPatterns = /\b(inc\.?|corp\.?|llc|l\.l\.c\.?|ltd\.?|lp|l\.p\.?|llp|l\.l\.p\.?|pllc|pc|p\.c\.?|incorporated|corporation|company|co\.?)\b/i;
             const isRegisteredEntity = entityPatterns.test(businessName);
@@ -8183,14 +8213,19 @@ Return ONLY valid JSON:
             const stateMatch = location?.match(/\b([A-Z]{2})\b|\b(California|Texas|Florida|New York|Illinois|Pennsylvania|Ohio|Georgia|North Carolina|Michigan|New Jersey|Virginia|Washington|Arizona|Massachusetts|Tennessee|Indiana|Missouri|Maryland|Wisconsin|Colorado|Minnesota|South Carolina|Alabama|Louisiana|Kentucky|Oregon|Oklahoma|Connecticut|Utah|Iowa|Nevada|Arkansas|Mississippi|Kansas|New Mexico|Nebraska|Idaho|West Virginia|Hawaii|New Hampshire|Maine|Montana|Rhode Island|Delaware|South Dakota|North Dakota|Alaska|Vermont|Wyoming)\b/i);
             const state = stateMatch ? stateMatch[0] : '';
 
+            // Build entity context string for modules that need it (UCC, Tax, Judgment, Bankruptcy)
+            const entityContext = verifiedEntity
+                ? `IMPORTANT: Search for the SAME entity verified from Secretary of State: "${businessName}"${verifiedEntity.entity_number ? `, Entity/File Number: ${verifiedEntity.entity_number}` : ''}${verifiedEntity.formation_date ? `, formed ${verifiedEntity.formation_date}` : ''}${verifiedEntity.status ? ` (${verifiedEntity.status})` : ''}.`
+                : '';
+
             const prompts = {
                 sos: isRegisteredEntity
                     ? `Search for the Secretary of State business registration for "${businessName}" ${state ? `in ${state}` : location ? `in ${location}` : ''}. This is a registered business entity. Find: Entity number, formation date, current status (Active/Inactive/Dissolved), registered agent, principal address, and any amendments or name changes. Search state corporation databases.`
                     : `Research the Secretary of State registration for "${businessName}" ${location ? `in ${location}` : ''}. Determine: Is the business in good standing? When was it formed? Any name changes or mergers?`,
-                ucc: `Search for UCC filings against "${businessName}". Look for: Existing liens, secured creditors, MCA lenders like Credibly, Bluevine, OnDeck, Fundbox, Kabbage, equipment financing, factoring companies.`,
-                tax: `Research tax lien status for "${businessName}" ${ownerName ? `and owner ${ownerName}` : ''}. Look for: Federal tax liens, state tax liens, payment plans.`,
-                judgment: `Research court judgments and legal actions involving "${businessName}" ${ownerName ? `or ${ownerName}` : ''}. Look for: Civil judgments, lawsuits, collections.`,
-                bankruptcy: `Research bankruptcy history for "${businessName}" ${ownerName ? `and owner ${ownerName}` : ''}. Check federal bankruptcy court PACER records for Chapter 7, 11, or 13 filings, discharge status.`,
+                ucc: `${entityContext} Search for UCC filings against "${businessName}". Look for: Existing liens, secured creditors, MCA lenders like Credibly, Bluevine, OnDeck, Fundbox, Kabbage, equipment financing, factoring companies. Only return results for this specific entity.`,
+                tax: `${entityContext} Research tax lien status for "${businessName}" ${ownerName ? `and owner ${ownerName}` : ''}. Look for: Federal tax liens, state tax liens, payment plans. Only return results for this specific entity.`,
+                judgment: `${entityContext} Research court judgments and legal actions involving "${businessName}" ${ownerName ? `or ${ownerName}` : ''}. Look for: Civil judgments, lawsuits, collections. Only return results for this specific entity.`,
+                bankruptcy: `${entityContext} Research bankruptcy history for "${businessName}" ${ownerName ? `and owner ${ownerName}` : ''}. Check federal bankruptcy court PACER records for Chapter 7, 11, or 13 filings, discharge status. Only return results for this specific entity.`,
                 bbb: `Research the Better Business Bureau profile for "${businessName}". Determine: BBB rating, complaint history, years accredited.`,
                 reviews: `Research online reviews for "${businessName}". Analyze: Google rating, Yelp rating, common complaints, customer sentiment.`,
                 news: `Research recent news and press mentions for "${businessName}". Look for: Positive coverage, negative incidents, industry recognition.`,
@@ -8260,7 +8295,7 @@ Return ONLY valid JSON.`
                     console.warn(`Research API error for ${module.id}:`, data.error);
                     if (retryCount < 2) {
                         await new Promise(r => setTimeout(r, 1000 * (retryCount + 1)));
-                        return runSingleResearch(apiKey, module, businessName, ownerName, location, retryCount + 1);
+                        return runSingleResearch(apiKey, module, businessName, ownerName, location, retryCount + 1, verifiedEntity);
                     }
                     throw new Error(data.error.message);
                 }
@@ -8272,7 +8307,7 @@ Return ONLY valid JSON.`
                     console.warn(`Empty response for ${module.id}, retry ${retryCount + 1}`);
                     if (retryCount < 2) {
                         await new Promise(r => setTimeout(r, 1000 * (retryCount + 1)));
-                        return runSingleResearch(apiKey, module, businessName, ownerName, location, retryCount + 1);
+                        return runSingleResearch(apiKey, module, businessName, ownerName, location, retryCount + 1, verifiedEntity);
                     }
                 }
 
@@ -8284,7 +8319,7 @@ Return ONLY valid JSON.`
                     if (retryCount < 2) {
                         console.warn(`Invalid response for ${module.id}, retry ${retryCount + 1}`);
                         await new Promise(r => setTimeout(r, 1000 * (retryCount + 1)));
-                        return runSingleResearch(apiKey, module, businessName, ownerName, location, retryCount + 1);
+                        return runSingleResearch(apiKey, module, businessName, ownerName, location, retryCount + 1, verifiedEntity);
                     }
                 }
 
@@ -8293,7 +8328,7 @@ Return ONLY valid JSON.`
                 console.error(`Research error for ${module.id}:`, e);
                 if (retryCount < 2) {
                     await new Promise(r => setTimeout(r, 1000 * (retryCount + 1)));
-                    return runSingleResearch(apiKey, module, businessName, ownerName, location, retryCount + 1);
+                    return runSingleResearch(apiKey, module, businessName, ownerName, location, retryCount + 1, verifiedEntity);
                 }
                 // Return a default assessment on final failure
                 return {
