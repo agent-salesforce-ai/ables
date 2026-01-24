@@ -5901,7 +5901,7 @@
                 // Bank data complete - render results
                 renderExtractedData();
                 renderCharts();
-                renderDebtResults();
+                // Note: renderDebtObligations() is called inside renderExtractedData()
 
                 // Display extracted business info
                 if (extractedBusinessInfo.name) {
@@ -6987,6 +6987,21 @@ Return ONLY valid JSON:
             // Destroy existing charts
             if (charts.balance) charts.balance.destroy();
             if (charts.flow) charts.flow.destroy();
+
+            // Recreate the chart container HTML (skeleton may have replaced it)
+            const chartsContainer = document.querySelector('#chartsSection .section-body');
+            if (chartsContainer) {
+                chartsContainer.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="chart-container" style="position: relative; height: 250px;">
+                            <canvas id="balanceChart"></canvas>
+                        </div>
+                        <div class="chart-container" style="position: relative; height: 250px;">
+                            <canvas id="flowChart"></canvas>
+                        </div>
+                    </div>
+                `;
+            }
 
             const labels = months.map(m => m.month || '');
             const deposits = months.map(m => m.total_deposits || 0);
