@@ -6789,15 +6789,40 @@ Return ONLY valid JSON:
             const container = document.getElementById('extractedData');
 
             // Determine which row is currently being processed
-            const currentlyProcessing = extractedResults.length;
+            // extractedResults.length tells us how many have been processed (including failures)
+            // The currently processing index is extractedResults.length (next one to be added)
+            const numProcessed = extractedResults.length;
+            const currentlyProcessingIndex = numProcessed; // The one we're working on next
 
             // Build rows for each statement - show skeleton for all rows upfront
             const statementRows = files.map((f, i) => {
-                const data = extractedResults[i];
-                const isCurrentlyProcessing = (i === currentlyProcessing);
-                const isPending = !data;
+                // Check if this row has been processed yet
+                const hasBeenProcessed = i < numProcessed;
+                const data = hasBeenProcessed ? extractedResults[i] : undefined;
+                const isCurrentlyProcessing = (i === currentlyProcessingIndex);
+                const isFailed = hasBeenProcessed && data === null;
+                const isWaiting = !hasBeenProcessed && !isCurrentlyProcessing;
+                const hasData = hasBeenProcessed && data !== null;
 
-                if (isPending) {
+                if (isFailed) {
+                    // Show error row for failed extraction
+                    const fileName = f.name.length > 25 ? f.name.substring(0, 22) + '...' : f.name;
+                    return `
+                        <tr style="opacity: 0.6; background: rgba(239, 68, 68, 0.05);">
+                            <td style="padding: 12px; border-bottom: 1px solid var(--border); border-left: 3px solid var(--red); white-space: nowrap;">
+                                <span style="display: inline-flex; align-items: center; gap: 8px;">
+                                    <span style="color: var(--red);">✗</span>
+                                    <span style="color: var(--red); font-size: 12px;">${fileName}</span>
+                                </span>
+                            </td>
+                            <td colspan="9" style="padding: 12px; border-bottom: 1px solid var(--border); text-align: center; color: var(--text-muted); font-size: 12px;">
+                                Extraction failed - check console for details
+                            </td>
+                        </tr>
+                    `;
+                }
+
+                if (!hasData) {
                     // Show skeleton row - animated if currently processing, dimmed if waiting
                     const rowOpacity = isCurrentlyProcessing ? '1' : '0.5';
                     const fileName = f.name.length > 20 ? f.name.substring(0, 17) + '...' : f.name;
