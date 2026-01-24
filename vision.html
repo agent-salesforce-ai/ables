@@ -6270,7 +6270,26 @@ Return ONLY valid JSON:
                     return null;
                 }
 
+                // Log finish reason to check for truncation
+                const finishReason = data.candidates?.[0]?.finishReason;
+                console.log(`Statement ${fileIndex + 1} finish reason: ${finishReason}, response length: ${text.length}`);
+
                 text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+
+                // Try to fix truncated JSON by closing brackets
+                if (!text.endsWith('}')) {
+                    console.warn(`Statement ${fileIndex + 1} JSON appears truncated, attempting to fix...`);
+                    // Count open brackets and close them
+                    const openBraces = (text.match(/\{/g) || []).length;
+                    const closeBraces = (text.match(/\}/g) || []).length;
+                    const openBrackets = (text.match(/\[/g) || []).length;
+                    const closeBrackets = (text.match(/\]/g) || []).length;
+
+                    // Close any open arrays first, then objects
+                    for (let i = 0; i < openBrackets - closeBrackets; i++) text += ']';
+                    for (let i = 0; i < openBraces - closeBraces; i++) text += '}';
+                }
+
                 const result = JSON.parse(text);
                 console.log(`Statement ${fileIndex + 1} parsed successfully:`, result.month);
                 return result;
