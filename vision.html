@@ -6507,8 +6507,16 @@ Return ONLY valid JSON:
                 mca_payments: r.detected_mca_payments || []
             }));
 
-            // Sort chronologically
-            months.sort((a, b) => new Date(a.month) - new Date(b.month));
+            // Sort chronologically - parse "Month Year" format properly
+            const parseMonthYear = (str) => {
+                if (!str) return new Date(0);
+                // Handle "Month Year" format like "June 2025"
+                const parsed = new Date(str + ' 1'); // Add day to help parsing
+                if (!isNaN(parsed)) return parsed;
+                // Fallback: try direct parse
+                return new Date(str);
+            };
+            months.sort((a, b) => parseMonthYear(a.month) - parseMonthYear(b.month));
 
             // Collect MCA/debt info
             const mcaLenderMap = new Map();
