@@ -7393,29 +7393,52 @@ Return ONLY valid JSON:
             `).join('');
         }
 
-        // Render skeleton state for charts/cash flow section - simple spinner
+        // Render skeleton state for charts/cash flow section
         function renderChartsSkeleton() {
-            const container = document.querySelector('#chartsSection .section-body');
-            if (!container) return;
+            const chartsContainer = document.querySelector('#chartsSection .section-body');
+            if (!chartsContainer) return;
 
-            container.innerHTML = `
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center;">
-                    <div style="width: 50px; height: 50px; border: 3px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px;"></div>
-                    <div style="font-size: 14px; color: var(--text-muted);">Building charts...</div>
+            chartsContainer.innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="chart-container" style="position: relative; height: 250px; background: var(--bg-tertiary); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                        <div style="text-align: center;">
+                            <div class="skeleton-bar" style="width: 150px; height: 16px; background: var(--border); border-radius: 4px; margin: 0 auto 12px; animation: shimmer 1.5s ease-in-out infinite;"></div>
+                            <div style="color: var(--text-muted); font-size: 12px;">Loading balance chart...</div>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="position: relative; height: 250px; background: var(--bg-tertiary); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                        <div style="text-align: center;">
+                            <div class="skeleton-bar" style="width: 150px; height: 16px; background: var(--border); border-radius: 4px; margin: 0 auto 12px; animation: shimmer 1.5s ease-in-out infinite;"></div>
+                            <div style="color: var(--text-muted); font-size: 12px;">Loading flow chart...</div>
+                        </div>
+                    </div>
                 </div>
             `;
         }
 
-        // Render skeleton state for debt section - simple spinner
+        // Render skeleton state for debt section
         function renderDebtSkeleton() {
-            const container = document.querySelector('#debtSection .section-body');
-            if (!container) return;
-            document.getElementById('debtTotalBadge').textContent = '...';
+            const debtContainer = document.querySelector('#debtSection .section-body');
+            if (!debtContainer) return;
 
-            container.innerHTML = `
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center;">
-                    <div style="width: 50px; height: 50px; border: 3px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px;"></div>
-                    <div style="font-size: 14px; color: var(--text-muted);">Analyzing debt positions...</div>
+            document.getElementById('debtTotalBadge').textContent = 'Calculating...';
+
+            debtContainer.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px;">
+                    ${Array(4).fill(0).map(() => `
+                        <div class="debt-stat" style="text-align: center; padding: 16px; background: var(--bg-tertiary); border-radius: 8px;">
+                            <div class="skeleton-bar" style="width: 60px; height: 28px; background: var(--border); border-radius: 4px; margin: 0 auto 8px; animation: shimmer 1.5s ease-in-out infinite;"></div>
+                            <div class="skeleton-bar" style="width: 80px; height: 12px; background: var(--border); border-radius: 4px; margin: 0 auto;"></div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 2;">
+                        <div class="skeleton-bar" style="width: 100%; height: 200px; background: var(--bg-tertiary); border-radius: 8px; animation: shimmer 1.5s ease-in-out infinite;"></div>
+                    </div>
+                    <div style="flex: 1;">
+                        <div class="skeleton-bar" style="width: 100%; height: 200px; background: var(--bg-tertiary); border-radius: 8px; animation: shimmer 1.5s ease-in-out infinite;"></div>
+                    </div>
                 </div>
             `;
         }
@@ -7514,16 +7537,62 @@ Return ONLY valid JSON:
             `;
         }
 
-        // Render skeleton state for bank data section - simple processing animation
+        // Render skeleton state for bank data section
         function renderBankDataSkeleton() {
             const container = document.getElementById('extractedData');
             if (!container) return;
 
             container.innerHTML = `
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center;">
-                    <div style="width: 60px; height: 60px; border: 3px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;"></div>
-                    <div style="font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 8px;">Processing Bank Statements</div>
-                    <div style="font-size: 13px; color: var(--text-muted);">Extracting transaction data from ${files.length} statement${files.length > 1 ? 's' : ''}...</div>
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding: 14px 18px; background: var(--bg-tertiary); border-radius: 10px; border: 1px solid var(--border);">
+                    <div style="font-size: 14px; font-weight: 600; color: var(--text-muted);">
+                        Extracting ${files.length} statements...
+                    </div>
+                    <div style="flex: 1; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden;">
+                        <div style="width: 0%; height: 100%; background: var(--blue); animation: shimmer 1.5s ease-in-out infinite;"></div>
+                    </div>
+                </div>
+                <div style="overflow-x: auto; border: 1px solid var(--border); border-radius: 10px;">
+                    <table style="width: 100%; border-collapse: collapse; min-width: 1000px;">
+                        <thead>
+                            <tr style="background: var(--bg-tertiary);">
+                                <th style="padding: 14px 16px; text-align: left; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Month</th>
+                                <th style="padding: 14px 12px; text-align: right; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Deposits</th>
+                                <th style="padding: 14px 12px; text-align: right; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">True Rev</th>
+                                <th style="padding: 14px 12px; text-align: center; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">#</th>
+                                <th style="padding: 14px 12px; text-align: right; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Withdrawals</th>
+                                <th style="padding: 14px 12px; text-align: right; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Avg Bal</th>
+                                <th style="padding: 14px 12px; text-align: right; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Open Bal</th>
+                                <th style="padding: 14px 12px; text-align: right; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">End Bal</th>
+                                <th style="padding: 14px 12px; text-align: center; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">NSF</th>
+                                <th style="padding: 14px 12px; text-align: center; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Neg</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${files.map((f, i) => `
+                                <tr style="opacity: ${i === 0 ? '1' : '0.5'};">
+                                    <td style="padding: 12px; border-bottom: 1px solid var(--border);">
+                                        ${i === 0 ? `
+                                            <span style="display: inline-flex; align-items: center; gap: 8px;">
+                                                <span style="width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--blue); border-top-color: transparent; animation: spin 0.8s linear infinite; display: inline-block;"></span>
+                                                <span style="color: var(--blue); font-weight: 500;">Processing...</span>
+                                            </span>
+                                        ` : `
+                                            <span style="color: var(--text-muted); font-size: 12px;">${f.name.substring(0, 20)}...</span>
+                                        `}
+                                    </td>
+                                    <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right;"><div style="width: 80px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto; ${i === 0 ? 'animation: shimmer 1.5s ease-in-out infinite;' : ''}"></div></td>
+                                    <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right;"><div style="width: 80px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto;"></div></td>
+                                    <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: center;"><div style="width: 30px; height: 16px; background: var(--border); border-radius: 4px; margin: 0 auto;"></div></td>
+                                    <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right;"><div style="width: 80px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto;"></div></td>
+                                    <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right;"><div style="width: 70px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto;"></div></td>
+                                    <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right;"><div style="width: 70px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto;"></div></td>
+                                    <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right;"><div style="width: 70px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto;"></div></td>
+                                    <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: center;"><div style="width: 30px; height: 16px; background: var(--border); border-radius: 4px; margin: 0 auto;"></div></td>
+                                    <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: center;"><div style="width: 30px; height: 16px; background: var(--border); border-radius: 4px; margin: 0 auto;"></div></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
                 </div>
             `;
         }
