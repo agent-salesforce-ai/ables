@@ -5888,6 +5888,28 @@
                     updateFileList();
                 }
 
+                // Try to extract business name from filename to start research early
+                // Filename format: "BUSINESS NAME account_number_date.pdf"
+                if (!researchStarted && files.length > 0) {
+                    const filename = files[0].name || '';
+                    // Remove common suffixes and extensions
+                    let businessFromFilename = filename
+                        .replace(/\.(pdf|png|jpg|jpeg)$/i, '')
+                        .replace(/\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\s*\d{0,4}/gi, '')
+                        .replace(/\s*\d{4,}.*$/i, '') // Remove trailing numbers (account numbers, dates)
+                        .replace(/_/g, ' ')
+                        .trim();
+
+                    // Only use if we got something meaningful (at least 3 chars)
+                    if (businessFromFilename.length >= 3) {
+                        researchStarted = true;
+                        extractedBusinessInfo.name = businessFromFilename;
+                        document.getElementById('researchBusinessName').textContent = businessFromFilename;
+                        console.log(`🔍 Starting early research from filename: ${businessFromFilename}`);
+                        researchPromise = runBackgroundResearch(apiKey);
+                    }
+                }
+
                 // Step 3: Extract Data - with parallel research kickoff
                 setStep(3);
                 showLoading(true, 'Extracting bank data...', {
