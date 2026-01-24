@@ -6348,15 +6348,23 @@ Return ONLY valid JSON:
                 const model = getSelectedModel();
                 console.log(`Extracting statement ${fileIndex + 1} with model: ${model}, pages: ${images.length}`);
 
+                // Use AbortController for fetch timeout (90 seconds)
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 90000);
+
+                console.log(`Statement ${fileIndex + 1} starting extraction...`);
+
                 const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         contents: [{ parts }],
                         generationConfig: { temperature: 0.1, maxOutputTokens: 65536 }
-                    })
+                    }),
+                    signal: controller.signal
                 });
 
+                clearTimeout(timeoutId);
                 const data = await resp.json();
 
                 // Check for API errors
@@ -6457,6 +6465,8 @@ Return ONLY valid JSON:
 
             const results = await Promise.all(
                 files.map(async (file, i) => {
+                    // Stagger start times by 500ms to avoid rate limiting
+                    await new Promise(r => setTimeout(r, i * 500));
                     const result = await extractWithRetry(file, i);
                     updateExtractionProgress();
 
