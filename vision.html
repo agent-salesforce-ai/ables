@@ -5846,25 +5846,13 @@
             }
 
             try {
-                // Show ALL sections immediately with skeleton states
                 document.getElementById('emptyState').style.display = 'none';
-                document.getElementById('fraudSection').classList.remove('hidden');
-                document.getElementById('dataSection').classList.remove('hidden');
-                document.getElementById('chartsSection').classList.remove('hidden');
-                document.getElementById('debtSection').classList.remove('hidden');
-                document.getElementById('researchSection').classList.remove('hidden');
-                document.getElementById('lenderSection').classList.remove('hidden');
 
-                // Initialize with skeleton/pending states
-                renderFraudResultsLive();
-                renderExtractedDataLive([]);
-                renderChartsSkeleton(); // Show charts skeleton immediately
-                renderDebtSkeleton(); // Show debt skeleton immediately
-                renderResearchSkeleton(); // Show research skeleton immediately
-                renderLenderSkeleton(); // Show lender skeleton immediately
-
-                // Step 2: Fraud Scan
+                // ===== STEP 2: FRAUD SCAN =====
                 setStep(2);
+                document.getElementById('fraudSection').classList.remove('hidden');
+                renderFraudSkeleton(); // Show skeleton while scanning
+
                 showLoading(true, 'Scanning for fraud indicators...', {
                     step: 'scan',
                     progress: 5,
@@ -5872,30 +5860,36 @@
                 });
 
                 for (let i = 0; i < files.length; i++) {
-                    const scanProgress = 5 + Math.round((i / files.length) * 20);
+                    const scanProgress = 5 + Math.round((i / files.length) * 25);
                     showLoading(true, `Scanning document ${i + 1} of ${files.length}...`, {
                         step: 'scan',
                         progress: scanProgress,
-                        subtext: `Checking for digital alterations and inconsistencies`
+                        subtext: `Checking for digital alterations`
                     });
                     files[i].status = await scanForFraud(files[i], apiKey);
-                    // Update live as each document is scanned
-                    renderFraudResultsLive();
                     updateFileList();
                 }
 
-                // Step 3: Extract Data
+                // Fraud complete - render results
+                renderFraudResults();
+
+                // ===== STEP 3: EXTRACT BANK DATA =====
                 setStep(3);
+                document.getElementById('dataSection').classList.remove('hidden');
+                document.getElementById('chartsSection').classList.remove('hidden');
+                renderBankDataSkeleton(); // Show skeleton while extracting
+                renderChartsSkeleton();
+
                 showLoading(true, 'Extracting bank data...', {
                     step: 'extract',
                     progress: 30,
                     subtext: 'Reading transaction data and account details'
                 });
 
-                // Extract bank data (research will start after this completes)
-                extractedData = await extractBankData(apiKey);
+                extractedData = await extractBankDataSimple(apiKey);
 
-                // Keep the live table - don't replace it with renderExtractedData()
+                // Bank data complete - render results
+                renderExtractedData();
                 renderCharts();
 
                 // Display extracted business info
@@ -5906,26 +5900,40 @@
                     document.getElementById('displayBusinessAddress').textContent = extractedBusinessInfo.address || '';
                 }
 
-                // Step 4: Run background research (after bank statement extraction is complete)
+                // ===== EXISTING DEBT (from extracted data) =====
+                document.getElementById('debtSection').classList.remove('hidden');
+                renderDebtResults();
+
+                // ===== STEP 4: RESEARCH =====
                 setStep(4);
+                document.getElementById('researchSection').classList.remove('hidden');
+                renderResearchSkeleton();
+
                 if (extractedBusinessInfo.name) {
                     showLoading(true, `Researching ${extractedBusinessInfo.name}...`, {
                         step: 'analyze',
-                        progress: 55,
+                        progress: 60,
                         subtext: 'Running comprehensive background checks'
                     });
                     document.getElementById('researchBusinessName').textContent = extractedBusinessInfo.name;
                     await runBackgroundResearch(apiKey);
                 }
 
-                // Step 5: Match Lenders
+                // ===== ABLES CREDIT SCORE =====
+                document.getElementById('scoreSection').classList.remove('hidden');
+                calculateCreditScore();
+
+                // ===== STEP 5: MATCH LENDERS =====
                 setStep(5);
+                document.getElementById('lenderSection').classList.remove('hidden');
+                document.getElementById('submitSection').classList.remove('hidden');
+                renderLenderSkeleton();
+
                 showLoading(true, 'Finding best lender matches...', {
                     step: 'match',
                     progress: 90,
                     subtext: 'Comparing against lender criteria'
                 });
-                document.getElementById('submitSection').classList.remove('hidden');
 
                 matchedLenders = matchLenders(extractedData);
                 renderLenderResults();
@@ -6255,25 +6263,8 @@ Return ONLY valid JSON:
             }
         }
 
-        // Wrapper that calls extractBankData with a callback for research
-        async function extractBankDataWithResearch(apiKey, onBusinessNameFound) {
-            return extractBankData(apiKey, onBusinessNameFound);
-        }
-
-        async function extractBankData(apiKey, onBusinessNameFound = null) {
-            // Process statements SEQUENTIALLY for live updates
-            showLoading(true, `Extracting data from ${files.length} statements...`, {
-                step: 'extract',
-                progress: 35,
-                subtext: `Processing statement 1 of ${files.length}`
-            });
-
-            // Initialize live data display
-            renderExtractedDataLive([]);
-
-            let businessNameCallbackFired = false;
-
-            // Extract each statement with retry logic - ONE AT A TIME for live updates
+        // Simple extraction function - no live updates, just loading animation
+        async function extractBankDataSimple(apiKey) {
             const extractWithRetry = async (file, index, maxRetries = 2) => {
                 for (let attempt = 0; attempt <= maxRetries; attempt++) {
                     try {
@@ -6287,54 +6278,40 @@ Return ONLY valid JSON:
                         console.error(`Statement ${index + 1} attempt ${attempt + 1} failed:`, e);
                     }
                     if (attempt < maxRetries) {
-                        await new Promise(r => setTimeout(r, 1000)); // Wait 1s before retry
+                        await new Promise(r => setTimeout(r, 1000));
                     }
                 }
                 console.error(`✗ Statement ${index + 1} failed after ${maxRetries + 1} attempts`);
                 return null;
             };
 
-            // Process sequentially for live updates
             const results = [];
             for (let i = 0; i < files.length; i++) {
-                const progress = 35 + Math.round((i / files.length) * 30);
+                const progress = 30 + Math.round((i / files.length) * 25);
                 showLoading(true, `Extracting statement ${i + 1} of ${files.length}...`, {
                     step: 'extract',
                     progress: progress,
-                    subtext: `Reading transaction data from ${files[i].name.substring(0, 30)}...`
+                    subtext: `Reading ${files[i].name.substring(0, 30)}...`
                 });
 
                 const result = await extractWithRetry(files[i], i);
                 results.push(result);
 
-                // Update live display after each extraction - pass full results array (with nulls)
-                // so indices match up with files array
-                renderExtractedDataLive(results);
-
-                // After first successful extraction, check for business name and trigger research
-                if (result && !businessNameCallbackFired && onBusinessNameFound) {
+                // Store business info from first successful result
+                if (result && !extractedBusinessInfo.name) {
                     const businessName = result.business_name || result.account_holder || '';
                     if (businessName) {
-                        businessNameCallbackFired = true;
-                        // Store it early
                         extractedBusinessInfo.name = businessName;
                         extractedBusinessInfo.owner = result.owner_name || '';
                         extractedBusinessInfo.address = result.business_address || '';
-                        // Fire callback to start research in parallel
-                        onBusinessNameFound(businessName);
                     }
                 }
             }
 
-            // Log extraction summary
             const successCount = results.filter(r => r !== null).length;
             console.log(`Extraction complete: ${successCount}/${files.length} statements successful`);
 
-            if (successCount < files.length) {
-                showStatus(`Warning: Only ${successCount} of ${files.length} statements were extracted. Check console for details.`, 'info');
-            }
-
-            // Filter out failed extractions and build months array
+            // Build months array from successful extractions
             const months = results.filter(r => r !== null).map(r => ({
                 month: r.month || 'Unknown',
                 total_deposits: r.total_deposits || 0,
@@ -6349,15 +6326,11 @@ Return ONLY valid JSON:
                 days_negative: r.days_negative || 0
             }));
 
-            // Sort months chronologically
-            months.sort((a, b) => {
-                const dateA = new Date(a.month);
-                const dateB = new Date(b.month);
-                return dateA - dateB;
-            });
+            // Sort chronologically
+            months.sort((a, b) => new Date(a.month) - new Date(b.month));
 
-            // Collect all MCA lenders and debt from all statements
-            const mcaLenderMap = new Map(); // Use Map to dedupe by lender name
+            // Collect MCA/debt info
+            const mcaLenderMap = new Map();
             const allDebt = [];
             const allRedFlags = [];
             let businessInfo = { business_name: '', owner_name: '', business_address: '' };
@@ -6366,125 +6339,75 @@ Return ONLY valid JSON:
             results.filter(r => r !== null).forEach(r => {
                 if (r.detected_mca_payments) {
                     r.detected_mca_payments.forEach(m => {
-                        // Extract lender name from various formats
-                        let lenderName = '';
-                        let amount = 0;
-                        let date = '';
-
-                        if (typeof m === 'string') {
-                            lenderName = m;
-                        } else if (typeof m === 'object') {
-                            lenderName = m.name || m.lender || m.payee || '';
-                            amount = m.amount || m.payment_amount || 0;
-                            date = m.date || '';
-                        }
-
-                        // Skip if no valid lender name
-                        if (!lenderName || lenderName === 'Unknown') return;
-
-                        // Clean lender name - remove amounts, dates, and extra info
-                        // Pattern: "Lender Name: $X,XXX.XX (MM/DD)" or "Lender Name - $X,XXX.XX"
-                        let cleanName = lenderName
-                            .replace(/:\s*\$[\d,]+\.?\d*\s*(\(\d{2}\/\d{2}\))?/gi, '') // Remove ": $X,XXX.XX (MM/DD)"
-                            .replace(/-\s*\$[\d,]+\.?\d*/gi, '') // Remove "- $X,XXX.XX"
-                            .replace(/\s*\(\d{2}\/\d{2}(\/\d{2,4})?\)/gi, '') // Remove standalone dates like (05/06)
-                            .replace(/\s*\$[\d,]+\.?\d*/gi, '') // Remove any remaining dollar amounts
-                            .replace(/\s+/g, ' ') // Normalize whitespace
-                            .trim();
-
-                        // If we stripped everything, use original
-                        if (!cleanName) cleanName = lenderName.trim();
-
-                        // Extract amount from name if not already set
-                        if (!amount) {
-                            const amountMatch = lenderName.match(/\$[\d,]+\.?\d*/);
-                            if (amountMatch) {
-                                amount = parseFloat(amountMatch[0].replace(/[$,]/g, '')) || 0;
+                        let lenderName = typeof m === 'string' ? m : (m.name || m.lender || m.payee || '');
+                        let amount = typeof m === 'object' ? (m.amount || m.payment_amount || 0) : 0;
+                        if (lenderName) {
+                            const key = lenderName.toLowerCase().trim();
+                            if (!mcaLenderMap.has(key)) {
+                                mcaLenderMap.set(key, { name: lenderName, payments: [], totalAmount: 0 });
                             }
-                        }
-
-                        // Normalize for deduplication - aggressive cleaning
-                        const normalizedName = cleanName
-                            .toUpperCase()
-                            .replace(/[^A-Z0-9]/g, '') // Remove ALL non-alphanumeric chars (spaces, dashes, etc)
-                            .trim();
-
-                        // Add or update in map (keep highest amount, count occurrences)
-                        if (!mcaLenderMap.has(normalizedName)) {
-                            mcaLenderMap.set(normalizedName, { name: cleanName, amount, count: 1 });
-                        } else {
-                            const existing = mcaLenderMap.get(normalizedName);
-                            existing.count = (existing.count || 1) + 1;
-                            if (amount && amount > (existing.amount || 0)) {
-                                existing.amount = amount;
-                            }
+                            const entry = mcaLenderMap.get(key);
+                            entry.payments.push({ amount, month: r.month });
+                            entry.totalAmount += amount;
                         }
                     });
                 }
-                if (r.existing_debt) {
-                    allDebt.push(...r.existing_debt);
-                }
-                if (r.red_flags) {
-                    allRedFlags.push(...r.red_flags);
-                }
-                if (r.business_name && !businessInfo.business_name) {
-                    businessInfo.business_name = r.business_name;
-                }
-                if (r.owner_name && !businessInfo.owner_name) {
-                    businessInfo.owner_name = r.owner_name;
-                }
-                if (r.bank_name && !accountInfo.bank_name) {
-                    accountInfo.bank_name = r.bank_name;
-                }
-                if (r.account_number_last4 && !accountInfo.account_number_last4) {
-                    accountInfo.account_number_last4 = r.account_number_last4;
-                }
+                if (r.identified_debt) allDebt.push(...(Array.isArray(r.identified_debt) ? r.identified_debt : [r.identified_debt]));
+                if (r.red_flags) allRedFlags.push(...(Array.isArray(r.red_flags) ? r.red_flags : [r.red_flags]));
+                if (r.business_name && !businessInfo.business_name) businessInfo.business_name = r.business_name;
+                if (r.owner_name && !businessInfo.owner_name) businessInfo.owner_name = r.owner_name;
+                if (r.business_address && !businessInfo.business_address) businessInfo.business_address = r.business_address;
+                if (r.bank_name && !accountInfo.bank_name) accountInfo.bank_name = r.bank_name;
+                if (r.account_holder && !accountInfo.account_holder) accountInfo.account_holder = r.account_holder;
+                if (r.account_number_last4 && !accountInfo.account_number_last4) accountInfo.account_number_last4 = r.account_number_last4;
             });
 
-            // Calculate our own aggregates from the extracted month data
+            // Calculate aggregates for credit scoring
             const numMonths = months.length || 1;
             const totals = months.reduce((acc, m) => ({
                 deposits: acc.deposits + (m.total_deposits || 0),
                 trueRevenue: acc.trueRevenue + (m.true_revenue || 0),
                 withdrawals: acc.withdrawals + (m.total_withdrawals || 0),
                 avgBal: acc.avgBal + (m.average_daily_balance || 0),
+                endBal: acc.endBal + (m.ending_balance || 0),
                 numDeps: acc.numDeps + (m.num_deposits || 0),
                 nsf: acc.nsf + (m.nsf_count || 0),
                 negDays: acc.negDays + (m.days_negative || 0)
-            }), { deposits: 0, trueRevenue: 0, withdrawals: 0, avgBal: 0, numDeps: 0, nsf: 0, negDays: 0 });
+            }), { deposits: 0, trueRevenue: 0, withdrawals: 0, avgBal: 0, endBal: 0, numDeps: 0, nsf: 0, negDays: 0 });
 
-            // Store extracted business info for research
-            extractedBusinessInfo = {
-                name: businessInfo.business_name || accountInfo.account_holder || '',
-                owner: businessInfo.owner_name || '',
-                address: businessInfo.business_address || ''
-            };
-
-            // Build the full analysis object with OUR calculated aggregates
-            const parsed = {
-                business_info: businessInfo,
-                account_info: accountInfo,
-                months: months,
-                aggregated: {
-                    avg_monthly_deposits: Math.round(totals.deposits / numMonths),
-                    avg_monthly_true_revenue: Math.round(totals.trueRevenue / numMonths),
-                    avg_monthly_balance: Math.round(totals.avgBal / numMonths),
-                    total_nsf_fees: totals.nsf,
-                    total_negative_days: totals.negDays,
-                    avg_num_deposits: Math.round(totals.numDeps / numMonths),
-                    months_analyzed: numMonths,
-                    detected_mca_lenders: Array.from(mcaLenderMap.values())
-                },
-                existing_debt: allDebt,
-                red_flags: [...new Set(allRedFlags)]
+            const aggregated = {
+                avg_monthly_deposits: Math.round(totals.deposits / numMonths),
+                avg_monthly_true_revenue: Math.round(totals.trueRevenue / numMonths),
+                avg_monthly_balance: Math.round(totals.avgBal / numMonths),
+                avg_ending_balance: Math.round(totals.endBal / numMonths),
+                total_nsf_fees: totals.nsf,
+                total_negative_days: totals.negDays,
+                avg_num_deposits: Math.round(totals.numDeps / numMonths),
+                months_analyzed: numMonths,
+                detected_mca_lenders: Array.from(mcaLenderMap.values())
             };
 
             return {
-                monthly_deposits: parsed.aggregated.avg_monthly_deposits,
-                average_daily_balance: parsed.aggregated.avg_monthly_balance,
-                nsf_negative_days: parsed.aggregated.total_negative_days,
-                num_deposits_monthly: parsed.aggregated.avg_num_deposits,
-                full_analysis: parsed
+                months,
+                mca_positions: Array.from(mcaLenderMap.values()),
+                identified_debt: allDebt,
+                red_flags: [...new Set(allRedFlags)],
+                business_info: businessInfo,
+                account_info: accountInfo,
+                // For credit score compatibility
+                full_analysis: {
+                    months,
+                    aggregated,
+                    business_info: businessInfo,
+                    account_info: accountInfo,
+                    existing_debt: allDebt,
+                    red_flags: [...new Set(allRedFlags)]
+                },
+                // Direct access for lender matching
+                monthly_deposits: aggregated.avg_monthly_deposits,
+                average_daily_balance: aggregated.avg_monthly_balance,
+                nsf_negative_days: aggregated.total_negative_days,
+                num_deposits_monthly: aggregated.avg_num_deposits
             };
         }
 
@@ -7490,6 +7413,160 @@ Return ONLY valid JSON:
                     <div style="flex: 1;">
                         <div class="skeleton-bar" style="width: 100%; height: 200px; background: var(--bg-tertiary); border-radius: 8px; animation: shimmer 1.5s ease-in-out infinite;"></div>
                     </div>
+                </div>
+            `;
+        }
+
+        // Render actual debt/MCA results
+        function renderDebtResults() {
+            const container = document.querySelector('#debtSection .section-body');
+            if (!container || !extractedData) return;
+
+            const mcaPositions = extractedData.mca_positions || [];
+            const identifiedDebt = extractedData.identified_debt || [];
+            const totalMCACount = mcaPositions.length;
+            const totalDebtAmount = mcaPositions.reduce((sum, p) => sum + (p.totalAmount || p.amount || 0), 0);
+
+            document.getElementById('debtTotalBadge').textContent = totalMCACount > 0 ? `${totalMCACount} Position${totalMCACount > 1 ? 's' : ''}` : 'None Detected';
+
+            if (totalMCACount === 0 && identifiedDebt.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                        <div style="font-size: 48px; margin-bottom: 16px;">✓</div>
+                        <div style="font-size: 16px; font-weight: 500; color: var(--green);">No MCA Positions Detected</div>
+                        <div style="font-size: 13px; margin-top: 8px;">No evidence of existing merchant cash advance payments found in the bank statements.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
+                    <div style="text-align: center; padding: 20px; background: var(--bg-tertiary); border-radius: 10px; border: 1px solid var(--border);">
+                        <div style="font-size: 28px; font-weight: 700; color: ${totalMCACount > 0 ? 'var(--red)' : 'var(--green)'};">${totalMCACount}</div>
+                        <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">MCA Positions</div>
+                    </div>
+                    <div style="text-align: center; padding: 20px; background: var(--bg-tertiary); border-radius: 10px; border: 1px solid var(--border);">
+                        <div style="font-size: 28px; font-weight: 700; color: var(--text);">$${totalDebtAmount.toLocaleString()}</div>
+                        <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Est. Monthly Debt</div>
+                    </div>
+                    <div style="text-align: center; padding: 20px; background: var(--bg-tertiary); border-radius: 10px; border: 1px solid var(--border);">
+                        <div style="font-size: 28px; font-weight: 700; color: var(--text);">${identifiedDebt.length}</div>
+                        <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Other Debt Items</div>
+                    </div>
+                </div>
+                ${mcaPositions.length > 0 ? `
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px;">Detected MCA Lenders</div>
+                        <div style="display: grid; gap: 8px;">
+                            ${mcaPositions.map(p => `
+                                <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--bg-tertiary); border-radius: 8px; border-left: 3px solid var(--red);">
+                                    <div style="font-weight: 500; color: var(--text);">${p.name}</div>
+                                    <div style="display: flex; align-items: center; gap: 16px;">
+                                        ${p.payments ? `<span style="font-size: 12px; color: var(--text-muted);">${p.payments.length} payment${p.payments.length > 1 ? 's' : ''}</span>` : ''}
+                                        <span style="font-weight: 600; color: var(--red);">$${(p.totalAmount || p.amount || 0).toLocaleString()}</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+            `;
+        }
+
+        // Render skeleton state for fraud section
+        function renderFraudSkeleton() {
+            const container = document.getElementById('fraudResults');
+            if (!container) return;
+
+            container.innerHTML = `
+                <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div class="skeleton-bar" style="width: 24px; height: 24px; background: var(--border); border-radius: 50%; animation: shimmer 1.5s ease-in-out infinite;"></div>
+                        <div class="skeleton-bar" style="width: 60px; height: 16px; background: var(--border); border-radius: 4px;"></div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div class="skeleton-bar" style="width: 24px; height: 24px; background: var(--border); border-radius: 50%;"></div>
+                        <div class="skeleton-bar" style="width: 60px; height: 16px; background: var(--border); border-radius: 4px;"></div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div class="skeleton-bar" style="width: 24px; height: 24px; background: var(--border); border-radius: 50%;"></div>
+                        <div class="skeleton-bar" style="width: 60px; height: 16px; background: var(--border); border-radius: 4px;"></div>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px;">
+                    ${files.map(() => `
+                        <div class="fraud-card" style="opacity: 0.6;">
+                            <div style="display: flex; align-items: center; gap: 12px; padding: 16px;">
+                                <div class="skeleton-bar" style="width: 40px; height: 40px; background: var(--border); border-radius: 8px; animation: shimmer 1.5s ease-in-out infinite;"></div>
+                                <div style="flex: 1;">
+                                    <div class="skeleton-bar" style="width: 80%; height: 14px; background: var(--border); border-radius: 4px; margin-bottom: 8px;"></div>
+                                    <div class="skeleton-bar" style="width: 50%; height: 12px; background: var(--border); border-radius: 4px;"></div>
+                                </div>
+                                <div class="skeleton-bar" style="width: 60px; height: 24px; background: var(--border); border-radius: 12px;"></div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Render skeleton state for bank data section
+        function renderBankDataSkeleton() {
+            const container = document.getElementById('extractedData');
+            if (!container) return;
+
+            container.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding: 14px 18px; background: var(--bg-tertiary); border-radius: 10px; border: 1px solid var(--border);">
+                    <div style="font-size: 14px; font-weight: 600; color: var(--text-muted);">
+                        Extracting ${files.length} statements...
+                    </div>
+                    <div style="flex: 1; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden;">
+                        <div style="width: 0%; height: 100%; background: var(--blue); animation: shimmer 1.5s ease-in-out infinite;"></div>
+                    </div>
+                </div>
+                <div style="overflow-x: auto; border: 1px solid var(--border); border-radius: 10px;">
+                    <table style="width: 100%; border-collapse: collapse; min-width: 1000px;">
+                        <thead>
+                            <tr style="background: var(--bg-tertiary);">
+                                <th style="padding: 14px 16px; text-align: left; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Month</th>
+                                <th style="padding: 14px 12px; text-align: right; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Deposits</th>
+                                <th style="padding: 14px 12px; text-align: right; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">True Rev</th>
+                                <th style="padding: 14px 12px; text-align: center; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">#</th>
+                                <th style="padding: 14px 12px; text-align: right; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Withdrawals</th>
+                                <th style="padding: 14px 12px; text-align: right; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Avg Bal</th>
+                                <th style="padding: 14px 12px; text-align: right; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Open Bal</th>
+                                <th style="padding: 14px 12px; text-align: right; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">End Bal</th>
+                                <th style="padding: 14px 12px; text-align: center; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">NSF</th>
+                                <th style="padding: 14px 12px; text-align: center; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Neg</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${files.map((f, i) => `
+                                <tr style="opacity: ${i === 0 ? '1' : '0.5'};">
+                                    <td style="padding: 12px; border-bottom: 1px solid var(--border);">
+                                        ${i === 0 ? `
+                                            <span style="display: inline-flex; align-items: center; gap: 8px;">
+                                                <span style="width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--blue); border-top-color: transparent; animation: spin 0.8s linear infinite; display: inline-block;"></span>
+                                                <span style="color: var(--blue); font-weight: 500;">Processing...</span>
+                                            </span>
+                                        ` : `
+                                            <span style="color: var(--text-muted); font-size: 12px;">${f.name.substring(0, 20)}...</span>
+                                        `}
+                                    </td>
+                                    <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right;"><div style="width: 80px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto; ${i === 0 ? 'animation: shimmer 1.5s ease-in-out infinite;' : ''}"></div></td>
+                                    <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right;"><div style="width: 80px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto;"></div></td>
+                                    <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: center;"><div style="width: 30px; height: 16px; background: var(--border); border-radius: 4px; margin: 0 auto;"></div></td>
+                                    <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right;"><div style="width: 80px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto;"></div></td>
+                                    <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right;"><div style="width: 70px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto;"></div></td>
+                                    <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right;"><div style="width: 70px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto;"></div></td>
+                                    <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: right;"><div style="width: 70px; height: 16px; background: var(--border); border-radius: 4px; margin-left: auto;"></div></td>
+                                    <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: center;"><div style="width: 30px; height: 16px; background: var(--border); border-radius: 4px; margin: 0 auto;"></div></td>
+                                    <td style="padding: 12px; border-bottom: 1px solid var(--border); text-align: center;"><div style="width: 30px; height: 16px; background: var(--border); border-radius: 4px; margin: 0 auto;"></div></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
                 </div>
             `;
         }
