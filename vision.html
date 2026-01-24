@@ -6398,6 +6398,10 @@ Return ONLY valid JSON:
 
         // Live rendering - shows each statement as horizontal table rows with clickable cells
         function renderExtractedDataLive(extractedResults) {
+            console.log('renderExtractedDataLive called with:', extractedResults.length, 'results');
+            extractedResults.forEach((r, i) => {
+                if (r) console.log(`Result ${i}: month=${r.month}, deposits=${r.total_deposits}, trueRev=${r.true_revenue}`);
+            });
             liveExtractionResults = extractedResults;
             const container = document.getElementById('extractedData');
 
