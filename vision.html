@@ -5347,117 +5347,102 @@
         }
 
         async function exportCardAsPng(cardId, cardName) {
-            const card = document.getElementById(cardId);
-            if (!card) {
-                showStatus('Card not found', 'error');
-                return;
-            }
-
             showStatus('Generating PNG...', 'info');
 
             try {
-                // Hide the export button during capture
-                const exportBtn = card.querySelector('.card-export-btn');
-                if (exportBtn) exportBtn.style.display = 'none';
+                // Map card IDs to export options
+                const sectionMap = {
+                    'fraudSection': { includeFraud: true },
+                    'dataSection': { includeData: true },
+                    'chartsSection': { includeCharts: true },
+                    'debtSection': { includeDebt: true },
+                    'researchSection': { includeResearch: true },
+                    'lenderSection': { includeLenders: true },
+                    'creditEngineSection': { includeScore: true },
+                    'submitSection': { includeSubmit: true }
+                };
 
-                // Expand any hidden content within the card
-                const hiddenEls = card.querySelectorAll('.hidden');
-                hiddenEls.forEach(el => el.classList.remove('hidden'));
+                const options = sectionMap[cardId] || {};
 
-                const canvas = await html2canvas(card, {
+                // Generate HTML for just this section with branding
+                const exportHTML = generateExportHTML(options);
+
+                // Create iframe for isolated rendering
+                const iframe = document.createElement('iframe');
+                iframe.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 900px;
+                    height: 100vh;
+                    border: none;
+                    z-index: 99999;
+                    background: white;
+                `;
+
+                // Create overlay
+                const overlay = document.createElement('div');
+                overlay.id = 'exportOverlay';
+                overlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0,0,0,0.9);
+                    z-index: 99998;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-size: 18px;
+                    font-family: 'Inter', sans-serif;
+                `;
+                overlay.innerHTML = '<div style="text-align: center;"><div style="margin-bottom: 12px;">Generating export...</div><div style="font-size: 14px; opacity: 0.7;">Please wait</div></div>';
+
+                document.body.appendChild(overlay);
+                document.body.appendChild(iframe);
+
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+                // Write complete self-contained HTML with Ables branding
+                iframeDoc.open();
+                iframeDoc.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <style>
+                            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+                            * { margin: 0; padding: 0; box-sizing: border-box; }
+                            body {
+                                font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+                                background: #ffffff;
+                                color: #111827;
+                                padding: 24px;
+                                line-height: 1.5;
+                            }
+                        </style>
+                    </head>
+                    <body>${exportHTML}</body>
+                    </html>
+                `);
+                iframeDoc.close();
+
+                // Wait for fonts and content to load
+                await new Promise(r => setTimeout(r, 800));
+
+                const canvas = await html2canvas(iframeDoc.body, {
                     scale: 2,
                     useCORS: true,
                     backgroundColor: '#ffffff',
                     logging: false,
                     allowTaint: true,
-                    onclone: (clonedDoc) => {
-                        const clonedCard = clonedDoc.getElementById(cardId);
-                        if (!clonedCard) return;
-
-                        // Hide export button in clone
-                        const clonedBtn = clonedCard.querySelector('.card-export-btn');
-                        if (clonedBtn) clonedBtn.style.display = 'none';
-
-                        // Inject SOLID COLOR light theme CSS
-                        const style = clonedDoc.createElement('style');
-                        style.textContent = `
-                            :root, html, body, * {
-                                --bg: #f3f4f6 !important;
-                                --bg-secondary: #ffffff !important;
-                                --bg-tertiary: #f3f4f6 !important;
-                                --text: #111827 !important;
-                                --text-secondary: #374151 !important;
-                                --text-muted: #6b7280 !important;
-                                --border: #d1d5db !important;
-                                --green: #22c55e !important;
-                                --red: #ef4444 !important;
-                                --yellow: #eab308 !important;
-                                --gold: #ca8a04 !important;
-                            }
-                            .section-card {
-                                background: #ffffff !important;
-                                border: 1px solid #d1d5db !important;
-                                box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
-                            }
-                            .section-header {
-                                background: #f3f4f6 !important;
-                                color: #111827 !important;
-                                border-bottom: 1px solid #d1d5db !important;
-                            }
-                            .section-body {
-                                background: #ffffff !important;
-                                color: #111827 !important;
-                            }
-                            /* Data cards with SOLID backgrounds */
-                            .data-card {
-                                background: #f9fafb !important;
-                                border: 2px solid #d1d5db !important;
-                            }
-                            .data-card[style*="green"] { background: #dcfce7 !important; border-color: #22c55e !important; }
-                            .data-card[style*="yellow"] { background: #fef9c3 !important; border-color: #eab308 !important; }
-                            .data-card[style*="red"] { background: #fee2e2 !important; border-color: #ef4444 !important; }
-                            .data-label { color: #6b7280 !important; }
-                            .data-value { color: #111827 !important; }
-                            .data-value.green { color: #16a34a !important; }
-                            .data-value.red { color: #dc2626 !important; }
-                            .data-value.gold { color: #ca8a04 !important; }
-                            /* Fraud items with SOLID left borders */
-                            .fraud-item { background: #f9fafb !important; border-left: 4px solid #d1d5db !important; }
-                            .fraud-item[style*="green"] { background: #f0fdf4 !important; border-left-color: #22c55e !important; }
-                            .fraud-item[style*="yellow"] { background: #fefce8 !important; border-left-color: #eab308 !important; }
-                            .fraud-item[style*="red"] { background: #fef2f2 !important; border-left-color: #ef4444 !important; }
-                            /* Risk chips with SOLID colors */
-                            .risk-chip { background: #f3f4f6 !important; border: 2px solid #d1d5db !important; }
-                            .risk-chip.good { background: #dcfce7 !important; border-color: #22c55e !important; }
-                            .risk-chip.warn { background: #fef9c3 !important; border-color: #eab308 !important; }
-                            .risk-chip.bad { background: #fee2e2 !important; border-color: #ef4444 !important; }
-                            .risk-chip-value { color: #111827 !important; }
-                            .risk-chip.good .risk-chip-value { color: #166534 !important; }
-                            .risk-chip.warn .risk-chip-value { color: #854d0e !important; }
-                            .risk-chip.bad .risk-chip-value { color: #991b1b !important; }
-                            .risk-chip-label { color: #6b7280 !important; }
-                            /* Tables */
-                            table { background: #ffffff !important; border: 1px solid #e5e7eb !important; }
-                            th { background: #f3f4f6 !important; color: #111827 !important; border: 1px solid #e5e7eb !important; }
-                            td { color: #111827 !important; border: 1px solid #e5e7eb !important; background: #ffffff !important; }
-                            /* MCA sections */
-                            .mca-section, .mca-alert { background: #fee2e2 !important; border: 2px solid #ef4444 !important; color: #991b1b !important; }
-                            /* Stats */
-                            .debt-stat, .research-stat { background: #f3f4f6 !important; border: 1px solid #e5e7eb !important; }
-                            .debt-stat-value, .research-stat-value { color: #111827 !important; }
-                            .debt-stat-label, .research-stat-label { color: #6b7280 !important; }
-                            .chart-container { background: #ffffff !important; border: 1px solid #e5e7eb !important; }
-                        `;
-                        clonedDoc.head.appendChild(style);
-                        clonedDoc.documentElement.setAttribute('data-theme', 'light');
-                    }
+                    width: 900,
+                    windowWidth: 900
                 });
 
-                // Restore button visibility
-                if (exportBtn) exportBtn.style.display = '';
-
-                // Restore hidden elements
-                hiddenEls.forEach(el => el.classList.add('hidden'));
+                document.body.removeChild(iframe);
+                document.body.removeChild(overlay);
 
                 const businessName = extractedBusinessInfo.name || 'Report';
                 const filename = `${businessName.replace(/[^a-z0-9]/gi, '_')}_${cardName}_${new Date().toISOString().split('T')[0]}.png`;
@@ -5470,6 +5455,11 @@
                 showStatus(`${cardName.replace(/_/g, ' ')} exported!`, 'success');
             } catch (error) {
                 console.error('Export error:', error);
+                // Clean up
+                document.getElementById('exportOverlay')?.remove();
+                document.querySelectorAll('iframe').forEach(f => {
+                    if (f.style.zIndex === '99999') f.remove();
+                });
                 showStatus('Error exporting PNG: ' + error.message, 'error');
             }
         }
