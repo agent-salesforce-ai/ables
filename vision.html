@@ -6402,10 +6402,25 @@ Return ONLY valid JSON:
 
         // Simple extraction function - no live updates, just loading animation
         async function extractBankDataSimple(apiKey) {
+            // Timeout wrapper to prevent stuck requests from blocking others
+            const withTimeout = (promise, ms, label) => {
+                return Promise.race([
+                    promise,
+                    new Promise((_, reject) =>
+                        setTimeout(() => reject(new Error(`${label} timed out after ${ms/1000}s`)), ms)
+                    )
+                ]);
+            };
+
             const extractWithRetry = async (file, index, maxRetries = 2) => {
                 for (let attempt = 0; attempt <= maxRetries; attempt++) {
                     try {
-                        const result = await extractSingleStatement(file, apiKey, index);
+                        // 90 second timeout per extraction attempt
+                        const result = await withTimeout(
+                            extractSingleStatement(file, apiKey, index),
+                            90000,
+                            `Statement ${index + 1}`
+                        );
                         if (result && result.month) {
                             console.log(`✓ Statement ${index + 1} extracted: ${result.month}`);
                             return result;
