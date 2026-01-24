@@ -5638,96 +5638,93 @@ Return ONLY valid JSON:
         // Live rendering - shows each statement as it's extracted
         function renderExtractedDataLive(extractedResults) {
             const container = document.getElementById('extractedData');
-
-            if (extractedResults.length === 0) {
-                container.innerHTML = `
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; max-width: 800px; margin: 0 auto;">
-                        ${files.map((f, i) => `
-                            <div class="statement-card pending" style="background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 10px; padding: 16px; opacity: 0.6;">
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <div style="width: 32px; height: 32px; border-radius: 6px; background: var(--bg-secondary); display: flex; align-items: center; justify-content: center; animation: pulse 1.5s ease-in-out infinite;">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; color: var(--text-muted);"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                    </div>
-                                    <div style="flex: 1; min-width: 0;">
-                                        <div style="font-size: 13px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${f.name.length > 25 ? f.name.substring(0, 22) + '...' : f.name}</div>
-                                        <div style="font-size: 11px; color: var(--text-muted);">Waiting...</div>
-                                    </div>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-                return;
-            }
-
-            // Build cards for each statement - showing extracted data as it comes in
-            const statementCards = files.map((f, i) => {
-                const data = extractedResults[i];
-                if (!data) {
-                    // Still pending
-                    return `
-                        <div class="statement-card pending" style="background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 10px; padding: 16px; opacity: 0.6;">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <div style="width: 32px; height: 32px; border-radius: 6px; background: var(--bg-secondary); display: flex; align-items: center; justify-content: center; animation: pulse 1.5s ease-in-out infinite;">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; color: var(--text-muted);"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                </div>
-                                <div style="flex: 1; min-width: 0;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${f.name.length > 25 ? f.name.substring(0, 22) + '...' : f.name}</div>
-                                    <div style="font-size: 11px; color: var(--text-muted);">Waiting...</div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                // Has data - show extracted info
-                const hasNSF = (data.nsf_count || 0) > 0;
-                const hasNeg = (data.days_negative || 0) > 0;
-                const borderColor = hasNSF || hasNeg ? 'var(--red)' : 'var(--green)';
-
-                return `
-                    <div class="statement-card extracted" style="background: var(--bg-secondary); border: 1px solid var(--border); border-left: 3px solid ${borderColor}; border-radius: 10px; padding: 16px; animation: fadeIn 0.3s ease-out;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                            <div style="font-size: 14px; font-weight: 700; color: var(--gold);">${data.month || 'Unknown'}</div>
-                            <div style="display: flex; gap: 6px;">
-                                ${hasNSF ? `<span style="background: var(--red-bg); color: var(--red); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600;">${data.nsf_count} NSF</span>` : ''}
-                                ${hasNeg ? `<span style="background: var(--red-bg); color: var(--red); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600;">${data.days_negative}d NEG</span>` : ''}
-                                ${!hasNSF && !hasNeg ? `<span style="background: var(--green-bg); color: var(--green); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600;">CLEAN</span>` : ''}
-                            </div>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px;">
-                            <div>
-                                <div style="color: var(--text-muted); font-size: 10px;">DEPOSITS</div>
-                                <div style="color: var(--green); font-weight: 600;">$${(data.total_deposits || 0).toLocaleString()}</div>
-                            </div>
-                            <div>
-                                <div style="color: var(--text-muted); font-size: 10px;">TRUE REV</div>
-                                <div style="color: var(--gold); font-weight: 600;">$${(data.true_revenue || 0).toLocaleString()}</div>
-                            </div>
-                            <div>
-                                <div style="color: var(--text-muted); font-size: 10px;">AVG BAL</div>
-                                <div style="color: var(--text); font-weight: 600;">$${(data.average_daily_balance || 0).toLocaleString()}</div>
-                            </div>
-                            <div>
-                                <div style="color: var(--text-muted); font-size: 10px;">END BAL</div>
-                                <div style="color: ${(data.ending_balance || 0) < 0 ? 'var(--red)' : 'var(--text)'}; font-weight: 600;">$${(data.ending_balance || 0).toLocaleString()}</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+            const extractedCount = extractedResults.length;
 
             // Calculate running totals from extracted data
-            const extractedCount = extractedResults.length;
             const totals = extractedResults.reduce((acc, m) => ({
                 deposits: acc.deposits + (m.total_deposits || 0),
                 trueRevenue: acc.trueRevenue + (m.true_revenue || 0),
+                withdrawals: acc.withdrawals + (m.total_withdrawals || 0),
                 avgBalSum: acc.avgBalSum + (m.average_daily_balance || 0),
+                numDeps: acc.numDeps + (m.num_deposits || 0),
                 nsf: acc.nsf + (m.nsf_count || 0),
                 negDays: acc.negDays + (m.days_negative || 0)
-            }), { deposits: 0, trueRevenue: 0, avgBalSum: 0, nsf: 0, negDays: 0 });
+            }), { deposits: 0, trueRevenue: 0, withdrawals: 0, avgBalSum: 0, numDeps: 0, nsf: 0, negDays: 0 });
+
+            // Build table rows - extracted data + skeleton placeholders
+            const tableRows = files.map((f, i) => {
+                const data = extractedResults[i];
+                if (!data) {
+                    // Skeleton loading row
+                    return `
+                        <tr class="skeleton-row" style="opacity: 0.5;">
+                            <td style="font-weight: 500;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span class="skeleton-loader" style="display: inline-block; width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border); border-top-color: var(--gold); animation: spin 1s linear infinite;"></span>
+                                    <span style="color: var(--text-muted);">Processing...</span>
+                                </div>
+                            </td>
+                            <td><div class="skeleton-bar"></div></td>
+                            <td><div class="skeleton-bar"></div></td>
+                            <td><div class="skeleton-bar" style="width: 30px;"></div></td>
+                            <td><div class="skeleton-bar"></div></td>
+                            <td><div class="skeleton-bar"></div></td>
+                            <td><div class="skeleton-bar"></div></td>
+                            <td><div class="skeleton-bar"></div></td>
+                            <td><div class="skeleton-bar" style="width: 30px;"></div></td>
+                            <td><div class="skeleton-bar" style="width: 30px;"></div></td>
+                        </tr>
+                    `;
+                }
+
+                // Real data row
+                const hasNSF = (data.nsf_count || 0) > 0;
+                const hasNeg = (data.days_negative || 0) > 0;
+                return `
+                    <tr style="animation: fadeIn 0.3s ease-out;">
+                        <td style="font-weight: 500;">${data.month || 'Unknown'}</td>
+                        <td class="text-green">$${(data.total_deposits || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td class="text-gold">$${(data.true_revenue || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td>${data.num_deposits || 0}</td>
+                        <td class="text-red">$${(data.total_withdrawals || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td>$${(data.average_daily_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td class="${(data.opening_balance || 0) < 0 ? 'text-red' : ''}">$${(data.opening_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td class="${(data.ending_balance || 0) < 0 ? 'text-red' : ''}">$${(data.ending_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td class="${hasNSF ? 'text-red' : ''}">${data.nsf_count || 0}</td>
+                        <td class="${hasNeg ? 'text-red' : ''}">${data.days_negative || 0}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Calculate averages for footer
+            const numMonths = extractedCount || 1;
+            const avgDeposits = totals.deposits / numMonths;
+            const avgTrueRev = totals.trueRevenue / numMonths;
+            const avgWithdrawals = totals.withdrawals / numMonths;
+            const avgBalance = totals.avgBalSum / numMonths;
+            const avgNumDeps = Math.round(totals.numDeps / numMonths);
+            const avgNsf = (totals.nsf / numMonths).toFixed(2);
+            const avgNegDays = (totals.negDays / numMonths).toFixed(2);
 
             container.innerHTML = `
+                <style>
+                    .skeleton-bar {
+                        height: 14px;
+                        background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--border) 50%, var(--bg-tertiary) 75%);
+                        background-size: 200% 100%;
+                        animation: shimmer 1.5s infinite;
+                        border-radius: 4px;
+                        width: 70px;
+                    }
+                    @keyframes shimmer {
+                        0% { background-position: 200% 0; }
+                        100% { background-position: -200% 0; }
+                    }
+                    @keyframes spin {
+                        to { transform: rotate(360deg); }
+                    }
+                </style>
+
                 <!-- Progress indicator -->
                 <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding: 12px; background: var(--bg-tertiary); border-radius: 8px;">
                     <div style="font-size: 13px; font-weight: 600; color: var(--text);">
@@ -5738,29 +5735,67 @@ Return ONLY valid JSON:
                     </div>
                 </div>
 
-                <!-- Live Running Totals -->
+                <!-- Live Running Totals Cards -->
                 <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px;">
                     <div style="background: var(--green-bg); border: 1px solid var(--green); border-radius: 8px; padding: 12px; text-align: center;">
                         <div style="font-size: 10px; color: var(--green); margin-bottom: 4px;">AVG DEPOSITS</div>
-                        <div style="font-size: 18px; font-weight: 700; color: var(--green);">$${extractedCount > 0 ? Math.round(totals.deposits / extractedCount).toLocaleString() : '0'}</div>
+                        <div style="font-size: 18px; font-weight: 700; color: var(--green);">${extractedCount > 0 ? '$' + Math.round(avgDeposits).toLocaleString() : '<div class="skeleton-bar" style="margin: 0 auto;"></div>'}</div>
                     </div>
                     <div style="background: var(--gold-bg); border: 1px solid var(--gold); border-radius: 8px; padding: 12px; text-align: center;">
                         <div style="font-size: 10px; color: var(--gold); margin-bottom: 4px;">AVG TRUE REV</div>
-                        <div style="font-size: 18px; font-weight: 700; color: var(--gold);">$${extractedCount > 0 ? Math.round(totals.trueRevenue / extractedCount).toLocaleString() : '0'}</div>
+                        <div style="font-size: 18px; font-weight: 700; color: var(--gold);">${extractedCount > 0 ? '$' + Math.round(avgTrueRev).toLocaleString() : '<div class="skeleton-bar" style="margin: 0 auto;"></div>'}</div>
                     </div>
                     <div style="background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center;">
                         <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">AVG BALANCE</div>
-                        <div style="font-size: 18px; font-weight: 700; color: var(--text);">$${extractedCount > 0 ? Math.round(totals.avgBalSum / extractedCount).toLocaleString() : '0'}</div>
+                        <div style="font-size: 18px; font-weight: 700; color: var(--text);">${extractedCount > 0 ? '$' + Math.round(avgBalance).toLocaleString() : '<div class="skeleton-bar" style="margin: 0 auto;"></div>'}</div>
                     </div>
                     <div style="background: ${totals.nsf > 0 ? 'var(--red-bg)' : 'var(--green-bg)'}; border: 1px solid ${totals.nsf > 0 ? 'var(--red)' : 'var(--green)'}; border-radius: 8px; padding: 12px; text-align: center;">
                         <div style="font-size: 10px; color: ${totals.nsf > 0 ? 'var(--red)' : 'var(--green)'}; margin-bottom: 4px;">TOTAL NSF</div>
-                        <div style="font-size: 18px; font-weight: 700; color: ${totals.nsf > 0 ? 'var(--red)' : 'var(--green)'};">${totals.nsf}</div>
+                        <div style="font-size: 18px; font-weight: 700; color: ${totals.nsf > 0 ? 'var(--red)' : 'var(--green)'};">${extractedCount > 0 ? totals.nsf : '<div class="skeleton-bar" style="margin: 0 auto; width: 30px;"></div>'}</div>
                     </div>
                 </div>
 
-                <!-- Statement Cards Grid -->
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; max-width: 800px; margin: 0 auto;">
-                    ${statementCards}
+                <!-- Live Table with skeleton rows -->
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>Deposits</th>
+                                <th>True Rev</th>
+                                <th>#</th>
+                                <th>Withdrawals</th>
+                                <th>Avg Bal</th>
+                                <th>Open Bal</th>
+                                <th>End Bal</th>
+                                <th>NSF</th>
+                                <th>Neg</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${tableRows}
+                        </tbody>
+                        ${extractedCount > 0 ? `
+                        <tfoot>
+                            <tr>
+                                <td><strong>AVERAGE</strong></td>
+                                <td>$${avgDeposits.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                <td>$${avgTrueRev.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                <td>${avgNumDeps}</td>
+                                <td>$${avgWithdrawals.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                <td>$${avgBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>${avgNsf}</td>
+                                <td>${avgNegDays}</td>
+                            </tr>
+                        </tfoot>
+                        ` : ''}
+                    </table>
+                </div>
+
+                <div style="text-align: center; color: var(--text-muted); font-size: 12px; margin-top: 12px;">
+                    Click any cell to view details
                 </div>
             `;
         }
