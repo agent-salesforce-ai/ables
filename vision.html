@@ -7220,24 +7220,28 @@ Return ONLY valid JSON:
         }
 
         function calculateSuggestedApproval(totalScore, tier, avgRevenue, estimatedFico) {
-            // Approval multipliers based on tier
-            const tierMultipliers = {
-                A: { amount: 1.5, rate: 1.15, approval: 'APPROVED' },
-                B: { amount: 1.2, rate: 1.25, approval: 'APPROVED' },
-                C: { amount: 0.9, rate: 1.35, approval: 'CONDITIONAL' },
-                D: { amount: 0.6, rate: 1.45, approval: 'CONDITIONAL' },
-                E: { amount: 0, rate: 0, approval: 'DECLINED' }
+            // Calculate advance multiplier based on Ables score (1.25x to 1.55x)
+            // Score 0 = 1.25x, Score 100 = 1.55x (linear interpolation)
+            const advanceMultiplier = 1.25 + (totalScore / 100) * 0.30;
+
+            // Determine approval status and factor rate based on tier
+            const tierConfig = {
+                A: { rate: 1.15, approval: 'APPROVED' },
+                B: { rate: 1.25, approval: 'APPROVED' },
+                C: { rate: 1.35, approval: 'CONDITIONAL' },
+                D: { rate: 1.45, approval: 'CONDITIONAL' },
+                E: { rate: 0, approval: 'DECLINED' }
             };
 
-            const multiplier = tierMultipliers[tier] || tierMultipliers.E;
+            const config = tierConfig[tier] || tierConfig.E;
 
-            // Calculate max advance (based on monthly revenue)
-            let maxAdvance = Math.round(avgRevenue * multiplier.amount / 1000) * 1000;
+            // Calculate max advance (based on monthly revenue * score-based multiplier)
+            let maxAdvance = tier === 'E' ? 0 : Math.round(avgRevenue * advanceMultiplier / 1000) * 1000;
             maxAdvance = Math.min(maxAdvance, 500000); // Cap at 500K
             maxAdvance = Math.max(maxAdvance, 0);
 
             // Factor rate based on tier
-            const factorRate = multiplier.rate;
+            const factorRate = config.rate;
 
             // Daily payment (assuming 6-month term, 22 business days/month)
             const totalPayback = maxAdvance * factorRate;
@@ -7250,8 +7254,8 @@ Return ONLY valid JSON:
                 'CONDITIONAL': { bg: '#fef9c3', color: '#ca8a04' },
                 'DECLINED': { bg: '#fee2e2', color: '#dc2626' }
             };
-            const colors = approvalColors[multiplier.approval];
-            approvalBadge.textContent = multiplier.approval;
+            const colors = approvalColors[config.approval];
+            approvalBadge.textContent = config.approval;
             approvalBadge.style.background = colors.bg;
             approvalBadge.style.color = colors.color;
 
@@ -7259,13 +7263,13 @@ Return ONLY valid JSON:
             document.getElementById('suggestedRate').textContent = factorRate > 0 ? factorRate.toFixed(2) : '--';
             document.getElementById('suggestedPayment').textContent = dailyPayment > 0 ? '$' + dailyPayment.toLocaleString() : '$0';
 
-            // Approval note
+            // Approval note with multiplier info
             const noteEl = document.getElementById('approvalNote');
-            if (multiplier.approval === 'APPROVED') {
-                noteEl.textContent = `Strong profile. FICO ${estimatedFico}, Ables Score ${totalScore}/100. Recommended for standard terms.`;
+            if (config.approval === 'APPROVED') {
+                noteEl.textContent = `Strong profile. FICO ${estimatedFico}, Ables Score ${totalScore}/100 (${advanceMultiplier.toFixed(2)}x multiplier). Recommended for standard terms.`;
                 noteEl.style.background = '#dcfce7';
-            } else if (multiplier.approval === 'CONDITIONAL') {
-                noteEl.textContent = `Review required. FICO ${estimatedFico}, Ables Score ${totalScore}/100. Consider reduced advance or higher factor.`;
+            } else if (config.approval === 'CONDITIONAL') {
+                noteEl.textContent = `Review required. FICO ${estimatedFico}, Ables Score ${totalScore}/100 (${advanceMultiplier.toFixed(2)}x multiplier). Consider reduced advance or higher factor.`;
                 noteEl.style.background = '#fef9c3';
             } else {
                 noteEl.textContent = `Does not meet minimum criteria. FICO ${estimatedFico}, Ables Score ${totalScore}/100. Recommend decline or stip for additional collateral.`;
