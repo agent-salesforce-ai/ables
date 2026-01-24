@@ -7776,8 +7776,8 @@ Return ONLY valid JSON:
             const groundedModules = ['sos', 'ucc', 'tax', 'judgment', 'bankruptcy', 'bbb'];
             const useGrounding = groundedModules.includes(module.id) && retryCount < 2;
 
-            // Use gemini-2.0-flash-exp which supports grounding better
-            const model = useGrounding ? 'gemini-2.0-flash-exp' : getSelectedModel();
+            // Use gemini-2.5-flash for grounding (supports google_search)
+            const model = useGrounding ? 'gemini-2.5-flash-preview-05-20' : getSelectedModel();
 
             const requestBody = {
                 contents: [{
@@ -7805,12 +7805,7 @@ Return ONLY valid JSON.`
             // Add search grounding for key research modules
             if (useGrounding) {
                 requestBody.tools = [{
-                    google_search_retrieval: {
-                        dynamic_retrieval_config: {
-                            mode: "MODE_DYNAMIC",
-                            dynamic_threshold: 0.2
-                        }
-                    }
+                    google_search: {}
                 }];
             }
 
@@ -7903,8 +7898,9 @@ Return ONLY valid JSON.`
             const details = result.details || [];
             const flags = result.flags || [];
 
-            // Build entity info section for SOS results
-            const entityInfo = (result.entity_number || result.formation_date || result.status) ? `
+            // Build entity info section for SOS/UCC/legal modules only
+            const entityModules = ['sos', 'ucc', 'tax', 'judgment', 'bankruptcy'];
+            const entityInfo = (entityModules.includes(module.id) && (result.entity_number || result.formation_date || result.status)) ? `
                 <div class="research-detail-section" style="margin-bottom: 12px;">
                     <div class="research-detail-label">Entity Information</div>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin-top: 8px;">
