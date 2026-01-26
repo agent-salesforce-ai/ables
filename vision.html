@@ -8692,7 +8692,7 @@ Return ONLY valid JSON:
 
             // Use grounded search for key modules that need real data
             const groundedModules = ['sos', 'ucc', 'tax', 'judgment', 'bankruptcy', 'bbb'];
-            const useGrounding = groundedModules.includes(module.id) && retryCount === 0;
+            const useGrounding = groundedModules.includes(module.id) && retryCount < 2;
 
             // Use Gemini 3 Flash for all research (supports google_search grounding)
             const model = 'gemini-3-flash-preview';
@@ -8726,7 +8726,7 @@ ${jsonSchema}
 Return ONLY valid JSON.`
                     }]
                 }],
-                generationConfig: { temperature: 0.3, maxOutputTokens: 1024 }
+                generationConfig: { temperature: 0.3, maxOutputTokens: 2048 }
             };
 
             // Add search grounding for key research modules
@@ -8739,7 +8739,7 @@ Return ONLY valid JSON.`
             try {
                 // Use AbortController for fetch timeout (60 seconds for research)
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 30000);
+                const timeoutId = setTimeout(() => controller.abort(), 60000);
 
                 const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
                     method: 'POST',
