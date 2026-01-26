@@ -3953,7 +3953,7 @@
                     // Try pdf-lib first for full quality vector PDF output
                     try {
                         const { PDFDocument } = PDFLib;
-                        const pdfDoc = await PDFDocument.load(file.originalPdfBytes.slice(0), { ignoreEncryption: true });
+                        const pdfDoc = await PDFDocument.load(file.originalPdfBytes.slice(0));
                         const watermarkImage = await pdfDoc.embedPng(watermarkPngBytes);
                         const pages = pdfDoc.getPages();
 
@@ -4007,6 +4007,24 @@
                         }
                         pdf.save(`${safeLabel}.pdf`);
                     }
+                } else {
+                    // Non-PDF multi-page: render pages to canvas with watermark, assemble via jsPDF
+                    file.currentPage = 0;
+                    activeFileIndex = i;
+                    renderPreview();
+                    await new Promise(r => setTimeout(r, 150));
+
+                    const pdf = new jsPDF({ orientation: canvas.width > canvas.height ? 'landscape' : 'portrait', unit: 'px', format: [canvas.width, canvas.height] });
+                    pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, canvas.width, canvas.height);
+
+                    for (let p = 1; p < file.pages.length; p++) {
+                        file.currentPage = p;
+                        renderPreview();
+                        await new Promise(r => setTimeout(r, 150));
+                        pdf.addPage([canvas.width, canvas.height]);
+                        pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, canvas.width, canvas.height);
+                    }
+                    pdf.save(`${safeLabel}.pdf`);
                 }
                 await new Promise(r => setTimeout(r, 300));
             }
@@ -6066,7 +6084,7 @@
 
                 for (let i = 1; i <= pdf.numPages; i++) {
                     const page = await pdf.getPage(i);
-                    const viewport = page.getViewport({ scale: 1.5 });
+                    const viewport = page.getViewport({ scale: 3 });
                     const pdfCanvas = document.createElement('canvas');
                     pdfCanvas.width = viewport.width;
                     pdfCanvas.height = viewport.height;
