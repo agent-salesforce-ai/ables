@@ -2212,11 +2212,15 @@
             margin-top: 4px;
         }
 
-        /* Research Modules Grid */
+        /* Research Modules Grid - columns prevent reflow when cards expand */
         .research-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 12px;
+            columns: 2 320px;
+            column-gap: 12px;
+        }
+
+        .research-grid > .research-module {
+            break-inside: avoid;
+            margin-bottom: 12px;
         }
 
         .research-module {
@@ -8958,8 +8962,9 @@ Return ONLY the JSON object, no other text.`
             const content = document.getElementById(`content-${module.id}`);
             const iconEl = moduleEl.querySelector('.research-module-icon');
 
-            // Remove loading state and flash to signal completion
+            // Remove loading state, expand, flash to signal completion
             moduleEl.classList.remove('loading');
+            moduleEl.classList.add('expanded');
             moduleEl.classList.add('just-loaded');
             setTimeout(() => moduleEl.classList.remove('just-loaded'), 1000);
 
