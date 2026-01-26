@@ -229,6 +229,11 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
+        .btn-primary.analyze-main-btn {
+            border: 2px solid var(--gold);
+            padding: 14px 16px;
+        }
+
         .btn-primary::before {
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
         }
@@ -2793,7 +2798,7 @@
                 <button class="btn btn-secondary" id="downloadAllBtn" style="width: 100%; display: none;">
                     Download Watermarked
                 </button>
-                <button class="btn btn-primary" id="processBtn" style="width: 100%;" disabled>
+                <button class="btn btn-primary analyze-main-btn" id="processBtn" style="width: 100%;" disabled>
                     Analyze Documents
                 </button>
                 <div class="export-menu-container" style="width: 100%;">
