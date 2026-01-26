@@ -3952,14 +3952,15 @@
                             const wmWidth = watermarkImage.width;
                             const wmHeight = watermarkImage.height;
 
-                            // Calculate watermark size based on settings
-                            const baseSize = Math.min(width, height) * (settings.size / 100) * 0.5;
+                            // Calculate watermark size based on settings (settings.size is 0-1)
+                            const baseSize = Math.min(width, height) * settings.size * 1.5;
                             const wmScale = baseSize / Math.max(wmWidth, wmHeight);
                             const drawWidth = wmWidth * wmScale;
                             const drawHeight = wmHeight * wmScale;
 
-                            // Calculate spacing based on density - ensure minimum spacing
-                            const spacing = Math.max(50, Math.max(drawWidth, drawHeight) * (2.5 - settings.density / 50));
+                            // Calculate spacing based on density (settings.density is 0-1)
+                            const gap = 1.5 - settings.density;
+                            const spacing = Math.max(50, Math.max(drawWidth, drawHeight) * gap + 80);
 
                             // Draw tiled watermarks
                             for (let y = 0; y < height; y += spacing) {
@@ -3969,7 +3970,7 @@
                                         y: y,
                                         width: drawWidth,
                                         height: drawHeight,
-                                        opacity: settings.opacity / 100,
+                                        opacity: settings.opacity,
                                         rotate: PDFLib.degrees(-settings.rotation)
                                     });
                                 }
