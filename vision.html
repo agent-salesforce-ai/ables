@@ -4004,12 +4004,12 @@
 
         // Generate completely fresh export HTML with hardcoded light styles
         function generateExportHTML(options) {
-            const analysis = extractedData.full_analysis;
+            const analysis = extractedData?.full_analysis || {};
             const agg = analysis.aggregated || {};
             const months = analysis.months || [];
             const mcaLenders = agg.detected_mca_lenders || [];
             const flags = analysis.red_flags || [];
-            const existingDebt = analysis.existing_debt || [];
+            const existingDebt = analysis.existing_debt || extractedData?.identified_debt || [];
 
             // Calculate totals
             const totals = months.reduce((acc, m) => ({
@@ -5456,6 +5456,7 @@
                     'debtSection': { includeDebt: true },
                     'researchSection': { includeResearch: true },
                     'lenderSection': { includeLenders: true },
+                    'scoreSection': { includeScore: true },
                     'creditEngineSection': { includeScore: true },
                     'submitSection': { includeSubmit: true }
                 };
