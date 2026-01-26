@@ -8642,18 +8642,21 @@ Return ONLY valid JSON:
 
             console.log(`Running ${remainingModules.length} remaining research modules`);
 
-            // Fire all remaining modules concurrently, render each as it returns
-            await Promise.all(remainingModules.map(async (module) => {
-                try {
-                    const result = await runSingleResearch(apiKey, module, businessName, ownerName, location, 0, verifiedEntity);
-                    researchResults[module.id] = result;
-                    renderResearchModule(module, result);
-                } catch (e) {
-                    researchResults[module.id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
-                    renderResearchModule(module, researchResults[module.id]);
-                }
-                updateProgress();
-            }));
+            // Run 3 at a time to avoid API limits, each renders immediately on return
+            for (let i = 0; i < remainingModules.length; i += 3) {
+                const batch = remainingModules.slice(i, i + 3);
+                await Promise.all(batch.map(async (module) => {
+                    try {
+                        const result = await runSingleResearch(apiKey, module, businessName, ownerName, location, 0, verifiedEntity);
+                        researchResults[module.id] = result;
+                        renderResearchModule(module, result);
+                    } catch (e) {
+                        researchResults[module.id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
+                        renderResearchModule(module, researchResults[module.id]);
+                    }
+                    updateProgress();
+                }));
+            }
 
             // Final check
             if (completed >= researchModules.length) {
