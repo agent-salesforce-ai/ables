@@ -6073,38 +6073,19 @@
                 window._verifiedEntity = null;
                 researchResults = {};
 
-                // ===== STEP 2: FRAUD SCAN (parallel) =====
+                // ===== STEP 2: EXTRACT BANK DATA + FRAUD SCAN (combined) =====
                 setStep(2);
-                showLoading(true, `Scanning ${files.length} documents for fraud in parallel...`, {
-                    step: 'scan',
-                    progress: 10,
-                    subtext: `Analyzing all documents simultaneously for manipulation`
-                });
-
-                let fraudScanned = 0;
-                await Promise.all(files.map(async (file, i) => {
-                    file.status = await scanForFraud(file, apiKey);
-                    fraudScanned++;
-                    showLoading(true, `Scanned ${fraudScanned} of ${files.length} documents...`, {
-                        step: 'scan',
-                        progress: 5 + Math.round((fraudScanned / files.length) * 25),
-                        subtext: `${files.length - fraudScanned} remaining`
-                    });
-                    updateFileList();
-                }));
-
-                // Fraud complete - render results
-                renderFraudResults();
-
-                // ===== STEP 3: EXTRACT BANK DATA =====
-                setStep(3);
-                showLoading(true, 'Extracting bank data...', {
+                showLoading(true, 'Extracting bank data & scanning for fraud...', {
                     step: 'extract',
-                    progress: 30,
-                    subtext: 'Reading transaction data and account details'
+                    progress: 15,
+                    subtext: 'Processing all documents simultaneously'
                 });
 
                 extractedData = await extractBankDataSimple(apiKey);
+
+                // Fraud results come back in the extraction response
+                renderFraudResults();
+                updateFileList();
 
                 // Store months data for clickable cell popups
                 liveExtractionResults = extractedData?.full_analysis?.months || [];
@@ -6122,8 +6103,8 @@
                     document.getElementById('displayBusinessAddress').textContent = extractedBusinessInfo.address || '';
                 }
 
-                // ===== STEP 4: RESEARCH =====
-                setStep(4);
+                // ===== STEP 3: RESEARCH =====
+                setStep(3);
                 if (extractedBusinessInfo.name) {
                     showLoading(true, `Researching ${extractedBusinessInfo.name}...`, {
                         step: 'analyze',
@@ -6137,8 +6118,8 @@
                 // ===== ABLES CREDIT SCORE =====
                 calculateCreditScore();
 
-                // ===== STEP 5: MATCH LENDERS =====
-                setStep(5);
+                // ===== STEP 4: MATCH LENDERS =====
+                setStep(4);
                 document.getElementById('submitSection').classList.remove('hidden');
 
                 showLoading(true, 'Finding best lender matches...', {
@@ -6399,7 +6380,17 @@ End with exactly one: RISK_LEVEL:CLEAN or RISK_LEVEL:WARNING or RISK_LEVEL:DANGE
             const parts = [
                 { text: `You are analyzing a SINGLE bank statement for MCA underwriting. This is statement ${fileIndex + 1}.
 
-Extract the data for THIS ONE MONTH only:
+TWO TASKS:
+
+TASK 1 - FRAUD CHECK: Examine the document image for signs of ALTERATION or TAMPERING:
+- DIGITAL EDITING: visible editing artifacts, cut/paste lines, mismatched pixels, blur around numbers
+- FONT TAMPERING: numbers or text with different fonts/sizes than surrounding content
+- WHITEOUT/CORRECTION: visible white boxes or correction tape marks covering original text
+- MATHEMATICAL ERRORS: running balance doesn't add up correctly with transactions shown
+DO NOT flag for: future dates, low resolution, normal format variations, standard PDF artifacts.
+Set fraud_status to "clean", "warning", or "danger". Only "danger" if CLEAR visual evidence of alteration.
+
+TASK 2 - DATA EXTRACTION: Extract the data for THIS ONE MONTH only:
 - month: Month name and year (e.g., "January 2024")
 - total_deposits: Sum of all credits/deposits
 - true_revenue: Deposits minus internal transfers, loans, owner deposits
@@ -6428,6 +6419,8 @@ Detect any MCA/debt payments - look for recurring debits to: LIBERTAS, YELLOWSTO
 
 Return ONLY valid JSON:
 {
+  "fraud_status": "clean",
+  "fraud_notes": "Brief explanation of fraud check findings",
   "month": "Month Year",
   "total_deposits": 0,
   "true_revenue": 0,
@@ -6579,6 +6572,15 @@ Return ONLY valid JSON:
                     await new Promise(r => setTimeout(r, i * 2000));
                     const result = await extractWithRetry(file, i);
                     updateExtractionProgress();
+
+                    // Store fraud results from combined extraction
+                    if (result) {
+                        file.status = result.fraud_status || 'clean';
+                        file.fraudAnalysis = result.fraud_notes || 'No alterations detected';
+                    } else {
+                        file.status = 'warning';
+                        file.fraudAnalysis = 'Extraction failed - unable to analyze';
+                    }
 
                     // Store business info from first successful result
                     if (result && !extractedBusinessInfo.name) {
