@@ -8642,8 +8642,27 @@ Return ONLY valid JSON:
 
             console.log(`Running ${remainingModules.length} remaining research modules`);
 
-            // Fire all remaining modules concurrently, render each as it returns
-            await Promise.all(remainingModules.map(async (module) => {
+            // Run SOS first if it hasn't completed (most important, needs to load first)
+            const sosModule = remainingModules.find(m => m.id === 'sos');
+            const otherModules = remainingModules.filter(m => m.id !== 'sos');
+            if (sosModule) {
+                try {
+                    const result = await runSingleResearch(apiKey, sosModule, businessName, ownerName, location, 0, verifiedEntity);
+                    researchResults[sosModule.id] = result;
+                    renderResearchModule(sosModule, result);
+                    if (result.entity_number || result.formation_date || result.status) {
+                        window._verifiedEntity = { entity_number: result.entity_number, formation_date: result.formation_date, status: result.status, verified_name: businessName };
+                        verifiedEntity = window._verifiedEntity;
+                    }
+                } catch (e) {
+                    researchResults[sosModule.id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
+                    renderResearchModule(sosModule, researchResults[sosModule.id]);
+                }
+                updateProgress();
+            }
+
+            // Fire all other modules concurrently, render each as it returns
+            await Promise.all(otherModules.map(async (module) => {
                 try {
                     const result = await runSingleResearch(apiKey, module, businessName, ownerName, location, 0, verifiedEntity);
                     researchResults[module.id] = result;
@@ -8693,9 +8712,8 @@ Return ONLY valid JSON:
                 location: `Research the business location for "${businessName}" ${location ? `at ${location}` : ''}. Analyze: Area demographics, local competition, foot traffic potential.`
             };
 
-            // Use grounded search for key modules that need real data
-            const groundedModules = ['sos', 'ucc', 'tax', 'judgment', 'bankruptcy', 'bbb'];
-            const useGrounding = groundedModules.includes(module.id) && retryCount < 2;
+            // All modules use Google Search grounding for real web data
+            const useGrounding = retryCount < 2;
 
             // Use Gemini 3 Flash for all research (supports google_search grounding)
             const model = 'gemini-3-flash-preview';
