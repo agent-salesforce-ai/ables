@@ -3918,18 +3918,27 @@
             const { jsPDF } = window.jspdf;
             showStatus('Preparing watermarked downloads...', 'info');
 
-            // Prepare watermark PNG bytes for pdf-lib
+            // Prepare compressed watermark bytes for pdf-lib
+            let watermarkJpgBytes = null;
             let watermarkPngBytes = null;
             if (logoImage && logoImage.complete && logoImage.naturalWidth > 0) {
                 try {
+                    // Scale watermark down to max 150px on longest side for small file size
+                    const maxDim = 150;
+                    const ratio = Math.min(maxDim / logoImage.naturalWidth, maxDim / logoImage.naturalHeight, 1);
                     const wmCanvas = document.createElement('canvas');
-                    wmCanvas.width = logoImage.naturalWidth;
-                    wmCanvas.height = logoImage.naturalHeight;
+                    wmCanvas.width = Math.round(logoImage.naturalWidth * ratio);
+                    wmCanvas.height = Math.round(logoImage.naturalHeight * ratio);
                     const wmCtx = wmCanvas.getContext('2d');
-                    wmCtx.drawImage(logoImage, 0, 0);
-                    const dataUrl = wmCanvas.toDataURL('image/png');
-                    const base64 = dataUrl.split(',')[1];
-                    watermarkPngBytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+                    wmCtx.drawImage(logoImage, 0, 0, wmCanvas.width, wmCanvas.height);
+                    // Try JPEG first (much smaller), fall back to PNG if logo has transparency
+                    const jpgUrl = wmCanvas.toDataURL('image/jpeg', 0.6);
+                    const jpgBase64 = jpgUrl.split(',')[1];
+                    watermarkJpgBytes = Uint8Array.from(atob(jpgBase64), c => c.charCodeAt(0));
+                    // Also prepare PNG in case logo needs transparency
+                    const pngUrl = wmCanvas.toDataURL('image/png');
+                    const pngBase64 = pngUrl.split(',')[1];
+                    watermarkPngBytes = Uint8Array.from(atob(pngBase64), c => c.charCodeAt(0));
                 } catch (e) {
                     console.error('Error creating watermark bytes:', e);
                 }
@@ -3949,12 +3958,15 @@
                     link.download = `${safeLabel}.png`;
                     link.href = canvas.toDataURL('image/png');
                     link.click();
-                } else if (file.isPdf && file.originalPdfBytes && watermarkPngBytes) {
+                } else if (file.isPdf && file.originalPdfBytes && (watermarkJpgBytes || watermarkPngBytes)) {
                     // Try pdf-lib first for full quality vector PDF output
                     try {
                         const { PDFDocument } = PDFLib;
                         const pdfDoc = await PDFDocument.load(file.originalPdfBytes.slice(0));
-                        const watermarkImage = await pdfDoc.embedPng(watermarkPngBytes);
+                        // Use JPEG (much smaller ~2-5KB) over PNG (~50-200KB) to keep file size down
+                        const watermarkImage = watermarkJpgBytes
+                            ? await pdfDoc.embedJpg(watermarkJpgBytes)
+                            : await pdfDoc.embedPng(watermarkPngBytes);
                         const pages = pdfDoc.getPages();
 
                         for (const page of pages) {
