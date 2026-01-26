@@ -2757,45 +2757,24 @@
                     <div class="export-dropdown" id="exportDropdown">
                         <div class="export-dropdown-header">Export Options</div>
                         <div class="export-dropdown-section">
-                            <div class="export-dropdown-section-title">Images</div>
-                            <button class="export-option" onclick="exportMethod('png-clean')">
-                                <div class="export-option-icon png">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-                                </div>
-                                <div class="export-option-info">
-                                    <div class="export-option-title">PNG (Light Theme)</div>
-                                    <div class="export-option-desc">Clean white background, DOM clone method</div>
-                                </div>
-                                <span class="export-option-badge">Best</span>
-                            </button>
+                            <div class="export-dropdown-section-title">Full Report</div>
                             <button class="export-option" onclick="exportMethod('png-iframe')">
                                 <div class="export-option-icon png">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
                                 </div>
                                 <div class="export-option-info">
-                                    <div class="export-option-title">PNG (Iframe Render)</div>
-                                    <div class="export-option-desc">Isolated render, avoids style conflicts</div>
+                                    <div class="export-option-title">PNG Image</div>
+                                    <div class="export-option-desc">Full report with all sections</div>
                                 </div>
+                                <span class="export-option-badge">Best</span>
                             </button>
-                            <button class="export-option" onclick="exportMethod('png-native')">
-                                <div class="export-option-icon png">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-                                </div>
-                                <div class="export-option-info">
-                                    <div class="export-option-title">PNG (Current Theme)</div>
-                                    <div class="export-option-desc">Exports as-is with current dark/light theme</div>
-                                </div>
-                            </button>
-                        </div>
-                        <div class="export-dropdown-section">
-                            <div class="export-dropdown-section-title">Documents</div>
                             <button class="export-option" onclick="exportMethod('pdf')">
                                 <div class="export-option-icon pdf">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
                                 </div>
                                 <div class="export-option-info">
                                     <div class="export-option-title">PDF Document</div>
-                                    <div class="export-option-desc">Multi-page PDF with light theme</div>
+                                    <div class="export-option-desc">Multi-page PDF with all sections</div>
                                 </div>
                             </button>
                             <button class="export-option" onclick="exportMethod('print')">
@@ -2804,7 +2783,7 @@
                                 </div>
                                 <div class="export-option-info">
                                     <div class="export-option-title">Print / Save as PDF</div>
-                                    <div class="export-option-desc">Uses browser print dialog, best quality</div>
+                                    <div class="export-option-desc">Uses browser print dialog</div>
                                 </div>
                             </button>
                         </div>
@@ -2826,15 +2805,6 @@
                                 <div class="export-option-info">
                                     <div class="export-option-title">CSV Spreadsheet</div>
                                     <div class="export-option-desc">Monthly data for Excel/Sheets</div>
-                                </div>
-                            </button>
-                            <button class="export-option" onclick="exportMethod('clipboard')">
-                                <div class="export-option-icon clipboard">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
-                                </div>
-                                <div class="export-option-info">
-                                    <div class="export-option-title">Copy to Clipboard</div>
-                                    <div class="export-option-desc">Formatted summary text</div>
                                 </div>
                             </button>
                         </div>
@@ -3550,8 +3520,8 @@
             padding: 24,
             quality: 1,
             width: 1200,
-            background: '#ffffff',
-            theme: 'light'
+            background: 'auto',
+            theme: 'auto'
         };
 
         // Initialize
@@ -3949,13 +3919,9 @@
 
             switch(method) {
                 case 'png-clean':
-                    await exportPngIframe(); // Use iframe for consistent light theme rendering
-                    break;
                 case 'png-iframe':
-                    await exportPngIframe();
-                    break;
                 case 'png-native':
-                    await exportPngNative();
+                    await exportPngIframe();
                     break;
                 case 'pdf':
                     await exportPdf();
@@ -3981,36 +3947,37 @@
             const ownerName = extractedBusinessInfo.owner || '';
             const exportDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
+            // Always use dark branded header bar for consistency
             const header = document.createElement('div');
             header.style.cssText = `
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 20px 24px;
+                padding: 24px 28px;
                 margin-bottom: 20px;
-                background: ${isDark ? '#1a1a1a' : '#f8fafc'};
-                border: 1px solid ${isDark ? '#333' : '#e2e8f0'};
-                border-radius: 12px;
+                background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+                border: 1px solid #2a2a2a;
+                border-radius: 16px;
             `;
 
             header.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <div style="width: 40px; height: 40px; position: relative;">
-                        <svg viewBox="0 0 100 100" style="width: 100%; height: 100%;">
-                            <ellipse cx="50" cy="50" rx="35" ry="12" fill="none" stroke="#eab308" stroke-width="4" transform="rotate(-20 50 50)"/>
-                            <circle cx="50" cy="50" r="18" fill="#f97316"/>
-                            <ellipse cx="50" cy="50" rx="42" ry="8" fill="none" stroke="#eab308" stroke-width="2" transform="rotate(-20 50 50)" opacity="0.5"/>
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <div style="width: 44px; height: 44px; position: relative;">
+                        <svg viewBox="0 0 64 64" fill="none" style="width: 100%; height: 100%;">
+                            <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
+                            <circle cx="32" cy="32" r="12" fill="#eab308"/>
+                            <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
                         </svg>
                     </div>
                     <div>
-                        <div style="font-size: 18px; font-weight: 700; color: ${isDark ? '#ffffff' : '#111827'};">Vision Pro</div>
-                        <div style="font-size: 11px; color: ${isDark ? '#9ca3af' : '#6b7280'}; text-transform: uppercase; letter-spacing: 0.5px;">Bank Statement Analysis</div>
+                        <div style="font-size: 22px; font-weight: 700; color: #ffffff;">Vision <span style="color: #eab308;">PRO</span></div>
+                        <div style="font-size: 11px; color: #71717a; text-transform: uppercase; letter-spacing: 1px;">Bank Statement Analysis</div>
                     </div>
                 </div>
                 <div style="text-align: right;">
-                    <div style="font-size: 16px; font-weight: 600; color: ${isDark ? '#ffffff' : '#111827'};">${businessName}</div>
-                    ${ownerName ? `<div style="font-size: 13px; color: ${isDark ? '#9ca3af' : '#6b7280'};">${ownerName}</div>` : ''}
-                    <div style="font-size: 12px; color: ${isDark ? '#6b7280' : '#9ca3af'}; margin-top: 4px;">${exportDate}</div>
+                    <div style="font-size: 16px; font-weight: 600; color: #ffffff;">${businessName}</div>
+                    ${ownerName ? `<div style="font-size: 13px; color: #a1a1aa;">${ownerName}</div>` : ''}
+                    <div style="font-size: 12px; color: #71717a; margin-top: 2px;">${exportDate}</div>
                 </div>
             `;
 
@@ -4019,6 +3986,7 @@
 
         // Create export footer
         function createExportFooter(isDark = false) {
+            // Always use dark branded footer bar for consistency
             const footer = document.createElement('div');
             footer.style.cssText = `
                 display: flex;
@@ -4026,22 +3994,22 @@
                 align-items: center;
                 padding: 16px 24px;
                 margin-top: 20px;
-                background: ${isDark ? '#1a1a1a' : '#f8fafc'};
-                border: 1px solid ${isDark ? '#333' : '#e2e8f0'};
+                background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+                border: 1px solid #2a2a2a;
                 border-radius: 12px;
                 font-size: 11px;
-                color: ${isDark ? '#6b7280' : '#9ca3af'};
+                color: #71717a;
             `;
 
             footer.innerHTML = `
-                <div>Generated by Vision Pro • ables.ai</div>
+                <div>Generated by <span style="color: #eab308;">Vision PRO</span> • ables.ai</div>
                 <div>Confidential - For Internal Use Only</div>
             `;
 
             return footer;
         }
 
-        // Generate completely fresh export HTML with hardcoded light styles
+        // Generate export HTML matching the website's current theme
         function generateExportHTML(options) {
             const analysis = extractedData?.full_analysis || {};
             const agg = analysis.aggregated || {};
@@ -4065,25 +4033,49 @@
             const avgBalance = Math.round(totals.avgBalSum / numMonths);
 
             const businessName = extractedBusinessInfo.name || 'Bank Analysis';
+            const ownerName = extractedBusinessInfo.owner || '';
             const dateStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
+            // Detect current theme from the document
+            const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+
+            // Theme-aware colors matching the website exactly
+            const C = isDark ? {
+                bg: '#0a0a0a', bgCard: '#111111', bgHeader: '#1a1a1a',
+                border: '#2a2a2a', text: '#ffffff', textSec: '#a1a1aa', textMuted: '#71717a',
+                gold: '#eab308', goldBg: 'rgba(234, 179, 8, 0.1)',
+                green: '#22c55e', greenBg: 'rgba(34, 197, 94, 0.1)',
+                red: '#ef4444', redBg: 'rgba(239, 68, 68, 0.1)',
+                yellow: '#f59e0b', yellowBg: 'rgba(245, 158, 11, 0.1)',
+                blue: '#3b82f6'
+            } : {
+                bg: '#f8fafc', bgCard: '#ffffff', bgHeader: '#f1f5f9',
+                border: '#e2e8f0', text: '#1e293b', textSec: '#475569', textMuted: '#94a3b8',
+                gold: '#eab308', goldBg: 'rgba(234, 179, 8, 0.08)',
+                green: '#16a34a', greenBg: '#f0fdf4',
+                red: '#dc2626', redBg: '#fef2f2',
+                yellow: '#d97706', yellowBg: '#fffbeb',
+                blue: '#3b82f6'
+            };
+
             let html = `
-                <!-- Header -->
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; background: #000000; border-radius: 12px; margin-bottom: 20px;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <svg viewBox="0 0 64 64" fill="none" style="width: 40px; height: 40px;">
+                <!-- Header - always dark branded bar -->
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px 28px; background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%); border: 1px solid #2a2a2a; border-radius: 16px; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <svg viewBox="0 0 64 64" fill="none" style="width: 44px; height: 44px;">
                             <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
                             <circle cx="32" cy="32" r="12" fill="#eab308"/>
                             <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
                         </svg>
                         <div>
-                            <div style="font-size: 20px; font-weight: 700; color: #ffffff;">Vision PRO</div>
-                            <div style="font-size: 12px; color: #94a3b8;">Bank Statement Analysis</div>
+                            <div style="font-size: 22px; font-weight: 700; color: #ffffff;">Vision <span style="color: #eab308;">PRO</span></div>
+                            <div style="font-size: 11px; color: #71717a; text-transform: uppercase; letter-spacing: 1px;">Bank Statement Analysis</div>
                         </div>
                     </div>
                     <div style="text-align: right;">
-                        <div style="font-size: 14px; font-weight: 600; color: #ffffff;">${businessName}</div>
-                        <div style="font-size: 12px; color: #94a3b8;">${dateStr}</div>
+                        <div style="font-size: 16px; font-weight: 600; color: #ffffff;">${businessName}</div>
+                        ${ownerName ? `<div style="font-size: 13px; color: #a1a1aa;">${ownerName}</div>` : ''}
+                        <div style="font-size: 12px; color: #71717a; margin-top: 2px;">${dateStr}</div>
                     </div>
                 </div>
             `;
@@ -4093,49 +4085,49 @@
                 const clean = files.filter(f => f.status === 'clean').length;
                 const warning = files.filter(f => f.status === 'warning').length;
                 const danger = files.filter(f => f.status === 'danger').length;
-                const overallColor = danger > 0 ? '#ef4444' : warning > 0 ? '#f59e0b' : '#22c55e';
+                const overallColor = danger > 0 ? C.red : warning > 0 ? C.yellow : C.green;
                 const overallText = danger > 0 ? 'Issues Detected' : warning > 0 ? 'Review Required' : 'All Clear';
+                const overallBg = danger > 0 ? C.redBg : warning > 0 ? C.yellowBg : C.greenBg;
 
                 html += `
-                    <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                        <div style="background: #f8fafc; padding: 16px 20px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 10px;">
+                    <div style="background: ${C.bgCard}; border: 1px solid ${C.border}; border-radius: 12px; margin-bottom: 20px; overflow: hidden;">
+                        <div style="background: ${C.bgHeader}; padding: 16px 20px; border-bottom: 1px solid ${C.border}; display: flex; align-items: center; gap: 10px;">
                             <svg viewBox="0 0 64 64" fill="none" style="width: 24px; height: 24px;">
                                 <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
                                 <circle cx="32" cy="32" r="12" fill="#eab308"/>
                             </svg>
-                            <span style="font-weight: 600; font-size: 14px; color: #111827;">Fraud Analysis</span>
+                            <span style="font-weight: 600; font-size: 14px; color: ${C.text};">Fraud Analysis</span>
                         </div>
                         <div style="padding: 20px;">
                             <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
                                 <div style="display: flex; align-items: center; gap: 6px;">
-                                    <span style="font-size: 20px; font-weight: 700; color: #22c55e;">${clean}</span>
-                                    <span style="font-size: 12px; color: #6b7280;">Clean</span>
+                                    <span style="font-size: 20px; font-weight: 700; color: ${C.green};">${clean}</span>
+                                    <span style="font-size: 12px; color: ${C.textMuted};">Clean</span>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 6px;">
-                                    <span style="font-size: 20px; font-weight: 700; color: #f59e0b;">${warning}</span>
-                                    <span style="font-size: 12px; color: #6b7280;">Review</span>
+                                    <span style="font-size: 20px; font-weight: 700; color: ${C.yellow};">${warning}</span>
+                                    <span style="font-size: 12px; color: ${C.textMuted};">Review</span>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 6px;">
-                                    <span style="font-size: 20px; font-weight: 700; color: #ef4444;">${danger}</span>
-                                    <span style="font-size: 12px; color: #6b7280;">Risk</span>
+                                    <span style="font-size: 20px; font-weight: 700; color: ${C.red};">${danger}</span>
+                                    <span style="font-size: 12px; color: ${C.textMuted};">Risk</span>
                                 </div>
                                 <div style="flex: 1;"></div>
-                                <div style="padding: 6px 12px; background: ${overallColor}15; border-radius: 20px; font-size: 12px; font-weight: 600; color: ${overallColor};">${overallText}</div>
+                                <div style="padding: 6px 12px; background: ${overallBg}; border-radius: 20px; font-size: 12px; font-weight: 600; color: ${overallColor};">${overallText}</div>
                             </div>
                             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; max-width: 700px; margin: 0 auto;">
                                 ${files.map(f => {
                                     const statusText = f.status === 'danger' ? 'HIGH RISK' : f.status === 'warning' ? 'REVIEW' : 'CLEAN';
-                                    const borderColor = f.status === 'danger' ? '#ef4444' : f.status === 'warning' ? '#f59e0b' : '#22c55e';
-                                    const bgColor = f.status === 'danger' ? '#fef2f2' : f.status === 'warning' ? '#fffbeb' : '#f0fdf4';
-                                    const textColor = f.status === 'danger' ? '#991b1b' : f.status === 'warning' ? '#92400e' : '#166534';
+                                    const borderColor = f.status === 'danger' ? C.red : f.status === 'warning' ? C.yellow : C.green;
+                                    const bgColor = f.status === 'danger' ? C.redBg : f.status === 'warning' ? C.yellowBg : C.greenBg;
                                     const shortName = f.name.length > 30 ? f.name.substring(0, 27) + '...' : f.name;
                                     return `
-                                        <div style="background: #ffffff; border: 1px solid #e5e7eb; border-left: 3px solid ${borderColor}; border-radius: 8px; padding: 12px;">
+                                        <div style="background: ${C.bgHeader}; border: 1px solid ${C.border}; border-left: 3px solid ${borderColor}; border-radius: 8px; padding: 12px;">
                                             <div style="display: flex; justify-content: space-between; align-items: center;">
-                                                <div style="font-size: 13px; font-weight: 600; color: #111827;">${shortName}</div>
-                                                <div style="padding: 3px 8px; background: ${bgColor}; color: ${textColor}; border-radius: 10px; font-size: 10px; font-weight: 600;">${statusText}</div>
+                                                <div style="font-size: 13px; font-weight: 600; color: ${C.text};">${shortName}</div>
+                                                <div style="padding: 3px 8px; background: ${bgColor}; color: ${borderColor}; border-radius: 10px; font-size: 10px; font-weight: 600;">${statusText}</div>
                                             </div>
-                                            <div style="font-size: 11px; color: #6b7280; margin-top: 4px;">${f.pages?.length || 0} page(s) analyzed</div>
+                                            <div style="font-size: 11px; color: ${C.textMuted}; margin-top: 4px;">${f.pages?.length || 0} page(s) analyzed</div>
                                         </div>
                                     `;
                                 }).join('')}
@@ -4147,100 +4139,102 @@
 
             // Bank Analysis Section
             if (options.includeData) {
+                const riskCard = (val, threshold1, threshold2, label) => {
+                    const isGood = val === 0;
+                    const isWarn = !isGood && val <= threshold1;
+                    const color = isGood ? C.green : isWarn ? C.yellow : C.red;
+                    const bg = isGood ? C.greenBg : isWarn ? C.yellowBg : C.redBg;
+                    return `<div style="background: ${bg}; border: 1px solid ${color}; border-radius: 8px; padding: 16px; text-align: center;">
+                        <div style="font-size: 28px; font-weight: 700; color: ${color};">${val}</div>
+                        <div style="font-size: 11px; color: ${C.textMuted};">${label}</div>
+                    </div>`;
+                };
+
                 html += `
-                    <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                        <div style="background: #f8fafc; padding: 16px 20px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 10px;">
+                    <div style="background: ${C.bgCard}; border: 1px solid ${C.border}; border-radius: 12px; margin-bottom: 20px; overflow: hidden;">
+                        <div style="background: ${C.bgHeader}; padding: 16px 20px; border-bottom: 1px solid ${C.border}; display: flex; align-items: center; gap: 10px;">
                             <svg viewBox="0 0 64 64" fill="none" style="width: 24px; height: 24px;">
                                 <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
                                 <circle cx="32" cy="32" r="12" fill="#eab308"/>
                             </svg>
-                            <span style="font-weight: 600; font-size: 14px; color: #111827;">Bank Analysis Worksheet</span>
+                            <span style="font-weight: 600; font-size: 14px; color: ${C.text};">Bank Analysis Worksheet</span>
                         </div>
                         <div style="padding: 20px;">
                             <!-- Risk Summary -->
                             <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;">
-                                <div style="background: ${totals.nsf === 0 ? '#f0fdf4' : totals.nsf <= 3 ? '#fffbeb' : '#fef2f2'}; border: 2px solid ${totals.nsf === 0 ? '#22c55e' : totals.nsf <= 3 ? '#f59e0b' : '#ef4444'}; border-radius: 8px; padding: 16px; text-align: center;">
-                                    <div style="font-size: 28px; font-weight: 700; color: ${totals.nsf === 0 ? '#166534' : totals.nsf <= 3 ? '#92400e' : '#991b1b'};">${totals.nsf}</div>
-                                    <div style="font-size: 11px; color: #6b7280;">NSF ITEMS</div>
-                                </div>
-                                <div style="background: ${totals.negDays === 0 ? '#f0fdf4' : totals.negDays <= 5 ? '#fffbeb' : '#fef2f2'}; border: 2px solid ${totals.negDays === 0 ? '#22c55e' : totals.negDays <= 5 ? '#f59e0b' : '#ef4444'}; border-radius: 8px; padding: 16px; text-align: center;">
-                                    <div style="font-size: 28px; font-weight: 700; color: ${totals.negDays === 0 ? '#166534' : totals.negDays <= 5 ? '#92400e' : '#991b1b'};">${totals.negDays}</div>
-                                    <div style="font-size: 11px; color: #6b7280;">NEG DAYS</div>
-                                </div>
-                                <div style="background: ${mcaLenders.length === 0 ? '#f0fdf4' : mcaLenders.length <= 2 ? '#fffbeb' : '#fef2f2'}; border: 2px solid ${mcaLenders.length === 0 ? '#22c55e' : mcaLenders.length <= 2 ? '#f59e0b' : '#ef4444'}; border-radius: 8px; padding: 16px; text-align: center;">
-                                    <div style="font-size: 28px; font-weight: 700; color: ${mcaLenders.length === 0 ? '#166534' : mcaLenders.length <= 2 ? '#92400e' : '#991b1b'};">${mcaLenders.length}</div>
-                                    <div style="font-size: 11px; color: #6b7280;">MCA FOUND</div>
-                                </div>
-                                <div style="background: #f8fafc; border: 2px solid #e5e7eb; border-radius: 8px; padding: 16px; text-align: center;">
-                                    <div style="font-size: 28px; font-weight: 700; color: #111827;">${Math.round(totals.numDeps / numMonths)}</div>
-                                    <div style="font-size: 11px; color: #6b7280;">DEPS/MONTH</div>
+                                ${riskCard(totals.nsf, 3, 6, 'NSF ITEMS')}
+                                ${riskCard(totals.negDays, 5, 10, 'NEG DAYS')}
+                                ${riskCard(mcaLenders.length, 2, 4, 'MCA FOUND')}
+                                <div style="background: ${C.bgHeader}; border: 1px solid ${C.border}; border-radius: 8px; padding: 16px; text-align: center;">
+                                    <div style="font-size: 28px; font-weight: 700; color: ${C.text};">${Math.round(totals.numDeps / numMonths)}</div>
+                                    <div style="font-size: 11px; color: ${C.textMuted};">DEPS/MONTH</div>
                                 </div>
                             </div>
 
                             <!-- Monthly Table -->
                             ${months.length > 0 ? `
-                            <table style="width: 100%; border-collapse: collapse; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+                            <table style="width: 100%; border-collapse: collapse; background: ${C.bgCard}; border: 1px solid ${C.border}; border-radius: 8px; overflow: hidden;">
                                 <thead>
-                                    <tr style="background: #f8fafc;">
-                                        <th style="padding: 12px; text-align: left; font-size: 12px; font-weight: 600; color: #374151; border-bottom: 1px solid #e5e7eb;">Month</th>
-                                        <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; color: #374151; border-bottom: 1px solid #e5e7eb;">Deposits</th>
-                                        <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; color: #374151; border-bottom: 1px solid #e5e7eb;">True Rev</th>
-                                        <th style="padding: 12px; text-align: center; font-size: 12px; font-weight: 600; color: #374151; border-bottom: 1px solid #e5e7eb;">#</th>
-                                        <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; color: #374151; border-bottom: 1px solid #e5e7eb;">Withdrawals</th>
-                                        <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; color: #374151; border-bottom: 1px solid #e5e7eb;">Avg Bal</th>
-                                        <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; color: #374151; border-bottom: 1px solid #e5e7eb;">Open Bal</th>
-                                        <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; color: #374151; border-bottom: 1px solid #e5e7eb;">End Bal</th>
-                                        <th style="padding: 12px; text-align: center; font-size: 12px; font-weight: 600; color: #374151; border-bottom: 1px solid #e5e7eb;">NSF</th>
-                                        <th style="padding: 12px; text-align: center; font-size: 12px; font-weight: 600; color: #374151; border-bottom: 1px solid #e5e7eb;">Neg</th>
+                                    <tr style="background: ${C.bgHeader};">
+                                        <th style="padding: 12px; text-align: left; font-size: 12px; font-weight: 600; color: ${C.textSec}; border-bottom: 1px solid ${C.border};">Month</th>
+                                        <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; color: ${C.textSec}; border-bottom: 1px solid ${C.border};">Deposits</th>
+                                        <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; color: ${C.textSec}; border-bottom: 1px solid ${C.border};">True Rev</th>
+                                        <th style="padding: 12px; text-align: center; font-size: 12px; font-weight: 600; color: ${C.textSec}; border-bottom: 1px solid ${C.border};">#</th>
+                                        <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; color: ${C.textSec}; border-bottom: 1px solid ${C.border};">Withdrawals</th>
+                                        <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; color: ${C.textSec}; border-bottom: 1px solid ${C.border};">Avg Bal</th>
+                                        <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; color: ${C.textSec}; border-bottom: 1px solid ${C.border};">Open Bal</th>
+                                        <th style="padding: 12px; text-align: right; font-size: 12px; font-weight: 600; color: ${C.textSec}; border-bottom: 1px solid ${C.border};">End Bal</th>
+                                        <th style="padding: 12px; text-align: center; font-size: 12px; font-weight: 600; color: ${C.textSec}; border-bottom: 1px solid ${C.border};">NSF</th>
+                                        <th style="padding: 12px; text-align: center; font-size: 12px; font-weight: 600; color: ${C.textSec}; border-bottom: 1px solid ${C.border};">Neg</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    ${months.map(m => `
-                                        <tr>
-                                            <td style="padding: 12px; font-size: 13px; font-weight: 500; color: #111827; border-bottom: 1px solid #f3f4f6;">${m.month || 'N/A'}</td>
-                                            <td style="padding: 12px; font-size: 13px; color: #16a34a; text-align: right; border-bottom: 1px solid #f3f4f6;">$${(m.total_deposits || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
-                                            <td style="padding: 12px; font-size: 13px; color: #ca8a04; text-align: right; border-bottom: 1px solid #f3f4f6;">$${(m.true_revenue || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
-                                            <td style="padding: 12px; font-size: 13px; color: #374151; text-align: center; border-bottom: 1px solid #f3f4f6;">${m.num_deposits || 0}</td>
-                                            <td style="padding: 12px; font-size: 13px; color: #dc2626; text-align: right; border-bottom: 1px solid #f3f4f6;">$${(m.total_withdrawals || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
-                                            <td style="padding: 12px; font-size: 13px; color: #374151; text-align: right; border-bottom: 1px solid #f3f4f6;">$${(m.average_daily_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
-                                            <td style="padding: 12px; font-size: 13px; color: ${(m.opening_balance || 0) < 0 ? '#dc2626' : '#374151'}; text-align: right; border-bottom: 1px solid #f3f4f6;">$${(m.opening_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
-                                            <td style="padding: 12px; font-size: 13px; color: ${(m.ending_balance || 0) < 0 ? '#dc2626' : '#374151'}; text-align: right; border-bottom: 1px solid #f3f4f6;">$${(m.ending_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
-                                            <td style="padding: 12px; font-size: 13px; color: ${(m.nsf_count || 0) > 0 ? '#dc2626' : '#374151'}; text-align: center; border-bottom: 1px solid #f3f4f6;">${m.nsf_count || 0}</td>
-                                            <td style="padding: 12px; font-size: 13px; color: ${(m.days_negative || 0) > 0 ? '#dc2626' : '#374151'}; text-align: center; border-bottom: 1px solid #f3f4f6;">${m.days_negative || 0}</td>
+                                    ${months.map((m, i) => `
+                                        <tr style="background: ${i % 2 === 0 ? C.bgCard : C.bgHeader};">
+                                            <td style="padding: 12px; font-size: 13px; font-weight: 500; color: ${C.text}; border-bottom: 1px solid ${C.border};">${m.month || 'N/A'}</td>
+                                            <td style="padding: 12px; font-size: 13px; color: ${C.green}; text-align: right; border-bottom: 1px solid ${C.border};">$${(m.total_deposits || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                            <td style="padding: 12px; font-size: 13px; color: ${C.gold}; text-align: right; border-bottom: 1px solid ${C.border};">$${(m.true_revenue || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                            <td style="padding: 12px; font-size: 13px; color: ${C.textSec}; text-align: center; border-bottom: 1px solid ${C.border};">${m.num_deposits || 0}</td>
+                                            <td style="padding: 12px; font-size: 13px; color: ${C.red}; text-align: right; border-bottom: 1px solid ${C.border};">$${(m.total_withdrawals || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                            <td style="padding: 12px; font-size: 13px; color: ${C.textSec}; text-align: right; border-bottom: 1px solid ${C.border};">$${(m.average_daily_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                            <td style="padding: 12px; font-size: 13px; color: ${(m.opening_balance || 0) < 0 ? C.red : C.textSec}; text-align: right; border-bottom: 1px solid ${C.border};">$${(m.opening_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                            <td style="padding: 12px; font-size: 13px; color: ${(m.ending_balance || 0) < 0 ? C.red : C.textSec}; text-align: right; border-bottom: 1px solid ${C.border};">$${(m.ending_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                            <td style="padding: 12px; font-size: 13px; color: ${(m.nsf_count || 0) > 0 ? C.red : C.textSec}; text-align: center; border-bottom: 1px solid ${C.border};">${m.nsf_count || 0}</td>
+                                            <td style="padding: 12px; font-size: 13px; color: ${(m.days_negative || 0) > 0 ? C.red : C.textSec}; text-align: center; border-bottom: 1px solid ${C.border};">${m.days_negative || 0}</td>
                                         </tr>
                                     `).join('')}
                                 </tbody>
                                 <tfoot>
-                                    <tr style="background: #f8fafc;">
-                                        <td style="padding: 12px; font-size: 13px; font-weight: 700; color: #111827;">AVERAGE</td>
-                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: #16a34a; text-align: right;">$${(totals.deposits / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
-                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: #ca8a04; text-align: right;">$${(totals.trueRevenue / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
-                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: #374151; text-align: center;">${Math.round(totals.numDeps / numMonths)}</td>
-                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: #dc2626; text-align: right;">$${(totals.withdrawals / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
-                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: #374151; text-align: right;">$${avgBalance.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
-                                        <td style="padding: 12px; font-size: 13px; color: #6b7280; text-align: right;">-</td>
-                                        <td style="padding: 12px; font-size: 13px; color: #6b7280; text-align: right;">-</td>
-                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: #374151; text-align: center;">${totals.nsf}</td>
-                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: #374151; text-align: center;">${totals.negDays}</td>
+                                    <tr style="background: ${C.bgHeader};">
+                                        <td style="padding: 12px; font-size: 13px; font-weight: 700; color: ${C.gold};">AVERAGE</td>
+                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: ${C.green}; text-align: right;">$${(totals.deposits / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: ${C.gold}; text-align: right;">$${(totals.trueRevenue / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: ${C.textSec}; text-align: center;">${Math.round(totals.numDeps / numMonths)}</td>
+                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: ${C.red}; text-align: right;">$${(totals.withdrawals / numMonths).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: ${C.textSec}; text-align: right;">$${avgBalance.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                        <td style="padding: 12px; font-size: 13px; color: ${C.textMuted}; text-align: right;">-</td>
+                                        <td style="padding: 12px; font-size: 13px; color: ${C.textMuted}; text-align: right;">-</td>
+                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: ${C.textSec}; text-align: center;">${totals.nsf}</td>
+                                        <td style="padding: 12px; font-size: 13px; font-weight: 600; color: ${C.textSec}; text-align: center;">${totals.negDays}</td>
                                     </tr>
                                 </tfoot>
                             </table>
                             ` : ''}
 
                             ${mcaLenders.length > 0 ? `
-                            <div style="margin-top: 20px; background: #fef2f2; border: 2px solid #ef4444; border-radius: 8px; padding: 16px;">
+                            <div style="margin-top: 20px; background: ${C.redBg}; border: 2px solid ${C.red}; border-radius: 8px; padding: 16px;">
                                 <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                                    <div style="width: 32px; height: 32px; background: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">!</div>
+                                    <div style="width: 32px; height: 32px; background: ${C.red}; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">!</div>
                                     <div>
-                                        <div style="font-size: 14px; font-weight: 700; color: #991b1b;">EXISTING MCA POSITIONS DETECTED</div>
-                                        <div style="font-size: 12px; color: #b91c1c;">Active merchant cash advance obligations identified</div>
+                                        <div style="font-size: 14px; font-weight: 700; color: ${C.red};">EXISTING MCA POSITIONS DETECTED</div>
+                                        <div style="font-size: 12px; color: ${C.textSec};">Active merchant cash advance obligations identified</div>
                                     </div>
-                                    <div style="margin-left: auto; background: #ef4444; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">${mcaLenders.length} Lender${mcaLenders.length > 1 ? 's' : ''}</div>
+                                    <div style="margin-left: auto; background: ${C.red}; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">${mcaLenders.length} Lender${mcaLenders.length > 1 ? 's' : ''}</div>
                                 </div>
                                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
                                     ${mcaLenders.map(l => {
                                         const name = typeof l === 'object' ? (l.name || 'Unknown Lender') : l;
-                                        return `<div style="background: #ffffff; border: 1px solid #fecaca; border-radius: 6px; padding: 10px 12px; font-size: 13px; font-weight: 500; color: #991b1b;">${name}</div>`;
+                                        return `<div style="background: ${C.bgHeader}; border: 1px solid ${C.border}; border-radius: 6px; padding: 10px 12px; font-size: 13px; font-weight: 500; color: ${C.red};">${name}</div>`;
                                     }).join('')}
                                 </div>
                             </div>
@@ -4250,34 +4244,34 @@
                 `;
             }
 
-            // Cash Flow Analysis Section (charts are not exportable to static HTML, show summary instead)
+            // Cash Flow Analysis Section
             if (options.includeCharts && months.length > 0) {
                 const avgDeposits = totals.deposits / numMonths;
                 const avgWithdrawals = totals.withdrawals / numMonths;
                 const cashFlow = avgDeposits - avgWithdrawals;
 
                 html += `
-                    <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                        <div style="background: #f8fafc; padding: 16px 20px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 10px;">
+                    <div style="background: ${C.bgCard}; border: 1px solid ${C.border}; border-radius: 12px; margin-bottom: 20px; overflow: hidden;">
+                        <div style="background: ${C.bgHeader}; padding: 16px 20px; border-bottom: 1px solid ${C.border}; display: flex; align-items: center; gap: 10px;">
                             <svg viewBox="0 0 64 64" fill="none" style="width: 24px; height: 24px;">
                                 <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
                                 <circle cx="32" cy="32" r="12" fill="#eab308"/>
                             </svg>
-                            <span style="font-weight: 600; font-size: 14px; color: #111827;">Cash Flow Analysis</span>
+                            <span style="font-weight: 600; font-size: 14px; color: ${C.text};">Cash Flow Analysis</span>
                         </div>
                         <div style="padding: 20px;">
                             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
-                                <div style="background: #f0fdf4; border: 1px solid #22c55e; border-radius: 8px; padding: 16px; text-align: center;">
-                                    <div style="font-size: 24px; font-weight: 700; color: #16a34a;">$${avgDeposits.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</div>
-                                    <div style="font-size: 11px; color: #6b7280; margin-top: 4px;">AVG MONTHLY DEPOSITS</div>
+                                <div style="background: ${C.greenBg}; border: 1px solid ${C.green}; border-radius: 8px; padding: 16px; text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 700; color: ${C.green};">$${avgDeposits.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</div>
+                                    <div style="font-size: 11px; color: ${C.textMuted}; margin-top: 4px;">AVG MONTHLY DEPOSITS</div>
                                 </div>
-                                <div style="background: #fef2f2; border: 1px solid #ef4444; border-radius: 8px; padding: 16px; text-align: center;">
-                                    <div style="font-size: 24px; font-weight: 700; color: #dc2626;">$${avgWithdrawals.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</div>
-                                    <div style="font-size: 11px; color: #6b7280; margin-top: 4px;">AVG MONTHLY WITHDRAWALS</div>
+                                <div style="background: ${C.redBg}; border: 1px solid ${C.red}; border-radius: 8px; padding: 16px; text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 700; color: ${C.red};">$${avgWithdrawals.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</div>
+                                    <div style="font-size: 11px; color: ${C.textMuted}; margin-top: 4px;">AVG MONTHLY WITHDRAWALS</div>
                                 </div>
-                                <div style="background: ${cashFlow >= 0 ? '#f0fdf4' : '#fef2f2'}; border: 1px solid ${cashFlow >= 0 ? '#22c55e' : '#ef4444'}; border-radius: 8px; padding: 16px; text-align: center;">
-                                    <div style="font-size: 24px; font-weight: 700; color: ${cashFlow >= 0 ? '#16a34a' : '#dc2626'};">${cashFlow >= 0 ? '+' : ''}$${cashFlow.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</div>
-                                    <div style="font-size: 11px; color: #6b7280; margin-top: 4px;">NET CASH FLOW</div>
+                                <div style="background: ${cashFlow >= 0 ? C.greenBg : C.redBg}; border: 1px solid ${cashFlow >= 0 ? C.green : C.red}; border-radius: 8px; padding: 16px; text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 700; color: ${cashFlow >= 0 ? C.green : C.red};">${cashFlow >= 0 ? '+' : ''}$${cashFlow.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</div>
+                                    <div style="font-size: 11px; color: ${C.textMuted}; margin-top: 4px;">NET CASH FLOW</div>
                                 </div>
                             </div>
                         </div>
@@ -4302,30 +4296,30 @@
                         return '#ef4444';
                     };
 
-                    // Approval badge colors
                     const approvalColors = {
-                        'APPROVED': { bg: '#dcfce7', color: '#16a34a' },
-                        'CONDITIONAL': { bg: '#fef9c3', color: '#ca8a04' },
-                        'DECLINED': { bg: '#fee2e2', color: '#dc2626' }
+                        'APPROVED': { bg: C.greenBg, color: C.green },
+                        'CONDITIONAL': { bg: C.yellowBg, color: C.yellow },
+                        'DECLINED': { bg: C.redBg, color: C.red },
+                        'CUSTOM': { bg: isDark ? 'rgba(59, 130, 246, 0.1)' : '#eff6ff', color: C.blue }
                     };
                     const approvalStyle = sa ? approvalColors[sa.approval] || approvalColors['DECLINED'] : null;
 
                     html += `
-                        <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                            <div style="background: #f8fafc; padding: 12px 20px; border-bottom: 1px solid #e5e7eb;">
-                                <div style="font-size: 10px; font-weight: 800; letter-spacing: 0.15em; color: #6b7280;">ABLESAI CREDIT ENGINE</div>
-                                <div style="font-size: 9px; color: #9ca3af;">V4.2</div>
+                        <div style="background: ${C.bgCard}; border: 1px solid ${C.border}; border-radius: 12px; margin-bottom: 20px; overflow: hidden;">
+                            <div style="background: ${C.bgHeader}; padding: 12px 20px; border-bottom: 1px solid ${C.border};">
+                                <div style="font-size: 10px; font-weight: 800; letter-spacing: 0.15em; color: ${C.gold};">ABLESAI CREDIT ENGINE</div>
+                                <div style="font-size: 9px; color: ${C.textMuted};">V4.2</div>
                             </div>
                             <div style="display: grid; grid-template-columns: 180px 1fr;">
-                                <div style="padding: 24px; border-right: 1px solid #e5e7eb; text-align: center; background: ${color}10;">
-                                    <div style="font-size: 48px; font-weight: 800; color: ${color}; line-height: 1;">${cs.total}<span style="font-size: 18px; color: #6b7280;">/100</span></div>
+                                <div style="padding: 24px; border-right: 1px solid ${C.border}; text-align: center; background: ${C.bgHeader};">
+                                    <div style="font-size: 48px; font-weight: 800; color: ${color}; line-height: 1;">${cs.total}<span style="font-size: 18px; color: ${C.textMuted};">/100</span></div>
                                     <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px;">
                                         <span style="font-size: 24px; font-weight: 800; color: ${color};">${cs.tier}</span>
-                                        <span style="font-size: 11px; font-weight: 600; color: #374151; text-transform: uppercase;">${cs.label}</span>
+                                        <span style="font-size: 11px; font-weight: 600; color: ${C.textSec}; text-transform: uppercase;">${cs.label}</span>
                                     </div>
                                 </div>
                                 <div style="padding: 20px;">
-                                    <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280; margin-bottom: 12px;">Score Breakdown</div>
+                                    <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: ${C.textMuted}; margin-bottom: 12px;">Score Breakdown</div>
                                     ${[
                                         { label: 'Credit Score', pts: cs.components?.credit || 0, max: 20, display: cs.inputs?.estimatedFico || '--' },
                                         { label: `Behavior (${Math.round((cs.inputs?.avgNsf || 0) + (cs.inputs?.avgNegDays || 0))})`, pts: cs.components?.behavior || 0, max: 15 },
@@ -4339,46 +4333,48 @@
                                         return `
                                             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
                                                 <div style="width: 8px; height: 8px; border-radius: 50%; background: ${barColor};"></div>
-                                                <span style="font-size: 12px; font-weight: 600; color: #374151; min-width: 100px;">${item.label}</span>
-                                                <div style="flex: 1; height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden;">
+                                                <span style="font-size: 12px; font-weight: 600; color: ${C.textSec}; min-width: 100px;">${item.label}</span>
+                                                <div style="flex: 1; height: 6px; background: ${C.border}; border-radius: 3px; overflow: hidden;">
                                                     <div style="width: ${pct}%; height: 100%; background: ${barColor}; border-radius: 3px;"></div>
                                                 </div>
-                                                <span style="font-size: 12px; font-weight: 700; min-width: 40px; text-align: right;">${displayVal}</span>
+                                                <span style="font-size: 12px; font-weight: 700; color: ${C.text}; min-width: 40px; text-align: right;">${displayVal}</span>
                                             </div>
                                         `;
                                     }).join('')}
-                                    <div style="display: flex; gap: 4px; margin-top: 16px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
+                                    <div style="display: flex; gap: 4px; margin-top: 16px; padding-top: 12px; border-top: 1px solid ${C.border};">
                                         ${['E', 'D', 'C', 'B', 'A'].map(t => {
-                                            const tColors = { E: { bg: '#fee2e2', fg: '#dc2626' }, D: { bg: '#ffedd5', fg: '#ea580c' }, C: { bg: '#fef9c3', fg: '#ca8a04' }, B: { bg: '#dcfce7', fg: '#16a34a' }, A: { bg: '#d1fae5', fg: '#059669' } };
+                                            const tColorsDark = { E: { bg: 'rgba(239,68,68,0.1)', fg: '#ef4444' }, D: { bg: 'rgba(245,158,11,0.1)', fg: '#ea580c' }, C: { bg: 'rgba(245,158,11,0.1)', fg: '#eab308' }, B: { bg: 'rgba(34,197,94,0.1)', fg: '#22c55e' }, A: { bg: 'rgba(34,197,94,0.1)', fg: '#059669' } };
+                                            const tColorsLight = { E: { bg: '#fee2e2', fg: '#dc2626' }, D: { bg: '#ffedd5', fg: '#ea580c' }, C: { bg: '#fef9c3', fg: '#ca8a04' }, B: { bg: '#dcfce7', fg: '#16a34a' }, A: { bg: '#d1fae5', fg: '#059669' } };
+                                            const tc = isDark ? tColorsDark[t] : tColorsLight[t];
                                             const tLabels = { E: 'E <35', D: 'D 35+', C: 'C 50+', B: 'B 65+', A: 'A 80+' };
                                             const active = cs.tier === t;
-                                            return `<div style="flex: 1; padding: 6px; background: ${tColors[t].bg}; color: ${tColors[t].fg}; text-align: center; border-radius: 4px; font-size: 9px; font-weight: 700; ${active ? 'box-shadow: 0 2px 6px rgba(0,0,0,0.2); transform: scale(1.05);' : ''}">${tLabels[t]}</div>`;
+                                            return `<div style="flex: 1; padding: 6px; background: ${tc.bg}; color: ${tc.fg}; text-align: center; border-radius: 4px; font-size: 9px; font-weight: 700; ${active ? `box-shadow: 0 0 12px ${tc.fg}40; border: 1px solid ${tc.fg};` : `border: 1px solid transparent;`}">${tLabels[t]}</div>`;
                                         }).join('')}
                                     </div>
                                 </div>
                             </div>
                             ${sa ? `
-                            <div style="border-top: 1px solid #e5e7eb; padding: 16px 20px; background: #f8fafc;">
+                            <div style="border-top: 1px solid ${C.border}; padding: 16px 20px; background: ${C.bgHeader};">
                                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280;">Suggested Approval</div>
+                                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: ${C.gold};">Suggested Approval</div>
                                     <div style="padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; background: ${approvalStyle.bg}; color: ${approvalStyle.color};">${sa.approval}</div>
                                 </div>
                                 <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center;">
                                     <div>
-                                        <div style="font-size: 10px; color: #6b7280; text-transform: uppercase;">Max Advance</div>
-                                        <div style="font-size: 18px; font-weight: 700; color: #111827;">$${sa.maxAdvance.toLocaleString()}</div>
+                                        <div style="font-size: 10px; color: ${C.textMuted}; text-transform: uppercase;">Max Advance</div>
+                                        <div style="font-size: 18px; font-weight: 700; color: ${C.text};">$${sa.maxAdvance.toLocaleString()}</div>
                                     </div>
                                     <div>
-                                        <div style="font-size: 10px; color: #6b7280; text-transform: uppercase;">Factor Rate</div>
-                                        <div style="font-size: 18px; font-weight: 700; color: #111827;">${sa.factorRate.toFixed(2)}</div>
+                                        <div style="font-size: 10px; color: ${C.textMuted}; text-transform: uppercase;">Factor Rate</div>
+                                        <div style="font-size: 18px; font-weight: 700; color: ${C.text};">${sa.factorRate.toFixed(2)}</div>
                                     </div>
                                     <div>
-                                        <div style="font-size: 10px; color: #6b7280; text-transform: uppercase;">Term</div>
-                                        <div style="font-size: 18px; font-weight: 700; color: #111827;">${sa.termMonths} mo</div>
+                                        <div style="font-size: 10px; color: ${C.textMuted}; text-transform: uppercase;">Term</div>
+                                        <div style="font-size: 18px; font-weight: 700; color: ${C.text};">${sa.termMonths} mo</div>
                                     </div>
                                     <div>
-                                        <div style="font-size: 10px; color: #6b7280; text-transform: uppercase;">${(sa.frequency || 'daily') === 'weekly' ? 'Weekly' : 'Daily'} Payment</div>
-                                        <div style="font-size: 18px; font-weight: 700; color: #111827;">$${(sa.payment || 0).toLocaleString()}</div>
+                                        <div style="font-size: 10px; color: ${C.textMuted}; text-transform: uppercase;">${(sa.frequency || 'daily') === 'weekly' ? 'Weekly' : 'Daily'} Payment</div>
+                                        <div style="font-size: 18px; font-weight: 700; color: ${C.gold};">$${(sa.payment || 0).toLocaleString()}</div>
                                     </div>
                                 </div>
                             </div>
@@ -4395,32 +4391,32 @@
                     const totalMonthly = debts.reduce((sum, d) => sum + (d.payment_amount || 0), 0);
 
                     html += `
-                        <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                            <div style="background: #f8fafc; padding: 16px 20px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="background: ${C.bgCard}; border: 1px solid ${C.border}; border-radius: 12px; margin-bottom: 20px; overflow: hidden;">
+                            <div style="background: ${C.bgHeader}; padding: 16px 20px; border-bottom: 1px solid ${C.border}; display: flex; align-items: center; justify-content: space-between;">
                                 <div style="display: flex; align-items: center; gap: 10px;">
                                     <svg viewBox="0 0 64 64" fill="none" style="width: 24px; height: 24px;">
                                         <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
                                         <circle cx="32" cy="32" r="12" fill="#eab308"/>
                                     </svg>
-                                    <span style="font-weight: 600; font-size: 14px; color: #111827;">Existing Debt Obligations</span>
+                                    <span style="font-weight: 600; font-size: 14px; color: ${C.text};">Existing Debt Obligations</span>
                                 </div>
-                                <div style="background: #fef2f2; color: #dc2626; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">$${totalMonthly.toLocaleString()}/mo</div>
+                                <div style="background: ${C.redBg}; color: ${C.red}; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">$${totalMonthly.toLocaleString()}/mo</div>
                             </div>
                             <div style="padding: 20px;">
                                 <table style="width: 100%; border-collapse: collapse;">
                                     <thead>
-                                        <tr style="background: #f8fafc;">
-                                            <th style="padding: 10px; text-align: left; font-size: 11px; font-weight: 600; color: #6b7280; border-bottom: 1px solid #e5e7eb;">CREDITOR</th>
-                                            <th style="padding: 10px; text-align: center; font-size: 11px; font-weight: 600; color: #6b7280; border-bottom: 1px solid #e5e7eb;">TYPE</th>
-                                            <th style="padding: 10px; text-align: right; font-size: 11px; font-weight: 600; color: #6b7280; border-bottom: 1px solid #e5e7eb;">PAYMENT</th>
+                                        <tr style="background: ${C.bgHeader};">
+                                            <th style="padding: 10px; text-align: left; font-size: 11px; font-weight: 600; color: ${C.textMuted}; border-bottom: 1px solid ${C.border};">CREDITOR</th>
+                                            <th style="padding: 10px; text-align: center; font-size: 11px; font-weight: 600; color: ${C.textMuted}; border-bottom: 1px solid ${C.border};">TYPE</th>
+                                            <th style="padding: 10px; text-align: right; font-size: 11px; font-weight: 600; color: ${C.textMuted}; border-bottom: 1px solid ${C.border};">PAYMENT</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        ${debts.map(d => `
-                                            <tr>
-                                                <td style="padding: 10px; font-size: 13px; color: #111827; border-bottom: 1px solid #f3f4f6;">${d.creditor_name}</td>
-                                                <td style="padding: 10px; font-size: 12px; color: #6b7280; text-align: center; border-bottom: 1px solid #f3f4f6;">${d.debt_type || 'MCA'}</td>
-                                                <td style="padding: 10px; font-size: 13px; font-weight: 600; color: #dc2626; text-align: right; border-bottom: 1px solid #f3f4f6;">$${(d.payment_amount || 0).toLocaleString()}</td>
+                                        ${debts.map((d, i) => `
+                                            <tr style="background: ${i % 2 === 0 ? C.bgCard : C.bgHeader};">
+                                                <td style="padding: 10px; font-size: 13px; color: ${C.text}; border-bottom: 1px solid ${C.border};">${d.creditor_name}</td>
+                                                <td style="padding: 10px; font-size: 12px; color: ${C.textMuted}; text-align: center; border-bottom: 1px solid ${C.border};">${d.debt_type || 'MCA'}</td>
+                                                <td style="padding: 10px; font-size: 13px; font-weight: 600; color: ${C.red}; text-align: right; border-bottom: 1px solid ${C.border};">$${(d.payment_amount || 0).toLocaleString()}</td>
                                             </tr>
                                         `).join('')}
                                     </tbody>
@@ -4439,31 +4435,31 @@
                 const totalFlags = Object.values(researchResults).reduce((sum, r) => sum + (r.flags?.length || 0), 0);
 
                 html += `
-                    <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                        <div style="background: #f8fafc; padding: 16px 20px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 10px;">
+                    <div style="background: ${C.bgCard}; border: 1px solid ${C.border}; border-radius: 12px; margin-bottom: 20px; overflow: hidden;">
+                        <div style="background: ${C.bgHeader}; padding: 16px 20px; border-bottom: 1px solid ${C.border}; display: flex; align-items: center; gap: 10px;">
                             <svg viewBox="0 0 64 64" fill="none" style="width: 24px; height: 24px;">
                                 <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
                                 <circle cx="32" cy="32" r="12" fill="#eab308"/>
                             </svg>
-                            <span style="font-weight: 600; font-size: 14px; color: #111827;">Background Research: ${businessName}</span>
+                            <span style="font-weight: 600; font-size: 14px; color: ${C.text};">Background Research: ${businessName}</span>
                         </div>
                         <div style="padding: 20px;">
                             <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;">
-                                <div style="background: #f0fdf4; border: 1px solid #22c55e; border-radius: 8px; padding: 12px; text-align: center;">
-                                    <div style="font-size: 24px; font-weight: 700; color: #16a34a;">${lowRisk}</div>
-                                    <div style="font-size: 10px; color: #6b7280;">LOW RISK</div>
+                                <div style="background: ${C.greenBg}; border: 1px solid ${C.green}; border-radius: 8px; padding: 12px; text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 700; color: ${C.green};">${lowRisk}</div>
+                                    <div style="font-size: 10px; color: ${C.textMuted};">LOW RISK</div>
                                 </div>
-                                <div style="background: #fffbeb; border: 1px solid #f59e0b; border-radius: 8px; padding: 12px; text-align: center;">
-                                    <div style="font-size: 24px; font-weight: 700; color: #d97706;">${medRisk}</div>
-                                    <div style="font-size: 10px; color: #6b7280;">MEDIUM RISK</div>
+                                <div style="background: ${C.yellowBg}; border: 1px solid ${C.yellow}; border-radius: 8px; padding: 12px; text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 700; color: ${C.yellow};">${medRisk}</div>
+                                    <div style="font-size: 10px; color: ${C.textMuted};">MEDIUM RISK</div>
                                 </div>
-                                <div style="background: #fef2f2; border: 1px solid #ef4444; border-radius: 8px; padding: 12px; text-align: center;">
-                                    <div style="font-size: 24px; font-weight: 700; color: #dc2626;">${highRisk}</div>
-                                    <div style="font-size: 10px; color: #6b7280;">HIGH RISK</div>
+                                <div style="background: ${C.redBg}; border: 1px solid ${C.red}; border-radius: 8px; padding: 12px; text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 700; color: ${C.red};">${highRisk}</div>
+                                    <div style="font-size: 10px; color: ${C.textMuted};">HIGH RISK</div>
                                 </div>
-                                <div style="background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; text-align: center;">
-                                    <div style="font-size: 24px; font-weight: 700; color: #111827;">${totalFlags}</div>
-                                    <div style="font-size: 10px; color: #6b7280;">RED FLAGS</div>
+                                <div style="background: ${C.bgHeader}; border: 1px solid ${C.border}; border-radius: 8px; padding: 12px; text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 700; color: ${C.text};">${totalFlags}</div>
+                                    <div style="font-size: 10px; color: ${C.textMuted};">RED FLAGS</div>
                                 </div>
                             </div>
                             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
@@ -4474,15 +4470,15 @@
                                         reviews: 'Online Reviews', news: 'News & Press', social: 'Social Media',
                                         industry: 'Industry Analysis', owner: 'Owner Background', location: 'Location Analysis'
                                     };
-                                    const riskColors = { low: '#22c55e', medium: '#f59e0b', high: '#ef4444', unknown: '#6b7280' };
-                                    const riskBg = { low: '#f0fdf4', medium: '#fffbeb', high: '#fef2f2', unknown: '#f8fafc' };
+                                    const riskColors = { low: C.green, medium: C.yellow, high: C.red, unknown: C.textMuted };
+                                    const riskBg = { low: C.greenBg, medium: C.yellowBg, high: C.redBg, unknown: C.bgHeader };
                                     return `
-                                        <div style="background: #ffffff; border: 1px solid #e5e7eb; border-left: 3px solid ${riskColors[result.risk] || '#6b7280'}; border-radius: 6px; padding: 12px;">
+                                        <div style="background: ${C.bgHeader}; border: 1px solid ${C.border}; border-left: 3px solid ${riskColors[result.risk] || C.textMuted}; border-radius: 6px; padding: 12px;">
                                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                                <span style="font-size: 12px; font-weight: 600; color: #111827;">${moduleNames[id] || id}</span>
-                                                <span style="font-size: 10px; padding: 2px 8px; background: ${riskBg[result.risk] || '#f8fafc'}; color: ${riskColors[result.risk] || '#6b7280'}; border-radius: 10px; font-weight: 500;">${(result.risk || 'unknown').toUpperCase()}</span>
+                                                <span style="font-size: 12px; font-weight: 600; color: ${C.text};">${moduleNames[id] || id}</span>
+                                                <span style="font-size: 10px; padding: 2px 8px; background: ${riskBg[result.risk] || C.bgHeader}; color: ${riskColors[result.risk] || C.textMuted}; border-radius: 10px; font-weight: 500;">${(result.risk || 'unknown').toUpperCase()}</span>
                                             </div>
-                                            <div style="font-size: 11px; color: #6b7280; line-height: 1.4;">${result.summary || 'No data'}</div>
+                                            <div style="font-size: 11px; color: ${C.textSec}; line-height: 1.4;">${result.summary || 'No data'}</div>
                                         </div>
                                     `;
                                 }).join('')}
@@ -4497,25 +4493,25 @@
                 const topLenders = matchedLenders.filter(l => l.score >= 50).slice(0, 6);
                 if (topLenders.length > 0) {
                     html += `
-                        <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                            <div style="background: #f8fafc; padding: 16px 20px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 10px;">
+                        <div style="background: ${C.bgCard}; border: 1px solid ${C.border}; border-radius: 12px; margin-bottom: 20px; overflow: hidden;">
+                            <div style="background: ${C.bgHeader}; padding: 16px 20px; border-bottom: 1px solid ${C.border}; display: flex; align-items: center; gap: 10px;">
                                 <svg viewBox="0 0 64 64" fill="none" style="width: 24px; height: 24px;">
                                     <ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/>
                                     <circle cx="32" cy="32" r="12" fill="#eab308"/>
                                 </svg>
-                                <span style="font-weight: 600; font-size: 14px; color: #111827;">Lender Matching</span>
+                                <span style="font-weight: 600; font-size: 14px; color: ${C.text};">Lender Matching</span>
                             </div>
                             <div style="padding: 20px;">
                                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
                                     ${topLenders.map(l => {
-                                        const scoreColor = l.score >= 80 ? '#22c55e' : l.score >= 60 ? '#f59e0b' : '#ef4444';
+                                        const scoreColor = l.score >= 80 ? C.green : l.score >= 60 ? C.yellow : C.red;
                                         return `
-                                            <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px;">
+                                            <div style="background: ${C.bgHeader}; border: 1px solid ${C.border}; border-radius: 8px; padding: 16px;">
                                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                                    <span style="font-size: 14px; font-weight: 600; color: #111827;">${l.name}</span>
+                                                    <span style="font-size: 14px; font-weight: 600; color: ${C.text};">${l.name}</span>
                                                     <span style="font-size: 16px; font-weight: 700; color: ${scoreColor};">${l.score}%</span>
                                                 </div>
-                                                <div style="height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden;">
+                                                <div style="height: 6px; background: ${C.border}; border-radius: 3px; overflow: hidden;">
                                                     <div style="width: ${l.score}%; height: 100%; background: ${scoreColor};"></div>
                                                 </div>
                                             </div>
@@ -4528,10 +4524,10 @@
                 }
             }
 
-            // Footer
+            // Footer - always dark branded bar
             html += `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: #f8fafc; border-radius: 8px; border: 1px solid #e5e7eb; font-size: 11px; color: #6b7280;">
-                    <div>Generated by Vision PRO • ables.ai</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%); border-radius: 8px; border: 1px solid #2a2a2a; font-size: 11px; color: #71717a;">
+                    <div>Generated by <span style="color: #eab308;">Vision PRO</span> • ables.ai</div>
                     <div>Confidential - For Internal Use Only</div>
                 </div>
             `;
@@ -4558,10 +4554,15 @@
                 const includeResearch = document.getElementById('exportResearch')?.checked ?? true;
                 const includeLenders = document.getElementById('exportLenders')?.checked ?? true;
 
-                // Generate completely fresh HTML with hardcoded light styles
+                // Generate HTML matching website theme
                 const exportHTML = generateExportHTML({
                     includeFraud, includeData, includeCharts, includeScore, includeDebt, includeResearch, includeLenders
                 });
+
+                // Detect theme for iframe background
+                const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+                const bgColor = isDark ? '#0a0a0a' : '#f8fafc';
+                const textColor = isDark ? '#ffffff' : '#1e293b';
 
                 // Create overlay to hide from user
                 const overlay = document.createElement('div');
@@ -4594,7 +4595,7 @@
                     height: 100vh;
                     border: none;
                     z-index: 99999;
-                    background: white;
+                    background: ${bgColor};
                 `;
 
                 document.body.appendChild(overlay);
@@ -4602,7 +4603,7 @@
 
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 
-                // Write complete self-contained HTML - NO CSS VARIABLES
+                // Write complete self-contained HTML matching website theme
                 iframeDoc.open();
                 iframeDoc.write(`
                     <!DOCTYPE html>
@@ -4613,8 +4614,8 @@
                             * { margin: 0; padding: 0; box-sizing: border-box; }
                             body {
                                 font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-                                background: #ffffff;
-                                color: #111827;
+                                background: ${bgColor};
+                                color: ${textColor};
                                 padding: ${exportSettings.padding}px;
                                 line-height: 1.5;
                             }
@@ -4631,7 +4632,7 @@
                 const canvas = await html2canvas(iframeDoc.body, {
                     scale: exportSettings.scale,
                     useCORS: true,
-                    backgroundColor: '#ffffff',
+                    backgroundColor: bgColor,
                     logging: false,
                     allowTaint: true,
                     width: exportSettings.width,
@@ -5029,26 +5030,28 @@
             });
         }
 
-        // Method 1: PNG Clean - DOM Clone with forced light styles
+        // Method 1: PNG Clean - DOM Clone with current theme styles
         async function exportPngClean() {
             showStatus('Generating PNG (Clean)...', 'info');
 
             try {
                 const resultsArea = document.getElementById('resultsArea');
+                const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+                const bgColor = isDark ? '#0a0a0a' : '#f8fafc';
 
-                // Create a wrapper div with explicit light styles
+                // Create a wrapper div matching current theme
                 const wrapper = document.createElement('div');
                 wrapper.style.cssText = `
                     position: absolute;
                     left: -9999px;
                     top: 0;
-                    background: #ffffff;
+                    background: ${bgColor};
                     padding: 24px;
                     width: ${resultsArea.offsetWidth}px;
                 `;
 
                 // Add branded header
-                wrapper.appendChild(createExportHeader(false));
+                wrapper.appendChild(createExportHeader(isDark));
 
                 // Clone the results
                 const clone = resultsArea.cloneNode(true);
@@ -5059,13 +5062,15 @@
                 // Remove all buttons
                 clone.querySelectorAll('button, .card-export-btn, .expand-toggle').forEach(el => el.remove());
 
-                // Apply comprehensive light styling
-                applyExportLightStyles(clone);
+                // Apply styling only if light theme (dark theme already looks correct)
+                if (!isDark) {
+                    applyExportLightStyles(clone);
+                }
 
                 wrapper.appendChild(clone);
 
                 // Add footer
-                wrapper.appendChild(createExportFooter(false));
+                wrapper.appendChild(createExportFooter(isDark));
 
                 document.body.appendChild(wrapper);
 
@@ -5075,7 +5080,7 @@
                 const canvas = await html2canvas(wrapper, {
                     scale: 2,
                     useCORS: true,
-                    backgroundColor: '#ffffff',
+                    backgroundColor: bgColor,
                     logging: false,
                     allowTaint: true
                 });
@@ -5090,21 +5095,24 @@
             }
         }
 
-        // Method 2: PNG Iframe - Render in isolated iframe with FRESH HTML (no CSS variables)
+        // Method 2: PNG Iframe - Render full report in isolated iframe
         async function exportPngIframe() {
-            showStatus('Generating PNG (Iframe)...', 'info');
+            showStatus('Generating PNG...', 'info');
 
             try {
-                // Generate completely fresh HTML with hardcoded light colors
                 const exportHTML = generateExportHTML({
                     includeFraud: true,
                     includeData: true,
-                    includeCharts: false,
+                    includeCharts: true,
                     includeScore: true,
                     includeDebt: true,
                     includeResearch: true,
                     includeLenders: true
                 });
+
+                const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+                const bgColor = isDark ? '#0a0a0a' : '#f8fafc';
+                const textColor = isDark ? '#ffffff' : '#1e293b';
 
                 // Create iframe - must be visible for html2canvas to work properly
                 const iframe = document.createElement('iframe');
@@ -5116,7 +5124,7 @@
                     height: 100vh;
                     border: none;
                     z-index: 99999;
-                    background: white;
+                    background: ${bgColor};
                 `;
 
                 // Create overlay to hide from user
@@ -5144,7 +5152,6 @@
 
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 
-                // Write complete self-contained HTML - NO CSS VARIABLES
                 iframeDoc.open();
                 iframeDoc.write(`
                     <!DOCTYPE html>
@@ -5155,8 +5162,8 @@
                             * { margin: 0; padding: 0; box-sizing: border-box; }
                             body {
                                 font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-                                background: #ffffff;
-                                color: #111827;
+                                background: ${bgColor};
+                                color: ${textColor};
                                 padding: 24px;
                                 line-height: 1.5;
                             }
@@ -5173,7 +5180,7 @@
                 const canvas = await html2canvas(iframeDoc.body, {
                     scale: 2,
                     useCORS: true,
-                    backgroundColor: '#ffffff',
+                    backgroundColor: bgColor,
                     logging: false,
                     allowTaint: true,
                     width: 900,
@@ -5230,21 +5237,24 @@
             }
         }
 
-        // Method 4: PDF Export
+        // Method 4: PDF Export - full report
         async function exportPdf() {
             showStatus('Generating PDF...', 'info');
 
             try {
-                // Use iframe method for proper color rendering
                 const exportHTML = generateExportHTML({
                     includeFraud: true,
                     includeData: true,
-                    includeCharts: false,
+                    includeCharts: true,
                     includeScore: true,
                     includeDebt: true,
                     includeResearch: true,
                     includeLenders: true
                 });
+
+                const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+                const bgColor = isDark ? '#0a0a0a' : '#f8fafc';
+                const textColor = isDark ? '#ffffff' : '#1e293b';
 
                 // Create iframe - must be visible for html2canvas to work properly
                 const iframe = document.createElement('iframe');
@@ -5256,7 +5266,7 @@
                     height: 100vh;
                     border: none;
                     z-index: 99999;
-                    background: white;
+                    background: ${bgColor};
                 `;
 
                 // Create overlay to hide from user
@@ -5284,7 +5294,6 @@
 
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 
-                // Write complete self-contained HTML - NO CSS VARIABLES
                 iframeDoc.open();
                 iframeDoc.write(`
                     <!DOCTYPE html>
@@ -5295,8 +5304,8 @@
                             * { margin: 0; padding: 0; box-sizing: border-box; }
                             body {
                                 font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-                                background: #ffffff;
-                                color: #111827;
+                                background: ${bgColor};
+                                color: ${textColor};
                                 padding: 24px;
                                 line-height: 1.5;
                             }
@@ -5313,7 +5322,7 @@
                 const canvas = await html2canvas(iframeDoc.body, {
                     scale: 2,
                     useCORS: true,
-                    backgroundColor: '#ffffff',
+                    backgroundColor: bgColor,
                     logging: false,
                     allowTaint: true,
                     width: 900,
@@ -5542,6 +5551,10 @@
                 // Generate HTML for just this section with branding
                 const exportHTML = generateExportHTML(options);
 
+                const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+                const bgColor = isDark ? '#0a0a0a' : '#f8fafc';
+                const textColor = isDark ? '#ffffff' : '#1e293b';
+
                 // Create iframe for isolated rendering
                 const iframe = document.createElement('iframe');
                 iframe.style.cssText = `
@@ -5552,7 +5565,7 @@
                     height: 100vh;
                     border: none;
                     z-index: 99999;
-                    background: white;
+                    background: ${bgColor};
                 `;
 
                 // Create overlay
@@ -5580,7 +5593,6 @@
 
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 
-                // Write complete self-contained HTML with Ables branding
                 iframeDoc.open();
                 iframeDoc.write(`
                     <!DOCTYPE html>
@@ -5591,8 +5603,8 @@
                             * { margin: 0; padding: 0; box-sizing: border-box; }
                             body {
                                 font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-                                background: #ffffff;
-                                color: #111827;
+                                background: ${bgColor};
+                                color: ${textColor};
                                 padding: 24px;
                                 line-height: 1.5;
                             }
@@ -5609,7 +5621,7 @@
                 const canvas = await html2canvas(iframeDoc.body, {
                     scale: 2,
                     useCORS: true,
-                    backgroundColor: '#ffffff',
+                    backgroundColor: bgColor,
                     logging: false,
                     allowTaint: true,
                     width: 900,
@@ -7830,7 +7842,20 @@ Return ONLY valid JSON:
             const termMonths = config.termMonths;
             const totalPayback = maxAdvance * factorRate;
 
-            // Calculate payment based on current frequency
+            // Auto-detect payment frequency from bank data
+            // Healthy avg balance relative to revenue = weekly (can handle larger lump payments)
+            // Low avg balance relative to revenue = daily (spread into smaller amounts)
+            const avgBalance = extractedData.full_analysis?.aggregated?.avg_ending_balance || 0;
+            const balanceRatio = avgRevenue > 0 ? avgBalance / avgRevenue : 0;
+            // 10%+ of monthly revenue in avg balance = healthy enough for weekly
+            paymentFrequency = balanceRatio >= 0.10 ? 'weekly' : 'daily';
+            // Update toggle buttons to reflect auto-detected frequency
+            const freqBtn = document.getElementById('paymentFreqToggle');
+            if (freqBtn) freqBtn.textContent = paymentFrequency.toUpperCase();
+            const freqBtnEdit = document.getElementById('paymentFreqToggleEdit');
+            if (freqBtnEdit) freqBtnEdit.textContent = paymentFrequency.toUpperCase();
+
+            // Calculate payment based on determined frequency
             let payment;
             if (paymentFrequency === 'daily') {
                 payment = maxAdvance > 0 ? Math.round(totalPayback / (termMonths * 22)) : 0;
