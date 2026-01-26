@@ -8622,47 +8622,27 @@ Return ONLY valid JSON:
             document.getElementById('researchProgressFill').style.width = pct + '%';
             document.getElementById('researchProgressText').textContent = `${completed} / ${researchModules.length}`;
 
-            // Run SOS first to get entity data for other modules
-            const sosModule = researchModules.find(m => m.id === 'sos');
-            let verifiedEntity = window._verifiedEntity || null;
-            if (sosModule && !researchResults['sos']) {
-                console.log('[Research] === PHASE 1: Running SOS solo ===');
-                const sosStart = performance.now();
-                try {
-                    const sosResult = await runSingleResearch(apiKey, sosModule, businessName, ownerName, location, 0, null);
-                    researchResults['sos'] = sosResult;
-                    renderResearchModule(sosModule, sosResult);
-                    console.log(`[Research] SOS completed in ${((performance.now() - sosStart) / 1000).toFixed(1)}s`);
-                    if (sosResult.entity_number || sosResult.formation_date || sosResult.status) {
-                        window._verifiedEntity = { entity_number: sosResult.entity_number, formation_date: sosResult.formation_date, status: sosResult.status, verified_name: businessName };
-                        verifiedEntity = window._verifiedEntity;
-                        console.log(`[Research] SOS entity verified: ${sosResult.entity_number || 'no entity#'}, status: ${sosResult.status || 'unknown'}`);
-                    }
-                } catch (e) {
-                    console.error(`[Research] SOS FAILED after ${((performance.now() - sosStart) / 1000).toFixed(1)}s:`, e.message);
-                    researchResults['sos'] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
-                    renderResearchModule(sosModule, researchResults['sos']);
-                }
-                updateProgress();
-            }
+            // Fire ALL modules with 300ms stagger, render each as it returns
+            const allModules = researchModules.filter(m => !researchResults[m.id]);
+            console.log(`[Research] === Firing ALL ${allModules.length} modules with 300ms stagger ===`);
+            console.log(`[Research] Modules: ${allModules.map(m => m.id).join(', ')}`);
+            const researchStart = performance.now();
 
-            // Fire remaining modules with 300ms stagger
-            const remainingModules = researchModules.filter(m => !researchResults[m.id]);
-            console.log(`[Research] === PHASE 2: Firing ${remainingModules.length} modules with 300ms stagger ===`);
-            console.log(`[Research] Modules: ${remainingModules.map(m => m.id).join(', ')}`);
-            const phase2Start = performance.now();
-
-            // Fire all remaining modules with 300ms stagger, render each as it returns
-            await Promise.all(remainingModules.map(async (module, idx) => {
+            await Promise.all(allModules.map(async (module, idx) => {
                 await new Promise(r => setTimeout(r, idx * 300));
                 console.log(`[Research] ${module.id} launching (stagger: ${idx * 300}ms)`);
                 const badge = document.getElementById(`badge-${module.id}`);
                 if (badge) badge.textContent = 'Fetching...';
                 try {
-                    const result = await runSingleResearch(apiKey, module, businessName, ownerName, location, 0, verifiedEntity);
+                    const result = await runSingleResearch(apiKey, module, businessName, ownerName, location, 0, null);
                     researchResults[module.id] = result;
                     renderResearchModule(module, result);
                     console.log(`[Research] ${module.id} DONE - rendered to UI`);
+                    // Store SOS entity data if it comes back
+                    if (module.id === 'sos' && (result.entity_number || result.formation_date || result.status)) {
+                        window._verifiedEntity = { entity_number: result.entity_number, formation_date: result.formation_date, status: result.status, verified_name: businessName };
+                        console.log(`[Research] SOS entity verified: ${result.entity_number || 'no entity#'}, status: ${result.status || 'unknown'}`);
+                    }
                 } catch (e) {
                     console.error(`[Research] ${module.id} FINAL FAILURE:`, e.message);
                     researchResults[module.id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
@@ -8670,7 +8650,7 @@ Return ONLY valid JSON:
                 }
                 updateProgress();
             }));
-            console.log(`[Research] === ALL MODULES COMPLETE in ${((performance.now() - phase2Start) / 1000).toFixed(1)}s ===`);
+            console.log(`[Research] === ALL ${allModules.length} MODULES COMPLETE in ${((performance.now() - researchStart) / 1000).toFixed(1)}s ===`);
 
             // Final check
             if (completed >= researchModules.length) {
