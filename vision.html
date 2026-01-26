@@ -2865,18 +2865,14 @@
                 </div>
                 <div class="step" id="step2">
                     <span class="step-num">2</span>
-                    <span>Fraud Scan</span>
+                    <span>Extract & Scan</span>
                 </div>
                 <div class="step" id="step3">
                     <span class="step-num">3</span>
-                    <span>Extract Data</span>
+                    <span>Research</span>
                 </div>
                 <div class="step" id="step4">
                     <span class="step-num">4</span>
-                    <span>Research</span>
-                </div>
-                <div class="step" id="step5">
-                    <span class="step-num">5</span>
                     <span>Match Lenders</span>
                 </div>
             </div>
@@ -6583,11 +6579,7 @@ Return ONLY valid JSON:
             const successCount = results.filter(r => r !== null).length;
             console.log(`Extraction complete: ${successCount}/${files.length} statements successful`);
 
-            // Start early research now that extraction is done (no competing API calls)
-            if (extractedBusinessInfo.name) {
-                window._earlyResearchStarted = true;
-                await startEarlyResearch(apiKey);
-            }
+            // Research runs in the full research step (batches of 3)
 
             // Build months array from successful extractions (include itemized lists for popups)
             const months = results.filter(r => r !== null).map(r => ({
@@ -8621,13 +8613,29 @@ Return ONLY valid JSON:
             document.getElementById('researchProgressFill').style.width = pct + '%';
             document.getElementById('researchProgressText').textContent = `${completed} / ${researchModules.length}`;
 
-            // Only run modules that haven't already completed
-            const remainingModules = researchModules.filter(m => !researchResults[m.id]);
-            const verifiedEntity = window._verifiedEntity || null;
+            // Run SOS first to get entity data for other modules
+            const sosModule = researchModules.find(m => m.id === 'sos');
+            let verifiedEntity = window._verifiedEntity || null;
+            if (sosModule && !researchResults['sos']) {
+                try {
+                    const sosResult = await runSingleResearch(apiKey, sosModule, businessName, ownerName, location, 0, null);
+                    researchResults['sos'] = sosResult;
+                    renderResearchModule(sosModule, sosResult);
+                    if (sosResult.entity_number || sosResult.formation_date || sosResult.status) {
+                        window._verifiedEntity = { entity_number: sosResult.entity_number, formation_date: sosResult.formation_date, status: sosResult.status, verified_name: businessName };
+                        verifiedEntity = window._verifiedEntity;
+                    }
+                } catch (e) {
+                    researchResults['sos'] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
+                    renderResearchModule(sosModule, researchResults['sos']);
+                }
+                updateProgress();
+            }
 
+            // Run remaining modules in batches of 3
+            const remainingModules = researchModules.filter(m => !researchResults[m.id]);
             console.log(`Running ${remainingModules.length} remaining research modules`);
 
-            // Run 3 at a time - all use grounding so can't fire all at once
             for (let i = 0; i < remainingModules.length; i += 3) {
                 const batch = remainingModules.slice(i, i + 3);
                 await Promise.all(batch.map(async (module) => {
