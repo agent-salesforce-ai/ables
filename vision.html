@@ -3036,7 +3036,7 @@
                                         <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Suggested Approval</div>
                                         <div id="approvalBadge" style="padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; background: #fee2e2; color: #dc2626;">CALCULATING...</div>
                                     </div>
-                                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: center;">
+                                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center;">
                                         <div>
                                             <div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Max Advance</div>
                                             <div id="suggestedAmount" style="font-size: 20px; font-weight: 700; color: var(--text);">$--</div>
@@ -3044,6 +3044,10 @@
                                         <div>
                                             <div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Factor Rate</div>
                                             <div id="suggestedRate" style="font-size: 20px; font-weight: 700; color: var(--text);">--</div>
+                                        </div>
+                                        <div>
+                                            <div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Term</div>
+                                            <div id="suggestedTerm" style="font-size: 20px; font-weight: 700; color: var(--text);">--</div>
                                         </div>
                                         <div>
                                             <div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Daily Payment</div>
@@ -4247,69 +4251,106 @@
             }
 
             // Credit Engine Section
-            if (options.includeScore && extractedData.credit_score) {
-                const cs = extractedData.credit_score;
-                const tierColors = {
-                    A: '#10b981', B: '#22c55e', C: '#eab308', D: '#f97316', E: '#ef4444'
-                };
-                const tierBg = {
-                    A: '#d1fae5', B: '#dcfce7', C: '#fef9c3', D: '#ffedd5', E: '#fee2e2'
-                };
-                const color = tierColors[cs.tier] || '#6b7280';
+            if (options.includeScore) {
+                const cs = extractedData?.credit_score;
+                const sa = extractedData?.suggested_approval;
 
-                const getScoreBarColor = (pct) => {
-                    if (pct >= 70) return '#10b981';
-                    if (pct >= 40) return '#eab308';
-                    return '#ef4444';
-                };
+                if (cs) {
+                    const tierColors = {
+                        A: '#10b981', B: '#22c55e', C: '#eab308', D: '#f97316', E: '#ef4444'
+                    };
+                    const color = tierColors[cs.tier] || '#6b7280';
 
-                html += `
-                    <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                        <div style="background: #f8fafc; padding: 12px 20px; border-bottom: 1px solid #e5e7eb;">
-                            <div style="font-size: 10px; font-weight: 800; letter-spacing: 0.15em; color: #6b7280;">ABLESAI CREDIT ENGINE</div>
-                            <div style="font-size: 9px; color: #9ca3af;">V4.2</div>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 180px 1fr;">
-                            <div style="padding: 24px; border-right: 1px solid #e5e7eb; text-align: center; background: ${color}10;">
-                                <div style="font-size: 48px; font-weight: 800; color: ${color}; line-height: 1;">${cs.total}<span style="font-size: 18px; color: #6b7280;">/100</span></div>
-                                <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px;">
-                                    <span style="font-size: 24px; font-weight: 800; color: ${color};">${cs.tier}</span>
-                                    <span style="font-size: 11px; font-weight: 600; color: #374151; text-transform: uppercase;">${cs.label}</span>
-                                </div>
+                    const getScoreBarColor = (pct) => {
+                        if (pct >= 70) return '#10b981';
+                        if (pct >= 40) return '#eab308';
+                        return '#ef4444';
+                    };
+
+                    // Approval badge colors
+                    const approvalColors = {
+                        'APPROVED': { bg: '#dcfce7', color: '#16a34a' },
+                        'CONDITIONAL': { bg: '#fef9c3', color: '#ca8a04' },
+                        'DECLINED': { bg: '#fee2e2', color: '#dc2626' }
+                    };
+                    const approvalStyle = sa ? approvalColors[sa.approval] || approvalColors['DECLINED'] : null;
+
+                    html += `
+                        <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                            <div style="background: #f8fafc; padding: 12px 20px; border-bottom: 1px solid #e5e7eb;">
+                                <div style="font-size: 10px; font-weight: 800; letter-spacing: 0.15em; color: #6b7280;">ABLESAI CREDIT ENGINE</div>
+                                <div style="font-size: 9px; color: #9ca3af;">V4.2</div>
                             </div>
-                            <div style="padding: 20px;">
-                                <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280; margin-bottom: 12px;">Score Breakdown</div>
-                                ${[
-                                    { label: 'Credit Score', pts: cs.components.credit, max: 20 },
-                                    { label: `Behavior (${cs.inputs.avgNsf + cs.inputs.avgNegDays})`, pts: cs.components.behavior, max: 15 },
-                                    { label: 'Revenue', pts: cs.components.revenue, max: 30 },
-                                    { label: 'Stability', pts: cs.components.stability, max: 20 },
-                                    { label: `Buffer (${cs.inputs.bufferRatio}%)`, pts: cs.components.buffer, max: 15 }
-                                ].map(item => {
-                                    const pct = (item.pts / item.max) * 100;
-                                    const barColor = getScoreBarColor(pct);
-                                    return `
-                                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                                            <div style="width: 8px; height: 8px; border-radius: 50%; background: ${barColor};"></div>
-                                            <span style="font-size: 12px; font-weight: 600; color: #374151; min-width: 90px;">${item.label}</span>
-                                            <div style="flex: 1; height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden;">
-                                                <div style="width: ${pct}%; height: 100%; background: ${barColor}; border-radius: 3px;"></div>
+                            <div style="display: grid; grid-template-columns: 180px 1fr;">
+                                <div style="padding: 24px; border-right: 1px solid #e5e7eb; text-align: center; background: ${color}10;">
+                                    <div style="font-size: 48px; font-weight: 800; color: ${color}; line-height: 1;">${cs.total}<span style="font-size: 18px; color: #6b7280;">/100</span></div>
+                                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px;">
+                                        <span style="font-size: 24px; font-weight: 800; color: ${color};">${cs.tier}</span>
+                                        <span style="font-size: 11px; font-weight: 600; color: #374151; text-transform: uppercase;">${cs.label}</span>
+                                    </div>
+                                </div>
+                                <div style="padding: 20px;">
+                                    <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280; margin-bottom: 12px;">Score Breakdown</div>
+                                    ${[
+                                        { label: 'Credit Score', pts: cs.components?.credit || 0, max: 20, display: cs.inputs?.estimatedFico || '--' },
+                                        { label: `Behavior (${Math.round((cs.inputs?.avgNsf || 0) + (cs.inputs?.avgNegDays || 0))})`, pts: cs.components?.behavior || 0, max: 15 },
+                                        { label: 'Revenue', pts: cs.components?.revenue || 0, max: 30 },
+                                        { label: 'Stability', pts: cs.components?.stability || 0, max: 20 },
+                                        { label: `Buffer (${cs.inputs?.bufferRatio || 0}%)`, pts: cs.components?.buffer || 0, max: 15 }
+                                    ].map(item => {
+                                        const pct = item.max > 0 ? (item.pts / item.max) * 100 : 0;
+                                        const barColor = getScoreBarColor(pct);
+                                        const displayVal = item.display || `${item.pts}/${item.max}`;
+                                        return `
+                                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                                <div style="width: 8px; height: 8px; border-radius: 50%; background: ${barColor};"></div>
+                                                <span style="font-size: 12px; font-weight: 600; color: #374151; min-width: 100px;">${item.label}</span>
+                                                <div style="flex: 1; height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden;">
+                                                    <div style="width: ${pct}%; height: 100%; background: ${barColor}; border-radius: 3px;"></div>
+                                                </div>
+                                                <span style="font-size: 12px; font-weight: 700; min-width: 40px; text-align: right;">${displayVal}</span>
                                             </div>
-                                            <span style="font-size: 12px; font-weight: 700; min-width: 40px; text-align: right;">${item.pts}/${item.max}</span>
-                                        </div>
-                                    `;
-                                }).join('')}
-                                <div style="display: flex; gap: 4px; margin-top: 16px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
-                                    <div style="flex: 1; padding: 6px; background: #fee2e2; color: #dc2626; text-align: center; border-radius: 4px; font-size: 9px; font-weight: 700; ${cs.tier === 'E' ? 'box-shadow: 0 2px 6px rgba(0,0,0,0.15);' : ''}">E &lt;35</div>
-                                    <div style="flex: 1; padding: 6px; background: #ffedd5; color: #ea580c; text-align: center; border-radius: 4px; font-size: 9px; font-weight: 700; ${cs.tier === 'D' ? 'box-shadow: 0 2px 6px rgba(0,0,0,0.15);' : ''}">D 35+</div>
-                                    <div style="flex: 1; padding: 6px; background: #fef9c3; color: #ca8a04; text-align: center; border-radius: 4px; font-size: 9px; font-weight: 700; ${cs.tier === 'C' ? 'box-shadow: 0 2px 6px rgba(0,0,0,0.15);' : ''}">C 50+</div>
-                                    <div style="flex: 1; padding: 6px; background: #dcfce7; color: #16a34a; text-align: center; border-radius: 4px; font-size: 9px; font-weight: 700; ${cs.tier === 'B' ? 'box-shadow: 0 2px 6px rgba(0,0,0,0.15);' : ''}">B 65+</div>
-                                    <div style="flex: 1; padding: 6px; background: #d1fae5; color: #059669; text-align: center; border-radius: 4px; font-size: 9px; font-weight: 700; ${cs.tier === 'A' ? 'box-shadow: 0 2px 6px rgba(0,0,0,0.15);' : ''}">A 80+</div>
+                                        `;
+                                    }).join('')}
+                                    <div style="display: flex; gap: 4px; margin-top: 16px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
+                                        ${['E', 'D', 'C', 'B', 'A'].map(t => {
+                                            const tColors = { E: { bg: '#fee2e2', fg: '#dc2626' }, D: { bg: '#ffedd5', fg: '#ea580c' }, C: { bg: '#fef9c3', fg: '#ca8a04' }, B: { bg: '#dcfce7', fg: '#16a34a' }, A: { bg: '#d1fae5', fg: '#059669' } };
+                                            const tLabels = { E: 'E <35', D: 'D 35+', C: 'C 50+', B: 'B 65+', A: 'A 80+' };
+                                            const active = cs.tier === t;
+                                            return `<div style="flex: 1; padding: 6px; background: ${tColors[t].bg}; color: ${tColors[t].fg}; text-align: center; border-radius: 4px; font-size: 9px; font-weight: 700; ${active ? 'box-shadow: 0 2px 6px rgba(0,0,0,0.2); transform: scale(1.05);' : ''}">${tLabels[t]}</div>`;
+                                        }).join('')}
+                                    </div>
                                 </div>
                             </div>
+                            ${sa ? `
+                            <div style="border-top: 1px solid #e5e7eb; padding: 16px 20px; background: #f8fafc;">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280;">Suggested Approval</div>
+                                    <div style="padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; background: ${approvalStyle.bg}; color: ${approvalStyle.color};">${sa.approval}</div>
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center;">
+                                    <div>
+                                        <div style="font-size: 10px; color: #6b7280; text-transform: uppercase;">Max Advance</div>
+                                        <div style="font-size: 18px; font-weight: 700; color: #111827;">$${sa.maxAdvance.toLocaleString()}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 10px; color: #6b7280; text-transform: uppercase;">Factor Rate</div>
+                                        <div style="font-size: 18px; font-weight: 700; color: #111827;">${sa.factorRate.toFixed(2)}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 10px; color: #6b7280; text-transform: uppercase;">Term</div>
+                                        <div style="font-size: 18px; font-weight: 700; color: #111827;">${sa.termMonths} mo</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 10px; color: #6b7280; text-transform: uppercase;">Daily Payment</div>
+                                        <div style="font-size: 18px; font-weight: 700; color: #111827;">$${sa.dailyPayment.toLocaleString()}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            ` : ''}
                         </div>
-                    </div>
-                `;
+                    `;
+                }
             }
 
             // Existing Debt Section
@@ -7603,13 +7644,13 @@ Return ONLY valid JSON:
             // Score 0 = 1.25x, Score 100 = 1.55x (linear interpolation)
             const advanceMultiplier = 1.25 + (totalScore / 100) * 0.30;
 
-            // Determine approval status and factor rate based on tier
+            // Determine approval status, factor rate, and term based on tier
             const tierConfig = {
-                A: { rate: 1.15, approval: 'APPROVED' },
-                B: { rate: 1.25, approval: 'APPROVED' },
-                C: { rate: 1.35, approval: 'CONDITIONAL' },
-                D: { rate: 1.45, approval: 'CONDITIONAL' },
-                E: { rate: 0, approval: 'DECLINED' }
+                A: { rate: 1.15, approval: 'APPROVED', termMonths: 12 },
+                B: { rate: 1.25, approval: 'APPROVED', termMonths: 9 },
+                C: { rate: 1.35, approval: 'CONDITIONAL', termMonths: 6 },
+                D: { rate: 1.45, approval: 'CONDITIONAL', termMonths: 4 },
+                E: { rate: 0, approval: 'DECLINED', termMonths: 0 }
             };
 
             const config = tierConfig[tier] || tierConfig.E;
@@ -7619,12 +7660,13 @@ Return ONLY valid JSON:
             maxAdvance = Math.min(maxAdvance, 500000); // Cap at 500K
             maxAdvance = Math.max(maxAdvance, 0);
 
-            // Factor rate based on tier
+            // Factor rate and term based on tier
             const factorRate = config.rate;
+            const termMonths = config.termMonths;
 
-            // Daily payment (assuming 6-month term, 22 business days/month)
+            // Daily payment based on tier-specific term, 22 business days/month
             const totalPayback = maxAdvance * factorRate;
-            const dailyPayment = maxAdvance > 0 ? Math.round(totalPayback / (6 * 22)) : 0;
+            const dailyPayment = maxAdvance > 0 ? Math.round(totalPayback / (termMonths * 22)) : 0;
 
             // Update UI
             const approvalBadge = document.getElementById('approvalBadge');
@@ -7640,15 +7682,23 @@ Return ONLY valid JSON:
 
             document.getElementById('suggestedAmount').textContent = maxAdvance > 0 ? '$' + maxAdvance.toLocaleString() : '$0';
             document.getElementById('suggestedRate').textContent = factorRate > 0 ? factorRate.toFixed(2) : '--';
+            document.getElementById('suggestedTerm').textContent = termMonths > 0 ? termMonths + ' mo' : '--';
             document.getElementById('suggestedPayment').textContent = dailyPayment > 0 ? '$' + dailyPayment.toLocaleString() : '$0';
+
+            // Store for export
+            extractedData.suggested_approval = {
+                maxAdvance, factorRate, termMonths, dailyPayment,
+                approval: config.approval, multiplier: advanceMultiplier,
+                fico: estimatedFico, ablesScore: totalScore
+            };
 
             // Approval note with multiplier info
             const noteEl = document.getElementById('approvalNote');
             if (config.approval === 'APPROVED') {
-                noteEl.textContent = `Strong profile. FICO ${estimatedFico}, Ables Score ${totalScore}/100 (${advanceMultiplier.toFixed(2)}x multiplier). Recommended for standard terms.`;
+                noteEl.textContent = `Strong profile. FICO ${estimatedFico}, Ables Score ${totalScore}/100 (${advanceMultiplier.toFixed(2)}x multiplier). ${termMonths}-month term recommended.`;
                 noteEl.style.background = '#dcfce7';
             } else if (config.approval === 'CONDITIONAL') {
-                noteEl.textContent = `Review required. FICO ${estimatedFico}, Ables Score ${totalScore}/100 (${advanceMultiplier.toFixed(2)}x multiplier). Consider reduced advance or higher factor.`;
+                noteEl.textContent = `Review required. FICO ${estimatedFico}, Ables Score ${totalScore}/100 (${advanceMultiplier.toFixed(2)}x multiplier). ${termMonths}-month term. Consider reduced advance or higher factor.`;
                 noteEl.style.background = '#fef9c3';
             } else {
                 noteEl.textContent = `Does not meet minimum criteria. FICO ${estimatedFico}, Ables Score ${totalScore}/100. Recommend decline or stip for additional collateral.`;
