@@ -6587,12 +6587,7 @@ Return ONLY valid JSON:
                             extractedBusinessInfo.name = businessName;
                             extractedBusinessInfo.owner = result.owner_name || '';
                             extractedBusinessInfo.address = result.business_address || '';
-                            // Kick off early research as soon as we have a business name
-                            if (!window._earlyResearchStarted) {
-                                window._earlyResearchStarted = true;
-                                console.log(`Business name found: "${businessName}" - starting early research`);
-                                startEarlyResearch(apiKey);
-                            }
+                            // Early research disabled - runs after extraction to avoid fetch aborts
                         }
                     }
                     return result;
