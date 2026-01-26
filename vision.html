@@ -6544,37 +6544,46 @@ Return ONLY valid JSON:
                 return null;
             };
 
-            // Extract statements one at a time to avoid API conflicts
-            const results = [];
-            for (let i = 0; i < files.length; i++) {
-                showLoading(true, `Extracting statement ${i + 1} of ${files.length}...`, {
-                    step: 'extract',
-                    progress: 15 + Math.round((i / files.length) * 40),
-                    subtext: `${files.length - i} remaining`
-                });
+            // Extract all statements in parallel with 2s stagger
+            showLoading(true, `Extracting ${files.length} statements in parallel...`, {
+                step: 'extract',
+                progress: 20,
+                subtext: `Processing all documents simultaneously`
+            });
 
-                const result = await extractWithRetry(files[i], i);
-                results.push(result);
+            let completedCount = 0;
+            const results = await Promise.all(
+                files.map(async (file, i) => {
+                    await new Promise(r => setTimeout(r, i * 2000));
+                    const result = await extractWithRetry(file, i);
+                    completedCount++;
+                    showLoading(true, `Extracted ${completedCount} of ${files.length} statements...`, {
+                        step: 'extract',
+                        progress: 15 + Math.round((completedCount / files.length) * 40),
+                        subtext: `${files.length - completedCount} remaining`
+                    });
 
-                // Store fraud results from combined extraction
-                if (result) {
-                    files[i].status = result.fraud_status || 'clean';
-                    files[i].fraudAnalysis = result.fraud_notes || 'No alterations detected';
-                } else {
-                    files[i].status = 'warning';
-                    files[i].fraudAnalysis = 'Extraction failed - unable to analyze';
-                }
-
-                // Store business info from first successful result
-                if (result && !extractedBusinessInfo.name) {
-                    const businessName = result.business_name || result.account_holder || '';
-                    if (businessName) {
-                        extractedBusinessInfo.name = businessName;
-                        extractedBusinessInfo.owner = result.owner_name || '';
-                        extractedBusinessInfo.address = result.business_address || '';
+                    // Store fraud results from combined extraction
+                    if (result) {
+                        file.status = result.fraud_status || 'clean';
+                        file.fraudAnalysis = result.fraud_notes || 'No alterations detected';
+                    } else {
+                        file.status = 'warning';
+                        file.fraudAnalysis = 'Extraction failed - unable to analyze';
                     }
-                }
-            }
+
+                    // Store business info from first successful result
+                    if (result && !extractedBusinessInfo.name) {
+                        const businessName = result.business_name || result.account_holder || '';
+                        if (businessName) {
+                            extractedBusinessInfo.name = businessName;
+                            extractedBusinessInfo.owner = result.owner_name || '';
+                            extractedBusinessInfo.address = result.business_address || '';
+                        }
+                    }
+                    return result;
+                })
+            );
 
             const successCount = results.filter(r => r !== null).length;
             console.log(`Extraction complete: ${successCount}/${files.length} statements successful`);
