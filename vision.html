@@ -4478,7 +4478,21 @@
                                                 <span style="font-size: 12px; font-weight: 600; color: ${C.text};">${moduleNames[id] || id}</span>
                                                 <span style="font-size: 10px; padding: 2px 8px; background: ${riskBg[result.risk] || C.bgHeader}; color: ${riskColors[result.risk] || C.textMuted}; border-radius: 10px; font-weight: 500;">${(result.risk || 'unknown').toUpperCase()}</span>
                                             </div>
-                                            <div style="font-size: 11px; color: ${C.textSec}; line-height: 1.4;">${result.summary || 'No data'}</div>
+                                            <div style="font-size: 11px; color: ${C.textSec}; line-height: 1.4; margin-bottom: ${(result.details?.length || result.flags?.length) ? '8px' : '0'};">${result.summary || 'No data'}</div>
+                                            ${result.details && result.details.length > 0 ? `
+                                                <div style="margin-bottom: ${result.flags?.length ? '8px' : '0'};">
+                                                    ${result.details.map(d => `
+                                                        <div style="font-size: 10px; color: ${C.textSec}; padding: 3px 0; padding-left: 10px; border-left: 2px solid ${C.border}; margin-bottom: 3px; line-height: 1.4;">${d}</div>
+                                                    `).join('')}
+                                                </div>
+                                            ` : ''}
+                                            ${result.flags && result.flags.length > 0 ? `
+                                                <div>
+                                                    ${result.flags.map(f => `
+                                                        <div style="font-size: 10px; color: ${C.red}; padding: 3px 6px; background: ${C.redBg}; border-radius: 4px; margin-bottom: 3px; line-height: 1.4;">⚠ ${f}</div>
+                                                    `).join('')}
+                                                </div>
+                                            ` : ''}
                                         </div>
                                     `;
                                 }).join('')}
@@ -5237,7 +5251,7 @@
             }
         }
 
-        // Method 4: PDF Export - full report
+        // Method 4: PDF Export - full report (excludes lenders/submission)
         async function exportPdf() {
             showStatus('Generating PDF...', 'info');
 
@@ -5249,7 +5263,7 @@
                     includeScore: true,
                     includeDebt: true,
                     includeResearch: true,
-                    includeLenders: true
+                    includeLenders: false
                 });
 
                 const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
@@ -8625,20 +8639,20 @@ Return ONLY valid JSON:
 
             console.log(`Running ${remainingModules.length} remaining research modules`);
 
-            // Run remaining modules in batches of 4 to avoid Gemini rate limits
-            for (let i = 0; i < remainingModules.length; i += 4) {
-                const batch = remainingModules.slice(i, i + 4);
-                await Promise.all(batch.map(async (module) => {
-                    try {
-                        const result = await runSingleResearch(apiKey, module, businessName, ownerName, location, 0, verifiedEntity);
-                        researchResults[module.id] = result;
-                        renderResearchModule(module, result);
-                    } catch (e) {
-                        researchResults[module.id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
-                        renderResearchModule(module, researchResults[module.id]);
-                    }
-                    updateProgress();
-                }));
+            // Run remaining modules consecutively, 500ms apart to avoid rate limits
+            for (const module of remainingModules) {
+                try {
+                    const result = await runSingleResearch(apiKey, module, businessName, ownerName, location, 0, verifiedEntity);
+                    researchResults[module.id] = result;
+                    renderResearchModule(module, result);
+                } catch (e) {
+                    researchResults[module.id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
+                    renderResearchModule(module, researchResults[module.id]);
+                }
+                updateProgress();
+                if (remainingModules.indexOf(module) < remainingModules.length - 1) {
+                    await new Promise(r => setTimeout(r, 500));
+                }
             }
 
             // Final check
