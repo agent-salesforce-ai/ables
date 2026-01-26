@@ -8543,15 +8543,13 @@ Return ONLY valid JSON:
             const earlyModuleIds = ['sos', 'ucc', 'tax'];
             const earlyModules = researchModules.filter(m => earlyModuleIds.includes(m.id));
 
-            // Run SOS first, then UCC + Tax in parallel with entity context
+            // Only run SOS during extraction (1 call) - UCC/Tax go in the full research batches
             const sosModule = earlyModules.find(m => m.id === 'sos');
-            const legalModules = earlyModules.filter(m => m.id !== 'sos');
 
             if (sosModule) {
                 try {
                     const sosResult = await runSingleResearch(apiKey, sosModule, businessName, ownerName, location, 0, null);
                     researchResults[sosModule.id] = sosResult;
-                    // Store verified entity globally for later modules
                     if (sosResult.entity_number || sosResult.formation_date || sosResult.status) {
                         window._verifiedEntity = {
                             entity_number: sosResult.entity_number,
@@ -8565,16 +8563,6 @@ Return ONLY valid JSON:
                     researchResults[sosModule.id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
                 }
             }
-
-            // Run UCC + Tax with entity context
-            await Promise.all(legalModules.map(async (module) => {
-                try {
-                    const result = await runSingleResearch(apiKey, module, businessName, ownerName, location, 0, window._verifiedEntity || null);
-                    researchResults[module.id] = result;
-                } catch (e) {
-                    researchResults[module.id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
-                }
-            }));
 
             console.log('Early research complete:', Object.keys(researchResults));
         }
