@@ -2461,6 +2461,15 @@
             background: transparent;
         }
 
+        .research-module.loading {
+            animation: cardPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes cardPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
         /* Fraud Analysis Modules */
         .fraud-modules-grid {
             display: grid;
@@ -2628,6 +2637,24 @@
             background: linear-gradient(90deg, var(--gold) 0%, #f59e0b 100%);
             border-radius: 4px;
             transition: width 0.3s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .research-progress-fill.active::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
         .research-progress-text {
@@ -8548,6 +8575,7 @@ Return ONLY valid JSON:
                 document.getElementById('researchProgressText').textContent = `${completed} / ${researchModules.length}`;
 
                 if (completed === researchModules.length) {
+                    document.getElementById('researchProgressFill').classList.remove('active');
                     updateResearchSummary();
                     document.getElementById('expandAllBtn').textContent = 'Collapse All';
                 }
@@ -8575,15 +8603,26 @@ Return ONLY valid JSON:
             console.log(`[Research] === Firing ${pendingGroups.length} grouped API calls (${pendingGroups.reduce((s, g) => s + g.modules.length, 0)} modules) ===`);
             const researchStart = performance.now();
 
-            // Set all badges to Fetching
+            // Activate progress bar shimmer animation
+            document.getElementById('researchProgressFill').classList.add('active');
+
+            // Set badges to show group info
             pendingGroups.forEach(g => g.modules.forEach(id => {
                 const badge = document.getElementById(`badge-${id}`);
-                if (badge) badge.textContent = 'Fetching...';
+                if (badge) {
+                    badge.className = 'risk-badge pending';
+                    badge.textContent = 'Queued';
+                }
             }));
 
             // Fire all 4 groups with 1s stagger (4 calls in 3s, well within 10 RPM)
             await Promise.all(pendingGroups.map(async (group, idx) => {
                 await new Promise(r => setTimeout(r, idx * 1000));
+                // Update badges to show actively fetching
+                group.modules.forEach(id => {
+                    const badge = document.getElementById(`badge-${id}`);
+                    if (badge) badge.textContent = 'Searching...';
+                });
                 console.log(`[Research] Group "${group.label}" launching (${group.modules.join(', ')})`);
                 try {
                     const results = await runGroupedResearch(apiKey, group.modules, businessName, ownerName, location);
