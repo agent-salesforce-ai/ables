@@ -2954,7 +2954,7 @@
             <!-- Credit Engine Scoring -->
             <div class="section-card hidden" id="scoreSection">
                 <div class="section-header">
-                    <div class="section-header-title"><svg class="section-logo" viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/><circle cx="32" cy="32" r="12" fill="#eab308"/><ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/></svg><span>Credit Engine</span></div>
+                    <div class="section-header-title"><svg class="section-logo" viewBox="0 0 64 64" fill="none" style="cursor: pointer;" onclick="event.stopPropagation(); toggleApprovalEdit()"><ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140"/><circle cx="32" cy="32" r="12" fill="#eab308"/><ellipse cx="32" cy="32" rx="28" ry="8" stroke="#ea580c" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/></svg><span>Credit Engine</span></div>
                     <button class="card-export-btn" onclick="exportCardAsPng('scoreSection', 'Credit_Score')">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                         PNG
@@ -3031,12 +3031,13 @@
                                     <div class="credit-engine-scale-item" id="scaleA" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);">A 80+</div>
                                 </div>
                                 <!-- Suggested Approval -->
-                                <div class="credit-engine-approval" id="approvalSection" style="margin-top: 16px; padding: 16px; background: var(--bg-tertiary); border-radius: 10px; border: 2px solid var(--border);">
+                                <div class="credit-engine-approval" id="approvalSection" style="margin-top: 16px; padding: 16px; background: var(--bg-tertiary); border-radius: 10px; border: 2px solid var(--border); transition: border-color 0.3s;">
                                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
                                         <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Suggested Approval</div>
                                         <div id="approvalBadge" style="padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; background: #fee2e2; color: #dc2626;">CALCULATING...</div>
                                     </div>
-                                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center;">
+                                    <!-- Locked view (read-only) -->
+                                    <div id="approvalLocked" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center;">
                                         <div>
                                             <div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Max Advance</div>
                                             <div id="suggestedAmount" style="font-size: 20px; font-weight: 700; color: var(--text);">$--</div>
@@ -3051,10 +3052,41 @@
                                         </div>
                                         <div>
                                             <div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 4px;">
-                                                <span id="paymentFreqLabel">Payment</span>
-                                                <button onclick="togglePaymentFrequency()" id="paymentFreqToggle" style="background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; font-size: 9px; color: var(--gold); cursor: pointer; font-weight: 600;">DAILY</button>
+                                                <span>Payment</span>
+                                                <button onclick="event.stopPropagation(); togglePaymentFrequency()" id="paymentFreqToggle" style="background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; font-size: 9px; color: var(--gold); cursor: pointer; font-weight: 600;">DAILY</button>
                                             </div>
                                             <div id="suggestedPayment" style="font-size: 20px; font-weight: 700; color: var(--text);">$--</div>
+                                        </div>
+                                    </div>
+                                    <!-- Unlocked view (editable inputs) -->
+                                    <div id="approvalUnlocked" style="display: none;">
+                                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center;">
+                                            <div>
+                                                <div style="font-size: 10px; color: var(--gold); text-transform: uppercase; font-weight: 600;">Max Advance</div>
+                                                <div style="position: relative; margin-top: 4px;">
+                                                    <span style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font-size: 14px; font-weight: 700; color: var(--text-muted);">$</span>
+                                                    <input type="number" id="editAdvance" style="width: 100%; padding: 8px 8px 8px 20px; border: 2px solid var(--gold); border-radius: 8px; background: var(--bg-secondary); color: var(--text); font-size: 16px; font-weight: 700; text-align: center;" oninput="recalcManualPayment()">
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div style="font-size: 10px; color: var(--gold); text-transform: uppercase; font-weight: 600;">Factor Rate</div>
+                                                <input type="number" id="editRate" step="0.01" min="1.0" max="2.0" style="width: 100%; padding: 8px; margin-top: 4px; border: 2px solid var(--gold); border-radius: 8px; background: var(--bg-secondary); color: var(--text); font-size: 16px; font-weight: 700; text-align: center;" oninput="recalcManualPayment()">
+                                            </div>
+                                            <div>
+                                                <div style="font-size: 10px; color: var(--gold); text-transform: uppercase; font-weight: 600;">Term (months)</div>
+                                                <input type="number" id="editTerm" min="1" max="24" style="width: 100%; padding: 8px; margin-top: 4px; border: 2px solid var(--gold); border-radius: 8px; background: var(--bg-secondary); color: var(--text); font-size: 16px; font-weight: 700; text-align: center;" oninput="recalcManualPayment()">
+                                            </div>
+                                            <div>
+                                                <div style="font-size: 10px; color: var(--gold); text-transform: uppercase; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                                                    <span>Payment</span>
+                                                    <button onclick="event.stopPropagation(); togglePaymentFrequency(); recalcManualPayment();" id="paymentFreqToggleEdit" style="background: var(--bg-secondary); border: 1px solid var(--gold); border-radius: 4px; padding: 1px 6px; font-size: 9px; color: var(--gold); cursor: pointer; font-weight: 600;">DAILY</button>
+                                                </div>
+                                                <div id="editPaymentDisplay" style="font-size: 20px; font-weight: 700; color: var(--gold); margin-top: 6px;">$--</div>
+                                            </div>
+                                        </div>
+                                        <div style="display: flex; gap: 8px; margin-top: 12px;">
+                                            <button onclick="applyManualTerms()" style="flex: 1; padding: 8px; background: var(--gold); color: #000; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;">Apply Custom Terms</button>
+                                            <button onclick="resetToSuggested()" style="padding: 8px 16px; background: var(--bg-secondary); color: var(--text-muted); border: 1px solid var(--border); border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;">Reset</button>
                                         </div>
                                     </div>
                                     <div id="approvalNote" style="margin-top: 12px; padding: 8px 12px; background: var(--bg-secondary); border-radius: 6px; font-size: 11px; color: var(--text-muted); text-align: center;"></div>
@@ -7655,6 +7687,98 @@ Return ONLY valid JSON:
 
         // Payment frequency state: 'daily' or 'weekly'
         let paymentFrequency = 'daily';
+        let approvalEditMode = false;
+
+        function toggleApprovalEdit() {
+            approvalEditMode = !approvalEditMode;
+            const locked = document.getElementById('approvalLocked');
+            const unlocked = document.getElementById('approvalUnlocked');
+            const section = document.getElementById('approvalSection');
+
+            if (approvalEditMode) {
+                locked.style.display = 'none';
+                unlocked.style.display = 'block';
+                section.style.borderColor = 'var(--gold)';
+                // Populate inputs with current values
+                const sa = extractedData?.suggested_approval;
+                if (sa) {
+                    document.getElementById('editAdvance').value = sa.maxAdvance || 0;
+                    document.getElementById('editRate').value = sa.factorRate || 1.35;
+                    document.getElementById('editTerm').value = sa.termMonths || 6;
+                }
+                document.getElementById('paymentFreqToggleEdit').textContent = paymentFrequency.toUpperCase();
+                recalcManualPayment();
+            } else {
+                locked.style.display = 'grid';
+                unlocked.style.display = 'none';
+                section.style.borderColor = 'var(--border)';
+            }
+        }
+
+        function recalcManualPayment() {
+            const advance = parseFloat(document.getElementById('editAdvance').value) || 0;
+            const rate = parseFloat(document.getElementById('editRate').value) || 1;
+            const term = parseInt(document.getElementById('editTerm').value) || 1;
+            const totalPayback = advance * rate;
+            let payment;
+            if (paymentFrequency === 'daily') {
+                payment = Math.round(totalPayback / (term * 22));
+            } else {
+                payment = Math.round(totalPayback / (term * 4.33));
+            }
+            document.getElementById('editPaymentDisplay').textContent = payment > 0 ? '$' + payment.toLocaleString() : '$0';
+        }
+
+        function applyManualTerms() {
+            const advance = parseFloat(document.getElementById('editAdvance').value) || 0;
+            const rate = parseFloat(document.getElementById('editRate').value) || 1;
+            const term = parseInt(document.getElementById('editTerm').value) || 1;
+            const totalPayback = advance * rate;
+            let payment;
+            if (paymentFrequency === 'daily') {
+                payment = Math.round(totalPayback / (term * 22));
+            } else {
+                payment = Math.round(totalPayback / (term * 4.33));
+            }
+
+            // Update locked display
+            document.getElementById('suggestedAmount').textContent = '$' + advance.toLocaleString();
+            document.getElementById('suggestedRate').textContent = rate.toFixed(2);
+            document.getElementById('suggestedTerm').textContent = term + ' mo';
+            document.getElementById('suggestedPayment').textContent = '$' + payment.toLocaleString();
+
+            // Update badge to show custom
+            const badge = document.getElementById('approvalBadge');
+            badge.textContent = 'CUSTOM';
+            badge.style.background = '#dbeafe';
+            badge.style.color = '#2563eb';
+
+            // Update stored data for export
+            extractedData.suggested_approval = {
+                ...(extractedData.suggested_approval || {}),
+                maxAdvance: advance,
+                factorRate: rate,
+                termMonths: term,
+                payment: payment,
+                approval: 'CUSTOM',
+                frequency: paymentFrequency
+            };
+
+            // Update note
+            const noteEl = document.getElementById('approvalNote');
+            noteEl.textContent = `Custom terms applied. $${advance.toLocaleString()} advance at ${rate.toFixed(2)} factor, ${term}-month term, $${payment.toLocaleString()} ${paymentFrequency} payment. Total payback: $${Math.round(totalPayback).toLocaleString()}.`;
+            noteEl.style.background = '#dbeafe';
+
+            // Close edit mode
+            toggleApprovalEdit();
+        }
+
+        function resetToSuggested() {
+            // Recalculate from credit score
+            calculateCreditScore();
+            // Close edit mode
+            if (approvalEditMode) toggleApprovalEdit();
+        }
 
         function togglePaymentFrequency() {
             paymentFrequency = paymentFrequency === 'daily' ? 'weekly' : 'daily';
