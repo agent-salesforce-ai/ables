@@ -8639,8 +8639,10 @@ Return ONLY valid JSON:
 
             console.log(`Running ${remainingModules.length} remaining research modules`);
 
-            // Run remaining modules consecutively, 500ms apart to avoid rate limits
-            for (const module of remainingModules) {
+            // Run all remaining modules in parallel with 500ms stagger between launches
+            await Promise.all(remainingModules.map(async (module, idx) => {
+                // Stagger launches 500ms apart so they don't all hit the API at once
+                if (idx > 0) await new Promise(r => setTimeout(r, idx * 500));
                 try {
                     const result = await runSingleResearch(apiKey, module, businessName, ownerName, location, 0, verifiedEntity);
                     researchResults[module.id] = result;
@@ -8650,10 +8652,7 @@ Return ONLY valid JSON:
                     renderResearchModule(module, researchResults[module.id]);
                 }
                 updateProgress();
-                if (remainingModules.indexOf(module) < remainingModules.length - 1) {
-                    await new Promise(r => setTimeout(r, 500));
-                }
-            }
+            }));
 
             // Final check
             if (completed >= researchModules.length) {
