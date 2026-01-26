@@ -8643,21 +8643,25 @@ Return ONLY valid JSON:
 
             // Run remaining modules in batches of 3
             const remainingModules = researchModules.filter(m => !researchResults[m.id]);
-            console.log(`Running ${remainingModules.length} remaining research modules`);
+            console.log(`Running ${remainingModules.length} remaining research modules:`, remainingModules.map(m => m.id));
 
             for (let i = 0; i < remainingModules.length; i += 3) {
                 const batch = remainingModules.slice(i, i + 3);
+                console.log(`Starting batch ${Math.floor(i/3) + 1}: ${batch.map(m => m.id).join(', ')}`);
                 await Promise.all(batch.map(async (module) => {
                     try {
                         const result = await runSingleResearch(apiKey, module, businessName, ownerName, location, 0, verifiedEntity);
                         researchResults[module.id] = result;
                         renderResearchModule(module, result);
+                        console.log(`✓ ${module.id} complete`);
                     } catch (e) {
+                        console.error(`✗ ${module.id} failed:`, e.message);
                         researchResults[module.id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
                         renderResearchModule(module, researchResults[module.id]);
                     }
                     updateProgress();
                 }));
+                console.log(`Batch ${Math.floor(i/3) + 1} complete`);
             }
 
             // Final check
