@@ -6554,7 +6554,7 @@ Return ONLY valid JSON:
             let completedCount = 0;
             const results = await Promise.all(
                 files.map(async (file, i) => {
-                    await new Promise(r => setTimeout(r, i * 2000));
+                    await new Promise(r => setTimeout(r, i * 500));
                     const result = await extractWithRetry(file, i);
                     completedCount++;
                     showLoading(true, `Extracted ${completedCount} of ${files.length} statements...`, {
