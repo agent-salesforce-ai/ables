@@ -6589,12 +6589,7 @@ Return ONLY valid JSON:
                             extractedBusinessInfo.name = businessName;
                             extractedBusinessInfo.owner = result.owner_name || '';
                             extractedBusinessInfo.address = result.business_address || '';
-                            // Kick off early research as soon as we have a business name
-                            if (!window._earlyResearchStarted) {
-                                window._earlyResearchStarted = true;
-                                console.log(`Business name found: "${businessName}" - starting early research`);
-                                startEarlyResearch(apiKey);
-                            }
+                            // Business name stored for research after extraction
                         }
                     }
                     return result;
@@ -6604,7 +6599,11 @@ Return ONLY valid JSON:
             const successCount = results.filter(r => r !== null).length;
             console.log(`Extraction complete: ${successCount}/${files.length} statements successful`);
 
-            // Early research already started during extraction (fire-and-forget)
+            // Start early research now that extraction is done (no competing API calls)
+            if (extractedBusinessInfo.name) {
+                window._earlyResearchStarted = true;
+                await startEarlyResearch(apiKey);
+            }
 
             // Build months array from successful extractions (include itemized lists for popups)
             const months = results.filter(r => r !== null).map(r => ({
