@@ -232,6 +232,43 @@
         .btn-primary.analyze-main-btn {
             border: 2px solid var(--gold);
             padding: 14px 16px;
+            font-size: 14px;
+            letter-spacing: 0.3px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-primary.analyze-main-btn:not(:disabled) {
+            animation: analyzeIdle 3s ease-in-out infinite;
+        }
+
+        @keyframes analyzeIdle {
+            0%, 100% { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 0 0 rgba(234, 179, 8, 0); }
+            50% { box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2), 0 0 15px 2px rgba(234, 179, 8, 0.15); }
+        }
+
+        .btn-primary.analyze-main-btn:not(:disabled):hover {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border-color: #facc15;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 0 25px 4px rgba(234, 179, 8, 0.3);
+            transform: translateY(-3px) scale(1.02);
+            animation: none;
+        }
+
+        .btn-primary.analyze-main-btn:not(:disabled):hover::before {
+            background: linear-gradient(90deg, transparent 0%, rgba(234, 179, 8, 0.25) 50%, transparent 100%);
+            left: 100%;
+            transition: left 0.6s ease;
+        }
+
+        .btn-primary.analyze-main-btn:not(:disabled):active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 10px 2px rgba(234, 179, 8, 0.2);
+        }
+
+        .btn-primary.analyze-main-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            border-color: var(--border);
         }
 
         .btn-primary::before {
@@ -1638,6 +1675,16 @@
             align-items: center;
             gap: 12px;
             margin-bottom: 12px;
+        }
+
+        .approval-badge-calc {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+        }
+
+        [data-theme="light"] .approval-badge-calc {
+            background: #fee2e2;
+            color: #dc2626;
         }
 
         .credit-engine-dot {
@@ -3073,7 +3120,7 @@
                                 <div class="credit-engine-approval" id="approvalSection" style="margin-top: 16px; padding: 16px; background: var(--bg-tertiary); border-radius: 10px; border: 2px solid var(--border); transition: border-color 0.3s;">
                                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
                                         <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Suggested Approval</div>
-                                        <div id="approvalBadge" style="padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; background: #fee2e2; color: #dc2626;">CALCULATING...</div>
+                                        <div id="approvalBadge" class="approval-badge-calc" style="padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;">CALCULATING...</div>
                                     </div>
                                     <!-- Locked view (read-only) -->
                                     <div id="approvalLocked" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center;">
