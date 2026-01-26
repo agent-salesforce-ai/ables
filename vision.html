@@ -6009,6 +6009,11 @@
                 renderScoreSkeleton();
                 renderLenderSkeleton();
 
+                // Reset early research state
+                window._earlyResearchStarted = false;
+                window._verifiedEntity = null;
+                researchResults = {};
+
                 // ===== STEP 2: FRAUD SCAN (parallel) =====
                 setStep(2);
                 showLoading(true, `Scanning ${files.length} documents for fraud in parallel...`, {
@@ -6523,6 +6528,12 @@ Return ONLY valid JSON:
                             extractedBusinessInfo.name = businessName;
                             extractedBusinessInfo.owner = result.owner_name || '';
                             extractedBusinessInfo.address = result.business_address || '';
+                            // Kick off early research as soon as we have a business name
+                            if (!window._earlyResearchStarted) {
+                                window._earlyResearchStarted = true;
+                                console.log(`Business name found: "${businessName}" - starting early research`);
+                                startEarlyResearch(apiKey);
+                            }
                         }
                     }
                     return result;
@@ -8353,12 +8364,61 @@ Return ONLY valid JSON:
             document.getElementById('researchSummary').style.display = 'grid';
         }
 
+        // Early research: start SOS, UCC, Tax while extraction is still running
+        async function startEarlyResearch(apiKey) {
+            const businessName = extractedBusinessInfo.name;
+            const ownerName = extractedBusinessInfo.owner;
+            const location = extractedBusinessInfo.address;
+            if (!businessName) return;
+
+            console.log('Starting early research for:', businessName);
+
+            // Initialize research results and render skeleton for early modules
+            const earlyModuleIds = ['sos', 'ucc', 'tax'];
+            const earlyModules = researchModules.filter(m => earlyModuleIds.includes(m.id));
+
+            // Run SOS first, then UCC + Tax in parallel with entity context
+            const sosModule = earlyModules.find(m => m.id === 'sos');
+            const legalModules = earlyModules.filter(m => m.id !== 'sos');
+
+            if (sosModule) {
+                try {
+                    const sosResult = await runSingleResearch(apiKey, sosModule, businessName, ownerName, location, 0, null);
+                    researchResults[sosModule.id] = sosResult;
+                    // Store verified entity globally for later modules
+                    if (sosResult.entity_number || sosResult.formation_date || sosResult.status) {
+                        window._verifiedEntity = {
+                            entity_number: sosResult.entity_number,
+                            formation_date: sosResult.formation_date,
+                            status: sosResult.status,
+                            verified_name: businessName
+                        };
+                        console.log('Early research: verified entity from SOS:', window._verifiedEntity);
+                    }
+                } catch (e) {
+                    researchResults[sosModule.id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
+                }
+            }
+
+            // Run UCC + Tax with entity context
+            await Promise.all(legalModules.map(async (module) => {
+                try {
+                    const result = await runSingleResearch(apiKey, module, businessName, ownerName, location, 0, window._verifiedEntity || null);
+                    researchResults[module.id] = result;
+                } catch (e) {
+                    researchResults[module.id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
+                }
+            }));
+
+            console.log('Early research complete:', Object.keys(researchResults));
+        }
+
         async function runBackgroundResearch(apiKey) {
             const businessName = extractedBusinessInfo.name;
             const ownerName = extractedBusinessInfo.owner;
             const location = extractedBusinessInfo.address;
 
-            researchResults = {};
+            // Don't clear researchResults - keep early results
             const resultsGrid = document.getElementById('researchResults');
             resultsGrid.innerHTML = researchModules.map(m => `
                 <div class="research-module loading" id="module-${m.id}">
@@ -8381,7 +8441,18 @@ Return ONLY valid JSON:
                 </div>
             `).join('');
 
+            // Immediately render any early research results that already completed
             let completed = 0;
+            const alreadyDone = Object.keys(researchResults);
+            alreadyDone.forEach(id => {
+                const module = researchModules.find(m => m.id === id);
+                if (module) {
+                    renderResearchModule(module, researchResults[id]);
+                    completed++;
+                }
+            });
+            console.log(`${alreadyDone.length} modules already completed from early research`);
+
             const updateProgress = () => {
                 completed++;
                 const pct = Math.round((completed / researchModules.length) * 100);
@@ -8390,43 +8461,23 @@ Return ONLY valid JSON:
 
                 if (completed === researchModules.length) {
                     updateResearchSummary();
-                    // Update button text since all modules are now expanded
                     document.getElementById('expandAllBtn').textContent = 'Collapse All';
                 }
             };
 
-            // Run SOS module FIRST to get verified entity info, then pass to other modules
-            const sosModule = researchModules.find(m => m.id === 'sos');
-            const otherModules = researchModules.filter(m => m.id !== 'sos');
+            // Update progress bar for already-completed modules
+            const pct = Math.round((completed / researchModules.length) * 100);
+            document.getElementById('researchProgressFill').style.width = pct + '%';
+            document.getElementById('researchProgressText').textContent = `${completed} / ${researchModules.length}`;
 
-            let verifiedEntity = null;
+            // Only run modules that haven't already completed
+            const remainingModules = researchModules.filter(m => !researchResults[m.id]);
+            const verifiedEntity = window._verifiedEntity || null;
 
-            // Step 1: Run SOS first to identify the correct entity
-            if (sosModule) {
-                try {
-                    const sosResult = await runSingleResearch(apiKey, sosModule, businessName, ownerName, location, 0, null);
-                    researchResults[sosModule.id] = sosResult;
-                    renderResearchModule(sosModule, sosResult);
+            console.log(`Running ${remainingModules.length} remaining research modules`);
 
-                    // Extract verified entity info to pass to other modules
-                    if (sosResult.entity_number || sosResult.formation_date || sosResult.status) {
-                        verifiedEntity = {
-                            entity_number: sosResult.entity_number,
-                            formation_date: sosResult.formation_date,
-                            status: sosResult.status,
-                            verified_name: businessName
-                        };
-                        console.log('Verified entity from SOS:', verifiedEntity);
-                    }
-                } catch (e) {
-                    researchResults[sosModule.id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
-                    renderResearchModule(sosModule, researchResults[sosModule.id]);
-                }
-                updateProgress();
-            }
-
-            // Step 2: Run ALL remaining modules in parallel (no batching for speed)
-            await Promise.all(otherModules.map(async (module) => {
+            // Run all remaining modules in parallel
+            await Promise.all(remainingModules.map(async (module) => {
                 try {
                     const result = await runSingleResearch(apiKey, module, businessName, ownerName, location, 0, verifiedEntity);
                     researchResults[module.id] = result;
@@ -8437,6 +8488,12 @@ Return ONLY valid JSON:
                 }
                 updateProgress();
             }));
+
+            // Final check
+            if (completed >= researchModules.length) {
+                updateResearchSummary();
+                document.getElementById('expandAllBtn').textContent = 'Collapse All';
+            }
         }
 
         async function runSingleResearch(apiKey, module, businessName, ownerName, location, retryCount = 0, verifiedEntity = null) {
