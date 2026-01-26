@@ -1106,7 +1106,7 @@
         }
 
         th, td {
-            padding: 10px 12px;
+            padding: 14px 12px;
             text-align: left;
             border-bottom: 1px solid var(--border);
             transition: all 0.15s ease;
@@ -4150,10 +4150,21 @@
         function generateExportHTML(options) {
             const analysis = extractedData?.full_analysis || {};
             const agg = analysis.aggregated || {};
-            const months = analysis.months || [];
+            const months = (analysis.months || []).slice();
             const mcaLenders = agg.detected_mca_lenders || [];
             const flags = analysis.red_flags || [];
             const existingDebt = analysis.existing_debt || extractedData?.identified_debt || [];
+
+            // Sort months chronologically for export
+            const parseMonthYearExport = (str) => {
+                if (!str) return new Date(0);
+                const match = str.match(/^(\w+)\s+(\d{4})$/);
+                if (match) return new Date(`${match[1]} 1, ${match[2]}`);
+                const parsed = new Date(str);
+                if (!isNaN(parsed)) return parsed;
+                return new Date(0);
+            };
+            months.sort((a, b) => parseMonthYearExport(a.month) - parseMonthYearExport(b.month));
 
             // Calculate totals
             const totals = months.reduce((acc, m) => ({
@@ -6752,11 +6763,13 @@ Return ONLY valid JSON:
             // Sort chronologically - parse "Month Year" format properly
             const parseMonthYear = (str) => {
                 if (!str) return new Date(0);
-                // Handle "Month Year" format like "June 2025"
-                const parsed = new Date(str + ' 1'); // Add day to help parsing
-                if (!isNaN(parsed)) return parsed;
+                // Handle "Month Year" format like "June 2025" -> "June 1, 2025"
+                const match = str.match(/^(\w+)\s+(\d{4})$/);
+                if (match) return new Date(`${match[1]} 1, ${match[2]}`);
                 // Fallback: try direct parse
-                return new Date(str);
+                const parsed = new Date(str);
+                if (!isNaN(parsed)) return parsed;
+                return new Date(0);
             };
             months.sort((a, b) => parseMonthYear(a.month) - parseMonthYear(b.month));
 
@@ -7357,9 +7370,20 @@ Return ONLY valid JSON:
 
             const analysis = extractedData.full_analysis;
             const agg = analysis.aggregated || {};
-            const months = analysis.months || [];
+            const months = (analysis.months || []).slice();
             const mcaLenders = agg.detected_mca_lenders || [];
             const flags = analysis.red_flags || [];
+
+            // Sort months chronologically
+            const parseMonthYearRender = (str) => {
+                if (!str) return new Date(0);
+                const match = str.match(/^(\w+)\s+(\d{4})$/);
+                if (match) return new Date(`${match[1]} 1, ${match[2]}`);
+                const parsed = new Date(str);
+                if (!isNaN(parsed)) return parsed;
+                return new Date(0);
+            };
+            months.sort((a, b) => parseMonthYearRender(a.month) - parseMonthYearRender(b.month));
 
             // Calculate totals
             const totals = months.reduce((acc, m) => ({
@@ -7518,7 +7542,18 @@ Return ONLY valid JSON:
             if (!extractedData.full_analysis) return;
 
             document.getElementById('chartsSection').classList.remove('hidden');
-            const months = extractedData.full_analysis.months || [];
+            const months = (extractedData.full_analysis.months || []).slice();
+
+            // Sort months chronologically for charts
+            const parseMonthYearChart = (str) => {
+                if (!str) return new Date(0);
+                const match = str.match(/^(\w+)\s+(\d{4})$/);
+                if (match) return new Date(`${match[1]} 1, ${match[2]}`);
+                const parsed = new Date(str);
+                if (!isNaN(parsed)) return parsed;
+                return new Date(0);
+            };
+            months.sort((a, b) => parseMonthYearChart(a.month) - parseMonthYearChart(b.month));
 
             // Destroy existing charts
             if (charts.balance) charts.balance.destroy();
