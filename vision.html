@@ -8639,10 +8639,8 @@ Return ONLY valid JSON:
 
             console.log(`Running ${remainingModules.length} remaining research modules`);
 
-            // Run all remaining modules in parallel with 500ms stagger between launches
-            await Promise.all(remainingModules.map(async (module, idx) => {
-                // Stagger launches 500ms apart so they don't all hit the API at once
-                if (idx > 0) await new Promise(r => setTimeout(r, idx * 500));
+            // Fire all modules in parallel, each renders immediately when it returns
+            await Promise.all(remainingModules.map(async (module) => {
                 try {
                     const result = await runSingleResearch(apiKey, module, businessName, ownerName, location, 0, verifiedEntity);
                     researchResults[module.id] = result;
