@@ -8543,13 +8543,15 @@ Return ONLY valid JSON:
             const earlyModuleIds = ['sos', 'ucc', 'tax'];
             const earlyModules = researchModules.filter(m => earlyModuleIds.includes(m.id));
 
-            // Only run SOS during extraction (1 call) - UCC/Tax go in the full research batches
+            // Run SOS first, then UCC + Tax in parallel with entity context
             const sosModule = earlyModules.find(m => m.id === 'sos');
+            const legalModules = earlyModules.filter(m => m.id !== 'sos');
 
             if (sosModule) {
                 try {
                     const sosResult = await runSingleResearch(apiKey, sosModule, businessName, ownerName, location, 0, null);
                     researchResults[sosModule.id] = sosResult;
+                    // Store verified entity globally for later modules
                     if (sosResult.entity_number || sosResult.formation_date || sosResult.status) {
                         window._verifiedEntity = {
                             entity_number: sosResult.entity_number,
@@ -8563,6 +8565,16 @@ Return ONLY valid JSON:
                     researchResults[sosModule.id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
                 }
             }
+
+            // Run UCC + Tax with entity context
+            await Promise.all(legalModules.map(async (module) => {
+                try {
+                    const result = await runSingleResearch(apiKey, module, businessName, ownerName, location, 0, window._verifiedEntity || null);
+                    researchResults[module.id] = result;
+                } catch (e) {
+                    researchResults[module.id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
+                }
+            }));
 
             console.log('Early research complete:', Object.keys(researchResults));
         }
@@ -8630,21 +8642,18 @@ Return ONLY valid JSON:
 
             console.log(`Running ${remainingModules.length} remaining research modules`);
 
-            // Run 3 at a time to avoid API limits, each renders immediately on return
-            for (let i = 0; i < remainingModules.length; i += 3) {
-                const batch = remainingModules.slice(i, i + 3);
-                await Promise.all(batch.map(async (module) => {
-                    try {
-                        const result = await runSingleResearch(apiKey, module, businessName, ownerName, location, 0, verifiedEntity);
-                        researchResults[module.id] = result;
-                        renderResearchModule(module, result);
-                    } catch (e) {
-                        researchResults[module.id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
-                        renderResearchModule(module, researchResults[module.id]);
-                    }
-                    updateProgress();
-                }));
-            }
+            // Run all remaining modules in parallel
+            await Promise.all(remainingModules.map(async (module) => {
+                try {
+                    const result = await runSingleResearch(apiKey, module, businessName, ownerName, location, 0, verifiedEntity);
+                    researchResults[module.id] = result;
+                    renderResearchModule(module, result);
+                } catch (e) {
+                    researchResults[module.id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
+                    renderResearchModule(module, researchResults[module.id]);
+                }
+                updateProgress();
+            }));
 
             // Final check
             if (completed >= researchModules.length) {
@@ -8684,8 +8693,9 @@ Return ONLY valid JSON:
                 location: `Research the business location for "${businessName}" ${location ? `at ${location}` : ''}. Analyze: Area demographics, local competition, foot traffic potential.`
             };
 
-            // All modules use Google Search grounding for real web data
-            const useGrounding = retryCount < 2;
+            // Use grounded search for key modules that need real data
+            const groundedModules = ['sos', 'ucc', 'tax', 'judgment', 'bankruptcy', 'bbb'];
+            const useGrounding = groundedModules.includes(module.id) && retryCount < 2;
 
             // Use Gemini 3 Flash for all research (supports google_search grounding)
             const model = 'gemini-3-flash-preview';
