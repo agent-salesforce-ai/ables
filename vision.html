@@ -2259,6 +2259,12 @@
         .risk-badge.pending {
             background: var(--bg-tertiary);
             color: var(--text-muted);
+            animation: badgePulse 1.2s ease-in-out infinite;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
         }
 
         .risk-badge.low {
@@ -2462,12 +2468,32 @@
         }
 
         .research-module.loading {
-            animation: cardPulse 2s ease-in-out infinite;
+            animation: cardPulse 1.5s ease-in-out infinite !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .research-module.loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent 0%, rgba(245, 176, 65, 0.08) 40%, rgba(245, 176, 65, 0.15) 50%, rgba(245, 176, 65, 0.08) 60%, transparent 100%);
+            animation: cardShimmer 2s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 1;
         }
 
         @keyframes cardPulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
+            0%, 100% { border-color: var(--border); }
+            50% { border-color: var(--gold); }
+        }
+
+        @keyframes cardShimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
 
         /* Fraud Analysis Modules */
@@ -6129,12 +6155,10 @@
                 // ===== STEP 3: RESEARCH =====
                 setStep(3);
                 if (extractedBusinessInfo.name) {
-                    showLoading(true, `Researching ${extractedBusinessInfo.name}...`, {
-                        step: 'analyze',
-                        progress: 60,
-                        subtext: 'Running comprehensive background checks'
-                    });
+                    showLoading(false); // Hide loading overlay - research section has its own progress UI
                     document.getElementById('researchBusinessName').textContent = extractedBusinessInfo.name;
+                    // Scroll research section into view so user sees the cards loading
+                    document.getElementById('researchSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
                     await runBackgroundResearch(apiKey);
                 }
 
