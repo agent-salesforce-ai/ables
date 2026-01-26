@@ -3946,7 +3946,7 @@
                     // Use pdf-lib to overlay watermark on original PDF (preserves vector content)
                     try {
                         const { PDFDocument } = PDFLib;
-                        const pdfDoc = await PDFDocument.load(file.originalPdfBytes.slice(0));
+                        const pdfDoc = await PDFDocument.load(file.originalPdfBytes.slice(0), { ignoreEncryption: true });
                         const watermarkImage = await pdfDoc.embedPng(watermarkPngBytes);
                         const pages = pdfDoc.getPages();
 
