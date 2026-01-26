@@ -6548,53 +6548,37 @@ Return ONLY valid JSON:
                 return null;
             };
 
-            // Extract all statements in parallel for speed
-            showLoading(true, `Extracting ${files.length} statements in parallel...`, {
-                step: 'extract',
-                progress: 35,
-                subtext: `Processing all documents simultaneously`
-            });
-
-            let completedCount = 0;
-            const updateExtractionProgress = () => {
-                completedCount++;
-                const progress = 30 + Math.round((completedCount / files.length) * 25);
-                showLoading(true, `Extracted ${completedCount} of ${files.length} statements...`, {
+            // Extract statements one at a time to avoid API conflicts
+            const results = [];
+            for (let i = 0; i < files.length; i++) {
+                showLoading(true, `Extracting statement ${i + 1} of ${files.length}...`, {
                     step: 'extract',
-                    progress: progress,
-                    subtext: `${files.length - completedCount} remaining`
+                    progress: 15 + Math.round((i / files.length) * 40),
+                    subtext: `${files.length - i} remaining`
                 });
-            };
 
-            const results = await Promise.all(
-                files.map(async (file, i) => {
-                    // Stagger start times by 2s to avoid rate limiting on large documents
-                    await new Promise(r => setTimeout(r, i * 2000));
-                    const result = await extractWithRetry(file, i);
-                    updateExtractionProgress();
+                const result = await extractWithRetry(files[i], i);
+                results.push(result);
 
-                    // Store fraud results from combined extraction
-                    if (result) {
-                        file.status = result.fraud_status || 'clean';
-                        file.fraudAnalysis = result.fraud_notes || 'No alterations detected';
-                    } else {
-                        file.status = 'warning';
-                        file.fraudAnalysis = 'Extraction failed - unable to analyze';
+                // Store fraud results from combined extraction
+                if (result) {
+                    files[i].status = result.fraud_status || 'clean';
+                    files[i].fraudAnalysis = result.fraud_notes || 'No alterations detected';
+                } else {
+                    files[i].status = 'warning';
+                    files[i].fraudAnalysis = 'Extraction failed - unable to analyze';
+                }
+
+                // Store business info from first successful result
+                if (result && !extractedBusinessInfo.name) {
+                    const businessName = result.business_name || result.account_holder || '';
+                    if (businessName) {
+                        extractedBusinessInfo.name = businessName;
+                        extractedBusinessInfo.owner = result.owner_name || '';
+                        extractedBusinessInfo.address = result.business_address || '';
                     }
-
-                    // Store business info from first successful result
-                    if (result && !extractedBusinessInfo.name) {
-                        const businessName = result.business_name || result.account_holder || '';
-                        if (businessName) {
-                            extractedBusinessInfo.name = businessName;
-                            extractedBusinessInfo.owner = result.owner_name || '';
-                            extractedBusinessInfo.address = result.business_address || '';
-                            // Business name stored for research after extraction
-                        }
-                    }
-                    return result;
-                })
-            );
+                }
+            }
 
             const successCount = results.filter(r => r !== null).length;
             console.log(`Extraction complete: ${successCount}/${files.length} statements successful`);
