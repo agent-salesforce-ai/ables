@@ -6445,13 +6445,12 @@ Return ONLY valid JSON:
 
             try {
                 const model = getSelectedModel();
-                console.log(`Extracting statement ${fileIndex + 1} with model: ${model}, pages: ${images.length}`);
+                const startTime = performance.now();
+                console.log(`[Extract] Statement ${fileIndex + 1} STARTED - model: ${model}, pages: ${images.length}`);
 
                 // Use AbortController for fetch timeout (90 seconds)
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 90000);
-
-                console.log(`Statement ${fileIndex + 1} starting extraction...`);
 
                 const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
                     method: 'POST',
@@ -6464,45 +6463,46 @@ Return ONLY valid JSON:
                 });
 
                 clearTimeout(timeoutId);
+                const elapsed = ((performance.now() - startTime) / 1000).toFixed(1);
+                console.log(`[Extract] Statement ${fileIndex + 1} response in ${elapsed}s (HTTP ${resp.status})`);
                 const data = await resp.json();
 
                 // Check for API errors
                 if (data.error) {
-                    console.error(`API error for statement ${fileIndex + 1}:`, data.error);
+                    console.error(`[Extract] Statement ${fileIndex + 1} API ERROR:`, data.error.message || data.error);
                     return null;
                 }
 
                 let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
                 if (!text) {
-                    console.error(`Empty response for statement ${fileIndex + 1}:`, data);
+                    console.error(`[Extract] Statement ${fileIndex + 1} EMPTY RESPONSE - finishReason: ${data.candidates?.[0]?.finishReason || 'none'}`);
                     return null;
                 }
 
                 // Log finish reason to check for truncation
                 const finishReason = data.candidates?.[0]?.finishReason;
-                console.log(`Statement ${fileIndex + 1} finish reason: ${finishReason}, response length: ${text.length}`);
+                console.log(`[Extract] Statement ${fileIndex + 1} finishReason: ${finishReason}, chars: ${text.length}`);
 
                 text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
 
                 // Try to fix truncated JSON by closing brackets
                 if (!text.endsWith('}')) {
-                    console.warn(`Statement ${fileIndex + 1} JSON appears truncated, attempting to fix...`);
-                    // Count open brackets and close them
+                    console.warn(`[Extract] Statement ${fileIndex + 1} JSON TRUNCATED - attempting fix...`);
                     const openBraces = (text.match(/\{/g) || []).length;
                     const closeBraces = (text.match(/\}/g) || []).length;
                     const openBrackets = (text.match(/\[/g) || []).length;
                     const closeBrackets = (text.match(/\]/g) || []).length;
-
-                    // Close any open arrays first, then objects
                     for (let i = 0; i < openBrackets - closeBrackets; i++) text += ']';
                     for (let i = 0; i < openBraces - closeBraces; i++) text += '}';
                 }
 
                 const result = JSON.parse(text);
-                console.log(`Statement ${fileIndex + 1} parsed successfully:`, result.month);
+                const totalTime = ((performance.now() - startTime) / 1000).toFixed(1);
+                console.log(`[Extract] Statement ${fileIndex + 1} SUCCESS in ${totalTime}s - ${result.month}, fraud: ${result.fraud_status || 'n/a'}`);
                 return result;
             } catch (e) {
-                console.error(`Extract error for file ${fileIndex}:`, e);
+                const isTimeout = e.name === 'AbortError';
+                console.error(`[Extract] Statement ${fileIndex + 1} ${isTimeout ? 'TIMED OUT (90s)' : 'ERROR: ' + e.message}`);
                 return null;
             }
         }
@@ -6522,25 +6522,20 @@ Return ONLY valid JSON:
             const extractWithRetry = async (file, index, maxRetries = 2) => {
                 for (let attempt = 0; attempt <= maxRetries; attempt++) {
                     try {
-                        // 90 second timeout per extraction attempt
-                        const result = await withTimeout(
-                            extractSingleStatement(file, apiKey, index),
-                            90000,
-                            `Statement ${index + 1}`
-                        );
+                        const result = await extractSingleStatement(file, apiKey, index);
                         if (result && result.month) {
-                            console.log(`✓ Statement ${index + 1} extracted: ${result.month}`);
                             return result;
                         }
-                        console.warn(`Statement ${index + 1} attempt ${attempt + 1}: Invalid response, retrying...`);
+                        console.warn(`[Extract] Statement ${index + 1} attempt ${attempt + 1}/${maxRetries + 1}: no valid month returned, retrying...`);
                     } catch (e) {
-                        console.error(`Statement ${index + 1} attempt ${attempt + 1} failed:`, e);
+                        console.error(`[Extract] Statement ${index + 1} attempt ${attempt + 1}/${maxRetries + 1} FAILED:`, e.message);
                     }
                     if (attempt < maxRetries) {
+                        console.log(`[Extract] Statement ${index + 1} retrying in 1s...`);
                         await new Promise(r => setTimeout(r, 1000));
                     }
                 }
-                console.error(`✗ Statement ${index + 1} failed after ${maxRetries + 1} attempts`);
+                console.error(`[Extract] Statement ${index + 1} FAILED after all ${maxRetries + 1} attempts`);
                 return null;
             };
 
