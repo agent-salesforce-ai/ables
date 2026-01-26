@@ -2233,6 +2233,15 @@
             transform: translateY(-2px);
         }
 
+        .research-module.just-loaded {
+            animation: cardLoaded 0.6s ease-out;
+        }
+
+        @keyframes cardLoaded {
+            0% { box-shadow: 0 0 0 2px var(--gold); }
+            100% { box-shadow: none; }
+        }
+
         .research-module.expanded {
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
@@ -8710,7 +8719,6 @@ Return ONLY valid JSON:
                 if (completed === researchModules.length) {
                     document.getElementById('researchProgressFill').classList.remove('active');
                     updateResearchSummary();
-                    document.getElementById('expandAllBtn').textContent = 'Collapse All';
                 }
             };
 
@@ -8783,7 +8791,6 @@ Return ONLY valid JSON:
             // Final check
             if (completed >= researchModules.length) {
                 updateResearchSummary();
-                document.getElementById('expandAllBtn').textContent = 'Collapse All';
             }
         }
 
@@ -8951,11 +8958,10 @@ Return ONLY the JSON object, no other text.`
             const content = document.getElementById(`content-${module.id}`);
             const iconEl = moduleEl.querySelector('.research-module-icon');
 
-            // Remove loading state
+            // Remove loading state and flash to signal completion
             moduleEl.classList.remove('loading');
-
-            // Auto-expand the module to show content
-            moduleEl.classList.add('expanded');
+            moduleEl.classList.add('just-loaded');
+            setTimeout(() => moduleEl.classList.remove('just-loaded'), 1000);
 
             // Set risk class on module
             moduleEl.classList.add(`risk-${result.risk || 'unknown'}`);
