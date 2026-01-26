@@ -3962,7 +3962,7 @@
                     // Try pdf-lib first for full quality vector PDF output
                     try {
                         const { PDFDocument } = PDFLib;
-                        const pdfDoc = await PDFDocument.load(file.originalPdfBytes.slice(0));
+                        const pdfDoc = await PDFDocument.load(file.originalPdfBytes.slice(0), { ignoreEncryption: true });
                         // Use JPEG (much smaller ~2-5KB) over PNG (~50-200KB) to keep file size down
                         const watermarkImage = watermarkJpgBytes
                             ? await pdfDoc.embedJpg(watermarkJpgBytes)
@@ -4008,14 +4008,14 @@
                         await new Promise(r => setTimeout(r, 150));
 
                         const pdf = new jsPDF({ orientation: canvas.width > canvas.height ? 'landscape' : 'portrait', unit: 'px', format: [canvas.width, canvas.height] });
-                        pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, canvas.width, canvas.height);
+                        pdf.addImage(canvas.toDataURL('image/jpeg', 0.80), 'JPEG', 0, 0, canvas.width, canvas.height);
 
                         for (let p = 1; p < file.pages.length; p++) {
                             file.currentPage = p;
                             renderPreview();
                             await new Promise(r => setTimeout(r, 150));
                             pdf.addPage([canvas.width, canvas.height]);
-                            pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, canvas.width, canvas.height);
+                            pdf.addImage(canvas.toDataURL('image/jpeg', 0.80), 'JPEG', 0, 0, canvas.width, canvas.height);
                         }
                         pdf.save(`${safeLabel}.pdf`);
                     }
@@ -4027,14 +4027,14 @@
                     await new Promise(r => setTimeout(r, 150));
 
                     const pdf = new jsPDF({ orientation: canvas.width > canvas.height ? 'landscape' : 'portrait', unit: 'px', format: [canvas.width, canvas.height] });
-                    pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, canvas.width, canvas.height);
+                    pdf.addImage(canvas.toDataURL('image/jpeg', 0.80), 'JPEG', 0, 0, canvas.width, canvas.height);
 
                     for (let p = 1; p < file.pages.length; p++) {
                         file.currentPage = p;
                         renderPreview();
                         await new Promise(r => setTimeout(r, 150));
                         pdf.addPage([canvas.width, canvas.height]);
-                        pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, canvas.width, canvas.height);
+                        pdf.addImage(canvas.toDataURL('image/jpeg', 0.80), 'JPEG', 0, 0, canvas.width, canvas.height);
                     }
                     pdf.save(`${safeLabel}.pdf`);
                 }
@@ -6096,7 +6096,7 @@
 
                 for (let i = 1; i <= pdf.numPages; i++) {
                     const page = await pdf.getPage(i);
-                    const viewport = page.getViewport({ scale: 3 });
+                    const viewport = page.getViewport({ scale: 1.5 });
                     const pdfCanvas = document.createElement('canvas');
                     pdfCanvas.width = viewport.width;
                     pdfCanvas.height = viewport.height;
