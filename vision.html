@@ -3939,57 +3939,7 @@
                 const nameInput = document.getElementById(`downloadName_${i}`);
                 const safeLabel = (nameInput?.value || file.name.replace(/\.[^.]+$/, '')).replace(/[^a-z0-9_\-\s]/gi, '_');
 
-                if (file.isPdf && file.originalPdfBytes && watermarkPngBytes) {
-                    // Use pdf-lib to overlay watermark on original PDF (preserves vector content)
-                    try {
-                        const { PDFDocument } = PDFLib;
-                        const pdfDoc = await PDFDocument.load(file.originalPdfBytes.slice(0), { ignoreEncryption: true });
-                        const watermarkImage = await pdfDoc.embedPng(watermarkPngBytes);
-                        const pages = pdfDoc.getPages();
-
-                        for (const page of pages) {
-                            const { width, height } = page.getSize();
-                            const wmWidth = watermarkImage.width;
-                            const wmHeight = watermarkImage.height;
-
-                            // Calculate watermark size based on settings (settings.size is 0-1)
-                            const baseSize = Math.min(width, height) * settings.size * 1.5;
-                            const wmScale = baseSize / Math.max(wmWidth, wmHeight);
-                            const drawWidth = wmWidth * wmScale;
-                            const drawHeight = wmHeight * wmScale;
-
-                            // Calculate spacing based on density (settings.density is 0-1)
-                            const gap = 1.5 - settings.density;
-                            const spacing = Math.max(50, Math.max(drawWidth, drawHeight) * gap + 80);
-
-                            // Draw tiled watermarks
-                            for (let y = 0; y < height; y += spacing) {
-                                for (let x = 0; x < width; x += spacing) {
-                                    page.drawImage(watermarkImage, {
-                                        x: x,
-                                        y: y,
-                                        width: drawWidth,
-                                        height: drawHeight,
-                                        opacity: settings.opacity,
-                                        rotate: PDFLib.degrees(-settings.rotation)
-                                    });
-                                }
-                            }
-                        }
-
-                        const pdfBytes = await pdfDoc.save();
-                        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-                        const link = document.createElement('a');
-                        link.href = URL.createObjectURL(blob);
-                        link.download = `${safeLabel}.pdf`;
-                        link.click();
-                        URL.revokeObjectURL(link.href);
-                        showStatus('Download complete!', 'success');
-                    } catch (err) {
-                        console.error('pdf-lib error:', err);
-                        showStatus('Error processing PDF: ' + err.message, 'error');
-                    }
-                } else if (file.pages.length === 1) {
+                if (file.pages.length === 1) {
                     // Single image - download as PNG with watermark
                     activeFileIndex = i;
                     file.currentPage = 0;
@@ -4001,7 +3951,7 @@
                     link.href = canvas.toDataURL('image/png');
                     link.click();
                 } else {
-                    // Multi-page non-PDF (shouldn't happen, but fallback to jsPDF)
+                    // Multi-page file - render each page with watermark via canvas, assemble as PDF
                     const { jsPDF } = window.jspdf;
                     file.currentPage = 0;
                     activeFileIndex = i;
