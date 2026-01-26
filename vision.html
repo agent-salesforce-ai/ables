@@ -3050,7 +3050,10 @@
                                             <div id="suggestedTerm" style="font-size: 20px; font-weight: 700; color: var(--text);">--</div>
                                         </div>
                                         <div>
-                                            <div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Daily Payment</div>
+                                            <div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                                                <span id="paymentFreqLabel">Payment</span>
+                                                <button onclick="togglePaymentFrequency()" id="paymentFreqToggle" style="background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; font-size: 9px; color: var(--gold); cursor: pointer; font-weight: 600;">DAILY</button>
+                                            </div>
                                             <div id="suggestedPayment" style="font-size: 20px; font-weight: 700; color: var(--text);">$--</div>
                                         </div>
                                     </div>
@@ -4342,8 +4345,8 @@
                                         <div style="font-size: 18px; font-weight: 700; color: #111827;">${sa.termMonths} mo</div>
                                     </div>
                                     <div>
-                                        <div style="font-size: 10px; color: #6b7280; text-transform: uppercase;">Daily Payment</div>
-                                        <div style="font-size: 18px; font-weight: 700; color: #111827;">$${sa.dailyPayment.toLocaleString()}</div>
+                                        <div style="font-size: 10px; color: #6b7280; text-transform: uppercase;">${(sa.frequency || 'daily') === 'weekly' ? 'Weekly' : 'Daily'} Payment</div>
+                                        <div style="font-size: 18px; font-weight: 700; color: #111827;">$${(sa.payment || 0).toLocaleString()}</div>
                                     </div>
                                 </div>
                             </div>
@@ -7639,9 +7642,37 @@ Return ONLY valid JSON:
             }
         }
 
+        // Payment frequency state: 'daily' or 'weekly'
+        let paymentFrequency = 'daily';
+
+        function togglePaymentFrequency() {
+            paymentFrequency = paymentFrequency === 'daily' ? 'weekly' : 'daily';
+            const btn = document.getElementById('paymentFreqToggle');
+            btn.textContent = paymentFrequency.toUpperCase();
+            // Recalculate payment display
+            updatePaymentDisplay();
+        }
+
+        function updatePaymentDisplay() {
+            const sa = extractedData?.suggested_approval;
+            if (!sa) return;
+            const totalPayback = sa.maxAdvance * sa.factorRate;
+            let payment;
+            if (paymentFrequency === 'daily') {
+                // 22 business days per month
+                payment = sa.maxAdvance > 0 ? Math.round(totalPayback / (sa.termMonths * 22)) : 0;
+            } else {
+                // ~4.33 weeks per month
+                payment = sa.maxAdvance > 0 ? Math.round(totalPayback / (sa.termMonths * 4.33)) : 0;
+            }
+            document.getElementById('suggestedPayment').textContent = payment > 0 ? '$' + payment.toLocaleString() : '$0';
+            // Update stored value for export
+            sa.payment = payment;
+            sa.frequency = paymentFrequency;
+        }
+
         function calculateSuggestedApproval(totalScore, tier, avgRevenue, estimatedFico) {
             // Calculate advance multiplier based on Ables score (1.25x to 1.55x)
-            // Score 0 = 1.25x, Score 100 = 1.55x (linear interpolation)
             const advanceMultiplier = 1.25 + (totalScore / 100) * 0.30;
 
             // Determine approval status, factor rate, and term based on tier
@@ -7657,16 +7688,20 @@ Return ONLY valid JSON:
 
             // Calculate max advance (based on monthly revenue * score-based multiplier)
             let maxAdvance = tier === 'E' ? 0 : Math.round(avgRevenue * advanceMultiplier / 1000) * 1000;
-            maxAdvance = Math.min(maxAdvance, 500000); // Cap at 500K
+            maxAdvance = Math.min(maxAdvance, 500000);
             maxAdvance = Math.max(maxAdvance, 0);
 
-            // Factor rate and term based on tier
             const factorRate = config.rate;
             const termMonths = config.termMonths;
-
-            // Daily payment based on tier-specific term, 22 business days/month
             const totalPayback = maxAdvance * factorRate;
-            const dailyPayment = maxAdvance > 0 ? Math.round(totalPayback / (termMonths * 22)) : 0;
+
+            // Calculate payment based on current frequency
+            let payment;
+            if (paymentFrequency === 'daily') {
+                payment = maxAdvance > 0 ? Math.round(totalPayback / (termMonths * 22)) : 0;
+            } else {
+                payment = maxAdvance > 0 ? Math.round(totalPayback / (termMonths * 4.33)) : 0;
+            }
 
             // Update UI
             const approvalBadge = document.getElementById('approvalBadge');
@@ -7683,22 +7718,24 @@ Return ONLY valid JSON:
             document.getElementById('suggestedAmount').textContent = maxAdvance > 0 ? '$' + maxAdvance.toLocaleString() : '$0';
             document.getElementById('suggestedRate').textContent = factorRate > 0 ? factorRate.toFixed(2) : '--';
             document.getElementById('suggestedTerm').textContent = termMonths > 0 ? termMonths + ' mo' : '--';
-            document.getElementById('suggestedPayment').textContent = dailyPayment > 0 ? '$' + dailyPayment.toLocaleString() : '$0';
+            document.getElementById('suggestedPayment').textContent = payment > 0 ? '$' + payment.toLocaleString() : '$0';
 
-            // Store for export
+            // Store for export and toggle
             extractedData.suggested_approval = {
-                maxAdvance, factorRate, termMonths, dailyPayment,
+                maxAdvance, factorRate, termMonths, payment,
                 approval: config.approval, multiplier: advanceMultiplier,
-                fico: estimatedFico, ablesScore: totalScore
+                fico: estimatedFico, ablesScore: totalScore,
+                frequency: paymentFrequency
             };
 
-            // Approval note with multiplier info
+            // Approval note
+            const freqLabel = paymentFrequency === 'daily' ? 'daily' : 'weekly';
             const noteEl = document.getElementById('approvalNote');
             if (config.approval === 'APPROVED') {
-                noteEl.textContent = `Strong profile. FICO ${estimatedFico}, Ables Score ${totalScore}/100 (${advanceMultiplier.toFixed(2)}x multiplier). ${termMonths}-month term recommended.`;
+                noteEl.textContent = `Strong profile. FICO ${estimatedFico}, Ables Score ${totalScore}/100 (${advanceMultiplier.toFixed(2)}x multiplier). ${termMonths}-month term, ${freqLabel} payments recommended.`;
                 noteEl.style.background = '#dcfce7';
             } else if (config.approval === 'CONDITIONAL') {
-                noteEl.textContent = `Review required. FICO ${estimatedFico}, Ables Score ${totalScore}/100 (${advanceMultiplier.toFixed(2)}x multiplier). ${termMonths}-month term. Consider reduced advance or higher factor.`;
+                noteEl.textContent = `Review required. FICO ${estimatedFico}, Ables Score ${totalScore}/100 (${advanceMultiplier.toFixed(2)}x multiplier). ${termMonths}-month term, ${freqLabel} payments. Consider reduced advance or higher factor.`;
                 noteEl.style.background = '#fef9c3';
             } else {
                 noteEl.textContent = `Does not meet minimum criteria. FICO ${estimatedFico}, Ables Score ${totalScore}/100. Recommend decline or stip for additional collateral.`;
