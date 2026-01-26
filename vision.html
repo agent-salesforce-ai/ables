@@ -6511,8 +6511,8 @@ Return ONLY valid JSON:
 
             const results = await Promise.all(
                 files.map(async (file, i) => {
-                    // Stagger start times by 500ms to avoid rate limiting
-                    await new Promise(r => setTimeout(r, i * 500));
+                    // Stagger start times by 2s to avoid rate limiting on large documents
+                    await new Promise(r => setTimeout(r, i * 2000));
                     const result = await extractWithRetry(file, i);
                     updateExtractionProgress();
 
