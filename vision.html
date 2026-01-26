@@ -6509,16 +6509,6 @@ Return ONLY valid JSON:
 
         // Simple extraction function - no live updates, just loading animation
         async function extractBankDataSimple(apiKey) {
-            // Timeout wrapper to prevent stuck requests from blocking others
-            const withTimeout = (promise, ms, label) => {
-                return Promise.race([
-                    promise,
-                    new Promise((_, reject) =>
-                        setTimeout(() => reject(new Error(`${label} timed out after ${ms/1000}s`)), ms)
-                    )
-                ]);
-            };
-
             const extractWithRetry = async (file, index, maxRetries = 2) => {
                 for (let attempt = 0; attempt <= maxRetries; attempt++) {
                     try {
@@ -8511,55 +8501,6 @@ Return ONLY valid JSON:
             document.getElementById('researchSummary').style.display = 'grid';
         }
 
-        // Early research: start SOS, UCC, Tax while extraction is still running
-        async function startEarlyResearch(apiKey) {
-            const businessName = extractedBusinessInfo.name;
-            const ownerName = extractedBusinessInfo.owner;
-            const location = extractedBusinessInfo.address;
-            if (!businessName) return;
-
-            console.log('Starting early research for:', businessName);
-
-            // Initialize research results and render skeleton for early modules
-            const earlyModuleIds = ['sos', 'ucc', 'tax'];
-            const earlyModules = researchModules.filter(m => earlyModuleIds.includes(m.id));
-
-            // Run SOS first, then UCC + Tax in parallel with entity context
-            const sosModule = earlyModules.find(m => m.id === 'sos');
-            const legalModules = earlyModules.filter(m => m.id !== 'sos');
-
-            if (sosModule) {
-                try {
-                    const sosResult = await runSingleResearch(apiKey, sosModule, businessName, ownerName, location, 0, null);
-                    researchResults[sosModule.id] = sosResult;
-                    // Store verified entity globally for later modules
-                    if (sosResult.entity_number || sosResult.formation_date || sosResult.status) {
-                        window._verifiedEntity = {
-                            entity_number: sosResult.entity_number,
-                            formation_date: sosResult.formation_date,
-                            status: sosResult.status,
-                            verified_name: businessName
-                        };
-                        console.log('Early research: verified entity from SOS:', window._verifiedEntity);
-                    }
-                } catch (e) {
-                    researchResults[sosModule.id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
-                }
-            }
-
-            // Run UCC + Tax with entity context
-            await Promise.all(legalModules.map(async (module) => {
-                try {
-                    const result = await runSingleResearch(apiKey, module, businessName, ownerName, location, 0, window._verifiedEntity || null);
-                    researchResults[module.id] = result;
-                } catch (e) {
-                    researchResults[module.id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
-                }
-            }));
-
-            console.log('Early research complete:', Object.keys(researchResults));
-        }
-
         async function runBackgroundResearch(apiKey) {
             const businessName = extractedBusinessInfo.name;
             const ownerName = extractedBusinessInfo.owner;
@@ -8617,35 +8558,55 @@ Return ONLY valid JSON:
             document.getElementById('researchProgressFill').style.width = pct + '%';
             document.getElementById('researchProgressText').textContent = `${completed} / ${researchModules.length}`;
 
-            // Fire ALL modules with 300ms stagger, render each as it returns
-            const allModules = researchModules.filter(m => !researchResults[m.id]);
-            console.log(`[Research] === Firing ALL ${allModules.length} modules with 300ms stagger ===`);
-            console.log(`[Research] Modules: ${allModules.map(m => m.id).join(', ')}`);
+            // Group 12 modules into 4 API calls to stay within rate limits (free tier: 10 RPM)
+            const researchGroups = [
+                { id: 'legal_registry', modules: ['sos', 'ucc', 'tax'], label: 'Legal & Registry' },
+                { id: 'court_records', modules: ['judgment', 'bankruptcy'], label: 'Court Records' },
+                { id: 'reputation', modules: ['bbb', 'reviews', 'news', 'social'], label: 'Reputation & Presence' },
+                { id: 'background', modules: ['industry', 'owner', 'location'], label: 'Background & Context' }
+            ];
+
+            // Filter out already-completed modules
+            const pendingGroups = researchGroups.map(g => ({
+                ...g,
+                modules: g.modules.filter(id => !researchResults[id])
+            })).filter(g => g.modules.length > 0);
+
+            console.log(`[Research] === Firing ${pendingGroups.length} grouped API calls (${pendingGroups.reduce((s, g) => s + g.modules.length, 0)} modules) ===`);
             const researchStart = performance.now();
 
-            await Promise.all(allModules.map(async (module, idx) => {
-                await new Promise(r => setTimeout(r, idx * 300));
-                console.log(`[Research] ${module.id} launching (stagger: ${idx * 300}ms)`);
-                const badge = document.getElementById(`badge-${module.id}`);
+            // Set all badges to Fetching
+            pendingGroups.forEach(g => g.modules.forEach(id => {
+                const badge = document.getElementById(`badge-${id}`);
                 if (badge) badge.textContent = 'Fetching...';
+            }));
+
+            // Fire all 4 groups with 1s stagger (4 calls in 3s, well within 10 RPM)
+            await Promise.all(pendingGroups.map(async (group, idx) => {
+                await new Promise(r => setTimeout(r, idx * 1000));
+                console.log(`[Research] Group "${group.label}" launching (${group.modules.join(', ')})`);
                 try {
-                    const result = await runSingleResearch(apiKey, module, businessName, ownerName, location, 0, null);
-                    researchResults[module.id] = result;
-                    renderResearchModule(module, result);
-                    console.log(`[Research] ${module.id} DONE - rendered to UI`);
-                    // Store SOS entity data if it comes back
-                    if (module.id === 'sos' && (result.entity_number || result.formation_date || result.status)) {
-                        window._verifiedEntity = { entity_number: result.entity_number, formation_date: result.formation_date, status: result.status, verified_name: businessName };
-                        console.log(`[Research] SOS entity verified: ${result.entity_number || 'no entity#'}, status: ${result.status || 'unknown'}`);
+                    const results = await runGroupedResearch(apiKey, group.modules, businessName, ownerName, location);
+                    // Render each module result from the group
+                    for (const moduleId of group.modules) {
+                        const moduleResult = results[moduleId] || { risk: 'unknown', summary: 'No data returned', details: [], flags: [] };
+                        researchResults[moduleId] = moduleResult;
+                        const moduleDef = researchModules.find(m => m.id === moduleId);
+                        if (moduleDef) renderResearchModule(moduleDef, moduleResult);
+                        console.log(`[Research] ${moduleId} DONE - risk: ${moduleResult.risk}`);
+                        updateProgress();
                     }
                 } catch (e) {
-                    console.error(`[Research] ${module.id} FINAL FAILURE:`, e.message);
-                    researchResults[module.id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
-                    renderResearchModule(module, researchResults[module.id]);
+                    console.error(`[Research] Group "${group.label}" FAILED:`, e.message);
+                    for (const moduleId of group.modules) {
+                        researchResults[moduleId] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
+                        const moduleDef = researchModules.find(m => m.id === moduleId);
+                        if (moduleDef) renderResearchModule(moduleDef, researchResults[moduleId]);
+                        updateProgress();
+                    }
                 }
-                updateProgress();
             }));
-            console.log(`[Research] === ALL ${allModules.length} MODULES COMPLETE in ${((performance.now() - researchStart) / 1000).toFixed(1)}s ===`);
+            console.log(`[Research] === ALL MODULES COMPLETE in ${((performance.now() - researchStart) / 1000).toFixed(1)}s ===`);
 
             // Final check
             if (completed >= researchModules.length) {
@@ -8654,89 +8615,73 @@ Return ONLY valid JSON:
             }
         }
 
-        async function runSingleResearch(apiKey, module, businessName, ownerName, location, retryCount = 0, verifiedEntity = null) {
-            // Detect if this is a formal registered entity
+        async function runGroupedResearch(apiKey, moduleIds, businessName, ownerName, location, retryCount = 0) {
             const entityPatterns = /\b(inc\.?|corp\.?|llc|l\.l\.c\.?|ltd\.?|lp|l\.p\.?|llp|l\.l\.p\.?|pllc|pc|p\.c\.?|incorporated|corporation|company|co\.?)\b/i;
             const isRegisteredEntity = entityPatterns.test(businessName);
-
-            // Extract state from location if available
             const stateMatch = location?.match(/\b([A-Z]{2})\b|\b(California|Texas|Florida|New York|Illinois|Pennsylvania|Ohio|Georgia|North Carolina|Michigan|New Jersey|Virginia|Washington|Arizona|Massachusetts|Tennessee|Indiana|Missouri|Maryland|Wisconsin|Colorado|Minnesota|South Carolina|Alabama|Louisiana|Kentucky|Oregon|Oklahoma|Connecticut|Utah|Iowa|Nevada|Arkansas|Mississippi|Kansas|New Mexico|Nebraska|Idaho|West Virginia|Hawaii|New Hampshire|Maine|Montana|Rhode Island|Delaware|South Dakota|North Dakota|Alaska|Vermont|Wyoming)\b/i);
             const state = stateMatch ? stateMatch[0] : '';
 
-            // Build entity context string for modules that need it (UCC, Tax, Judgment, Bankruptcy)
-            const entityContext = verifiedEntity
-                ? `IMPORTANT: Search for the SAME entity verified from Secretary of State: "${businessName}"${verifiedEntity.entity_number ? `, Entity/File Number: ${verifiedEntity.entity_number}` : ''}${verifiedEntity.formation_date ? `, formed ${verifiedEntity.formation_date}` : ''}${verifiedEntity.status ? ` (${verifiedEntity.status})` : ''}.`
-                : '';
-
-            const prompts = {
+            // Build per-module instructions
+            const moduleInstructions = {
                 sos: isRegisteredEntity
-                    ? `Search for the Secretary of State business registration for "${businessName}" ${state ? `in ${state}` : location ? `in ${location}` : ''}. This is a registered business entity. Find: Entity number, formation date, current status (Active/Inactive/Dissolved), registered agent, principal address, and any amendments or name changes. Search state corporation databases.`
-                    : `Research the Secretary of State registration for "${businessName}" ${location ? `in ${location}` : ''}. Determine: Is the business in good standing? When was it formed? Any name changes or mergers?`,
-                ucc: `${entityContext} Search for UCC filings against "${businessName}". Look for: Existing liens, secured creditors, MCA lenders like Credibly, Bluevine, OnDeck, Fundbox, Kabbage, equipment financing, factoring companies. Only return results for this specific entity.`,
-                tax: `${entityContext} Research tax lien status for "${businessName}" ${ownerName ? `and owner ${ownerName}` : ''}. Look for: Federal tax liens, state tax liens, payment plans. Only return results for this specific entity.`,
-                judgment: `${entityContext} Research court judgments and legal actions involving "${businessName}" ${ownerName ? `or ${ownerName}` : ''}. Look for: Civil judgments, lawsuits, collections. Only return results for this specific entity.`,
-                bankruptcy: `${entityContext} Research bankruptcy history for "${businessName}" ${ownerName ? `and owner ${ownerName}` : ''}. Check federal bankruptcy court PACER records for Chapter 7, 11, or 13 filings, discharge status. Only return results for this specific entity.`,
-                bbb: `Research the Better Business Bureau profile for "${businessName}". Determine: BBB rating, complaint history, years accredited.`,
-                reviews: `Research online reviews for "${businessName}". Analyze: Google rating, Yelp rating, common complaints, customer sentiment.`,
-                news: `Research recent news and press mentions for "${businessName}". Look for: Positive coverage, negative incidents, industry recognition.`,
-                social: `Research social media presence for "${businessName}". Analyze: Active accounts, follower counts, engagement, content quality.`,
-                industry: `Research the industry and market position for "${businessName}". Analyze: Industry trends, competition level, market outlook.`,
-                owner: `Research owner background for ${ownerName || businessName}. Look for: Business experience, other ventures, professional history.`,
-                location: `Research the business location for "${businessName}" ${location ? `at ${location}` : ''}. Analyze: Area demographics, local competition, foot traffic potential.`
+                    ? `SECRETARY OF STATE: Search for the business registration for "${businessName}" ${state ? `in ${state}` : location ? `in ${location}` : ''}. Find: Entity number, formation date, current status (Active/Inactive/Dissolved), registered agent, principal address.`
+                    : `SECRETARY OF STATE: Research registration for "${businessName}" ${location ? `in ${location}` : ''}. Is it in good standing? Formation date? Name changes?`,
+                ucc: `UCC FILINGS: Search for UCC filings against "${businessName}". Look for: Existing liens, secured creditors, MCA lenders (Credibly, Bluevine, OnDeck, Fundbox, Kabbage), equipment financing, factoring companies.`,
+                tax: `TAX LIENS: Research tax lien status for "${businessName}" ${ownerName ? `and owner ${ownerName}` : ''}. Federal tax liens, state tax liens, payment plans.`,
+                judgment: `JUDGMENTS: Research court judgments and legal actions involving "${businessName}" ${ownerName ? `or ${ownerName}` : ''}. Civil judgments, lawsuits, collections.`,
+                bankruptcy: `BANKRUPTCY: Research bankruptcy history for "${businessName}" ${ownerName ? `and owner ${ownerName}` : ''}. Check PACER records for Chapter 7, 11, 13 filings, discharge status.`,
+                bbb: `BBB PROFILE: Research Better Business Bureau profile for "${businessName}". BBB rating, complaint history, years accredited.`,
+                reviews: `ONLINE REVIEWS: Research online reviews for "${businessName}". Google rating, Yelp rating, common complaints, customer sentiment.`,
+                news: `NEWS & PRESS: Research recent news and press mentions for "${businessName}". Positive coverage, negative incidents, industry recognition.`,
+                social: `SOCIAL MEDIA: Research social media presence for "${businessName}". Active accounts, follower counts, engagement, content quality.`,
+                industry: `INDUSTRY: Research industry and market position for "${businessName}". Industry trends, competition level, market outlook.`,
+                owner: `OWNER BACKGROUND: Research owner background for ${ownerName || businessName}. Business experience, other ventures, professional history.`,
+                location: `LOCATION: Research business location for "${businessName}" ${location ? `at ${location}` : ''}. Area demographics, local competition, foot traffic potential.`
             };
 
-            // All modules use Google Search grounding for real web data
+            const tasks = moduleIds.map(id => moduleInstructions[id]).join('\n\n');
+            const hasSos = moduleIds.includes('sos');
+
+            const schemaFields = moduleIds.map(id => {
+                if (id === 'sos') return `  "${id}": { "risk": "low|medium|high|unknown", "summary": "one sentence", "details": ["findings"], "flags": ["red flags"], "entity_number": "number", "formation_date": "date", "status": "Active/Inactive/Dissolved" }`;
+                return `  "${id}": { "risk": "low|medium|high|unknown", "summary": "one sentence", "details": ["findings"], "flags": ["red flags"] }`;
+            }).join(',\n');
+
             const useGrounding = retryCount < 2;
-
-            // Use Gemini 3 Flash for all research (supports google_search grounding)
             const model = 'gemini-3-flash-preview';
-
-            // Only include entity fields for SOS module (other modules don't have entity registrations)
-            const includeEntityFields = module.id === 'sos';
-
-            const jsonSchema = includeEntityFields ? `{
-  "risk": "low" | "medium" | "high" | "unknown",
-  "summary": "One sentence summary",
-  "details": ["Finding 1", "Finding 2", "Finding 3"],
-  "flags": ["Red flags if any"],
-  "entity_number": "Entity/File number from Secretary of State",
-  "formation_date": "Date business was formed/incorporated",
-  "status": "Active/Inactive/Dissolved status"
-}` : `{
-  "risk": "low" | "medium" | "high" | "unknown",
-  "summary": "One sentence summary",
-  "details": ["Finding 1", "Finding 2", "Finding 3"],
-  "flags": ["Red flags if any"]
-}`;
 
             const requestBody = {
                 contents: [{
                     parts: [{
-                        text: `${prompts[module.id]}
+                        text: `Research "${businessName}" ${location ? `in ${location}` : ''} ${ownerName ? `(owner: ${ownerName})` : ''} for MCA underwriting.
 
-${useGrounding ? 'Search the web for current information.' : 'Provide assessment based on typical patterns.'} Format as JSON:
-${jsonSchema}
+Complete ALL of these research tasks:
 
-Return ONLY valid JSON.`
+${tasks}
+
+Search the web for current information on ALL tasks above.
+
+Return ONLY valid JSON with a key for each task:
+{
+${schemaFields}
+}
+
+Return ONLY the JSON object, no other text.`
                     }]
                 }],
-                generationConfig: { temperature: 0.3, maxOutputTokens: 2048 }
+                generationConfig: { temperature: 0.3, maxOutputTokens: 4096 }
             };
 
-            // Add search grounding for key research modules
             if (useGrounding) {
-                requestBody.tools = [{
-                    google_search: {}
-                }];
+                requestBody.tools = [{ google_search: {} }];
             }
 
             try {
                 const startTime = performance.now();
-                console.log(`[Research] ${module.id} STARTED (attempt ${retryCount + 1}/3) ${useGrounding ? 'WITH grounding' : 'NO grounding'}`);
+                console.log(`[Research] Group [${moduleIds.join(', ')}] STARTED (attempt ${retryCount + 1}/3) ${useGrounding ? 'WITH grounding' : 'NO grounding'}`);
 
-                // Use AbortController for fetch timeout (60 seconds for research)
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 60000);
+                const timeoutId = setTimeout(() => controller.abort(), 90000); // 90s for grouped calls
 
                 const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
                     method: 'POST',
@@ -8747,45 +8692,46 @@ Return ONLY valid JSON.`
 
                 clearTimeout(timeoutId);
                 const elapsed = ((performance.now() - startTime) / 1000).toFixed(1);
-                console.log(`[Research] ${module.id} response received in ${elapsed}s (HTTP ${resp.status})`);
+                console.log(`[Research] Group [${moduleIds.join(', ')}] response in ${elapsed}s (HTTP ${resp.status})`);
+
+                if (resp.status === 429) {
+                    console.warn(`[Research] Group [${moduleIds.join(', ')}] RATE LIMITED (429) - attempt ${retryCount + 1}/3`);
+                    if (retryCount < 2) {
+                        const backoff = (retryCount + 1) * 5000; // 5s, 10s backoff for rate limits
+                        console.log(`[Research] Backing off ${backoff/1000}s before retry...`);
+                        await new Promise(r => setTimeout(r, backoff));
+                        return runGroupedResearch(apiKey, moduleIds, businessName, ownerName, location, retryCount + 1);
+                    }
+                }
+
                 const data = await resp.json();
 
-                // Check for API errors
                 if (data.error) {
-                    console.warn(`[Research] ${module.id} API ERROR (attempt ${retryCount + 1}/3):`, data.error.message || data.error);
+                    console.warn(`[Research] Group [${moduleIds.join(', ')}] API ERROR:`, data.error.message || data.error);
                     if (retryCount < 2) {
-                        console.log(`[Research] ${module.id} retrying in ${(retryCount + 1)}s...`);
-                        await new Promise(r => setTimeout(r, 1000 * (retryCount + 1)));
-                        return runSingleResearch(apiKey, module, businessName, ownerName, location, retryCount + 1, verifiedEntity);
+                        await new Promise(r => setTimeout(r, 2000 * (retryCount + 1)));
+                        return runGroupedResearch(apiKey, moduleIds, businessName, ownerName, location, retryCount + 1);
                     }
                     throw new Error(data.error.message);
                 }
 
                 let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-
-                // If no text response, retry
-                if (!text || text.trim() === '{}' || text.trim() === '') {
-                    console.warn(`[Research] ${module.id} EMPTY RESPONSE (attempt ${retryCount + 1}/3)`);
+                if (!text || text.trim() === '') {
+                    console.warn(`[Research] Group [${moduleIds.join(', ')}] EMPTY RESPONSE`);
                     if (retryCount < 2) {
-                        console.log(`[Research] ${module.id} retrying in ${(retryCount + 1)}s...`);
-                        await new Promise(r => setTimeout(r, 1000 * (retryCount + 1)));
-                        return runSingleResearch(apiKey, module, businessName, ownerName, location, retryCount + 1, verifiedEntity);
+                        await new Promise(r => setTimeout(r, 2000 * (retryCount + 1)));
+                        return runGroupedResearch(apiKey, moduleIds, businessName, ownerName, location, retryCount + 1);
                     }
                 }
 
                 text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
 
-                // Try to fix truncated/malformed JSON
+                // Fix truncated JSON
                 if (!text.endsWith('}')) {
-                    console.warn(`Research ${module.id} JSON appears truncated, attempting to fix...`);
-                    // Fix unterminated strings by finding last quote and closing
+                    console.warn(`[Research] Group JSON truncated, fixing...`);
                     const lastQuote = text.lastIndexOf('"');
                     const lastColon = text.lastIndexOf(':');
-                    if (lastColon > lastQuote) {
-                        // Value is incomplete, add empty string
-                        text += '""';
-                    }
-                    // Close any open brackets/braces
+                    if (lastColon > lastQuote) text += '""';
                     const openBraces = (text.match(/\{/g) || []).length;
                     const closeBraces = (text.match(/\}/g) || []).length;
                     const openBrackets = (text.match(/\[/g) || []).length;
@@ -8795,35 +8741,34 @@ Return ONLY valid JSON.`
                 }
 
                 const result = JSON.parse(text);
-                console.log(`[Research] ${module.id} PARSED OK - risk: ${result.risk}, summary: ${(result.summary || '').substring(0, 60)}...`);
+                console.log(`[Research] Group [${moduleIds.join(', ')}] PARSED OK - keys: ${Object.keys(result).join(', ')}`);
 
-                // Validate result has meaningful content
-                if (!result.summary || result.summary === 'No data available' || result.summary.toLowerCase().includes('no data')) {
-                    if (retryCount < 2) {
-                        console.warn(`[Research] ${module.id} NO DATA response (attempt ${retryCount + 1}/3) - retrying...`);
-                        await new Promise(r => setTimeout(r, 1000 * (retryCount + 1)));
-                        return runSingleResearch(apiKey, module, businessName, ownerName, location, retryCount + 1, verifiedEntity);
+                // Validate each module got a result
+                const output = {};
+                for (const id of moduleIds) {
+                    if (result[id] && result[id].summary) {
+                        output[id] = result[id];
+                    } else {
+                        console.warn(`[Research] Module ${id} missing from grouped response`);
+                        output[id] = { risk: 'unknown', summary: `Unable to verify - manual review recommended`, details: [], flags: [] };
                     }
                 }
-
-                return result;
+                return output;
             } catch (e) {
                 const isTimeout = e.name === 'AbortError';
-                const errorType = isTimeout ? 'TIMED OUT (60s)' : `ERROR: ${e.message}`;
-                console.warn(`[Research] ${module.id} ${errorType} (attempt ${retryCount + 1}/3)`);
+                const errorType = isTimeout ? 'TIMED OUT (90s)' : `ERROR: ${e.message}`;
+                console.warn(`[Research] Group [${moduleIds.join(', ')}] ${errorType} (attempt ${retryCount + 1}/3)`);
                 if (retryCount < 2) {
-                    console.log(`[Research] ${module.id} retrying in ${(retryCount + 1)}s...`);
-                    await new Promise(r => setTimeout(r, 1000 * (retryCount + 1)));
-                    return runSingleResearch(apiKey, module, businessName, ownerName, location, retryCount + 1, verifiedEntity);
+                    console.log(`[Research] Group retrying in ${(retryCount + 1) * 2}s...`);
+                    await new Promise(r => setTimeout(r, 2000 * (retryCount + 1)));
+                    return runGroupedResearch(apiKey, moduleIds, businessName, ownerName, location, retryCount + 1);
                 }
-                console.error(`[Research] ${module.id} FAILED after 3 attempts - ${errorType}`);
-                // Return a default assessment on final failure
-                return {
-                    risk: 'unknown',
-                    summary: `Unable to verify ${module.name} - manual review recommended`,
-                    details: [`Automated search did not return results for "${businessName}"`, 'Consider checking state databases directly', 'This may indicate a new business or DBA not yet registered'],
-                    flags: []
-                };
+                console.error(`[Research] Group [${moduleIds.join(', ')}] FAILED after 3 attempts`);
+                const output = {};
+                for (const id of moduleIds) {
+                    output[id] = { risk: 'unknown', summary: 'Research failed - please retry', details: [], flags: [] };
+                }
+                return output;
             }
         }
 
