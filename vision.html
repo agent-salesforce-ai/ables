@@ -3946,8 +3946,8 @@
                     link.href = canvas.toDataURL('image/png');
                     link.click();
                 } else {
-                    // Export at 72 DPI: scale down preview pages (which are at 144 DPI / scale 2)
-                    const exportScale = 0.5;
+                    // Export at ~100 DPI: scale down preview pages (which are at 144 DPI / scale 2)
+                    const exportScale = 0.7;
                     const pageW = Math.round(file.pages[0].width * exportScale);
                     const pageH = Math.round(file.pages[0].height * exportScale);
                     const pdf = new jsPDF({ orientation: pageW > pageH ? 'landscape' : 'portrait', unit: 'px', format: [pageW, pageH] });
@@ -3984,7 +3984,7 @@
                         }
 
                         // Raw JPEG bytes with compression: 'NONE' so jsPDF embeds as-is
-                        const dataUrl = expCanvas.toDataURL('image/jpeg', 0.35);
+                        const dataUrl = expCanvas.toDataURL('image/jpeg', 0.5);
                         const bin = atob(dataUrl.split(',')[1]);
                         const uint8 = new Uint8Array(bin.length);
                         for (let b = 0; b < bin.length; b++) uint8[b] = bin.charCodeAt(b);
