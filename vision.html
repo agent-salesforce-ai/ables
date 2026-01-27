@@ -3946,49 +3946,29 @@
                     link.href = canvas.toDataURL('image/png');
                     link.click();
                 } else {
-                    // Export at ~100 DPI: scale down preview pages (which are at 144 DPI / scale 2)
-                    const exportScale = 0.7;
-                    const pageW = Math.round(file.pages[0].width * exportScale);
-                    const pageH = Math.round(file.pages[0].height * exportScale);
-                    const pdf = new jsPDF({ orientation: pageW > pageH ? 'landscape' : 'portrait', unit: 'px', format: [pageW, pageH] });
+                    // Use renderPreview canvas directly — what you see is what you get
+                    activeFileIndex = i;
+                    file.currentPage = 0;
+                    renderPreview();
+                    await new Promise(r => setTimeout(r, 150));
+
+                    const w = canvas.width;
+                    const h = canvas.height;
+                    const pdf = new jsPDF({ orientation: w > h ? 'landscape' : 'portrait', unit: 'px', format: [w, h] });
 
                     for (let p = 0; p < file.pages.length; p++) {
-                        if (p > 0) pdf.addPage([pageW, pageH]);
-
-                        // Render page at 72 DPI with watermark
-                        const expCanvas = document.createElement('canvas');
-                        expCanvas.width = pageW;
-                        expCanvas.height = pageH;
-                        const expCtx = expCanvas.getContext('2d');
-                        expCtx.drawImage(file.pages[p], 0, 0, pageW, pageH);
-
-                        // Draw watermark
-                        if (logoImage && logoImage.complete && logoImage.naturalWidth > 0) {
-                            expCtx.globalAlpha = settings.opacity;
-                            const logoW = pageW * settings.size * 1.5;
-                            const logoH = (logoImage.height / logoImage.width) * logoW;
-                            const gap = 1.5 - settings.density;
-                            const spaceX = logoW * gap + 80;
-                            const spaceY = logoH * gap + 80;
-                            const rad = settings.rotation * Math.PI / 180;
-                            for (let y = -logoH; y < pageH + logoH; y += spaceY) {
-                                for (let x = -logoW; x < pageW + logoW; x += spaceX) {
-                                    expCtx.save();
-                                    expCtx.translate(x + logoW / 2, y + logoH / 2);
-                                    expCtx.rotate(rad);
-                                    expCtx.drawImage(logoImage, -logoW / 2, -logoH / 2, logoW, logoH);
-                                    expCtx.restore();
-                                }
-                            }
-                            expCtx.globalAlpha = 1;
+                        if (p > 0) {
+                            file.currentPage = p;
+                            renderPreview();
+                            await new Promise(r => setTimeout(r, 150));
+                            pdf.addPage([w, h]);
                         }
-
-                        // Raw JPEG bytes with compression: 'NONE' so jsPDF embeds as-is
-                        const dataUrl = expCanvas.toDataURL('image/jpeg', 0.5);
+                        // Raw JPEG bytes — compression 'NONE' prevents jsPDF re-encoding
+                        const dataUrl = canvas.toDataURL('image/jpeg', 0.5);
                         const bin = atob(dataUrl.split(',')[1]);
                         const uint8 = new Uint8Array(bin.length);
                         for (let b = 0; b < bin.length; b++) uint8[b] = bin.charCodeAt(b);
-                        pdf.addImage(uint8, 'JPEG', 0, 0, pageW, pageH, undefined, 'NONE');
+                        pdf.addImage(uint8, 'JPEG', 0, 0, w, h, undefined, 'NONE');
                     }
                     pdf.save(`${safeLabel}.pdf`);
                 }
