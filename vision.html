@@ -3999,25 +3999,66 @@
                         URL.revokeObjectURL(link.href);
                     } catch (err) {
                         console.warn('pdf-lib failed, falling back to canvas method:', err.message);
-                        // Fallback for encrypted or problematic PDFs: canvas + jsPDF
-                        activeFileIndex = i;
-                        file.currentPage = 0;
-                        renderPreview();
-                        await new Promise(r => setTimeout(r, 150));
+                        // Fallback: re-render from PDF at high res, draw watermark, assemble via jsPDF
+                        try {
+                            const fallbackScale = 2;
+                            const fallbackPdf = await pdfjsLib.getDocument({ data: file.originalPdfBytes.slice(0) }).promise;
+                            const pg1 = await fallbackPdf.getPage(1);
+                            const vp1 = pg1.getViewport({ scale: 1 });
+                            const pageW = vp1.width;
+                            const pageH = vp1.height;
 
-                        const pdf = new jsPDF({ orientation: canvas.width > canvas.height ? 'landscape' : 'portrait', unit: 'px', format: [canvas.width, canvas.height] });
-                        pdf.addImage(canvas.toDataURL('image/jpeg', 0.80), 'JPEG', 0, 0, canvas.width, canvas.height);
+                            const pdf = new jsPDF({
+                                orientation: pageW > pageH ? 'landscape' : 'portrait',
+                                unit: 'pt',
+                                format: [pageW, pageH]
+                            });
 
-                        for (let p = 1; p < file.pages.length; p++) {
-                            file.currentPage = p;
-                            renderPreview();
-                            await new Promise(r => setTimeout(r, 150));
-                            pdf.addPage([canvas.width, canvas.height]);
-                            pdf.addImage(canvas.toDataURL('image/jpeg', 0.80), 'JPEG', 0, 0, canvas.width, canvas.height);
+                            for (let p = 0; p < file.pages.length; p++) {
+                                if (p > 0) pdf.addPage([pageW, pageH]);
+                                const pg = await fallbackPdf.getPage(p + 1);
+                                const vp = pg.getViewport({ scale: fallbackScale });
+                                const expCanvas = document.createElement('canvas');
+                                expCanvas.width = vp.width;
+                                expCanvas.height = vp.height;
+                                const expCtx = expCanvas.getContext('2d');
+                                await pg.render({ canvasContext: expCtx, viewport: vp }).promise;
+
+                                // Draw watermark
+                                if (logoImage && logoImage.complete && logoImage.naturalWidth > 0) {
+                                    expCtx.save();
+                                    expCtx.globalAlpha = settings.opacity;
+                                    const baseSize = Math.min(expCanvas.width, expCanvas.height) * settings.size * 0.5;
+                                    const wmRatio = logoImage.naturalWidth / logoImage.naturalHeight;
+                                    const wmW = wmRatio >= 1 ? baseSize : baseSize * wmRatio;
+                                    const wmH = wmRatio >= 1 ? baseSize / wmRatio : baseSize;
+                                    const minSp = Math.max(wmW, wmH) * 1.5;
+                                    const maxSp = Math.max(wmW, wmH) * 4;
+                                    const sp = maxSp - settings.density * (maxSp - minSp);
+                                    const rot = -settings.rotation * Math.PI / 180;
+                                    let count = 0;
+                                    for (let y = sp / 2; y < expCanvas.height && count < 12; y += sp) {
+                                        for (let x = sp / 2; x < expCanvas.width && count < 12; x += sp) {
+                                            expCtx.save();
+                                            expCtx.translate(x, y);
+                                            expCtx.rotate(rot);
+                                            expCtx.drawImage(logoImage, -wmW / 2, -wmH / 2, wmW, wmH);
+                                            expCtx.restore();
+                                            count++;
+                                        }
+                                    }
+                                    expCtx.restore();
+                                }
+
+                                pdf.addImage(expCanvas.toDataURL('image/jpeg', 0.65), 'JPEG', 0, 0, pageW, pageH);
+                            }
+                            pdf.save(`${safeLabel}.pdf`);
+                        } catch (fallbackErr) {
+                            console.error('Fallback export also failed:', fallbackErr);
+                            showStatus('Error exporting: ' + fallbackErr.message, 'error');
                         }
-                        pdf.save(`${safeLabel}.pdf`);
                     }
-                } else {
+                } else if (file.pages.length > 1) {
                     // Non-PDF multi-page: canvas + jsPDF
                     activeFileIndex = i;
                     file.currentPage = 0;
