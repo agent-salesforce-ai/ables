@@ -3927,10 +3927,40 @@
             openModal('downloadModal');
         }
 
+        function stripPdfEncryption(pdfBytes) {
+            // Strip /Encrypt reference from trailer so pdf-lib can load "encrypted" PDFs
+            const text = new TextDecoder('latin1').decode(pdfBytes);
+            const stripped = text.replace(/\/Encrypt\s+\d+\s+\d+\s+R/g, '');
+            if (stripped === text) return pdfBytes; // no encryption found
+            const result = new Uint8Array(stripped.length);
+            for (let i = 0; i < stripped.length; i++) {
+                result[i] = stripped.charCodeAt(i);
+            }
+            return result;
+        }
+
         async function executeDownload() {
             closeModal('downloadModal');
             const { jsPDF } = window.jspdf;
             showStatus('Preparing watermarked downloads...', 'info');
+
+            // Prepare small watermark PNG for pdf-lib
+            let watermarkPngBytes = null;
+            const wm = logoImageSmall || logoImage;
+            if (wm && wm.complete && wm.naturalWidth > 0) {
+                try {
+                    const wmCanvas = document.createElement('canvas');
+                    wmCanvas.width = wm.naturalWidth;
+                    wmCanvas.height = wm.naturalHeight;
+                    const wmCtx = wmCanvas.getContext('2d');
+                    wmCtx.drawImage(wm, 0, 0);
+                    const dataUrl = wmCanvas.toDataURL('image/png');
+                    const base64 = dataUrl.split(',')[1];
+                    watermarkPngBytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+                } catch (e) {
+                    console.error('Error creating watermark bytes:', e);
+                }
+            }
 
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
@@ -3946,7 +3976,69 @@
                     link.download = `${safeLabel}.png`;
                     link.href = canvas.toDataURL('image/png');
                     link.click();
+                } else if (file.isPdf && file.originalPdfBytes && watermarkPngBytes) {
+                    // Try pdf-lib with encryption stripped for small vector output
+                    try {
+                        const { PDFDocument } = PDFLib;
+                        const cleanBytes = stripPdfEncryption(file.originalPdfBytes.slice(0));
+                        const pdfDoc = await PDFDocument.load(cleanBytes);
+                        const watermarkImage = await pdfDoc.embedPng(watermarkPngBytes);
+                        const pages = pdfDoc.getPages();
+
+                        for (const page of pages) {
+                            const { width, height } = page.getSize();
+                            const baseSize = Math.min(width, height) * settings.size * 1.5;
+                            const wmScale = baseSize / Math.max(watermarkImage.width, watermarkImage.height);
+                            const drawWidth = watermarkImage.width * wmScale;
+                            const drawHeight = watermarkImage.height * wmScale;
+                            const gap = 1.5 - settings.density;
+                            const spacing = Math.max(50, Math.max(drawWidth, drawHeight) * gap + 80);
+
+                            let count = 0;
+                            for (let y = spacing / 2; y < height && count < 12; y += spacing) {
+                                for (let x = spacing / 2; x < width && count < 12; x += spacing) {
+                                    page.drawImage(watermarkImage, {
+                                        x: x - drawWidth / 2,
+                                        y: y - drawHeight / 2,
+                                        width: drawWidth,
+                                        height: drawHeight,
+                                        opacity: settings.opacity,
+                                        rotate: PDFLib.degrees(-settings.rotation)
+                                    });
+                                    count++;
+                                }
+                            }
+                        }
+
+                        const pdfBytes = await pdfDoc.save();
+                        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.download = `${safeLabel}.pdf`;
+                        link.click();
+                        URL.revokeObjectURL(link.href);
+                    } catch (err) {
+                        console.warn('pdf-lib failed, using canvas fallback:', err.message);
+                        // Fallback: canvas + jsPDF
+                        file.currentPage = 0;
+                        activeFileIndex = i;
+                        renderPreview();
+                        await new Promise(r => setTimeout(r, 150));
+
+                        const pdf = new jsPDF({ orientation: canvas.width > canvas.height ? 'landscape' : 'portrait', unit: 'px', format: [canvas.width, canvas.height] });
+                        pdf.addImage(canvas.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, canvas.width, canvas.height);
+
+                        for (let p = 1; p < file.pages.length; p++) {
+                            file.currentPage = p;
+                            renderPreview();
+                            await new Promise(r => setTimeout(r, 150));
+                            pdf.addPage([canvas.width, canvas.height]);
+                            pdf.addImage(canvas.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, canvas.width, canvas.height);
+                        }
+                        pdf.save(`${safeLabel}.pdf`);
+                    }
                 } else {
+                    // Non-PDF or no watermark: canvas + jsPDF
                     file.currentPage = 0;
                     activeFileIndex = i;
                     renderPreview();
