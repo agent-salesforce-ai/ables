@@ -3830,23 +3830,23 @@
         }
 
         function loadWatermark(url) {
-            logoImage = new Image();
-            logoImage.crossOrigin = 'anonymous';
-            logoImage.onload = () => {
-                // Pre-scale watermark to max 200px - reduces export size while staying crisp
-                const maxDim = 200;
-                const ratio = Math.min(maxDim / logoImage.naturalWidth, maxDim / logoImage.naturalHeight, 1);
+            const rawImage = new Image();
+            rawImage.crossOrigin = 'anonymous';
+            rawImage.onload = () => {
+                // Pre-scale watermark to max 300px - 1536px original destroys JPEG compression
+                const maxDim = 300;
+                const ratio = Math.min(maxDim / rawImage.naturalWidth, maxDim / rawImage.naturalHeight, 1);
                 const smCanvas = document.createElement('canvas');
-                smCanvas.width = Math.round(logoImage.naturalWidth * ratio);
-                smCanvas.height = Math.round(logoImage.naturalHeight * ratio);
+                smCanvas.width = Math.round(rawImage.naturalWidth * ratio);
+                smCanvas.height = Math.round(rawImage.naturalHeight * ratio);
                 const smCtx = smCanvas.getContext('2d');
-                smCtx.drawImage(logoImage, 0, 0, smCanvas.width, smCanvas.height);
-                logoImageSmall = new Image();
-                logoImageSmall.onload = () => { if (activeFileIndex >= 0) renderPreview(); };
-                logoImageSmall.src = smCanvas.toDataURL('image/png');
+                smCtx.drawImage(rawImage, 0, 0, smCanvas.width, smCanvas.height);
+                logoImage = new Image();
+                logoImage.onload = () => { if (activeFileIndex >= 0) renderPreview(); };
+                logoImage.src = smCanvas.toDataURL('image/png');
             };
-            logoImage.onerror = () => { console.warn('Failed to load watermark image'); };
-            logoImage.src = url;
+            rawImage.onerror = () => { console.warn('Failed to load watermark image'); };
+            rawImage.src = url;
         }
 
         function renderPreview() {
