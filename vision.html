@@ -3931,8 +3931,8 @@
 
         async function executeDownload() {
             closeModal('downloadModal');
-            const { jsPDF } = window.jspdf;
             showStatus('Preparing watermarked downloads...', 'info');
+            const { PDFDocument, StandardFonts, rgb, degrees } = PDFLib;
 
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
@@ -3940,6 +3940,7 @@
                 const safeLabel = (nameInput?.value || file.name.replace(/\.[^.]+$/, '')).replace(/[^a-z0-9_\-\s]/gi, '_');
 
                 if (file.pages.length === 1) {
+                    // Single page (image) — use canvas PNG export
                     activeFileIndex = i;
                     file.currentPage = 0;
                     renderPreview();
@@ -3948,17 +3949,127 @@
                     link.download = `${safeLabel}.png`;
                     link.href = canvas.toDataURL('image/png');
                     link.click();
+                } else if (file.isPdf && file.originalPdfBytes) {
+                    // PDF file — use pdf-lib to overlay watermark on original vector content
+                    try {
+                        const pdfDoc = await PDFDocument.load(file.originalPdfBytes, { ignoreEncryption: true });
+                        const pages = pdfDoc.getPages();
+
+                        // Embed watermark image ONCE — pre-compress to tiny JPEG
+                        let wmImage = null;
+                        if (logoImage && logoImage.complete && logoImage.naturalWidth > 0) {
+                            const wmCanvas = document.createElement('canvas');
+                            const wmMaxDim = 120;
+                            const wmRatio = Math.min(wmMaxDim / logoImage.naturalWidth, wmMaxDim / logoImage.naturalHeight, 1);
+                            wmCanvas.width = Math.round(logoImage.naturalWidth * wmRatio);
+                            wmCanvas.height = Math.round(logoImage.naturalHeight * wmRatio);
+                            const wmCtx = wmCanvas.getContext('2d');
+                            wmCtx.fillStyle = '#ffffff';
+                            wmCtx.fillRect(0, 0, wmCanvas.width, wmCanvas.height);
+                            wmCtx.drawImage(logoImage, 0, 0, wmCanvas.width, wmCanvas.height);
+                            const wmDataUrl = wmCanvas.toDataURL('image/jpeg', 0.6);
+                            const wmBin = atob(wmDataUrl.split(',')[1]);
+                            const wmBytes = new Uint8Array(wmBin.length);
+                            for (let b = 0; b < wmBin.length; b++) wmBytes[b] = wmBin.charCodeAt(b);
+                            wmImage = await pdfDoc.embedJpg(wmBytes);
+                        }
+
+                        // Also embed a standard font for text watermark fallback
+                        const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+                        for (const page of pages) {
+                            const { width, height } = page.getSize();
+
+                            if (wmImage) {
+                                // Tiled image watermark matching renderPreview layout
+                                const logoW = width * settings.size * 1.5;
+                                const logoH = (wmImage.height / wmImage.width) * logoW;
+                                const gap = 1.5 - settings.density;
+                                const spaceX = logoW * gap + 80;
+                                const spaceY = logoH * gap + 80;
+                                const rot = degrees(-settings.rotation);
+
+                                for (let y = -logoH; y < height + logoH; y += spaceY) {
+                                    for (let x = -logoW; x < width + logoW; x += spaceX) {
+                                        page.drawImage(wmImage, {
+                                            x: x,
+                                            y: height - y - logoH,
+                                            width: logoW,
+                                            height: logoH,
+                                            opacity: settings.opacity,
+                                            rotate: rot,
+                                        });
+                                    }
+                                }
+                            } else {
+                                // Text watermark fallback — near-zero overhead
+                                const text = 'CONFIDENTIAL';
+                                const fontSize = width * 0.08;
+                                const rot = degrees(-settings.rotation);
+                                const gap = 1.5 - settings.density;
+                                const spaceX = fontSize * 3 * gap + 80;
+                                const spaceY = fontSize * 2 * gap + 80;
+
+                                for (let y = 0; y < height; y += spaceY) {
+                                    for (let x = 0; x < width; x += spaceX) {
+                                        page.drawText(text, {
+                                            x: x,
+                                            y: height - y,
+                                            size: fontSize,
+                                            font,
+                                            color: rgb(0.7, 0.7, 0.7),
+                                            rotate: rot,
+                                            opacity: settings.opacity,
+                                        });
+                                    }
+                                }
+                            }
+                        }
+
+                        const pdfBytes = await pdfDoc.save({ useObjectStreams: true });
+                        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                        const url = URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.download = `${safeLabel}.pdf`;
+                        link.href = url;
+                        link.click();
+                        URL.revokeObjectURL(url);
+                    } catch (err) {
+                        console.error('pdf-lib watermark failed, falling back to canvas:', err);
+                        // Fallback: canvas rasterization approach
+                        const { jsPDF } = window.jspdf;
+                        activeFileIndex = i;
+                        file.currentPage = 0;
+                        renderPreview();
+                        await new Promise(r => setTimeout(r, 150));
+                        const w = canvas.width;
+                        const h = canvas.height;
+                        const pdf = new jsPDF({ orientation: w > h ? 'landscape' : 'portrait', unit: 'px', format: [w, h] });
+                        for (let p = 0; p < file.pages.length; p++) {
+                            if (p > 0) {
+                                file.currentPage = p;
+                                renderPreview();
+                                await new Promise(r => setTimeout(r, 150));
+                                pdf.addPage([w, h]);
+                            }
+                            const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                            const bin = atob(dataUrl.split(',')[1]);
+                            const uint8 = new Uint8Array(bin.length);
+                            for (let b = 0; b < bin.length; b++) uint8[b] = bin.charCodeAt(b);
+                            pdf.addImage(uint8, 'JPEG', 0, 0, w, h, undefined, 'NONE');
+                        }
+                        pdf.save(`${safeLabel}.pdf`);
+                    }
                 } else {
-                    // Use renderPreview canvas directly — what you see is what you get
+                    // Non-PDF multi-page (shouldn't happen, but handle gracefully)
+                    const { jsPDF } = window.jspdf;
                     activeFileIndex = i;
                     file.currentPage = 0;
                     renderPreview();
                     await new Promise(r => setTimeout(r, 150));
-
                     const w = canvas.width;
                     const h = canvas.height;
                     const pdf = new jsPDF({ orientation: w > h ? 'landscape' : 'portrait', unit: 'px', format: [w, h] });
-
                     for (let p = 0; p < file.pages.length; p++) {
                         if (p > 0) {
                             file.currentPage = p;
@@ -3966,7 +4077,6 @@
                             await new Promise(r => setTimeout(r, 150));
                             pdf.addPage([w, h]);
                         }
-                        // Raw JPEG bytes — compression 'NONE' prevents jsPDF re-encoding
                         const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
                         const bin = atob(dataUrl.split(',')[1]);
                         const uint8 = new Uint8Array(bin.length);
