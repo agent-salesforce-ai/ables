@@ -3975,13 +3975,19 @@
                     link.click();
                 } else {
                     const firstPage = renderExportPage(file.pages[0]);
-                    const pdf = new jsPDF({ orientation: firstPage.width > firstPage.height ? 'landscape' : 'portrait', unit: 'px', format: [firstPage.width, firstPage.height] });
-                    pdf.addImage(firstPage.toDataURL('image/jpeg', 0.4), 'JPEG', 0, 0, firstPage.width, firstPage.height);
+                    const w = firstPage.width;
+                    const h = firstPage.height;
+                    console.log(`Export page size: ${w}x${h}`);
+                    const pdf = new jsPDF({ orientation: w > h ? 'landscape' : 'portrait', unit: 'px', format: [w, h] });
 
-                    for (let p = 1; p < file.pages.length; p++) {
-                        const expPage = renderExportPage(file.pages[p]);
-                        pdf.addPage([expPage.width, expPage.height]);
-                        pdf.addImage(expPage.toDataURL('image/jpeg', 0.4), 'JPEG', 0, 0, expPage.width, expPage.height);
+                    for (let p = 0; p < file.pages.length; p++) {
+                        const expPage = p === 0 ? firstPage : renderExportPage(file.pages[p]);
+                        if (p > 0) pdf.addPage([w, h]);
+
+                        // Convert canvas to JPEG blob for exact size control
+                        const dataUrl = expPage.toDataURL('image/jpeg', 0.4);
+                        console.log(`Page ${p} JPEG data URL length: ${dataUrl.length} bytes (~${Math.round(dataUrl.length * 0.75 / 1024)}KB)`);
+                        pdf.addImage(dataUrl, 'JPEG', 0, 0, w, h);
                     }
                     pdf.save(`${safeLabel}.pdf`);
                 }
