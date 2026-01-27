@@ -3926,6 +3926,34 @@
             openModal('downloadModal');
         }
 
+        function renderExportPage(pageImg) {
+            // Render page at reduced size for export (matches 72 DPI approach)
+            // Page images are at scale 2 (144 DPI) — scale down by 0.5 to get 72 DPI
+            const scale = 0.5;
+            const expCanvas = document.createElement('canvas');
+            expCanvas.width = Math.round(pageImg.width * scale);
+            expCanvas.height = Math.round(pageImg.height * scale);
+            const expCtx = expCanvas.getContext('2d');
+            expCtx.drawImage(pageImg, 0, 0, expCanvas.width, expCanvas.height);
+
+            // Draw single centered watermark (not tiled — much smaller file)
+            if (logoImage && logoImage.complete && logoImage.naturalWidth > 0) {
+                expCtx.save();
+                expCtx.globalAlpha = settings.opacity;
+                const wmSize = 200;
+                const wmW = wmSize;
+                const wmH = (logoImage.height / logoImage.width) * wmSize;
+                const cx = expCanvas.width / 2;
+                const cy = expCanvas.height / 2;
+                expCtx.translate(cx, cy);
+                expCtx.rotate(-settings.rotation * Math.PI / 180);
+                expCtx.drawImage(logoImage, -wmW / 2, -wmH / 2, wmW, wmH);
+                expCtx.restore();
+            }
+
+            return expCanvas;
+        }
+
         async function executeDownload() {
             closeModal('downloadModal');
             const { jsPDF } = window.jspdf;
@@ -3946,20 +3974,14 @@
                     link.href = canvas.toDataURL('image/png');
                     link.click();
                 } else {
-                    file.currentPage = 0;
-                    activeFileIndex = i;
-                    renderPreview();
-                    await new Promise(r => setTimeout(r, 150));
-
-                    const pdf = new jsPDF({ orientation: canvas.width > canvas.height ? 'landscape' : 'portrait', unit: 'px', format: [canvas.width, canvas.height] });
-                    pdf.addImage(canvas.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, canvas.width, canvas.height);
+                    const firstPage = renderExportPage(file.pages[0]);
+                    const pdf = new jsPDF({ orientation: firstPage.width > firstPage.height ? 'landscape' : 'portrait', unit: 'px', format: [firstPage.width, firstPage.height] });
+                    pdf.addImage(firstPage.toDataURL('image/jpeg', 0.4), 'JPEG', 0, 0, firstPage.width, firstPage.height);
 
                     for (let p = 1; p < file.pages.length; p++) {
-                        file.currentPage = p;
-                        renderPreview();
-                        await new Promise(r => setTimeout(r, 150));
-                        pdf.addPage([canvas.width, canvas.height]);
-                        pdf.addImage(canvas.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, canvas.width, canvas.height);
+                        const expPage = renderExportPage(file.pages[p]);
+                        pdf.addPage([expPage.width, expPage.height]);
+                        pdf.addImage(expPage.toDataURL('image/jpeg', 0.4), 'JPEG', 0, 0, expPage.width, expPage.height);
                     }
                     pdf.save(`${safeLabel}.pdf`);
                 }
