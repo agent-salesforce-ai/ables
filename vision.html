@@ -3833,17 +3833,20 @@
             const rawImage = new Image();
             rawImage.crossOrigin = 'anonymous';
             rawImage.onload = () => {
-                // Pre-scale watermark to max 300px - 1536px original destroys JPEG compression
-                const maxDim = 300;
+                // Pre-scale to 150px and convert to JPEG (no alpha) for better compression
+                const maxDim = 150;
                 const ratio = Math.min(maxDim / rawImage.naturalWidth, maxDim / rawImage.naturalHeight, 1);
                 const smCanvas = document.createElement('canvas');
                 smCanvas.width = Math.round(rawImage.naturalWidth * ratio);
                 smCanvas.height = Math.round(rawImage.naturalHeight * ratio);
                 const smCtx = smCanvas.getContext('2d');
+                // White background to eliminate alpha channel
+                smCtx.fillStyle = '#ffffff';
+                smCtx.fillRect(0, 0, smCanvas.width, smCanvas.height);
                 smCtx.drawImage(rawImage, 0, 0, smCanvas.width, smCanvas.height);
                 logoImage = new Image();
                 logoImage.onload = () => { if (activeFileIndex >= 0) renderPreview(); };
-                logoImage.src = smCanvas.toDataURL('image/png');
+                logoImage.src = smCanvas.toDataURL('image/jpeg', 0.8);
             };
             rawImage.onerror = () => { console.warn('Failed to load watermark image'); };
             rawImage.src = url;
@@ -3964,7 +3967,7 @@
                             pdf.addPage([w, h]);
                         }
                         // Raw JPEG bytes — compression 'NONE' prevents jsPDF re-encoding
-                        const dataUrl = canvas.toDataURL('image/jpeg', 0.5);
+                        const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
                         const bin = atob(dataUrl.split(',')[1]);
                         const uint8 = new Uint8Array(bin.length);
                         for (let b = 0; b < bin.length; b++) uint8[b] = bin.charCodeAt(b);
