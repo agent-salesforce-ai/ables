@@ -3927,9 +3927,8 @@
         }
 
         function renderExportPage(pageImg) {
-            // Render page at reduced size for export (matches 72 DPI approach)
-            // Page images are at scale 2 (144 DPI) — scale down by 0.5 to get 72 DPI
-            const scale = 0.5;
+            // Use full resolution from scale-2 pages (144 DPI) — no downscaling
+            const scale = 1;
             const expCanvas = document.createElement('canvas');
             expCanvas.width = Math.round(pageImg.width * scale);
             expCanvas.height = Math.round(pageImg.height * scale);
