@@ -3967,7 +3967,7 @@
                             pdf.addPage([w, h]);
                         }
                         // Raw JPEG bytes — compression 'NONE' prevents jsPDF re-encoding
-                        const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+                        const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
                         const bin = atob(dataUrl.split(',')[1]);
                         const uint8 = new Uint8Array(bin.length);
                         for (let b = 0; b < bin.length; b++) uint8[b] = bin.charCodeAt(b);
