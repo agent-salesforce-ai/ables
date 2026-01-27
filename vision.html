@@ -3833,8 +3833,8 @@
             logoImage = new Image();
             logoImage.crossOrigin = 'anonymous';
             logoImage.onload = () => {
-                // Pre-scale watermark to max 100px - drastically reduces export file size
-                const maxDim = 100;
+                // Pre-scale watermark to max 200px - reduces export size while staying crisp
+                const maxDim = 200;
                 const ratio = Math.min(maxDim / logoImage.naturalWidth, maxDim / logoImage.naturalHeight, 1);
                 const smCanvas = document.createElement('canvas');
                 smCanvas.width = Math.round(logoImage.naturalWidth * ratio);
