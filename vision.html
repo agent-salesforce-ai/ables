@@ -3932,7 +3932,25 @@
         async function executeDownload() {
             closeModal('downloadModal');
             showStatus('Preparing watermarked downloads...', 'info');
-            const { PDFDocument, StandardFonts, rgb, degrees } = PDFLib;
+            const { PDFDocument, degrees } = PDFLib;
+
+            // Pre-compress watermark image ONCE as tiny JPEG bytes
+            let wmBytes = null;
+            if (logoImage && logoImage.complete && logoImage.naturalWidth > 0) {
+                const wmCanvas = document.createElement('canvas');
+                const wmMaxDim = 100;
+                const wmRatio = Math.min(wmMaxDim / logoImage.naturalWidth, wmMaxDim / logoImage.naturalHeight, 1);
+                wmCanvas.width = Math.round(logoImage.naturalWidth * wmRatio);
+                wmCanvas.height = Math.round(logoImage.naturalHeight * wmRatio);
+                const wmCtx = wmCanvas.getContext('2d');
+                wmCtx.fillStyle = '#ffffff';
+                wmCtx.fillRect(0, 0, wmCanvas.width, wmCanvas.height);
+                wmCtx.drawImage(logoImage, 0, 0, wmCanvas.width, wmCanvas.height);
+                const wmDataUrl = wmCanvas.toDataURL('image/jpeg', 0.5);
+                const wmBin = atob(wmDataUrl.split(',')[1]);
+                wmBytes = new Uint8Array(wmBin.length);
+                for (let b = 0; b < wmBin.length; b++) wmBytes[b] = wmBin.charCodeAt(b);
+            }
 
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
@@ -3940,7 +3958,7 @@
                 const safeLabel = (nameInput?.value || file.name.replace(/\.[^.]+$/, '')).replace(/[^a-z0-9_\-\s]/gi, '_');
 
                 if (file.pages.length === 1) {
-                    // Single page (image) — use canvas PNG export
+                    // Single page — canvas PNG with watermark baked in
                     activeFileIndex = i;
                     file.currentPage = 0;
                     renderPreview();
@@ -3949,77 +3967,67 @@
                     link.download = `${safeLabel}.png`;
                     link.href = canvas.toDataURL('image/png');
                     link.click();
-                } else if (file.isPdf && file.originalPdfBytes) {
-                    // PDF file — use pdf-lib to overlay watermark on original vector content
+                } else {
+                    // Multi-page PDF: build fresh PDF with pdf-lib
+                    // Page images from pdf.js (already rendered), watermark as separate overlay
                     try {
-                        const pdfDoc = await PDFDocument.load(file.originalPdfBytes, { ignoreEncryption: true });
-                        const pages = pdfDoc.getPages();
+                        const pdfDoc = await PDFDocument.create();
 
-                        // Embed watermark image ONCE — pre-compress to tiny JPEG
+                        // Embed watermark image ONCE into the new document
                         let wmImage = null;
-                        if (logoImage && logoImage.complete && logoImage.naturalWidth > 0) {
-                            const wmCanvas = document.createElement('canvas');
-                            const wmMaxDim = 120;
-                            const wmRatio = Math.min(wmMaxDim / logoImage.naturalWidth, wmMaxDim / logoImage.naturalHeight, 1);
-                            wmCanvas.width = Math.round(logoImage.naturalWidth * wmRatio);
-                            wmCanvas.height = Math.round(logoImage.naturalHeight * wmRatio);
-                            const wmCtx = wmCanvas.getContext('2d');
-                            wmCtx.fillStyle = '#ffffff';
-                            wmCtx.fillRect(0, 0, wmCanvas.width, wmCanvas.height);
-                            wmCtx.drawImage(logoImage, 0, 0, wmCanvas.width, wmCanvas.height);
-                            const wmDataUrl = wmCanvas.toDataURL('image/jpeg', 0.6);
-                            const wmBin = atob(wmDataUrl.split(',')[1]);
-                            const wmBytes = new Uint8Array(wmBin.length);
-                            for (let b = 0; b < wmBin.length; b++) wmBytes[b] = wmBin.charCodeAt(b);
+                        if (wmBytes) {
                             wmImage = await pdfDoc.embedJpg(wmBytes);
                         }
 
-                        // Also embed a standard font for text watermark fallback
-                        const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+                        for (let p = 0; p < file.pages.length; p++) {
+                            const pageImg = file.pages[p];
 
-                        for (const page of pages) {
-                            const { width, height } = page.getSize();
+                            // Render page WITHOUT watermark to a clean canvas
+                            const cleanCanvas = document.createElement('canvas');
+                            cleanCanvas.width = pageImg.width;
+                            cleanCanvas.height = pageImg.height;
+                            const cleanCtx = cleanCanvas.getContext('2d');
+                            cleanCtx.drawImage(pageImg, 0, 0);
 
+                            // Export as PNG — much smaller than JPEG for text-heavy bank statements
+                            const pngDataUrl = cleanCanvas.toDataURL('image/png');
+                            const pngBin = atob(pngDataUrl.split(',')[1]);
+                            const pngBytes = new Uint8Array(pngBin.length);
+                            for (let b = 0; b < pngBin.length; b++) pngBytes[b] = pngBin.charCodeAt(b);
+
+                            // Embed this page's image into pdf-lib
+                            const embeddedImg = await pdfDoc.embedPng(pngBytes);
+                            const { width: imgW, height: imgH } = embeddedImg.scale(1);
+
+                            // PDF page at 72 DPI (standard) — scale down from rendered resolution
+                            const scale = 72 / 144; // pages rendered at scale 2 (144 DPI), PDF at 72 DPI
+                            const pageW = imgW * scale;
+                            const pageH = imgH * scale;
+                            const page = pdfDoc.addPage([pageW, pageH]);
+
+                            // Draw the page image to fill the page
+                            page.drawImage(embeddedImg, {
+                                x: 0, y: 0, width: pageW, height: pageH
+                            });
+
+                            // Draw watermark overlay — lightweight vector operations
                             if (wmImage) {
-                                // Tiled image watermark matching renderPreview layout
-                                const logoW = width * settings.size * 1.5;
+                                const logoW = pageW * settings.size * 1.5;
                                 const logoH = (wmImage.height / wmImage.width) * logoW;
                                 const gap = 1.5 - settings.density;
-                                const spaceX = logoW * gap + 80;
-                                const spaceY = logoH * gap + 80;
+                                const spaceX = logoW * gap + 40;
+                                const spaceY = logoH * gap + 40;
                                 const rot = degrees(-settings.rotation);
 
-                                for (let y = -logoH; y < height + logoH; y += spaceY) {
-                                    for (let x = -logoW; x < width + logoW; x += spaceX) {
+                                for (let y = -logoH; y < pageH + logoH; y += spaceY) {
+                                    for (let x = -logoW; x < pageW + logoW; x += spaceX) {
                                         page.drawImage(wmImage, {
                                             x: x,
-                                            y: height - y - logoH,
+                                            y: pageH - y - logoH,
                                             width: logoW,
                                             height: logoH,
                                             opacity: settings.opacity,
                                             rotate: rot,
-                                        });
-                                    }
-                                }
-                            } else {
-                                // Text watermark fallback — near-zero overhead
-                                const text = 'CONFIDENTIAL';
-                                const fontSize = width * 0.08;
-                                const rot = degrees(-settings.rotation);
-                                const gap = 1.5 - settings.density;
-                                const spaceX = fontSize * 3 * gap + 80;
-                                const spaceY = fontSize * 2 * gap + 80;
-
-                                for (let y = 0; y < height; y += spaceY) {
-                                    for (let x = 0; x < width; x += spaceX) {
-                                        page.drawText(text, {
-                                            x: x,
-                                            y: height - y,
-                                            size: fontSize,
-                                            font,
-                                            color: rgb(0.7, 0.7, 0.7),
-                                            rotate: rot,
-                                            opacity: settings.opacity,
                                         });
                                     }
                                 }
@@ -4035,55 +4043,9 @@
                         link.click();
                         URL.revokeObjectURL(url);
                     } catch (err) {
-                        console.error('pdf-lib watermark failed, falling back to canvas:', err);
-                        // Fallback: canvas rasterization approach
-                        const { jsPDF } = window.jspdf;
-                        activeFileIndex = i;
-                        file.currentPage = 0;
-                        renderPreview();
-                        await new Promise(r => setTimeout(r, 150));
-                        const w = canvas.width;
-                        const h = canvas.height;
-                        const pdf = new jsPDF({ orientation: w > h ? 'landscape' : 'portrait', unit: 'px', format: [w, h] });
-                        for (let p = 0; p < file.pages.length; p++) {
-                            if (p > 0) {
-                                file.currentPage = p;
-                                renderPreview();
-                                await new Promise(r => setTimeout(r, 150));
-                                pdf.addPage([w, h]);
-                            }
-                            const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                            const bin = atob(dataUrl.split(',')[1]);
-                            const uint8 = new Uint8Array(bin.length);
-                            for (let b = 0; b < bin.length; b++) uint8[b] = bin.charCodeAt(b);
-                            pdf.addImage(uint8, 'JPEG', 0, 0, w, h, undefined, 'NONE');
-                        }
-                        pdf.save(`${safeLabel}.pdf`);
+                        console.error('pdf-lib build failed:', err);
+                        showStatus('Download error: ' + err.message, 'error');
                     }
-                } else {
-                    // Non-PDF multi-page (shouldn't happen, but handle gracefully)
-                    const { jsPDF } = window.jspdf;
-                    activeFileIndex = i;
-                    file.currentPage = 0;
-                    renderPreview();
-                    await new Promise(r => setTimeout(r, 150));
-                    const w = canvas.width;
-                    const h = canvas.height;
-                    const pdf = new jsPDF({ orientation: w > h ? 'landscape' : 'portrait', unit: 'px', format: [w, h] });
-                    for (let p = 0; p < file.pages.length; p++) {
-                        if (p > 0) {
-                            file.currentPage = p;
-                            renderPreview();
-                            await new Promise(r => setTimeout(r, 150));
-                            pdf.addPage([w, h]);
-                        }
-                        const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                        const bin = atob(dataUrl.split(',')[1]);
-                        const uint8 = new Uint8Array(bin.length);
-                        for (let b = 0; b < bin.length; b++) uint8[b] = bin.charCodeAt(b);
-                        pdf.addImage(uint8, 'JPEG', 0, 0, w, h, undefined, 'NONE');
-                    }
-                    pdf.save(`${safeLabel}.pdf`);
                 }
                 await new Promise(r => setTimeout(r, 300));
             }
