@@ -3651,6 +3651,7 @@
         let charts = {};
         let activeFileIndex = -1;
         let logoImage = null;
+        let logoImageSmall = null; // Pre-scaled small version for export
         let canvas = null;
         let ctx = null;
         const settings = { opacity: 0.25, size: 0.15, density: 0.50, rotation: 45 };
@@ -3831,7 +3832,19 @@
         function loadWatermark(url) {
             logoImage = new Image();
             logoImage.crossOrigin = 'anonymous';
-            logoImage.onload = () => { if (activeFileIndex >= 0) renderPreview(); };
+            logoImage.onload = () => {
+                // Pre-scale watermark to max 100px - drastically reduces export file size
+                const maxDim = 100;
+                const ratio = Math.min(maxDim / logoImage.naturalWidth, maxDim / logoImage.naturalHeight, 1);
+                const smCanvas = document.createElement('canvas');
+                smCanvas.width = Math.round(logoImage.naturalWidth * ratio);
+                smCanvas.height = Math.round(logoImage.naturalHeight * ratio);
+                const smCtx = smCanvas.getContext('2d');
+                smCtx.drawImage(logoImage, 0, 0, smCanvas.width, smCanvas.height);
+                logoImageSmall = new Image();
+                logoImageSmall.onload = () => { if (activeFileIndex >= 0) renderPreview(); };
+                logoImageSmall.src = smCanvas.toDataURL('image/png');
+            };
             logoImage.onerror = () => { console.warn('Failed to load watermark image'); };
             logoImage.src = url;
         }
@@ -3848,11 +3861,12 @@
             canvas.height = img.height;
             ctx.drawImage(img, 0, 0);
 
-            // Only add watermark if logo is loaded
-            if (logoImage && logoImage.complete && logoImage.naturalWidth > 0) {
+            // Only add watermark if logo is loaded (use pre-scaled small version)
+            const wm = logoImageSmall || logoImage;
+            if (wm && wm.complete && wm.naturalWidth > 0) {
                 ctx.globalAlpha = settings.opacity;
                 const logoW = img.width * settings.size * 1.5;
-                const logoH = (logoImage.height / logoImage.width) * logoW;
+                const logoH = (wm.naturalHeight / wm.naturalWidth) * logoW;
                 const gap = 1.5 - settings.density;
                 const spaceX = logoW * gap + 80;
                 const spaceY = logoH * gap + 80;
@@ -3863,7 +3877,7 @@
                         ctx.save();
                         ctx.translate(x + logoW/2, y + logoH/2);
                         ctx.rotate(rad);
-                        ctx.drawImage(logoImage, -logoW/2, -logoH/2, logoW, logoH);
+                        ctx.drawImage(wm, -logoW/2, -logoH/2, logoW, logoH);
                         ctx.restore();
                     }
                 }
