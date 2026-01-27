@@ -3977,17 +3977,19 @@
                     const firstPage = renderExportPage(file.pages[0]);
                     const w = firstPage.width;
                     const h = firstPage.height;
-                    console.log(`Export page size: ${w}x${h}`);
-                    const pdf = new jsPDF({ orientation: w > h ? 'landscape' : 'portrait', unit: 'px', format: [w, h] });
+                    const pdf = new jsPDF({ orientation: w > h ? 'landscape' : 'portrait', unit: 'px', format: [w, h], compress: true });
 
                     for (let p = 0; p < file.pages.length; p++) {
                         const expPage = p === 0 ? firstPage : renderExportPage(file.pages[p]);
                         if (p > 0) pdf.addPage([w, h]);
 
-                        // Convert canvas to JPEG blob for exact size control
+                        // Get raw JPEG bytes to prevent jsPDF from re-encoding
                         const dataUrl = expPage.toDataURL('image/jpeg', 0.4);
-                        console.log(`Page ${p} JPEG data URL length: ${dataUrl.length} bytes (~${Math.round(dataUrl.length * 0.75 / 1024)}KB)`);
-                        pdf.addImage(dataUrl, 'JPEG', 0, 0, w, h);
+                        const base64 = dataUrl.split(',')[1];
+                        const rawBytes = atob(base64);
+                        const uint8 = new Uint8Array(rawBytes.length);
+                        for (let b = 0; b < rawBytes.length; b++) uint8[b] = rawBytes.charCodeAt(b);
+                        pdf.addImage(uint8, 'JPEG', 0, 0, w, h);
                     }
                     pdf.save(`${safeLabel}.pdf`);
                 }
