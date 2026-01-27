@@ -3983,7 +3983,7 @@
                         if (p > 0) pdf.addPage([w, h]);
 
                         // Get raw JPEG bytes to prevent jsPDF from re-encoding
-                        const dataUrl = expPage.toDataURL('image/jpeg', 0.4);
+                        const dataUrl = expPage.toDataURL('image/jpeg', 0.75);
                         const base64 = dataUrl.split(',')[1];
                         const rawBytes = atob(base64);
                         const uint8 = new Uint8Array(rawBytes.length);
