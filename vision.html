@@ -3935,18 +3935,27 @@
             const expCtx = expCanvas.getContext('2d');
             expCtx.drawImage(pageImg, 0, 0, expCanvas.width, expCanvas.height);
 
-            // Draw single centered watermark (not tiled — much smaller file)
+            // Draw tiled watermark matching renderPreview pattern
             if (logoImage && logoImage.complete && logoImage.naturalWidth > 0) {
                 expCtx.save();
                 expCtx.globalAlpha = settings.opacity;
-                const wmSize = 200;
-                const wmW = wmSize;
-                const wmH = (logoImage.height / logoImage.width) * wmSize;
-                const cx = expCanvas.width / 2;
-                const cy = expCanvas.height / 2;
-                expCtx.translate(cx, cy);
-                expCtx.rotate(-settings.rotation * Math.PI / 180);
-                expCtx.drawImage(logoImage, -wmW / 2, -wmH / 2, wmW, wmH);
+                const logoW = expCanvas.width * settings.size * 1.5;
+                const logoH = (logoImage.height / logoImage.width) * logoW;
+                const gap = 1.5 - settings.density;
+                const spaceX = logoW * gap + 80;
+                const spaceY = logoH * gap + 80;
+                const rad = settings.rotation * Math.PI / 180;
+
+                for (let y = -logoH; y < expCanvas.height + logoH; y += spaceY) {
+                    for (let x = -logoW; x < expCanvas.width + logoW; x += spaceX) {
+                        expCtx.save();
+                        expCtx.translate(x + logoW / 2, y + logoH / 2);
+                        expCtx.rotate(rad);
+                        expCtx.drawImage(logoImage, -logoW / 2, -logoH / 2, logoW, logoH);
+                        expCtx.restore();
+                    }
+                }
+                expCtx.globalAlpha = 1;
                 expCtx.restore();
             }
 
