@@ -3926,42 +3926,6 @@
             openModal('downloadModal');
         }
 
-        function renderExportPage(pageImg) {
-            // Use full resolution from scale-2 pages (144 DPI) — no downscaling
-            const scale = 1;
-            const expCanvas = document.createElement('canvas');
-            expCanvas.width = Math.round(pageImg.width * scale);
-            expCanvas.height = Math.round(pageImg.height * scale);
-            const expCtx = expCanvas.getContext('2d');
-            expCtx.drawImage(pageImg, 0, 0, expCanvas.width, expCanvas.height);
-
-            // Draw tiled watermark matching renderPreview pattern
-            if (logoImage && logoImage.complete && logoImage.naturalWidth > 0) {
-                expCtx.save();
-                expCtx.globalAlpha = settings.opacity;
-                const logoW = expCanvas.width * settings.size * 1.5;
-                const logoH = (logoImage.height / logoImage.width) * logoW;
-                const gap = 1.5 - settings.density;
-                const spaceX = logoW * gap + 80;
-                const spaceY = logoH * gap + 80;
-                const rad = settings.rotation * Math.PI / 180;
-
-                for (let y = -logoH; y < expCanvas.height + logoH; y += spaceY) {
-                    for (let x = -logoW; x < expCanvas.width + logoW; x += spaceX) {
-                        expCtx.save();
-                        expCtx.translate(x + logoW / 2, y + logoH / 2);
-                        expCtx.rotate(rad);
-                        expCtx.drawImage(logoImage, -logoW / 2, -logoH / 2, logoW, logoH);
-                        expCtx.restore();
-                    }
-                }
-                expCtx.globalAlpha = 1;
-                expCtx.restore();
-            }
-
-            return expCanvas;
-        }
-
         async function executeDownload() {
             closeModal('downloadModal');
             const { jsPDF } = window.jspdf;
@@ -3982,22 +3946,32 @@
                     link.href = canvas.toDataURL('image/png');
                     link.click();
                 } else {
-                    const firstPage = renderExportPage(file.pages[0]);
-                    const w = firstPage.width;
-                    const h = firstPage.height;
-                    const pdf = new jsPDF({ orientation: w > h ? 'landscape' : 'portrait', unit: 'px', format: [w, h], compress: true });
+                    activeFileIndex = i;
+                    file.currentPage = 0;
+                    renderPreview();
+                    await new Promise(r => setTimeout(r, 150));
 
-                    for (let p = 0; p < file.pages.length; p++) {
-                        const expPage = p === 0 ? firstPage : renderExportPage(file.pages[p]);
-                        if (p > 0) pdf.addPage([w, h]);
+                    const pdf = new jsPDF({ orientation: canvas.width > canvas.height ? 'landscape' : 'portrait', unit: 'px', format: [canvas.width, canvas.height], compress: true });
 
-                        // Get raw JPEG bytes to prevent jsPDF from re-encoding
-                        const dataUrl = expPage.toDataURL('image/jpeg', 0.75);
+                    // Get raw JPEG bytes from preview canvas to prevent jsPDF re-encoding
+                    const dataUrl0 = canvas.toDataURL('image/jpeg', 0.75);
+                    const base64_0 = dataUrl0.split(',')[1];
+                    const raw0 = atob(base64_0);
+                    const uint0 = new Uint8Array(raw0.length);
+                    for (let b = 0; b < raw0.length; b++) uint0[b] = raw0.charCodeAt(b);
+                    pdf.addImage(uint0, 'JPEG', 0, 0, canvas.width, canvas.height);
+
+                    for (let p = 1; p < file.pages.length; p++) {
+                        file.currentPage = p;
+                        renderPreview();
+                        await new Promise(r => setTimeout(r, 150));
+                        pdf.addPage([canvas.width, canvas.height]);
+                        const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
                         const base64 = dataUrl.split(',')[1];
-                        const rawBytes = atob(base64);
-                        const uint8 = new Uint8Array(rawBytes.length);
-                        for (let b = 0; b < rawBytes.length; b++) uint8[b] = rawBytes.charCodeAt(b);
-                        pdf.addImage(uint8, 'JPEG', 0, 0, w, h);
+                        const raw = atob(base64);
+                        const uint8 = new Uint8Array(raw.length);
+                        for (let b = 0; b < raw.length; b++) uint8[b] = raw.charCodeAt(b);
+                        pdf.addImage(uint8, 'JPEG', 0, 0, canvas.width, canvas.height);
                     }
                     pdf.save(`${safeLabel}.pdf`);
                 }
