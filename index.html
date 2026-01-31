@@ -5198,6 +5198,10 @@
     .mobile-nav .nav-hubble .nav-icon { color: #FBBF24; }
     .mobile-nav .nav-hubble span { color: rgba(255, 255, 255, 0.9); }
 
+    /* Vision - orange/red */
+    .mobile-nav .nav-vision .nav-icon { color: #F97316; }
+    .mobile-nav .nav-vision span { color: rgba(255, 255, 255, 0.9); }
+
     /* Login - red/coral */
     .mobile-nav .nav-login .nav-icon { color: #F87171; }
     .mobile-nav .nav-login span { color: rgba(255, 255, 255, 0.9); }
@@ -5221,6 +5225,9 @@
 
     [data-theme="light"] .mobile-nav .nav-hubble .nav-icon { color: #D97706; }
     [data-theme="light"] .mobile-nav .nav-hubble span { color: rgba(0, 0, 0, 0.8); }
+
+    [data-theme="light"] .mobile-nav .nav-vision .nav-icon { color: #EA580C; }
+    [data-theme="light"] .mobile-nav .nav-vision span { color: rgba(0, 0, 0, 0.8); }
 
     [data-theme="light"] .mobile-nav .nav-login .nav-icon { color: #DC2626; }
     [data-theme="light"] .mobile-nav .nav-login span { color: rgba(0, 0, 0, 0.8); }
@@ -5366,7 +5373,7 @@
     <nav class="tab-nav">
       <button class="tab-btn" id="headerModelBtn">Model</button>
       <a href="https://ables.ai/search.html" class="tab-btn">Hubble<span class="api-badge">API</span></a>
-      <a href="https://ables.ai/booyah.html" class="tab-btn">BOOYAH<span class="invite-badge">INVITE</span></a>
+      <a href="https://ables.ai/vision.html" class="tab-btn">VISION<span class="invite-badge">BETA</span></a>
       <a href="https://ables.ai/calculator.html" class="tab-btn">Calculator<span class="lite-badge">Lite</span></a>
       <a href="https://ables.ai/toolbox.html" class="tab-btn">Toolbox<span class="free-badge">Free</span></a>
       <a href="#pricing" class="tab-btn">Pricing</a>
@@ -5394,6 +5401,13 @@
         <path d="m21 21-4.35-4.35"/>
       </svg>
       <span>Hubble</span>
+    </a>
+    <a href="https://ables.ai/vision.html" class="nav-item nav-vision">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+      <span>Vision</span>
     </a>
     <a href="https://ables.ai/login" class="nav-item nav-login">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -7376,9 +7390,9 @@
         <span class="icon-dot"></span>
         Hubble
       </a>
-      <a href="https://ables.ai/booyah.html" class="sticky-btn sticky-booyah">
+      <a href="https://ables.ai/vision.html" class="sticky-btn sticky-booyah">
         <span class="icon-dot"></span>
-        Booyah
+        Vision
       </a>
       <a href="https://ables.ai/calculator.html" class="sticky-btn sticky-calc">
         <span class="icon-dot"></span>
