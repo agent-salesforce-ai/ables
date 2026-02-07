@@ -1,10 +1,11 @@
+
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+<!-- saved from url=(0032)https://ables.ai/hubble-pro.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hubble Pro - AblesAI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="./Hubble Pro - AblesAI_files/css2" rel="stylesheet">
     <style>
         :root {
             /* Light Mode (Default) */
@@ -296,6 +297,7 @@
             align-items: center;
             justify-content: center;
             transition: var(--transition);
+            overflow: visible;
         }
 
         .logo:hover .logo-icon {
@@ -305,13 +307,15 @@
         .logo-icon svg {
             width: 100%;
             height: 100%;
+            overflow: visible;
         }
 
         .logo-text {
-            font-size: 1.25rem;
-            font-weight: 700;
+            font-size: 14px;
+            font-weight: 600;
             color: var(--text-primary);
-            letter-spacing: -0.3px;
+            letter-spacing: -0.2px;
+            font-family: inherit;
         }
 
         .logo-text span {
@@ -622,6 +626,11 @@
             margin-bottom: 28px;
             filter: drop-shadow(0 0 30px rgba(251, 191, 36, 0.35));
             animation: float 6s ease-in-out infinite;
+            overflow: visible;
+        }
+
+        .hero-logo svg {
+            overflow: visible;
         }
 
         @keyframes float {
@@ -1005,7 +1014,7 @@
 
         .progress-inline-stats {
             color: var(--text-muted);
-            font-family: 'JetBrains Mono', monospace;
+            /* mono removed */
             font-size: 0.85rem;
             background: var(--bg-tertiary);
             padding: 4px 10px;
@@ -1194,7 +1203,7 @@
 
         .stat-chip strong {
             color: var(--text-primary);
-            font-family: 'JetBrains Mono', monospace;
+            /* mono removed */
             font-size: 0.9rem;
             font-weight: 600;
         }
@@ -1815,7 +1824,7 @@
             background: var(--bg-primary);
             border-radius: var(--radius-sm);
             color: var(--text-muted);
-            font-family: 'JetBrains Mono', monospace;
+            /* mono removed */
         }
 
         /* Raw Data Toggle */
@@ -1841,7 +1850,7 @@
             background: var(--bg-primary);
             border: 1px solid var(--border-primary);
             border-radius: var(--radius-md);
-            font-family: 'JetBrains Mono', monospace;
+            /* mono removed */
             font-size: 0.75rem;
             color: var(--text-secondary);
             overflow-x: auto;
@@ -1850,53 +1859,7 @@
             white-space: pre-wrap;
         }
 
-        /* Cost Tracker */
-        .cost-tracker {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(var(--glass-blur));
-            -webkit-backdrop-filter: blur(var(--glass-blur));
-            border: 1px solid var(--border-secondary);
-            border-radius: var(--radius-lg);
-            padding: 14px 20px;
-            box-shadow: var(--shadow-lg);
-            z-index: 100;
-            transition: var(--transition);
-        }
-
-        .cost-tracker:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .cost-tracker-title {
-            font-size: 0.65rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .cost-tracker-title::before {
-            content: '';
-            width: 6px;
-            height: 6px;
-            background: var(--accent);
-            border-radius: 50%;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        .cost-tracker-value {
-            font-size: 1.25rem;
-            font-weight: 700;
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--accent);
-        }
+        /* Cost Tracker - removed */
 
         /* No findings state */
         .no-findings {
@@ -2036,7 +1999,7 @@
             }
         }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
+    <script src="./Hubble Pro - AblesAI_files/lz-string.min.js"></script>
 </head>
 <body>
     <div class="bg-grid"></div>
@@ -2059,29 +2022,53 @@
             <div class="header-left">
                 <div class="logo">
                     <div class="logo-icon">
-                        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="24" cy="22" r="14" fill="url(#glowGrad)" opacity="0.4"/>
-                            <ellipse cx="24" cy="22" rx="20" ry="6" stroke="url(#ringGrad)" stroke-width="2.5" opacity="0.9"/>
-                            <circle cx="24" cy="22" r="10" fill="url(#planetGrad)"/>
-                            <ellipse cx="20" cy="18" rx="4" ry="3" fill="rgba(255,255,255,0.3)"/>
-                            <path d="M 4 22 Q 24 28 44 22" stroke="url(#ringGrad)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <defs>
-                                <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
-                                    <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.6"/>
-                                    <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
+                                <radialGradient id="hPlanetGrad" cx="35%" cy="35%" r="60%">
+                                    <stop offset="0%" stop-color="#fcd34d"/>
+                                    <stop offset="50%" stop-color="#eab308"/>
+                                    <stop offset="100%" stop-color="#ca8a04"/>
                                 </radialGradient>
-                                <linearGradient id="planetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#fef3c7"/>
-                                    <stop offset="30%" stop-color="#fcd34d"/>
-                                    <stop offset="70%" stop-color="#f59e0b"/>
-                                    <stop offset="100%" stop-color="#b45309"/>
+                                <filter id="hPlanetGlow" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feGaussianBlur stdDeviation="2" result="glow"/>
+                                    <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+                                </filter>
+                                <linearGradient id="hRingGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#ffab40"/>
+                                    <stop offset="50%" stop-color="#ff8c00"/>
+                                    <stop offset="100%" stop-color="#ff6d00"/>
                                 </linearGradient>
-                                <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                    <stop offset="0%" stop-color="#f97316"/>
-                                    <stop offset="50%" stop-color="#fb923c"/>
-                                    <stop offset="100%" stop-color="#f97316"/>
-                                </linearGradient>
+                                <filter id="hMoonGlow" x="-100%" y="-100%" width="300%" height="300%">
+                                    <feGaussianBlur stdDeviation="1.5" result="glow"/>
+                                    <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+                                </filter>
                             </defs>
+                            <style>
+                                .hm-base { transform-origin: 32px 32px; animation: hOrbit 3s linear infinite, hMoonColor 2s ease-in-out infinite; filter: url(#hMoonGlow); }
+                                .hm-back { animation: hOrbit 3s linear infinite, hMoonColor 2s ease-in-out infinite, hMoonBackOp 3s linear infinite; }
+                                .hm-front { animation: hOrbit 3s linear infinite, hMoonColor 2s ease-in-out infinite, hMoonFrontOp 3s linear infinite; }
+                                @keyframes hOrbit {
+                                    0% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
+                                    12.5% { transform: rotate(-20deg) translate(18px, 5px) scale(0.85); }
+                                    25% { transform: rotate(-20deg) translate(0, 7px) scale(0.7); }
+                                    37.5% { transform: rotate(-20deg) translate(-18px, 5px) scale(0.55); }
+                                    50% { transform: rotate(-20deg) translate(-26px, 0) scale(0.5); }
+                                    62.5% { transform: rotate(-20deg) translate(-18px, -5px) scale(0.55); }
+                                    75% { transform: rotate(-20deg) translate(0, -7px) scale(0.7); }
+                                    87.5% { transform: rotate(-20deg) translate(18px, -5px) scale(0.85); }
+                                    100% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
+                                }
+                                @keyframes hMoonBackOp { 0%, 15% { opacity: 0; } 25% { opacity: 1; } 75% { opacity: 1; } 85%, 100% { opacity: 0; } }
+                                @keyframes hMoonFrontOp { 0%, 15% { opacity: 1; } 25% { opacity: 0; } 75% { opacity: 0; } 85%, 100% { opacity: 1; } }
+                                @keyframes hMoonColor { 0%, 100% { fill: #a855f7; } 25% { fill: #3b82f6; } 50% { fill: #ec4899; } 75% { fill: #10b981; } }
+                            </style>
+                            <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#hRingGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" opacity="0.6"/>
+                            <circle class="hm-base hm-back" cx="32" cy="32" r="4" fill="#a855f7"/>
+                            <circle cx="32" cy="32" r="14" fill="#eab308" opacity="0.2" filter="url(#hPlanetGlow)"/>
+                            <circle cx="32" cy="32" r="12" fill="url(#hPlanetGrad)" filter="url(#hPlanetGlow)"/>
+                            <ellipse cx="28" cy="28" rx="4" ry="3" fill="#fef3c7" opacity="0.4"/>
+                            <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#hRingGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
+                            <circle class="hm-base hm-front" cx="32" cy="32" r="4" fill="#a855f7"/>
                         </svg>
                     </div>
                     <div class="logo-text">Ables<span>AI</span></div>
@@ -2089,16 +2076,16 @@
             </div>
             <nav class="header-nav">
                 <a href="https://www.ables.ai/model" class="nav-item">Model</a>
-                <a href="#" class="nav-item">Hubble<span class="nav-badge api">API</span></a>
-                <a href="https://www.ables.ai/booyah" class="nav-item">Booyah<span class="nav-badge invite">Invite</span></a>
+                <a href="https://ables.ai/hubble-pro.html#" class="nav-item">Hubble<span class="nav-badge api">API</span></a>
+                <a href="https://www.ables.ai/vision.html" class="nav-item">Vision<span class="nav-badge invite">Invite</span></a>
                 <a href="https://www.ables.ai/calculator" class="nav-item">Calculator<span class="nav-badge lite">Lite</span></a>
                 <a href="https://www.ables.ai/toolbox" class="nav-item">Toolbox<span class="nav-badge free">Free</span></a>
                 <a href="https://www.ables.ai/login" class="nav-item">Login</a>
                 <div class="settings-dropdown">
                     <button class="settings-btn" onclick="toggleSettingsMenu()">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                            <circle cx="12" cy="12" r="3"/>
-                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                         </svg>
                     </button>
                 </div>
@@ -2112,14 +2099,14 @@
             <span class="settings-menu-title">Settings</span>
             <button class="settings-close-btn" onclick="closeSettingsMenu()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-                    <path d="M18 6L6 18M6 6l12 12"/>
+                    <path d="M18 6L6 18M6 6l12 12"></path>
                 </svg>
             </button>
         </div>
         <div class="settings-menu-item">
             <label>Model</label>
             <select id="modelSelect">
-                <option value="gemini-3-flash-preview" selected>Gemini 3 Flash</option>
+                <option value="gemini-3-flash-preview" selected="">Gemini 3 Flash</option>
                 <option value="gemini-3-pro-preview">Gemini 3 Pro</option>
             </select>
         </div>
@@ -2128,7 +2115,7 @@
             <select id="thinkingLevel">
                 <option value="low">Quick</option>
                 <option value="medium">Balanced</option>
-                <option value="high" selected>Deep</option>
+                <option value="high" selected="">Deep</option>
             </select>
         </div>
         <div class="settings-menu-item">
@@ -2139,8 +2126,8 @@
             <label>Theme</label>
             <button class="theme-toggle-btn" onclick="toggleTheme()">
                 <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                    <circle cx="12" cy="12" r="5"/>
-                    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
                 </svg>
                 <span>Toggle</span>
             </button>
@@ -2153,48 +2140,72 @@
             <!-- Hero Section -->
             <section class="hero-section" id="heroSection">
                 <div class="hero-logo">
-                    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="24" cy="22" r="14" fill="url(#glowGrad2)" opacity="0.4"/>
-                        <ellipse cx="24" cy="22" rx="20" ry="6" stroke="url(#ringGrad2)" stroke-width="2.5" opacity="0.9"/>
-                        <circle cx="24" cy="22" r="10" fill="url(#planetGrad2)"/>
-                        <ellipse cx="20" cy="18" rx="4" ry="3" fill="rgba(255,255,255,0.3)"/>
-                        <path d="M 4 22 Q 24 28 44 22" stroke="url(#ringGrad2)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <defs>
-                            <radialGradient id="glowGrad2" cx="50%" cy="50%" r="50%">
-                                <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.6"/>
-                                <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
+                            <radialGradient id="heroPlGrad" cx="35%" cy="35%" r="60%">
+                                <stop offset="0%" stop-color="#fcd34d"/>
+                                <stop offset="50%" stop-color="#eab308"/>
+                                <stop offset="100%" stop-color="#ca8a04"/>
                             </radialGradient>
-                            <linearGradient id="planetGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#fef3c7"/>
-                                <stop offset="30%" stop-color="#fcd34d"/>
-                                <stop offset="70%" stop-color="#f59e0b"/>
-                                <stop offset="100%" stop-color="#b45309"/>
+                            <filter id="heroPlGlow" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur stdDeviation="2" result="glow"/>
+                                <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+                            </filter>
+                            <linearGradient id="heroRgGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#ffab40"/>
+                                <stop offset="50%" stop-color="#ff8c00"/>
+                                <stop offset="100%" stop-color="#ff6d00"/>
                             </linearGradient>
-                            <linearGradient id="ringGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stop-color="#f97316"/>
-                                <stop offset="50%" stop-color="#fb923c"/>
-                                <stop offset="100%" stop-color="#f97316"/>
-                            </linearGradient>
+                            <filter id="heroMnGlow" x="-100%" y="-100%" width="300%" height="300%">
+                                <feGaussianBlur stdDeviation="1.5" result="glow"/>
+                                <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+                            </filter>
                         </defs>
+                        <style>
+                            .heroMn-base { transform-origin: 32px 32px; animation: heroOrbit 3s linear infinite, heroMnColor 2s ease-in-out infinite; filter: url(#heroMnGlow); }
+                            .heroMn-back { animation: heroOrbit 3s linear infinite, heroMnColor 2s ease-in-out infinite, heroMnBackOp 3s linear infinite; }
+                            .heroMn-front { animation: heroOrbit 3s linear infinite, heroMnColor 2s ease-in-out infinite, heroMnFrontOp 3s linear infinite; }
+                            @keyframes heroOrbit {
+                                0% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
+                                12.5% { transform: rotate(-20deg) translate(18px, 5px) scale(0.85); }
+                                25% { transform: rotate(-20deg) translate(0, 7px) scale(0.7); }
+                                37.5% { transform: rotate(-20deg) translate(-18px, 5px) scale(0.55); }
+                                50% { transform: rotate(-20deg) translate(-26px, 0) scale(0.5); }
+                                62.5% { transform: rotate(-20deg) translate(-18px, -5px) scale(0.55); }
+                                75% { transform: rotate(-20deg) translate(0, -7px) scale(0.7); }
+                                87.5% { transform: rotate(-20deg) translate(18px, -5px) scale(0.85); }
+                                100% { transform: rotate(-20deg) translate(26px, 0) scale(1); }
+                            }
+                            @keyframes heroMnBackOp { 0%, 15% { opacity: 0; } 25% { opacity: 1; } 75% { opacity: 1; } 85%, 100% { opacity: 0; } }
+                            @keyframes heroMnFrontOp { 0%, 15% { opacity: 1; } 25% { opacity: 0; } 75% { opacity: 0; } 85%, 100% { opacity: 1; } }
+                            @keyframes heroMnColor { 0%, 100% { fill: #a855f7; } 25% { fill: #3b82f6; } 50% { fill: #ec4899; } 75% { fill: #10b981; } }
+                        </style>
+                        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#heroRgGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" opacity="0.6"/>
+                        <circle class="heroMn-base heroMn-back" cx="32" cy="32" r="4" fill="#a855f7"/>
+                        <circle cx="32" cy="32" r="14" fill="#eab308" opacity="0.2" filter="url(#heroPlGlow)"/>
+                        <circle cx="32" cy="32" r="12" fill="url(#heroPlGrad)" filter="url(#heroPlGlow)"/>
+                        <ellipse cx="28" cy="28" rx="4" ry="3" fill="#fef3c7" opacity="0.4"/>
+                        <ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#heroRgGrad)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>
+                        <circle class="heroMn-base heroMn-front" cx="32" cy="32" r="4" fill="#a855f7"/>
                     </svg>
                 </div>
                 <h1 class="hero-title">Hubble Pro</h1>
                 <p class="hero-subtitle">AI-powered business intelligence</p>
                 <div class="hero-search">
-                    <input type="text" id="companyName" placeholder="Enter business name" onkeydown="if(event.key==='Enter')startResearch()">
+                    <input type="text" id="companyName" placeholder="Enter business name" onkeydown="if(event.key===&#39;Enter&#39;)startResearch()">
                     <button class="hero-search-btn" id="generateBtn" onclick="startResearch()">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <line x1="5" y1="12" x2="19" y2="12"/>
-                            <polyline points="12 5 19 12 12 19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
                         </svg>
                     </button>
                 </div>
                 <div class="hero-location">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                        <circle cx="12" cy="10" r="3"/>
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
                     </svg>
-                    <input type="text" id="companyLocation" placeholder="Location (optional)" onkeydown="if(event.key==='Enter')startResearch()">
+                    <input type="text" id="companyLocation" placeholder="Location (optional)" onkeydown="if(event.key===&#39;Enter&#39;)startResearch()">
                 </div>
 
                 <!-- Inline Progress -->
@@ -2219,13 +2230,16 @@
                             <span class="stat-chip risk" id="riskChip">...</span>
                             <span class="stat-chip"><strong id="findingCount">0</strong> findings</span>
                             <span class="stat-chip"><strong id="sourceCount">0</strong> sources</span>
-                            <span class="stat-chip">$<strong id="costDisplay">0.00</strong></span>
+                            <!-- cost chip removed -->
                         </div>
                     </div>
                     <div class="report-bar-actions">
                         <button class="btn btn-secondary" onclick="shareReport()">Share</button>
                         <button class="btn btn-secondary" onclick="exportJSON()">Export</button>
-                        <button class="btn btn-secondary" onclick="exportPDF()">Print</button>
+                        <button class="btn btn-primary" onclick="exportPDF()" style="background: linear-gradient(135deg, var(--gold-400), var(--gold-600)); color: #000;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            Download PDF
+                        </button>
                         <button class="btn btn-primary" onclick="resetReport()">New</button>
                     </div>
                 </div>
@@ -2234,12 +2248,12 @@
                 <div class="location-map-card" id="locationMapCard" style="display: none;">
                     <div class="location-map-header">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                            <circle cx="12" cy="10" r="3"/>
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
                         </svg>
                         <span id="locationText">Location</span>
                     </div>
-                    <iframe id="locationMapIframe" class="location-map-iframe" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    <iframe id="locationMapIframe" class="location-map-iframe" loading="lazy" allowfullscreen="" referrerpolicy="no-referrer-when-downgrade" src="./Hubble Pro - AblesAI_files/saved_resource.html"></iframe>
                 </div>
 
                 <!-- Legacy elements (hidden but kept for JS compatibility) -->
@@ -2260,11 +2274,8 @@
         </div>
     </main>
 
-    <!-- Cost Tracker -->
-    <div class="cost-tracker" id="costTracker" style="display: none;">
-        <div class="cost-tracker-title">Est. Cost</div>
-        <div class="cost-tracker-value">$<span id="runningCost">0.00</span></div>
-    </div>
+    <!-- Cost Tracker removed -->
+    <div id="costTracker" style="display:none;"><span id="runningCost"></span><span id="costDisplay">0.00</span></div>
 
     <script>
         // =====================================================
@@ -2362,8 +2373,8 @@
             localStorage.setItem('orbit-theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
         }
 
-        // Initialize theme (light is default, only add dark-mode if explicitly set)
-        if (localStorage.getItem('orbit-theme') === 'dark') {
+        // Initialize theme (dark is default, only remove if explicitly set to light)
+        if (localStorage.getItem('orbit-theme') !== 'light') {
             document.body.classList.add('dark-mode');
         }
 
@@ -2822,7 +2833,7 @@ IMPORTANT: Every finding MUST have source_url with real URL from search results.
                 document.getElementById('riskChip').className = 'stat-chip risk';
                 document.getElementById('findingCount').textContent = '0';
                 document.getElementById('sourceCount').textContent = '0';
-                document.getElementById('costDisplay').textContent = '0.00';
+                const cd = document.getElementById('costDisplay'); if (cd) cd.textContent = '0.00';
 
                 // Show location map if location provided
                 if (location) {
@@ -3208,11 +3219,7 @@ IMPORTANT: Every finding MUST have source_url with real URL from search results.
                     <div class="summary-value">${state.sources.length}</div>
                     <div class="summary-detail">${uniqueSources} unique domains</div>
                 </div>
-                <div class="summary-card">
-                    <div class="summary-label">Research Cost</div>
-                    <div class="summary-value">$${calculateCost().toFixed(2)}</div>
-                    <div class="summary-detail">${state.searchCount} searches</div>
-                </div>
+                <!-- cost card removed -->
             `;
 
             document.getElementById('reportTitle').textContent = state.company;
@@ -3488,7 +3495,432 @@ IMPORTANT: Every finding MUST have source_url with real URL from search results.
             URL.revokeObjectURL(url);
         }
 
-        function exportPDF() { window.print(); }
+        async function exportPDF() {
+          try {
+            if (!window.jspdf) {
+                const cdns = [
+                    'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+                    'https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js'
+                ];
+                let loaded = false;
+                for (const src of cdns) {
+                    try {
+                        await new Promise((resolve, reject) => {
+                            const s = document.createElement('script');
+                            s.src = src; s.onload = () => { loaded = true; resolve(); }; s.onerror = reject;
+                            document.head.appendChild(s);
+                        });
+                        if (loaded) break;
+                    } catch(e) { console.warn('CDN failed:', src); }
+                }
+                if (!window.jspdf) { alert('Could not load PDF library. Check your internet connection.'); return; }
+            }
+            const JsPDF = window.jspdf.jsPDF;
+            if (!JsPDF) { alert('PDF library failed to initialize.'); return; }
+
+            const doc = new JsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+            const W = 210, H = 297, M = 14, CW = W - M * 2;
+            let y = 0, pg = 1;
+
+            // ── ables.ai Dark Theme Colors (matching website CSS variables) ──
+            // Pre-computed: rgba(r,g,b,a) blended on #09090b background
+            const C = {
+                pageBg:     [9, 9, 11],            // --bg-primary #09090b
+                cardBg:     [15, 15, 18],           // --bg-secondary #0f0f12
+                tertiary:   [24, 24, 27],           // --bg-tertiary #18181b
+                hover:      [31, 31, 35],           // --bg-hover #1f1f23
+                textPri:    [250, 250, 250],         // --text-primary #fafafa
+                textSec:    [161, 161, 170],         // --text-secondary #a1a1aa
+                textMut:    [113, 113, 122],         // --text-muted #71717a
+                gold:       [245, 158, 11],          // --accent #f59e0b
+                goldLight:  [251, 191, 36],          // --accent-light #fbbf24
+                goldDark:   [217, 119, 6],           // --accent-dark #d97706
+                border:     [24, 24, 26],            // rgba(255,255,255,0.06) on #09090b
+                borderSec:  [34, 34, 35],            // rgba(255,255,255,0.1) on #09090b
+                stripe:     [14, 14, 16],            // rgba(255,255,255,0.02) on #09090b
+                rLow:       [16, 185, 129],          // #10b981
+                rMed:       [245, 158, 11],          // #f59e0b
+                rHigh:      [249, 115, 22],          // #f97316
+                rCrit:      [239, 68, 68],           // #ef4444
+                rLowBg:     [10, 35, 29],            // rgba(16,185,129,0.15) on #09090b
+                rMedBg:     [44, 31, 11],            // rgba(245,158,11,0.15) on #09090b
+                rHighBg:    [45, 25, 13],            // rgba(249,115,22,0.15) on #09090b
+                rCritBg:    [44, 18, 20],            // rgba(239,68,68,0.15) on #09090b
+                alertBg:    [27, 14, 16],            // rgba(239,68,68,0.08) on #09090b
+            };
+            const riskColor = { low: C.rLow, medium: C.rMed, high: C.rHigh, critical: C.rCrit };
+            const riskBg    = { low: C.rLowBg, medium: C.rMedBg, high: C.rHighBg, critical: C.rCritBg };
+            const riskScores = { low: 1, medium: 2, high: 3, critical: 4 };
+            const dateStr = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+
+            // ── Render Saturn SVG to image ──
+            let saturnImg = null;
+            try {
+                const svgStr = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="128" height="128">'
+                    + '<defs><radialGradient id="pG" cx="35%" cy="35%" r="60%"><stop offset="0%" stop-color="#fcd34d"/>'
+                    + '<stop offset="50%" stop-color="#eab308"/><stop offset="100%" stop-color="#ca8a04"/></radialGradient>'
+                    + '<linearGradient id="rG" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#ffab40"/>'
+                    + '<stop offset="50%" stop-color="#ff8c00"/><stop offset="100%" stop-color="#ff6d00"/></linearGradient></defs>'
+                    + '<ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#rG)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" opacity="0.6"/>'
+                    + '<circle cx="32" cy="32" r="14" fill="#eab308" opacity="0.2"/>'
+                    + '<circle cx="32" cy="32" r="12" fill="url(#pG)"/>'
+                    + '<ellipse cx="28" cy="28" rx="4" ry="3" fill="#fef3c7" opacity="0.4"/>'
+                    + '<ellipse cx="32" cy="32" rx="28" ry="8" stroke="url(#rG)" stroke-width="2.5" fill="none" transform="rotate(-20 32 32)" stroke-dasharray="70 140" stroke-dashoffset="-70"/>'
+                    + '<circle cx="50" cy="22" r="3.5" fill="#a855f7"/></svg>';
+                const cvs = document.createElement('canvas');
+                cvs.width = 128; cvs.height = 128;
+                const ctx = cvs.getContext('2d');
+                const img = new Image();
+                const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+                const bUrl = URL.createObjectURL(blob);
+                await new Promise((res, rej) => { img.onload = () => { ctx.drawImage(img, 0, 0, 128, 128); res(); }; img.onerror = rej; img.src = bUrl; });
+                saturnImg = cvs.toDataURL('image/png');
+                URL.revokeObjectURL(bUrl);
+            } catch(e) { console.warn('Saturn render failed:', e); }
+
+            // ── Helpers ──
+            function fillPageBg() {
+                doc.setFillColor(...C.pageBg);
+                doc.rect(0, 0, W, H, 'F');
+            }
+            function drawHeader(continuation) {
+                doc.setFillColor(...C.cardBg);
+                doc.rect(0, 0, W, 16, 'F');
+                doc.setFillColor(...C.gold);
+                doc.rect(0, 16, W, 0.6, 'F');
+                if (saturnImg) { try { doc.addImage(saturnImg, 'PNG', M, 2.5, 11, 11); } catch(e) {} }
+                const tx = saturnImg ? M + 12.5 : M;
+                doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.setTextColor(...C.textPri);
+                doc.text('HUBBLE PRO', tx, 8);
+                doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(...C.textMut);
+                doc.text(continuation ? 'Detailed Findings \u2014 ' + (state.company || '') : 'Business Intelligence Report', tx, 13);
+                doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(...C.gold);
+                doc.text('ables.ai', W - M, 8, { align: 'right' });
+                doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(...C.textMut);
+                doc.text(dateStr, W - M, 13, { align: 'right' });
+                y = 21;
+            }
+            function drawFooter() {
+                doc.setDrawColor(...C.border); doc.setLineWidth(0.2);
+                doc.line(M, H - 11, W - M, H - 11);
+                doc.setFont('helvetica', 'bold'); doc.setFontSize(6.5); doc.setTextColor(...C.gold);
+                doc.text('Hubble Pro', M, H - 6.5);
+                doc.setFont('helvetica', 'normal'); doc.setTextColor(...C.textMut);
+                doc.text(' by ables.ai', M + doc.getTextWidth('Hubble Pro'), H - 6.5);
+                doc.text('Page ' + pg, W / 2, H - 6.5, { align: 'center' });
+                doc.text(dateStr, W - M, H - 6.5, { align: 'right' });
+                doc.setFontSize(5); doc.setTextColor(...C.textMut);
+                doc.text('Generated from public data sources. Verify all information independently.', W / 2, H - 2.5, { align: 'center' });
+            }
+            function newPage() {
+                drawFooter();
+                doc.addPage();
+                pg++;
+                fillPageBg();
+                drawHeader(true);
+            }
+            function checkSpace(n) { if (y + n > H - 16) newPage(); }
+            function riskPill(x, py, risk) {
+                const rc = riskColor[risk] || C.rLow;
+                const bg = riskBg[risk] || C.rLowBg;
+                const label = risk.toUpperCase();
+                doc.setFont('helvetica', 'bold'); doc.setFontSize(5.5);
+                const pw = doc.getTextWidth(label) + 5;
+                doc.setFillColor(...bg);
+                doc.setDrawColor(...rc); doc.setLineWidth(0.2);
+                doc.roundedRect(x, py, pw, 4, 2, 2, 'FD');
+                doc.setTextColor(...rc);
+                doc.text(label, x + pw / 2, py + 2.9, { align: 'center' });
+                return pw;
+            }
+            function sectionBar(title) {
+                doc.setFillColor(...C.gold); doc.rect(M, y, 1.5, 5.5, 'F');
+                doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(...C.textPri);
+                doc.text(title, M + 4, y + 4); y += 8;
+            }
+
+            // ── Gather Data ──
+            let totalRisk = 0, modCount = 0, totalFindings = 0, highRiskMods = [];
+            MODULES.forEach(m => {
+                const r = state.results[m.id]?.data;
+                if (r?.risk_level) { totalRisk += riskScores[r.risk_level] || 1; modCount++; if (r.risk_level === 'high' || r.risk_level === 'critical') highRiskMods.push(m.name); }
+                if (r?.findings) totalFindings += r.findings.length;
+            });
+            const avgRisk = modCount > 0 ? totalRisk / modCount : 1;
+            let overallRisk = 'low';
+            if (avgRisk >= 3.5) overallRisk = 'critical';
+            else if (avgRisk >= 2.5) overallRisk = 'high';
+            else if (avgRisk >= 1.5) overallRisk = 'medium';
+
+            // ═══════════════════════════════════════
+            // PAGE 1 — Dark background
+            // ═══════════════════════════════════════
+            fillPageBg();
+            drawHeader(false);
+
+            // Company name
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.setTextColor(...C.textPri);
+            const cLines = doc.splitTextToSize(state.company || 'Unknown Company', CW);
+            doc.text(cLines, M, y); y += cLines.length * 6.5;
+            if (state.location) {
+                doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(...C.textMut);
+                doc.text(state.location, M, y + 1); y += 5;
+            }
+            y += 4;
+
+            // Stats row — dark cards with subtle border
+            const cardW = (CW - 6) / 4, cardH = 15;
+            const statItems = [
+                { label: 'OVERALL RISK', value: overallRisk.toUpperCase(), color: riskColor[overallRisk] },
+                { label: 'FINDINGS', value: String(totalFindings), color: C.gold },
+                { label: 'SOURCES', value: String(state.sources.length), color: C.gold },
+                { label: 'MODULES', value: String(MODULES.length), color: C.gold }
+            ];
+            statItems.forEach((s, i) => {
+                const cx = M + i * (cardW + 2);
+                doc.setFillColor(...C.cardBg);
+                doc.setDrawColor(...C.border); doc.setLineWidth(0.25);
+                doc.roundedRect(cx, y, cardW, cardH, 1.5, 1.5, 'FD');
+                doc.setFontSize(5); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.textMut);
+                doc.text(s.label, cx + cardW / 2, y + 5, { align: 'center' });
+                doc.setFontSize(12); doc.setFont('helvetica', 'bold'); doc.setTextColor(...s.color);
+                doc.text(s.value, cx + cardW / 2, y + 12, { align: 'center' });
+            });
+            y += cardH + 5;
+
+            // ── Charts: Risk Distribution + Module Radar ──
+            const chartH = 40;
+            checkSpace(chartH + 6);
+            const chartLW = (CW - 6) / 2;
+
+            // LEFT: Risk Distribution Bar Chart
+            const cxL = M, cyL = y;
+            doc.setFillColor(...C.cardBg); doc.setDrawColor(...C.border); doc.setLineWidth(0.25);
+            doc.roundedRect(cxL, cyL, chartLW, chartH, 1.5, 1.5, 'FD');
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(...C.textPri);
+            doc.text('Risk Distribution', cxL + 4, cyL + 5);
+
+            const riskCounts = { low: 0, medium: 0, high: 0, critical: 0 };
+            MODULES.forEach(m => {
+                const rl = state.results[m.id]?.data?.risk_level;
+                if (rl && riskCounts.hasOwnProperty(rl)) riskCounts[rl]++;
+            });
+            const maxBarCount = Math.max(1, ...Object.values(riskCounts));
+            const barLabels = ['Critical', 'High', 'Medium', 'Low'];
+            const barKeys = ['critical', 'high', 'medium', 'low'];
+            const barCols = [C.rCrit, C.rHigh, C.rMed, C.rLow];
+            const barBgCols = [C.rCritBg, C.rHighBg, C.rMedBg, C.rLowBg];
+            const barStartY = cyL + 10, barH = 5.5, barGap = 1.5;
+            const barMaxW = chartLW - 34, barLX = cxL + 4, barSX = cxL + 22;
+
+            barLabels.forEach((lbl, i) => {
+                const by = barStartY + i * (barH + barGap);
+                const cnt = riskCounts[barKeys[i]];
+                const bw = (cnt / maxBarCount) * barMaxW;
+                doc.setFont('helvetica', 'normal'); doc.setFontSize(6); doc.setTextColor(...C.textSec);
+                doc.text(lbl, barLX, by + 3.8);
+                doc.setFillColor(...barBgCols[i]);
+                doc.roundedRect(barSX, by, barMaxW, barH, 1, 1, 'F');
+                if (cnt > 0) { doc.setFillColor(...barCols[i]); doc.roundedRect(barSX, by, Math.max(bw, 3), barH, 1, 1, 'F'); }
+                doc.setFont('helvetica', 'bold'); doc.setFontSize(6.5); doc.setTextColor(...C.textPri);
+                doc.text(String(cnt), barSX + barMaxW + 3, by + 3.8);
+            });
+
+            // RIGHT: Module Risk Radar
+            const rxR = M + chartLW + 6, ryR = y;
+            doc.setFillColor(...C.cardBg); doc.setDrawColor(...C.border); doc.setLineWidth(0.25);
+            doc.roundedRect(rxR, ryR, chartLW, chartH, 1.5, 1.5, 'FD');
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(...C.textPri);
+            doc.text('Module Risk Radar', rxR + 4, ryR + 5);
+
+            const rcx = rxR + chartLW / 2, rcy = ryR + chartH / 2 + 3;
+            const rR = (chartH - 18) / 2;
+            const modsData = MODULES.filter(m => state.results[m.id]?.data?.risk_level);
+            const nAxes = modsData.length;
+
+            if (nAxes >= 3) {
+                // Concentric grid polygons (levels 1-4)
+                for (let ring = 1; ring <= 4; ring++) {
+                    const gr = (ring / 4) * rR;
+                    doc.setDrawColor(...(ring === 4 ? C.borderSec : C.border)); doc.setLineWidth(0.1);
+                    for (let i = 0; i < nAxes; i++) {
+                        const a1 = (i * 2 * Math.PI / nAxes) - Math.PI / 2;
+                        const a2 = ((i + 1) * 2 * Math.PI / nAxes) - Math.PI / 2;
+                        doc.line(rcx + gr * Math.cos(a1), rcy + gr * Math.sin(a1), rcx + gr * Math.cos(a2), rcy + gr * Math.sin(a2));
+                    }
+                }
+                // Axis spokes + labels
+                for (let i = 0; i < nAxes; i++) {
+                    const a = (i * 2 * Math.PI / nAxes) - Math.PI / 2;
+                    doc.setDrawColor(...C.border); doc.setLineWidth(0.08);
+                    doc.line(rcx, rcy, rcx + rR * Math.cos(a), rcy + rR * Math.sin(a));
+                    const lx = rcx + (rR + 2.5) * Math.cos(a);
+                    const ly = rcy + (rR + 2.5) * Math.sin(a);
+                    const mLabel = modsData[i].name.length > 8 ? modsData[i].name.substring(0, 7) + '\u2026' : modsData[i].name;
+                    doc.setFont('helvetica', 'normal'); doc.setFontSize(3.8); doc.setTextColor(...C.textMut);
+                    const al = Math.cos(a) < -0.1 ? 'right' : Math.cos(a) > 0.1 ? 'left' : 'center';
+                    doc.text(mLabel, lx, ly + 1, { align: al });
+                }
+                // Data polygon (filled)
+                const dataPts = modsData.map((m, i) => {
+                    const sc = riskScores[state.results[m.id]?.data?.risk_level || 'low'] || 1;
+                    const pr = (sc / 4) * rR;
+                    const a = (i * 2 * Math.PI / nAxes) - Math.PI / 2;
+                    return [rcx + pr * Math.cos(a), rcy + pr * Math.sin(a)];
+                });
+                if (dataPts.length >= 3) {
+                    const vecs = [];
+                    for (let i = 1; i < dataPts.length; i++) vecs.push([dataPts[i][0] - dataPts[i - 1][0], dataPts[i][1] - dataPts[i - 1][1]]);
+                    doc.setFillColor(...C.rMedBg); doc.setDrawColor(...C.gold); doc.setLineWidth(0.4);
+                    doc.lines(vecs, dataPts[0][0], dataPts[0][1], [1, 1], 'FD', true);
+                }
+                // Data points
+                dataPts.forEach((p, i) => {
+                    const rk = state.results[modsData[i].id]?.data?.risk_level || 'low';
+                    doc.setFillColor(...(riskColor[rk] || C.rLow));
+                    doc.circle(p[0], p[1], 0.8, 'F');
+                });
+            } else {
+                doc.setFont('helvetica', 'normal'); doc.setFontSize(6.5); doc.setTextColor(...C.textMut);
+                doc.text('Run search to generate radar', rcx, rcy, { align: 'center' });
+            }
+            y += chartH + 4;
+
+            // ── Business Address Card ──
+            if (state.location) {
+                checkSpace(12);
+                doc.setFillColor(...C.cardBg); doc.setDrawColor(...C.border); doc.setLineWidth(0.25);
+                doc.roundedRect(M, y, CW, 10, 1.5, 1.5, 'FD');
+                doc.setFillColor(...C.gold); doc.rect(M, y, 1.5, 10, 'F');
+                doc.setFillColor(...C.gold); doc.circle(M + 7, y + 4, 1.2, 'F');
+                doc.setFillColor(...C.cardBg); doc.circle(M + 7, y + 4, 0.5, 'F');
+                doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(...C.textPri);
+                doc.text('Business Address', M + 12, y + 4.5);
+                doc.setFont('helvetica', 'normal'); doc.setFontSize(6.5); doc.setTextColor(...C.textSec);
+                doc.text(state.location, M + 12, y + 8.5);
+                y += 14;
+            }
+
+            // Module Overview
+            sectionBar('Module Overview');
+
+            // Table header — tertiary bg
+            doc.setFillColor(...C.tertiary); doc.rect(M, y, CW, 5.5, 'F');
+            doc.setDrawColor(...C.border); doc.setLineWidth(0.2); doc.line(M, y + 5.5, M + CW, y + 5.5);
+            doc.setFontSize(5); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.textMut);
+            doc.text('MODULE', M + 3, y + 3.8);
+            doc.text('RISK', M + 55, y + 3.8);
+            doc.text('FINDINGS', M + 79, y + 3.8, { align: 'center' });
+            doc.text('SUMMARY', M + 90, y + 3.8);
+            y += 6;
+
+            MODULES.forEach((m, idx) => {
+                checkSpace(7);
+                const result = state.results[m.id]?.data || {};
+                const risk = result.risk_level || 'low';
+                const findings = result.findings || [];
+                const summary = result.summary || 'No data';
+                const rh = 6.5;
+                // Even rows get subtle stripe
+                if (idx % 2 === 0) { doc.setFillColor(...C.stripe); doc.rect(M, y, CW, rh, 'F'); }
+                doc.setFontSize(7); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.textPri);
+                doc.text(m.name, M + 3, y + 4.3);
+                riskPill(M + 52, y + 1.5, risk);
+                doc.setTextColor(...C.textSec); doc.setFontSize(7); doc.setFont('helvetica', 'normal');
+                doc.text(String(findings.length), M + 79, y + 4.3, { align: 'center' });
+                doc.setTextColor(...C.textMut); doc.setFontSize(6);
+                const sl = doc.splitTextToSize(summary, CW - 93);
+                doc.text(sl[0] || '-', M + 90, y + 4.3);
+                // Row bottom border
+                doc.setDrawColor(...C.border); doc.setLineWidth(0.15);
+                doc.line(M, y + rh, M + CW, y + rh);
+                y += rh;
+            });
+            y += 4;
+
+            // Inline alert — dark red tint
+            if (highRiskMods.length > 0) {
+                checkSpace(7);
+                doc.setFillColor(...C.rCrit); doc.rect(M, y, 1.5, 5, 'F');
+                doc.setFillColor(...C.alertBg); doc.rect(M + 1.5, y, CW - 1.5, 5, 'F');
+                doc.setFont('helvetica', 'bold'); doc.setFontSize(6); doc.setTextColor(...C.rCrit);
+                const alertLabel = 'HIGH RISK:';
+                doc.text(alertLabel, M + 5, y + 3.4);
+                doc.setFont('helvetica', 'normal'); doc.setFontSize(6.5); doc.setTextColor(...C.textSec);
+                doc.text(highRiskMods.join('  \u00B7  '), M + 5 + doc.getTextWidth(alertLabel + '  '), y + 3.4);
+                y += 9;
+            }
+
+            // ── Detailed Findings (starts on page 1) ──
+            const detailMods = MODULES.filter(m => state.results[m.id]?.data?.findings?.length > 0);
+            if (detailMods.length > 0) {
+                sectionBar('Detailed Findings');
+
+                detailMods.forEach((m, mIdx) => {
+                    const result = state.results[m.id]?.data || {};
+                    const findings = result.findings || [];
+                    const risk = result.risk_level || 'low';
+                    const summary = result.summary || '';
+                    checkSpace(16);
+
+                    // Module header bar — tertiary bg with border
+                    doc.setFillColor(...C.tertiary); doc.setDrawColor(...C.border); doc.setLineWidth(0.25);
+                    doc.roundedRect(M, y, CW, 6, 1, 1, 'FD');
+                    doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); doc.setTextColor(...C.textPri);
+                    doc.text(m.name, M + 3, y + 4.2);
+                    riskPill(M + 3 + doc.getTextWidth(m.name) + 3, y + 1.2, risk);
+                    y += 7.5;
+
+                    // Summary block — tertiary bg with gold left border (like .module-summary)
+                    if (summary) {
+                        doc.setFillColor(...C.tertiary); doc.rect(M + 2, y, CW - 4, 7, 'F');
+                        doc.setFillColor(...C.gold); doc.rect(M + 2, y, 1.2, 7, 'F');
+                        doc.setFont('helvetica', 'normal'); doc.setFontSize(6.5); doc.setTextColor(...C.textSec);
+                        const sumL = doc.splitTextToSize(summary, CW - 12);
+                        sumL.slice(0, 2).forEach((l, li) => { doc.text(l, M + 6, y + 3 + li * 3.2); });
+                        y += 9;
+                    }
+
+                    const showMax = 5;
+                    findings.slice(0, showMax).forEach((f, fi) => {
+                        checkSpace(6);
+                        const parts = [];
+                        Object.entries(f).forEach(([k, v]) => {
+                            if (k !== 'source_url' && k !== 'url' && k !== 'id' && v && typeof v === 'string' && v.length < 120) parts.push(v);
+                        });
+                        const line = parts.slice(0, 3).join(' \u2014 ') || 'Finding ' + (fi + 1);
+                        // Gold bullet
+                        doc.setFillColor(...C.gold); doc.circle(M + 4, y + 1.6, 0.7, 'F');
+                        doc.setFont('helvetica', 'normal'); doc.setFontSize(6.5); doc.setTextColor(...C.textSec);
+                        const fL = doc.splitTextToSize(line, CW - 10);
+                        fL.slice(0, 2).forEach((fl, li) => { doc.text(fl, M + 7, y + 2.2 + li * 3.2); });
+                        y += Math.min(fL.length, 2) * 3.2 + 1;
+                    });
+
+                    if (findings.length > showMax) {
+                        checkSpace(4); doc.setFont('helvetica', 'bold'); doc.setFontSize(6); doc.setTextColor(...C.goldDark);
+                        doc.text('+ ' + (findings.length - showMax) + ' more findings', M + 7, y + 2); y += 5;
+                    }
+
+                    if (mIdx < detailMods.length - 1) {
+                        y += 1.5; doc.setDrawColor(...C.border); doc.setLineWidth(0.2);
+                        doc.line(M, y, W - M, y); y += 3;
+                    }
+                });
+            } else {
+                sectionBar('Detailed Findings');
+                doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(...C.textMut);
+                doc.text('No detailed findings available. Run a search to generate report data.', M, y + 3);
+            }
+
+            drawFooter();
+            const filename = `HubblePro_${(state.company || 'Report').replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+            doc.save(filename);
+          } catch(err) {
+            console.error('PDF export error:', err);
+            alert('PDF export failed: ' + err.message);
+          }
+        }
 
         function resetReport() {
             document.getElementById('progressInline').classList.remove('active');
@@ -3502,5 +3934,6 @@ IMPORTANT: Every finding MUST have source_url with real URL from search results.
             state = { ...state, company: '', location: '', results: {}, sources: [], searchCount: 0, inputTokens: 0, outputTokens: 0, isRunning: false };
         }
     </script>
-</body>
-</html>
+
+
+</body></html>
