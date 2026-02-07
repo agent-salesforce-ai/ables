@@ -4,7 +4,7 @@
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hubble Pro - AblesAI</title>
+    <title>Hubble - AblesAI</title>
     <link href="./Hubble Pro - AblesAI_files/css2" rel="stylesheet">
     <style>
         :root {
@@ -2075,8 +2075,8 @@
                 </div>
             </div>
             <nav class="header-nav">
-                <a href="https://www.ables.ai/model" class="nav-item">Model</a>
-                <a href="https://ables.ai/hubble-pro.html#" class="nav-item">Hubble<span class="nav-badge api">API</span></a>
+                <a href="https://ables.ai/credit-model.html" class="nav-item">Model</a>
+                <a href="https://ables.ai/search.html#" class="nav-item">Hubble<span class="nav-badge api">API</span></a>
                 <a href="https://www.ables.ai/vision.html" class="nav-item">Vision<span class="nav-badge invite">Invite</span></a>
                 <a href="https://www.ables.ai/calculator" class="nav-item">Calculator<span class="nav-badge lite">Lite</span></a>
                 <a href="https://www.ables.ai/toolbox" class="nav-item">Toolbox<span class="nav-badge free">Free</span></a>
@@ -2189,7 +2189,7 @@
                         <circle class="heroMn-base heroMn-front" cx="32" cy="32" r="4" fill="#a855f7"/>
                     </svg>
                 </div>
-                <h1 class="hero-title">Hubble Pro</h1>
+                <h1 class="hero-title">Hubble</h1>
                 <p class="hero-subtitle">AI-powered business intelligence</p>
                 <div class="hero-search">
                     <input type="text" id="companyName" placeholder="Enter business name" onkeydown="if(event.key===&#39;Enter&#39;)startResearch()">
@@ -2279,7 +2279,7 @@
 
     <script>
         // =====================================================
-        // Hubble Pro - Business Intelligence
+        // Hubble - Business Intelligence
         // AblesAI Design System | Gemini 3 API Integration
         // =====================================================
 
@@ -3490,7 +3490,7 @@ IMPORTANT: Every finding MUST have source_url with real URL from search results.
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `HubblePro_${state.company.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.json`;
+            a.download = `Hubble_${state.company.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.json`;
             a.click();
             URL.revokeObjectURL(url);
         }
@@ -3591,7 +3591,7 @@ IMPORTANT: Every finding MUST have source_url with real URL from search results.
                 if (saturnImg) { try { doc.addImage(saturnImg, 'PNG', M, 2.5, 11, 11); } catch(e) {} }
                 const tx = saturnImg ? M + 12.5 : M;
                 doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.setTextColor(...C.textPri);
-                doc.text('HUBBLE PRO', tx, 8);
+                doc.text('HUBBLE', tx, 8);
                 doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(...C.textMut);
                 doc.text(continuation ? 'Detailed Findings \u2014 ' + (state.company || '') : 'Business Intelligence Report', tx, 13);
                 doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(...C.gold);
@@ -3604,9 +3604,9 @@ IMPORTANT: Every finding MUST have source_url with real URL from search results.
                 doc.setDrawColor(...C.border); doc.setLineWidth(0.2);
                 doc.line(M, H - 11, W - M, H - 11);
                 doc.setFont('helvetica', 'bold'); doc.setFontSize(6.5); doc.setTextColor(...C.gold);
-                doc.text('Hubble Pro', M, H - 6.5);
+                doc.text('Hubble', M, H - 6.5);
                 doc.setFont('helvetica', 'normal'); doc.setTextColor(...C.textMut);
-                doc.text(' by ables.ai', M + doc.getTextWidth('Hubble Pro'), H - 6.5);
+                doc.text(' by ables.ai', M + doc.getTextWidth('Hubble'), H - 6.5);
                 doc.text('Page ' + pg, W / 2, H - 6.5, { align: 'center' });
                 doc.text(dateStr, W - M, H - 6.5, { align: 'right' });
                 doc.setFontSize(5); doc.setTextColor(...C.textMut);
@@ -3914,7 +3914,7 @@ IMPORTANT: Every finding MUST have source_url with real URL from search results.
             }
 
             drawFooter();
-            const filename = `HubblePro_${(state.company || 'Report').replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+            const filename = `Hubble_${(state.company || 'Report').replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
             doc.save(filename);
           } catch(err) {
             console.error('PDF export error:', err);
