@@ -295,6 +295,21 @@
   .foot-bottom{display:flex;justify-content:space-between;margin-top:48px;padding-top:24px;border-top:1px solid var(--line);font-family:var(--mono);font-size:12px;color:var(--dim)}
   @media (max-width:880px){.foot{grid-template-columns:1fr 1fr;gap:32px}}
 
+  /* Pricing */
+  .price-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:48px}
+  .price-card{padding:36px;border-radius:14px;background:var(--bg-2);box-shadow:var(--shadow-card);display:flex;flex-direction:column}
+  .price-card-feature{box-shadow:0 0 0 1.5px var(--text), 0 8px 32px -12px rgba(0,0,0,.10)}
+  .price-tier{font-family:var(--sans);font-size:13px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
+  .price-card-feature .price-tier{color:var(--text)}
+  .price-desc{font-size:18px;line-height:1.45;color:var(--text);font-weight:500;margin-bottom:24px;letter-spacing:-.005em}
+  .price-list{list-style:none;padding:0;margin:0 0 28px;flex:1}
+  .price-list li{padding:8px 0;border-bottom:1px solid var(--line);font-size:14px;color:var(--muted);line-height:1.5;display:flex;gap:10px}
+  .price-list li:last-child{border-bottom:0}
+  .price-list li::before{content:"";flex-shrink:0;width:4px;height:4px;border-radius:50%;background:var(--text);margin-top:.55em}
+  .price-cta{align-self:flex-start;padding:12px 20px;font-size:14px}
+  .price-foot{font-size:13px;color:var(--muted);margin-top:32px;text-align:center}
+  @media (max-width:880px){.price-grid{grid-template-columns:1fr}}
+
   /* Modal — demo questionnaire */
   .modal-backdrop{
     position:fixed;inset:0;background:rgba(25,25,25,.32);backdrop-filter:blur(4px);
@@ -655,6 +670,42 @@
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="wrap">
+      <div class="eyebrow">Pricing</div>
+      <h2>Priced like the system it is, <em>not the seats you'd hire.</em></h2>
+      <p class="lead">Pricing scales with your funded volume — not your headcount. No per-rep, per-seat, or per-message fees. We'll quote it on the call.</p>
+
+      <div class="price-grid">
+        <div class="price-card">
+          <div class="price-tier">Starter</div>
+          <div class="price-desc">For shops funding under $5M/month who want to replace an SDR floor with one operator and the runtime.</div>
+          <ul class="price-list">
+            <li>All six agents — Hubble, Reply, Vision, Tier, Calculator, Drip</li>
+            <li>Up to 10K outbound messages per day</li>
+            <li>Standard CRM integration (Zoho, Salesforce, HubSpot)</li>
+            <li>Email + chat support</li>
+          </ul>
+          <a href="#" class="btn btn-ghost price-cta" data-action="open-demo">Get a quote <span class="arrow">→</span></a>
+        </div>
+        <div class="price-card price-card-feature">
+          <div class="price-tier">Scale</div>
+          <div class="price-desc">For platforms funding $25M+/month with custom underwriting models, dedicated infra, and white-glove rollout.</div>
+          <ul class="price-list">
+            <li>Everything in Starter, plus:</li>
+            <li>Custom Tier scoring model + dedicated GPU pool</li>
+            <li>White-label channels + sub-account isolation</li>
+            <li>SOC 2 evidence room + dedicated solutions engineer</li>
+            <li>Volume-aware SLAs · 99.97% uptime committed</li>
+          </ul>
+          <a href="#" class="btn btn-primary price-cta" data-action="open-demo">Get a quote <span class="arrow">→</span></a>
+        </div>
+      </div>
+
+      <p class="price-foot">Already running another funding stack? Ables runs alongside — no rip-and-replace required.</p>
     </div>
   </section>
 
