@@ -295,6 +295,60 @@
   .foot-bottom{display:flex;justify-content:space-between;margin-top:48px;padding-top:24px;border-top:1px solid var(--line);font-family:var(--mono);font-size:12px;color:var(--dim)}
   @media (max-width:880px){.foot{grid-template-columns:1fr 1fr;gap:32px}}
 
+  /* Modal — demo questionnaire */
+  .modal-backdrop{
+    position:fixed;inset:0;background:rgba(25,25,25,.32);backdrop-filter:blur(4px);
+    display:none;align-items:center;justify-content:center;z-index:100;padding:24px;
+    animation:bdIn .15s ease-out;
+  }
+  .modal-backdrop.open{display:flex}
+  @keyframes bdIn{from{opacity:0}to{opacity:1}}
+  .modal{
+    background:var(--bg-2);border-radius:16px;width:100%;max-width:520px;
+    box-shadow:0 0 0 1px rgba(224,221,208,.7), 0 30px 80px -20px rgba(0,0,0,.25);
+    max-height:calc(100vh - 48px);overflow:auto;
+    animation:mdIn .2s ease-out;
+  }
+  @keyframes mdIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;padding:28px 32px 8px;gap:16px}
+  .modal-head h3{margin:0;font-size:22px;font-weight:700;letter-spacing:-.02em}
+  .modal-close{
+    width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+    color:var(--muted);cursor:pointer;border:0;background:transparent;flex-shrink:0;
+  }
+  .modal-close:hover{background:var(--panel);color:var(--text)}
+  .modal-close svg{width:16px;height:16px}
+  .modal-sub{color:var(--muted);font-size:14px;padding:0 32px 24px;line-height:1.5}
+  .modal-body{padding:0 32px 32px}
+  .modal-footer{padding:20px 32px;background:var(--panel);border-top:1px solid var(--line);border-radius:0 0 16px 16px;font-size:12px;color:var(--muted);text-align:center}
+  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:480px){.field-row{grid-template-columns:1fr}}
+  .field label{font-size:13px;color:var(--text);font-weight:500}
+  .field label .req{color:var(--accent-2);margin-left:2px}
+  .field input, .field select, .field textarea{
+    font:inherit;font-size:14px;font-family:var(--sans);
+    padding:10px 12px;border:1px solid var(--line-2);border-radius:8px;
+    background:var(--bg-2);color:var(--text);width:100%;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{
+    outline:0;border-color:var(--text);box-shadow:0 0 0 3px rgba(25,25,25,.08);
+  }
+  .field textarea{resize:vertical;min-height:84px;line-height:1.5}
+  .field select{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B6B6B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+  .field-hp{position:absolute;left:-9999px}
+  .modal-actions{display:flex;gap:10px;align-items:center;justify-content:flex-end;margin-top:8px}
+  .modal-actions .btn-primary{background:var(--text);color:var(--bg);padding:11px 18px;font-size:14px}
+  .modal-actions .btn-primary:disabled{opacity:.55;cursor:not-allowed}
+  .modal-status{display:none;font-size:13px;padding:10px 12px;border-radius:8px;margin-bottom:12px}
+  .modal-status.error{display:block;background:rgba(166,90,44,.08);color:var(--accent-2);border:1px solid rgba(166,90,44,.2)}
+  .modal-success{display:none;text-align:center;padding:24px 32px 32px}
+  .modal-success.open{display:block}
+  .modal-success svg{width:48px;height:48px;color:var(--good);margin-bottom:16px}
+  .modal-success h3{margin:0 0 8px;font-size:20px;font-weight:700}
+  .modal-success p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+
   /* Marquee badges */
   .badges{margin:32px 0 0;display:flex;flex-wrap:wrap;gap:10px}
   .badge{font-family:var(--mono);font-size:11px;color:var(--muted);padding:6px 12px;border:1px solid var(--line-2);border-radius:999px;background:var(--bg-2)}
@@ -330,8 +384,8 @@
         <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
         <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
       </button>
-      <a href="#" class="btn btn-ghost">Sign in</a>
-      <a href="#cta" class="btn btn-primary">Book a demo <span class="arrow">→</span></a>
+      <a href="/legacy.html" class="btn btn-ghost">Sign in</a>
+      <a href="#cta" class="btn btn-primary" data-action="open-demo">Book a demo <span class="arrow">→</span></a>
     </div>
   </div>
 </nav>
@@ -363,7 +417,7 @@
       <h1 class="hero-title">The autonomous<br/>lending <em>stack.</em></h1>
       <p class="hero-sub">Agents that <strong>source, qualify, score, underwrite, and fund</strong> — running 24/7 across SMS, email, voice, and document intake. We don't sell tools. We run the whole pipeline.</p>
       <div class="hero-cta">
-        <a href="#cta" class="btn btn-accent btn-lg">See it running live <span class="arrow">→</span></a>
+        <a href="#cta" class="btn btn-accent btn-lg" data-action="open-demo">See it running live <span class="arrow">→</span></a>
         <a href="#stack" class="btn btn-ghost btn-lg">How it works</a>
       </div>
 
@@ -611,8 +665,8 @@
         <h2>Stop selling tools to your team.<br/><em>Give them a runtime.</em></h2>
         <p class="lead">Book a 30-minute walkthrough. We'll connect a live agent to your Zoho or Salesforce sandbox, score 5 of your real deals, and you decide from there.</p>
         <div class="hero-cta">
-          <a href="mailto:hello@ables.ai" class="btn btn-primary btn-lg">Book a walkthrough <span class="arrow">→</span></a>
-          <a href="#" class="btn btn-ghost btn-lg">Read the docs</a>
+          <a href="#" class="btn btn-primary btn-lg" data-action="open-demo">Book a walkthrough <span class="arrow">→</span></a>
+          <a href="/legacy.html" class="btn btn-ghost btn-lg">See the toolbox</a>
         </div>
       </div>
     </div>
@@ -641,24 +695,24 @@
       </div>
       <div class="foot-col">
         <h5>Product</h5>
-        <a href="#">Hubble</a>
-        <a href="#">Vision</a>
-        <a href="#">Calculator</a>
-        <a href="#">Drip</a>
+        <a href="/hubble.html">Hubble</a>
+        <a href="/vision.html">Vision</a>
+        <a href="/calculator.html">Calculator</a>
+        <a href="/toolbox.html">Toolbox</a>
       </div>
       <div class="foot-col">
         <h5>Company</h5>
-        <a href="#">Manifesto</a>
-        <a href="#">Customers</a>
-        <a href="#">Security</a>
-        <a href="#">Careers</a>
+        <a href="#" data-action="open-demo">Book a demo</a>
+        <a href="mailto:zak@ables.ai">Contact</a>
+        <a href="/legacy.html">Original site</a>
+        <a href="https://github.com/agent-salesforce-ai/ables">GitHub</a>
       </div>
       <div class="foot-col">
         <h5>Resources</h5>
-        <a href="#">Documentation</a>
-        <a href="#">API reference</a>
-        <a href="#">Changelog</a>
-        <a href="#">Status</a>
+        <a href="/legacy.html">Toolbox</a>
+        <a href="/vision.html">Vision</a>
+        <a href="https://2.ables.ai/">Legacy mirror</a>
+        <a href="mailto:zak@ables.ai">Support</a>
       </div>
     </div>
     <div class="foot-bottom">
@@ -667,6 +721,81 @@
     </div>
   </div>
 </footer>
+
+<!-- Demo request modal -->
+<div class="modal-backdrop" id="demoModal" role="dialog" aria-modal="true" aria-labelledby="demoTitle">
+  <div class="modal" role="document">
+    <div class="modal-form-wrap">
+      <div class="modal-head">
+        <h3 id="demoTitle">Book a walkthrough</h3>
+        <button class="modal-close" type="button" aria-label="Close" data-close-demo>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <p class="modal-sub">A 30-minute call. We'll connect a live agent to your CRM sandbox, score 5 of your real deals, and you decide from there.</p>
+      <form class="modal-body" id="demoForm" novalidate>
+        <div class="modal-status" id="demoErr"></div>
+        <div class="field-row">
+          <div class="field">
+            <label for="d-name">Name <span class="req">*</span></label>
+            <input id="d-name" name="name" type="text" autocomplete="name" required maxlength="100" />
+          </div>
+          <div class="field">
+            <label for="d-email">Work email <span class="req">*</span></label>
+            <input id="d-email" name="email" type="email" autocomplete="email" required maxlength="120" />
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="d-company">Company</label>
+            <input id="d-company" name="company" type="text" autocomplete="organization" maxlength="120" />
+          </div>
+          <div class="field">
+            <label for="d-role">Your role</label>
+            <select id="d-role" name="role">
+              <option value="">Select…</option>
+              <option>Owner / President</option>
+              <option>CEO / Founder</option>
+              <option>Head of Underwriting</option>
+              <option>Head of Sales</option>
+              <option>Operations / COO</option>
+              <option>ISO / Broker</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="d-volume">Monthly funded volume</label>
+          <select id="d-volume" name="volume">
+            <option value="">Select…</option>
+            <option>Less than $1M</option>
+            <option>$1M – $5M</option>
+            <option>$5M – $25M</option>
+            <option>$25M – $100M</option>
+            <option>$100M+</option>
+            <option>Not yet funding</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="d-message">What are you trying to solve?</label>
+          <textarea id="d-message" name="message" maxlength="2000" placeholder="Capacity? Renewals? Underwriting speed? Compliance?"></textarea>
+        </div>
+        <input class="field-hp" type="text" name="_hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" data-close-demo>Cancel</button>
+          <button type="submit" class="btn btn-primary" id="demoSubmit">Send request <span class="arrow">→</span></button>
+        </div>
+      </form>
+      <div class="modal-footer">We respond within one business day. Or email <a href="mailto:zak@ables.ai" style="color:var(--text);text-decoration:underline">zak@ables.ai</a> directly.</div>
+    </div>
+    <div class="modal-success" id="demoSuccess">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 16 9"/></svg>
+      <h3>Got it — talk soon.</h3>
+      <p>Your request is in. We'll reach out within one business day.</p>
+      <div style="margin-top:24px"><button type="button" class="btn btn-ghost" data-close-demo>Close</button></div>
+    </div>
+  </div>
+</div>
 
 <script>
   // Theme toggle
@@ -682,6 +811,77 @@
       } else {
         html.setAttribute('data-theme', 'dark');
         try { localStorage.setItem('ables-theme', 'dark'); } catch(e) {}
+      }
+    });
+  })();
+
+  // Demo modal
+  (function(){
+    const modal = document.getElementById('demoModal');
+    const form = document.getElementById('demoForm');
+    const formWrap = modal.querySelector('.modal-form-wrap');
+    const success = document.getElementById('demoSuccess');
+    const errBox = document.getElementById('demoErr');
+    const submitBtn = document.getElementById('demoSubmit');
+    const ENDPOINT = 'https://2.ables.ai/api/demo';
+
+    let lastFocus = null;
+    function open(e){
+      if (e) e.preventDefault();
+      lastFocus = document.activeElement;
+      modal.classList.add('open');
+      formWrap.style.display = '';
+      success.classList.remove('open');
+      errBox.classList.remove('error');
+      errBox.textContent = '';
+      document.body.style.overflow = 'hidden';
+      setTimeout(()=>{const f=modal.querySelector('input,select,textarea'); if(f)f.focus();},80);
+    }
+    function close(){
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+    // Open triggers
+    document.querySelectorAll('[data-action="open-demo"]').forEach(el => el.addEventListener('click', open));
+    // Close triggers
+    modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
+    document.querySelectorAll('[data-close-demo]').forEach(el => el.addEventListener('click', close));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('open')) close(); });
+
+    // Submit
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errBox.classList.remove('error');
+      errBox.textContent = '';
+      const fd = new FormData(form);
+      const payload = {};
+      fd.forEach((v,k) => payload[k] = String(v).trim());
+      // Client-side guard
+      if (!payload.name || !payload.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email)) {
+        errBox.classList.add('error');
+        errBox.textContent = 'Please enter a name and a valid work email.';
+        return;
+      }
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending…';
+      try {
+        const r = await fetch(ENDPOINT, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(payload),
+        });
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok || !data.ok) throw new Error(data.error || `Server returned ${r.status}`);
+        formWrap.style.display = 'none';
+        success.classList.add('open');
+        form.reset();
+      } catch (err) {
+        errBox.classList.add('error');
+        errBox.textContent = err.message || 'Could not send. Try again or email zak@ables.ai.';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Send request <span class="arrow">→</span>';
       }
     });
   })();
