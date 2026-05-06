@@ -295,24 +295,23 @@
   .foot-bottom{display:flex;justify-content:space-between;margin-top:48px;padding-top:24px;border-top:1px solid var(--line);font-family:var(--mono);font-size:12px;color:var(--dim)}
   @media (max-width:880px){.foot{grid-template-columns:1fr 1fr;gap:32px}}
 
-  /* Word flip — prefix cycles, "ables." stays anchored */
-  .word-flip{
+  /* Word flip — prefix cycles, "ables." stays anchored. Now the hero H1. */
+  .hero-title.word-flip{
     display:flex;align-items:baseline;
-    font-family:var(--sans);font-weight:600;
-    font-size:clamp(22px, 2.4vw, 32px);
-    letter-spacing:-.02em;
-    margin:-4px 0 32px;
+    margin-bottom:28px;
   }
   .word-prefix{
     display:inline-block;
     color:var(--muted);
-    font-weight:500;
+    font-weight:600;
     white-space:nowrap;
     transition:opacity .26s ease, transform .26s ease;
     will-change:opacity, transform;
   }
-  .word-prefix.fading{opacity:0;transform:translateY(-6px)}
+  .word-prefix.fading{opacity:0;transform:translateY(-8px)}
   .word-suffix{color:var(--text);font-weight:700}
+  /* Brand reveal — when prefix is empty, render "Ables." */
+  .word-prefix:empty + .word-suffix{text-transform:capitalize}
 
   /* Pricing */
   .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:48px}
@@ -449,10 +448,9 @@
   <section class="hero" style="border-top:0;padding-top:96px">
     <div class="wrap">
       <div class="hero-eyebrow"><span class="dot"></span>The system is online · 14 agents running</div>
-      <h1 class="hero-title">Underwriting at the<br/>speed of <em>software.</em></h1>
-      <div class="word-flip" aria-label="Receivables, Profitables, Screenables, Contactables, Fundables — Ables.">
+      <h1 class="hero-title word-flip" aria-label="Receivables, Profitables, Screenables, Contactables, Fundables, Renewables, Approvables, Bankables, Reliables, Closeables — Ables.">
         <span class="word-prefix" id="wordPrefix">Receiv</span><span class="word-suffix">ables.</span>
-      </div>
+      </h1>
       <p class="hero-sub">Agents that <strong>source, qualify, score, underwrite, and fund</strong> — running 24/7 across SMS, email, voice, and document intake. We don't sell tools. We run the whole pipeline.</p>
       <div class="hero-cta">
         <a href="#cta" class="btn btn-accent btn-lg" data-action="open-demo">See it running live <span class="arrow">→</span></a>
@@ -976,12 +974,17 @@
     const el = document.getElementById('wordPrefix');
     if (!el) return;
     const words = [
-      {prefix:'Receiv',  dwell:2000},
-      {prefix:'Profit',  dwell:2000},
-      {prefix:'Screen',  dwell:2000},
-      {prefix:'Contact', dwell:2000},
-      {prefix:'Fund',    dwell:2000},
-      {prefix:'',        dwell:2800}, // brand reveal: just "Ables."
+      {prefix:'Receiv',  dwell:1800},
+      {prefix:'Profit',  dwell:1800},
+      {prefix:'Screen',  dwell:1800},
+      {prefix:'Contact', dwell:1800},
+      {prefix:'Fund',    dwell:1800},
+      {prefix:'Renew',   dwell:1800},
+      {prefix:'Approv',  dwell:1800},
+      {prefix:'Bank',    dwell:1800},
+      {prefix:'Reli',    dwell:1800},
+      {prefix:'Close',   dwell:1800},
+      {prefix:'',        dwell:3000}, // brand reveal: "Ables."
     ];
     let i = 0;
     function next(){
