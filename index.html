@@ -295,6 +295,25 @@
   .foot-bottom{display:flex;justify-content:space-between;margin-top:48px;padding-top:24px;border-top:1px solid var(--line);font-family:var(--mono);font-size:12px;color:var(--dim)}
   @media (max-width:880px){.foot{grid-template-columns:1fr 1fr;gap:32px}}
 
+  /* Word flip — prefix cycles, "ables." stays anchored */
+  .word-flip{
+    display:flex;align-items:baseline;
+    font-family:var(--sans);font-weight:600;
+    font-size:clamp(22px, 2.4vw, 32px);
+    letter-spacing:-.02em;
+    margin:-4px 0 32px;
+  }
+  .word-prefix{
+    display:inline-block;
+    color:var(--muted);
+    font-weight:500;
+    white-space:nowrap;
+    transition:opacity .26s ease, transform .26s ease;
+    will-change:opacity, transform;
+  }
+  .word-prefix.fading{opacity:0;transform:translateY(-6px)}
+  .word-suffix{color:var(--text);font-weight:700}
+
   /* Pricing */
   .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:48px}
   .price-card{padding:32px;border-radius:14px;background:var(--bg-2);box-shadow:var(--shadow-card);display:flex;flex-direction:column}
@@ -431,6 +450,9 @@
     <div class="wrap">
       <div class="hero-eyebrow"><span class="dot"></span>The system is online · 14 agents running</div>
       <h1 class="hero-title">Underwriting at the<br/>speed of <em>software.</em></h1>
+      <div class="word-flip" aria-label="Receivables, Profitables, Screenables, Contactables, Fundables — Ables.">
+        <span class="word-prefix" id="wordPrefix">Receiv</span><span class="word-suffix">ables.</span>
+      </div>
       <p class="hero-sub">Agents that <strong>source, qualify, score, underwrite, and fund</strong> — running 24/7 across SMS, email, voice, and document intake. We don't sell tools. We run the whole pipeline.</p>
       <div class="hero-cta">
         <a href="#cta" class="btn btn-accent btn-lg" data-action="open-demo">See it running live <span class="arrow">→</span></a>
@@ -947,6 +969,31 @@
         submitBtn.innerHTML = 'Send request <span class="arrow">→</span>';
       }
     });
+  })();
+
+  // Hero word-flip (cycles prefix while "ables." stays anchored)
+  (function(){
+    const el = document.getElementById('wordPrefix');
+    if (!el) return;
+    const words = [
+      {prefix:'Receiv',  dwell:2000},
+      {prefix:'Profit',  dwell:2000},
+      {prefix:'Screen',  dwell:2000},
+      {prefix:'Contact', dwell:2000},
+      {prefix:'Fund',    dwell:2000},
+      {prefix:'',        dwell:2800}, // brand reveal: just "Ables."
+    ];
+    let i = 0;
+    function next(){
+      el.classList.add('fading');
+      setTimeout(() => {
+        i = (i + 1) % words.length;
+        el.textContent = words[i].prefix;
+        el.classList.remove('fading');
+        setTimeout(next, words[i].dwell);
+      }, 260);
+    }
+    setTimeout(next, words[0].dwell);
   })();
 
   // Live stream simulator
