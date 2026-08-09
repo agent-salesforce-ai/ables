@@ -58,7 +58,9 @@
 
   function track(eventName, params) {
     if (!ALLOWED_EVENTS.has(eventName) || typeof window.gtag !== 'function') return;
-    const safeParams = { page_path: cleanPath(window.location.pathname) };
+    const safeParams = eventName === 'generate_lead'
+      ? {}
+      : { page_path: cleanPath(window.location.pathname) };
     Object.entries(params || {}).forEach(([key, value]) => {
       if (!ALLOWED_EVENT_PARAMS.has(key)) return;
       const cleaned = key === 'page_path' ? cleanPath(value) : clean(value, 100);
