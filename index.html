@@ -9,7 +9,7 @@
   gtag('js', new Date());
   gtag('config', 'G-NLL9GDQY8S');
 </script>
-<script src="/analytics.js"></script>
+<script src="/analytics.js?v=00ccf10ba9f42a81"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>AI Underwriting &amp; Lending Automation Software | Ables</title>
@@ -1045,7 +1045,9 @@
           body: JSON.stringify(payload),
         });
         const data = await r.json().catch(() => ({}));
-        if (!r.ok || !data.ok) throw new Error(data.error || `Server returned ${r.status}`);
+        if (!r.ok || !data.ok || data.accepted !== true) {
+          throw new Error(data.error || 'The request was not accepted. Please try again.');
+        }
         if (window.AblesAnalytics) {
           window.AblesAnalytics.track('generate_lead', {
             form_name: 'demo_request',
