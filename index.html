@@ -3,8 +3,10 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ables — Underwriting at the speed of software</title>
-<meta name="description" content="Agents that source, qualify, underwrite, and fund — running 24/7 across SMS, email, voice, and document intake. $2.4B+ processed." />
+<title>AI Underwriting &amp; Lending Automation Software | Ables</title>
+<meta name="description" content="Ables connects lead intake, document review, risk scoring, offer workflows, and follow-up for small-business lenders and funding teams." />
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+<link rel="canonical" href="https://ables.ai/" />
 
 <!-- Favicon / app icons -->
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -17,23 +19,51 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://ables.ai/" />
 <meta property="og:site_name" content="Ables" />
-<meta property="og:title" content="Ables — Underwriting at the speed of software" />
-<meta property="og:description" content="Agents that source, qualify, score, underwrite, and fund — running 24/7. $2.41B processed · 38s decisions · 99.97% uptime." />
+<meta property="og:title" content="AI Underwriting &amp; Lending Automation Software | Ables" />
+<meta property="og:description" content="Connect lead intake, document review, risk scoring, offer workflows, and follow-up in one lending automation system." />
 <meta property="og:image" content="https://ables.ai/og-cover.png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:image:alt" content="Ables — Underwriting at the speed of software" />
+<meta property="og:image:alt" content="Ables AI underwriting and lending automation software" />
 
 <!-- Twitter / iMessage -->
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Ables — Underwriting at the speed of software" />
-<meta name="twitter:description" content="Agents that source, qualify, score, underwrite, and fund — running 24/7." />
+<meta name="twitter:title" content="AI Underwriting &amp; Lending Automation Software | Ables" />
+<meta name="twitter:description" content="AI workflow software for small-business lenders and funding teams." />
 <meta name="twitter:image" content="https://ables.ai/og-cover.png" />
+
+<script type="application/ld+json">
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": "https://ables.ai/#organization",
+    "name": "Ables",
+    "alternateName": "Ables AI",
+    "url": "https://ables.ai/",
+    "logo": "https://ables.ai/apple-touch-icon.png",
+    "email": "zak@ables.ai",
+    "sameAs": [
+      "https://www.linkedin.com/company/ables-ai/",
+      "https://github.com/agent-salesforce-ai/ables"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": "https://ables.ai/#website",
+    "url": "https://ables.ai/",
+    "name": "Ables",
+    "publisher": {"@id": "https://ables.ai/#organization"},
+    "inLanguage": "en-US"
+  }
+]
+</script>
 
 <script>(function(){try{if(localStorage.getItem('ables-theme')==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@300;400;500;600&amp;display=swap" rel="stylesheet" />
 <style>
   :root{
     /* Anthropic-style light: warm linen bg, pure white cards, monochrome */
@@ -152,7 +182,7 @@
   .btn-accent:hover{background:var(--accent-bright);transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.14)}
   @media (max-width:880px){.nav-links{display:none}}
 
-  /* Live ticker */
+  /* Capability ticker */
   .ticker{
     border-bottom:1px solid var(--line);
     background:linear-gradient(180deg, rgba(25,25,25,.04), transparent);
@@ -211,6 +241,7 @@
   .system-grid .cell:last-child{border-right:0}
   .cell .k{font-family:var(--sans);font-size:13px;color:var(--muted);font-weight:500;margin-bottom:12px;letter-spacing:0}
   .cell .v{font-family:var(--sans);font-size:36px;font-weight:700;letter-spacing:-.03em;line-height:1;color:var(--text)}
+  .cell .v.feature{font-size:24px;letter-spacing:-.02em}
   .cell .delta{font-family:var(--sans);font-size:12px;color:var(--good);margin-top:8px;display:flex;align-items:center;gap:4px;font-weight:500}
   .cell .delta.warm{color:var(--accent-2)}
   @media (max-width:880px){.system-grid{grid-template-columns:repeat(2,1fr)}.system-grid .cell:nth-child(2){border-right:0}.system-grid .cell:nth-child(1),.system-grid .cell:nth-child(2){border-bottom:1px solid var(--line)}}
@@ -278,6 +309,7 @@
   .bignum-row{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;margin-top:48px}
   .bignum{padding:0}
   .bignum .v{font-family:var(--sans);font-size:clamp(44px,4.5vw,72px);font-weight:700;letter-spacing:-.035em;line-height:1;margin-bottom:10px;color:var(--text)}
+  .bignum .v.word{font-size:clamp(26px,2.7vw,42px);line-height:1.08}
   .bignum .v .unit{font-size:.55em;color:var(--muted);font-weight:500}
   .bignum .k{font-size:13px;color:var(--muted);max-width:200px;line-height:1.4}
   @media (max-width:880px){.bignum-row{grid-template-columns:repeat(2,1fr);gap:32px 16px}}
@@ -420,7 +452,7 @@
 
 <nav>
   <div class="wrap nav">
-    <a href="#" class="brand">
+    <a href="/" class="brand" aria-label="Ables home">
       <svg class="brand-planet" width="34" height="20" viewBox="0 0 28 16" aria-hidden="true">
         <ellipse cx="12" cy="8" rx="11" ry="3.2" stroke="currentColor" stroke-width=".7" fill="none" opacity=".42" transform="rotate(-20 12 8)"/>
         <circle cx="12" cy="8" r="5" fill="currentColor" opacity=".12"/>
@@ -435,9 +467,9 @@
       Ables
     </a>
     <div class="nav-links">
-      <a href="#stack">The Stack</a>
-      <a href="#runtime">Runtime</a>
-      <a href="#numbers">Results</a>
+      <a href="#stack">Capabilities</a>
+      <a href="#runtime">Infrastructure</a>
+      <a href="#numbers">Evaluation</a>
       <a href="#pricing">Pricing</a>
     </div>
     <div class="nav-cta">
@@ -445,7 +477,7 @@
         <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
         <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
       </button>
-      <a href="/legacy.html" class="btn btn-ghost">Sign in</a>
+      <a href="/login.html" class="btn btn-ghost">Sign in</a>
       <a href="#cta" class="btn btn-primary" data-action="open-demo">Book a demo <span class="arrow">→</span></a>
     </div>
   </div>
@@ -453,63 +485,59 @@
 
 <div class="ticker">
   <div class="ticker-track">
-    <span class="ticker-item"><span class="dot"></span><span class="label">live ›</span> <span class="val">$2.41B</span> <span class="label">processed</span></span>
-    <span class="ticker-item"><span class="dot"></span><span class="label">today ›</span> <span class="val">3,241</span> <span class="label">decisions</span></span>
-    <span class="ticker-item"><span class="dot"></span><span class="label">avg ›</span> <span class="val">38.4s</span> <span class="label">decision time</span></span>
-    <span class="ticker-item"><span class="dot"></span><span class="label">approval rate ›</span> <span class="val">23.7%</span></span>
-    <span class="ticker-item"><span class="dot"></span><span class="label">replies/hr ›</span> <span class="val">412</span></span>
-    <span class="ticker-item"><span class="dot"></span><span class="label">models ›</span> <span class="val">qwen3.5:35b · gemma4:12b · gemini-flash</span></span>
-    <span class="ticker-item"><span class="dot"></span><span class="label">uptime ›</span> <span class="val">99.97%</span></span>
+    <span class="ticker-item"><span class="dot"></span><span class="label">illustrative demo ›</span> <span class="val">sample workflow activity</span></span>
+    <span class="ticker-item"><span class="dot"></span><span class="label">channels ›</span> <span class="val">Telnyx SMS · MS Graph · Gmail API</span></span>
+    <span class="ticker-item"><span class="dot"></span><span class="label">workflow ›</span> <span class="val">intake → qualify → review → decision</span></span>
+    <span class="ticker-item"><span class="dot"></span><span class="label">controls ›</span> <span class="val">opt-out handling · audit records</span></span>
+    <span class="ticker-item"><span class="dot"></span><span class="label">integrations ›</span> <span class="val">Zoho CRM · REST APIs</span></span>
+    <span class="ticker-item"><span class="dot"></span><span class="label">models ›</span> <span class="val">deployment-specific routing</span></span>
     <!-- duplicate for seamless loop -->
-    <span class="ticker-item"><span class="dot"></span><span class="label">live ›</span> <span class="val">$2.41B</span> <span class="label">processed</span></span>
-    <span class="ticker-item"><span class="dot"></span><span class="label">today ›</span> <span class="val">3,241</span> <span class="label">decisions</span></span>
-    <span class="ticker-item"><span class="dot"></span><span class="label">avg ›</span> <span class="val">38.4s</span> <span class="label">decision time</span></span>
-    <span class="ticker-item"><span class="dot"></span><span class="label">approval rate ›</span> <span class="val">23.7%</span></span>
-    <span class="ticker-item"><span class="dot"></span><span class="label">replies/hr ›</span> <span class="val">412</span></span>
-    <span class="ticker-item"><span class="dot"></span><span class="label">models ›</span> <span class="val">qwen3.5:35b · gemma4:12b · gemini-flash</span></span>
-    <span class="ticker-item"><span class="dot"></span><span class="label">uptime ›</span> <span class="val">99.97%</span></span>
+    <span class="ticker-item"><span class="dot"></span><span class="label">illustrative demo ›</span> <span class="val">sample workflow activity</span></span>
+    <span class="ticker-item"><span class="dot"></span><span class="label">channels ›</span> <span class="val">Telnyx SMS · MS Graph · Gmail API</span></span>
+    <span class="ticker-item"><span class="dot"></span><span class="label">workflow ›</span> <span class="val">intake → qualify → review → decision</span></span>
+    <span class="ticker-item"><span class="dot"></span><span class="label">controls ›</span> <span class="val">opt-out handling · audit records</span></span>
+    <span class="ticker-item"><span class="dot"></span><span class="label">integrations ›</span> <span class="val">Zoho CRM · REST APIs</span></span>
+    <span class="ticker-item"><span class="dot"></span><span class="label">models ›</span> <span class="val">deployment-specific routing</span></span>
   </div>
 </div>
 
 <main>
   <section class="hero" style="border-top:0;padding-top:96px">
     <div class="wrap">
-      <div class="hero-eyebrow"><span class="dot"></span>The system is online · 14 agents running</div>
-      <h1 class="hero-title word-flip" aria-label="Receivables, Profitables, Screenables, Contactables, Fundables, Renewables, Approvables, Bankables, Reliables, Closeables — Ables.">
-        <span class="word-prefix" id="wordPrefix">Receiv</span><span class="word-suffix">ables.</span>
-      </h1>
-      <p class="hero-sub">Agents that <strong>source, qualify, score, underwrite, and fund</strong> — running 24/7 across SMS, email, voice, and document intake. We don't sell tools. We run the whole pipeline.</p>
+      <div class="hero-eyebrow"><span class="dot"></span>AI workflow software for funding teams</div>
+      <h1 class="hero-title">AI underwriting automation for small-business lenders.</h1>
+      <p class="hero-sub">Connect <strong>lead intake, qualification, document review, risk scoring, offer workflows, and follow-up</strong> in one system designed for lender oversight.</p>
       <div class="hero-cta">
-        <a href="https://demovideo.ables.ai" class="btn btn-accent btn-lg" target="_blank" rel="noopener noreferrer">See it running live <span class="arrow">→</span></a>
+        <a href="https://demovideo.ables.ai" class="btn btn-accent btn-lg" target="_blank" rel="noopener noreferrer">Watch the product demo <span class="arrow">→</span></a>
         <a href="#stack" class="btn btn-ghost btn-lg">How it works</a>
       </div>
 
       <div class="system">
         <div class="system-bar">
           <div class="dots"><span></span><span></span><span></span></div>
-          <div class="title">ables://ops · live</div>
-          <div class="live"><span class="dot"></span>STREAMING</div>
+          <div class="title">ables://workflow · illustrative sample</div>
+          <div class="live"><span class="dot"></span>DEMO</div>
         </div>
         <div class="system-grid">
           <div class="cell">
-            <div class="k">Decisions / hr</div>
-            <div class="v" id="m-dec">142</div>
-            <div class="delta">↑ 18% vs 24h avg</div>
+            <div class="k">Lead intake</div>
+            <div class="v feature">01</div>
+            <div class="delta">SMS · email · voice</div>
           </div>
           <div class="cell">
-            <div class="k">In pipeline</div>
-            <div class="v" id="m-pipe">8,124</div>
-            <div class="delta">↑ 312 last hour</div>
+            <div class="k">Document review</div>
+            <div class="v feature">02</div>
+            <div class="delta">Revenue · obligations · flags</div>
           </div>
           <div class="cell">
-            <div class="k">Funded today</div>
-            <div class="v" id="m-fund">$847K</div>
-            <div class="delta">↑ 22% vs yesterday</div>
+            <div class="k">Risk scoring</div>
+            <div class="v feature">03</div>
+            <div class="delta">Rules · rationale · review</div>
           </div>
           <div class="cell">
-            <div class="k">Median time-to-yes</div>
-            <div class="v" id="m-tty">38<span style="color:var(--muted);font-size:.55em">s</span></div>
-            <div class="delta warm">↓ 4s vs last week</div>
+            <div class="k">Workflow routing</div>
+            <div class="v feature">04</div>
+            <div class="delta warm">Offer · handoff · follow-up</div>
           </div>
         </div>
         <div class="system-stream" id="stream">
@@ -518,62 +546,62 @@
       </div>
 
       <div class="badges">
-        <span class="badge accent">SOC 2 Type II</span>
-        <span class="badge">99.97% uptime</span>
-        <span class="badge">TCPA / DNC compliant</span>
-        <span class="badge">$2.41B processed</span>
-        <span class="badge">500+ funders on platform</span>
+        <span class="badge accent">Human review controls</span>
+        <span class="badge">Private deployment options</span>
+        <span class="badge">Opt-out workflow support</span>
+        <span class="badge">Telnyx messaging</span>
+        <span class="badge">CRM integrations</span>
       </div>
     </div>
   </section>
 
   <section id="stack">
     <div class="wrap">
-      <div class="eyebrow">The Stack</div>
-      <h2>Six agents. <em>One pipeline.</em><br/>Zero tabs.</h2>
-      <p class="lead">The legacy way: ten tools, four reps, three weeks. Ables runs the entire lifecycle — every lead, every deal, every payment — through a single autonomous stack you can audit in real time.</p>
+      <div class="eyebrow">Capabilities</div>
+      <h2>Six focused workflows.<br/><em>One connected pipeline.</em></h2>
+      <p class="lead">Ables connects outreach, qualification, document review, scoring, offer creation, and follow-up so teams can inspect each handoff in one workflow.</p>
 
       <div class="pipeline">
         <div class="agent">
           <div class="agent-num">01 / SOURCING</div>
           <div class="agent-name"><span class="pulse-dot"></span>Hubble</div>
-          <div class="agent-desc">SMS, email, and voice outreach across millions of small businesses. Pulls from D&B, Experian, and your in-house lists.</div>
-          <div class="agent-stat"><span class="k">throughput &nbsp;</span>30K msgs/day</div>
+          <div class="agent-desc">Coordinates SMS, email, and voice outreach from approved customer data sources and configured campaigns.</div>
+          <div class="agent-stat"><span class="k">channels &nbsp;</span>SMS · email · voice</div>
           <div class="agent-arrow">→</div>
         </div>
         <div class="agent">
           <div class="agent-num">02 / QUALIFICATION</div>
           <div class="agent-name"><span class="pulse-dot"></span>Reply</div>
-          <div class="agent-desc">Two-way conversation agent handles objections, qualifies revenue, captures app links.</div>
-          <div class="agent-stat"><span class="k">accuracy &nbsp;</span>97.2%</div>
+          <div class="agent-desc">Supports two-way conversations, routes objections, captures qualification details, and records opt-out events.</div>
+          <div class="agent-stat"><span class="k">controls &nbsp;</span>routing · audit log</div>
           <div class="agent-arrow">→</div>
         </div>
         <div class="agent">
           <div class="agent-num">03 / DOCUMENTS</div>
           <div class="agent-name"><span class="pulse-dot"></span>Vision</div>
-          <div class="agent-desc">Bank statement OCR, MCA stack detection, fraud signals, recurring-debit reconciliation. True revenue calculated to the dollar.</div>
-          <div class="agent-stat"><span class="k">parse time &nbsp;</span>14s</div>
+          <div class="agent-desc">Reviews bank-statement data, identifies recurring obligations, and surfaces items for underwriter review.</div>
+          <div class="agent-stat"><span class="k">outputs &nbsp;</span>revenue · obligations</div>
           <div class="agent-arrow">→</div>
         </div>
         <div class="agent">
           <div class="agent-num">04 / SCORING</div>
           <div class="agent-name"><span class="pulse-dot"></span>Tier</div>
-          <div class="agent-desc">Underwriter model. Five-component risk score → A–E tier with written rationale. Collectability classifier (H/M/L), credit pull, DataMerch fraud check.</div>
-          <div class="agent-stat"><span class="k">tier accuracy &nbsp;</span>94.1%</div>
+          <div class="agent-desc">Applies configured risk rules and data checks to produce a reviewable tier and written rationale.</div>
+          <div class="agent-stat"><span class="k">output &nbsp;</span>tier · rationale</div>
           <div class="agent-arrow">→</div>
         </div>
         <div class="agent">
           <div class="agent-num">05 / APPROVAL</div>
           <div class="agent-name"><span class="pulse-dot"></span>Calculator</div>
-          <div class="agent-desc">Generates compliant offers across daily / weekly / monthly frequencies. Tier-aware. Auto-routes to ISO and merchant inboxes.</div>
-          <div class="agent-stat"><span class="k">approval rate &nbsp;</span>23.7%</div>
+          <div class="agent-desc">Builds offers from approved terms and routes them through configured review and delivery steps.</div>
+          <div class="agent-stat"><span class="k">terms &nbsp;</span>daily · weekly · monthly</div>
           <div class="agent-arrow">→</div>
         </div>
         <div class="agent">
           <div class="agent-num">06 / SERVICING</div>
           <div class="agent-name"><span class="pulse-dot"></span>Drip</div>
-          <div class="agent-desc">Renewal targeting, abandoned-app recovery, payment monitoring, default-risk alerts. Compounds your book without compounding headcount.</div>
-          <div class="agent-stat"><span class="k">renewal lift &nbsp;</span>+34%</div>
+          <div class="agent-desc">Supports renewal targeting, abandoned-application follow-up, payment monitoring, and configured risk alerts.</div>
+          <div class="agent-stat"><span class="k">signals &nbsp;</span>payment · renewal</div>
           <div class="agent-arrow">→</div>
         </div>
       </div>
@@ -584,12 +612,12 @@
     <div class="wrap two-col">
       <div>
         <div class="eyebrow">Built For Lenders</div>
-        <h2>You don't need <em>more reps.</em> You need a runtime.</h2>
-        <p class="lead">Every funder we work with had the same problem: enough capital, not enough conversations. Ables doesn't replace your team — it gives them 100x reach and a system that never sleeps.</p>
+        <h2>Keep your team in control.<br/><em>Connect the work around them.</em></h2>
+        <p class="lead">Funding workflows often span separate inboxes, spreadsheets, document tools, and CRMs. Ables is designed to connect those steps while preserving review points for your team.</p>
         <div class="badges" style="margin-top:32px">
-          <span class="badge">No engineering required</span>
-          <span class="badge">Plugs into Zoho · Salesforce · HubSpot</span>
-          <span class="badge">Live from day 1</span>
+          <span class="badge">Deployment-specific setup</span>
+          <span class="badge">CRM and API integrations</span>
+          <span class="badge">Human review points</span>
         </div>
       </div>
       <div class="caps" style="margin-top:0;grid-template-columns:1fr;gap:16px">
@@ -597,22 +625,22 @@
           <div class="cap-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18.178 8a4.245 4.245 0 0 0-3.683 1.766l-2.99 3.722A4.245 4.245 0 0 1 7.822 16a4.245 4.245 0 0 1 0-8.49 4.245 4.245 0 0 1 3.683 1.745l2.99 3.722A4.245 4.245 0 0 0 18.178 16a4.245 4.245 0 0 0 0-8.49Z"/></svg>
           </div>
-          <h4>Capacity without headcount</h4>
-          <p>One agent runtime handles the conversations of 30 SDRs. Your reps step in only when the deal is qualified.</p>
+          <h4>Capacity without extra handoffs</h4>
+          <p>Automate repetitive routing and follow-up while assigning qualified conversations to the right person.</p>
         </div>
         <div class="cap">
           <div class="cap-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4.5 13.5a.5.5 0 0 0 .4.8H10l-1 7.7 8.5-12.5a.5.5 0 0 0-.4-.8H12l1-6.7Z"/></svg>
           </div>
-          <h4>45-second decisions</h4>
-          <p>Statements parsed, MCA stack detected, credit pulled, offer generated. Every deal scored to A–E with a written rationale.</p>
+          <h4>Review data in one workflow</h4>
+          <p>Bring statement review, obligation detection, data checks, and written scoring rationale into a traceable process.</p>
         </div>
         <div class="cap">
           <div class="cap-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg>
           </div>
-          <h4>Compliance is the default</h4>
-          <p>TCPA quiet hours, DNC scrub, state-by-state usury rules, audit trail per message. SOC 2 Type II audited.</p>
+          <h4>Controls are part of the workflow</h4>
+          <p>Support quiet-hour policies, DNC checks, opt-out handling, and message-level audit records. Customers remain responsible for their legal and compliance obligations.</p>
         </div>
       </div>
     </div>
@@ -620,9 +648,9 @@
 
   <section id="runtime">
     <div class="wrap">
-      <div class="eyebrow">The Runtime</div>
-      <h2>We <em>own</em> the model layer.</h2>
-      <p class="lead">No black box. No per-token API tax. Ables runs on a private GPU cluster with a multi-model cascade — every layer hot-swappable, every prompt versioned, every decision auditable.</p>
+      <div class="eyebrow">Infrastructure</div>
+      <h2>A model layer matched<br/><em>to the workflow.</em></h2>
+      <p class="lead">Model and infrastructure choices vary by deployment. Current implementations combine private GPU capacity with routed model providers and workflow-level logging; confirm the applicable architecture during security review.</p>
 
       <div class="stack-grid">
         <div class="stack-cell">
@@ -631,34 +659,33 @@
             <div>NVIDIA GB10 + RTX 5080</div>
             <div>qwen3.5:35b-a3b</div>
             <div>gemma4:12b · qwen3.5:9b</div>
-            <div>Gemini · Groq · Sonnet (fallback)</div>
+            <div>Gemini · Groq fallbacks</div>
           </div>
         </div>
         <div class="stack-cell">
           <div class="layer">Data</div>
           <div class="items">
-            <div>Plaid · Experian · D&B</div>
-            <div>DataMerch fraud db</div>
-            <div>Gemini Vision OCR</div>
-            <div>MoneyThumb</div>
-            <div>SearXNG enrichment</div>
+            <div>Customer-provided bank files</div>
+            <div>Experian · D&amp;B</div>
+            <div>DataMerch checks</div>
+            <div>CRM records · search enrichment</div>
           </div>
         </div>
         <div class="stack-cell">
           <div class="layer">Channels</div>
           <div class="items">
-            <div>SMS via Aircall + Kixie</div>
+            <div>SMS via Telnyx</div>
             <div>Email via MS Graph + Gmail API</div>
-            <div>Voice (in beta)</div>
+            <div>Voice workflows by deployment</div>
             <div>Webhook + REST API</div>
           </div>
         </div>
         <div class="stack-cell">
           <div class="layer">Integrations</div>
           <div class="items">
-            <div>Zoho · Salesforce · HubSpot</div>
+            <div>Zoho CRM</div>
             <div>LendSaaS · LendTech</div>
-            <div>Notion · Slack · Teams</div>
+            <div>Microsoft Graph · Gmail API</div>
             <div>Custom CRM via API</div>
           </div>
         </div>
@@ -668,24 +695,24 @@
 
   <section id="numbers">
     <div class="wrap">
-      <div class="eyebrow">Results</div>
-      <h2>Numbers that come<br/>from the database, <em>not the deck.</em></h2>
+      <div class="eyebrow">Evaluation</div>
+      <h2>Measure the workflow<br/><em>on your own sample.</em></h2>
       <div class="bignum-row">
         <div class="bignum">
-          <div class="v">$2.41<span class="unit">B</span></div>
-          <div class="k">Processed across the platform</div>
+          <div class="v word">Traceable</div>
+          <div class="k">Follow inputs, rules, and handoffs through the workflow</div>
         </div>
         <div class="bignum">
-          <div class="v">38<span class="unit">s</span></div>
-          <div class="k">Median time from app submission to decision</div>
+          <div class="v word">Reviewable</div>
+          <div class="k">Keep a person in the loop where your process requires it</div>
         </div>
         <div class="bignum">
-          <div class="v">+34<span class="unit">%</span></div>
-          <div class="k">Lift in renewal rate vs. control cohorts</div>
+          <div class="v word">Configurable</div>
+          <div class="k">Match risk rules, routing, and channels to the deployment</div>
         </div>
         <div class="bignum">
-          <div class="v">99.97<span class="unit">%</span></div>
-          <div class="k">Runtime uptime, 12-month rolling</div>
+          <div class="v word">Connected</div>
+          <div class="k">Use CRM, messaging, email, data, and API integrations together</div>
         </div>
       </div>
     </div>
@@ -693,26 +720,26 @@
 
   <section>
     <div class="wrap">
-      <div class="eyebrow">Field Reports</div>
-      <h2>What lenders <em>actually</em> say<br/>after 90 days.</h2>
+      <div class="eyebrow">Proof</div>
+      <h2>Evaluate the system<br/><em>before you believe the claims.</em></h2>
       <div class="quote-grid">
         <div class="quote">
-          <p class="quote-text">"We replaced our entire SDR floor with one operator and a dashboard. Our funded volume tripled the next quarter. I keep waiting for it to break and it just doesn't."</p>
+          <p class="quote-text">See a representative workflow from intake through review and routing. Example activity on this page is labeled as illustrative and is not presented as customer telemetry.</p>
           <div class="quote-author">
-            <div class="quote-avatar">MR</div>
+            <div class="quote-avatar">01</div>
             <div>
-              <div class="quote-name">Michael R.</div>
-              <div class="quote-role">President, Mid-market MCA shop</div>
+              <div class="quote-name">Product walkthrough</div>
+              <div class="quote-role">Review the workflow and controls</div>
             </div>
           </div>
         </div>
         <div class="quote">
-          <p class="quote-text">"The thing I didn't expect: every conversation is searchable, every decision is logged, every objection is mined. We started running our entire renewal book through it in month two."</p>
+          <p class="quote-text">Use an agreed sample to evaluate fit against your process. Access, security, success criteria, and integration work are defined before customer data is connected.</p>
           <div class="quote-author">
-            <div class="quote-avatar">JK</div>
+            <div class="quote-avatar">02</div>
             <div>
-              <div class="quote-name">Jordan K.</div>
-              <div class="quote-role">Head of Underwriting, Specialty Lender</div>
+              <div class="quote-name">Controlled pilot</div>
+              <div class="quote-role">Measure outcomes in your environment</div>
             </div>
           </div>
         </div>
@@ -723,30 +750,30 @@
   <section id="pricing">
     <div class="wrap">
       <div class="eyebrow">Pricing</div>
-      <h2>Priced like the system it is, <em>not the seats you'd hire.</em></h2>
-      <p class="lead">Pricing scales with your funded volume — not your headcount. No per-rep, per-seat, or per-message fees. We'll quote it on the call.</p>
+      <h2>Pricing matched<br/><em>to the deployment.</em></h2>
+      <p class="lead">Scope depends on the workflows, integrations, volume, support, and security requirements involved. We confirm applicable pricing after a discovery call.</p>
 
       <div class="price-grid">
         <div class="price-card">
           <div class="price-tier">Starter</div>
-          <div class="price-desc">For shops funding under $5M/month who want to replace an SDR floor with one operator and the runtime.</div>
+          <div class="price-desc">For funding teams connecting core workflow steps with a standard implementation.</div>
           <ul class="price-list">
             <li>All six agents — Hubble, Reply, Vision, Tier, Calculator, Drip</li>
-            <li>Up to 10K outbound messages per day</li>
-            <li>Standard CRM integration (Zoho, Salesforce, HubSpot)</li>
+            <li>Messaging capacity sized during discovery</li>
+            <li>Standard CRM or API integration</li>
             <li>Email + chat support</li>
           </ul>
           <a href="#" class="btn btn-ghost price-cta" data-action="open-demo">Get a quote <span class="arrow">→</span></a>
         </div>
         <div class="price-card price-card-feature">
           <div class="price-tier">Scale</div>
-          <div class="price-desc">For platforms funding $25M+/month with custom underwriting models, dedicated infra, and white-glove rollout.</div>
+          <div class="price-desc">For platforms that need custom risk rules, dedicated infrastructure, and implementation support.</div>
           <ul class="price-list">
             <li>Everything in Starter, plus:</li>
             <li>Custom Tier scoring model + dedicated GPU pool</li>
             <li>White-label channels + sub-account isolation</li>
-            <li>SOC 2 evidence room + dedicated solutions engineer</li>
-            <li>Volume-aware SLAs · 99.97% uptime committed</li>
+            <li>Security review materials + implementation support</li>
+            <li>Service levels documented in the agreement</li>
           </ul>
           <a href="#" class="btn btn-primary price-cta" data-action="open-demo">Get a quote <span class="arrow">→</span></a>
         </div>
@@ -764,7 +791,7 @@
         </div>
       </div>
 
-      <p class="price-foot">Already running another funding stack? Ables runs alongside — no rip-and-replace required.</p>
+      <p class="price-foot">Already running another funding stack? Ask whether a phased integration fits your current workflow.</p>
     </div>
   </section>
 
@@ -772,11 +799,11 @@
     <div class="wrap">
       <div class="cta-box">
         <div class="eyebrow">Ready when you are</div>
-        <h2>Stop selling tools to your team.<br/><em>Give them a runtime.</em></h2>
-        <p class="lead">Book a 30-minute walkthrough. We'll connect a live agent to your Zoho or Salesforce sandbox, score 5 of your real deals, and you decide from there.</p>
+        <h2>Start with the workflow<br/><em>your team already runs.</em></h2>
+        <p class="lead">Book a walkthrough to review the product, integration fit, security requirements, and a representative evaluation scope.</p>
         <div class="hero-cta">
           <a href="#" class="btn btn-primary btn-lg" data-action="open-demo">Book a walkthrough <span class="arrow">→</span></a>
-          <a href="/legacy.html" class="btn btn-ghost btn-lg">See the toolbox</a>
+          <a href="/security/" class="btn btn-ghost btn-lg">Review security approach</a>
         </div>
       </div>
     </div>
@@ -801,34 +828,35 @@
           </svg>
           Ables
         </div>
-        <div class="foot-tag">Underwriting at the speed of software. Built by operators, run on private GPUs, used by funders who'd rather ship than decide.</div>
+        <div class="foot-tag">AI workflow software for small-business lenders and funding teams.</div>
       </div>
       <div class="foot-col">
         <h5>Product</h5>
-        <a href="/hubble.html">Hubble</a>
-        <a href="/vision.html">Vision</a>
-        <a href="/calculator.html">Calculator</a>
-        <a href="/toolbox.html">Toolbox</a>
+        <a href="/#stack">Capabilities</a>
+        <a href="/#runtime">Infrastructure</a>
+        <a href="/#numbers">Evaluation</a>
+        <a href="/#pricing">Pricing</a>
       </div>
       <div class="foot-col">
         <h5>Company</h5>
+        <a href="/about/">About</a>
+        <a href="/security/">Security</a>
         <a href="#" data-action="open-demo">Book a demo</a>
         <a href="mailto:zak@ables.ai">Contact</a>
         <a href="https://www.linkedin.com/company/ables-ai/" target="_blank" rel="noopener noreferrer">Follow on LinkedIn</a>
-        <a href="/legacy.html">Original site</a>
         <a href="https://github.com/agent-salesforce-ai/ables">GitHub</a>
       </div>
       <div class="foot-col">
-        <h5>Resources</h5>
-        <a href="/legacy.html">Toolbox</a>
-        <a href="/vision.html">Vision</a>
-        <a href="https://2.ables.ai/">Legacy mirror</a>
+        <h5>Legal</h5>
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="/security/">Trust &amp; security</a>
         <a href="mailto:zak@ables.ai">Support</a>
       </div>
     </div>
     <div class="foot-bottom">
-      <div>© 2026 Ables Inc. · ables.ai</div>
-      <div>v2.0 · built on a Mac mini and a GPU cluster</div>
+      <div>© 2026 Ables · ables.ai</div>
+      <div>AI underwriting and lending workflow software</div>
     </div>
   </div>
 </footer>
@@ -843,7 +871,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
         </button>
       </div>
-      <p class="modal-sub">A 30-minute call. We'll connect a live agent to your CRM sandbox, score 5 of your real deals, and you decide from there.</p>
+      <p class="modal-sub">A 30-minute call to review the product, your workflow, integration fit, and an appropriate evaluation scope.</p>
       <form class="modal-body" id="demoForm" novalidate>
         <div class="modal-status" id="demoErr"></div>
         <div class="field-row">
@@ -897,7 +925,7 @@
           <button type="submit" class="btn btn-primary" id="demoSubmit">Send request <span class="arrow">→</span></button>
         </div>
       </form>
-      <div class="modal-footer">We respond within one business day. Or email <a href="mailto:zak@ables.ai" style="color:var(--text);text-decoration:underline">zak@ables.ai</a> directly.</div>
+      <div class="modal-footer">We use this information to respond to your request. See our <a href="/privacy/" style="color:var(--text);text-decoration:underline">privacy notice</a>, or email <a href="mailto:zak@ables.ai" style="color:var(--text);text-decoration:underline">zak@ables.ai</a>.</div>
     </div>
     <div class="modal-success" id="demoSuccess">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 16 9"/></svg>
@@ -997,52 +1025,22 @@
     });
   })();
 
-  // Hero word-flip (cycles prefix while "ables." stays anchored)
-  (function(){
-    const el = document.getElementById('wordPrefix');
-    if (!el) return;
-    const words = [
-      {prefix:'Receiv',  dwell:1800},
-      {prefix:'Profit',  dwell:1800},
-      {prefix:'Screen',  dwell:1800},
-      {prefix:'Contact', dwell:1800},
-      {prefix:'Fund',    dwell:1800},
-      {prefix:'Renew',   dwell:1800},
-      {prefix:'Approv',  dwell:1800},
-      {prefix:'Bank',    dwell:1800},
-      {prefix:'Reli',    dwell:1800},
-      {prefix:'Close',   dwell:1800},
-      {prefix:'',        dwell:3000}, // brand reveal: "Ables."
-    ];
-    let i = 0;
-    function next(){
-      el.classList.add('fading');
-      setTimeout(() => {
-        i = (i + 1) % words.length;
-        el.textContent = words[i].prefix;
-        el.classList.remove('fading');
-        setTimeout(next, words[i].dwell);
-      }, 260);
-    }
-    setTimeout(next, words[0].dwell);
-  })();
-
-  // Live stream simulator
+  // Illustrative workflow simulator. This is sample activity, not production telemetry.
   const streamEl = document.getElementById('stream');
   const events = [
-    {tag:'OUTREACH', cls:'', msg:'sms.send → +1 (646) ••• 4421 · "Hey Marcus, saw you process $..."'},
+    {tag:'OUTREACH', cls:'', msg:'telnyx.sms.send → +1 (646) ••• 4421 · "Hey Marcus, saw you process $..."'},
     {tag:'REPLY-IN', cls:'ok', msg:'inbound · "send me the link" · intent=interested · conf=0.94'},
     {tag:'VISION',   cls:'', msg:'parse: 3 statements · 184 txns · MCA-stack=2 · cleared'},
     {tag:'TIER',     cls:'score', msg:'5-comp model: rev=8.2 · NSF=9.1 · stack=6.4 · credit=7.0 · collect=H → tier=B'},
     {tag:'OFFER',    cls:'fund', msg:'$185K @ 1.32 · 12wk daily · sent → atlas-cap / northpoint-llc'},
     {tag:'FUNDED',   cls:'fund', msg:'wire confirmed · $185,000 · 12.4 hrs from first contact'},
     {tag:'DRIP',     cls:'', msg:'renewal queue · +14 deals @ payback ≥ 80%'},
-    {tag:'OUTREACH', cls:'', msg:'sms.send → +1 (305) ••• 9182 · angle=health · pace=ok'},
+    {tag:'OUTREACH', cls:'', msg:'telnyx.sms.send → +1 (305) ••• 9182 · angle=health · pace=ok'},
     {tag:'REPLY-IN', cls:'warm', msg:'inbound · "stop" · opt-out registered · TCPA logged'},
     {tag:'QUALIFY',  cls:'ok', msg:'rev=$48K/mo · time-in-biz=3y · industry=construction · → vision'},
     {tag:'VISION',   cls:'', msg:'fraud check: 0 hits · DataMerch clean · DNC clean'},
     {tag:'TIER',     cls:'score', msg:'rev=6.0 · NSF=4.2 · stack=5.5 · collect=M → tier=C · rationale logged'},
-    {tag:'OUTREACH', cls:'', msg:'sms.send → +1 (212) ••• 0044 · angle=growth · pace=ok'},
+    {tag:'OUTREACH', cls:'', msg:'telnyx.sms.send → +1 (212) ••• 0044 · angle=growth · pace=ok'},
     {tag:'OFFER',    cls:'fund', msg:'accepted · contract dispatched via DocuSign · funding ETA 36hr'},
     {tag:'TIER',     cls:'score', msg:'rev=4.1 · NSF=2.8 · stack=8.9 → tier=E · auto-decline · reason logged'},
   ];
@@ -1062,17 +1060,6 @@
   // Seed a few
   for (let i=0; i<6; i++) pushLine();
   setInterval(pushLine, 1400 + Math.random()*1600);
-
-  // Tick the metrics
-  function jitter(el, base, range, fmt){
-    setInterval(() => {
-      const v = base + Math.floor(Math.random()*range) - Math.floor(range/2);
-      el.textContent = fmt(v);
-    }, 2400);
-  }
-  jitter(document.getElementById('m-dec'), 142, 14, v=>v);
-  jitter(document.getElementById('m-pipe'), 8124, 80, v=>v.toLocaleString());
-  jitter(document.getElementById('m-fund'), 847, 16, v=>'$'+v+'K');
 </script>
 
 </body>
