@@ -68,9 +68,9 @@ for (const url of sitemapUrls) {
   if (canonicals.length !== 1 || canonicals[0]?.[1] !== url) fail(`${relative}: canonical does not match ${url}`);
   if (!/<meta\s+name="robots"\s+content="[^"]*index,follow/i.test(html)) fail(`${relative}: missing index,follow robots directive`);
   if (!html.includes('G-NLL9GDQY8S')) fail(`${relative}: missing Ables GA4 measurement ID`);
-  if (!/page_location\s*:\s*window\.location\.origin\s*\+\s*window\.location\.pathname/.test(html)) fail(`${relative}: GA page_location can include query parameters`);
-  if (!/page_referrer\s*:\s*document\.referrer\s*\?\s*new URL\(document\.referrer\)\.origin\s*\+\s*new URL\(document\.referrer\)\.pathname\s*:\s*['"]{2}/.test(html)) fail(`${relative}: GA page_referrer can include query parameters`);
-  if (!html.includes('/analytics.js?v=4cee0530253c')) fail(`${relative}: missing versioned analytics asset`);
+  if (!html.includes(`page_location: '${url}'`)) fail(`${relative}: GA page_location is not fixed to its canonical path`);
+  if (!/page_referrer\s*:\s*document\.referrer\s*\?\s*new URL\(document\.referrer\)\.origin\s*:\s*['"]{2}/.test(html)) fail(`${relative}: GA page_referrer is not origin-only`);
+  if (!html.includes('/analytics.js?v=60102cc503b3')) fail(`${relative}: missing versioned analytics asset`);
   if (/fonts\.googleapis\.com|fonts\.gstatic\.com/i.test(html)) fail(`${relative}: still loads external Google Fonts`);
   if (jsonLdBlocks.length === 0) fail(`${relative}: missing JSON-LD`);
 

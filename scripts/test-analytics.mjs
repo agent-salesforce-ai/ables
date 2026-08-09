@@ -54,14 +54,14 @@ function assertSafeShape(value) {
 {
   const rawSecrets = ['zak@example.com', '212-555-1212', '123-45-6789', 'private-campaign'];
   const result = runAnalytics({
-    pathname: '/solutions/underwriting/',
+    pathname: '/solutions/lending-workflow-automation/',
     search: '?utm_source=zak%40example.com&utm_medium=212-555-1212&utm_campaign=private-campaign&utm_content=123-45-6789&utm_term=zak%40example.com&utm_id=2125551212',
     referrer: 'https://search.example/results?email=zak%40example.com',
   });
 
   assert.deepEqual(result.attributes, {
-    landing_page: '/solutions/underwriting/',
-    referrer: 'https://search.example/results',
+    landing_page: '/solutions/lending-workflow-automation/',
+    referrer: 'https://search.example',
   });
   assert.deepEqual(result.stored, result.attributes);
   assertSafeShape(result.stored);
@@ -77,7 +77,7 @@ function assertSafeShape(value) {
 
   assert.deepEqual(result.attributes, {
     landing_page: '/resources/workflow-readiness-assessment/',
-    referrer: 'https://www.google.com/search',
+    referrer: 'https://www.google.com',
     utm_source: 'google',
     utm_medium: 'cpc',
   });
@@ -124,4 +124,18 @@ function assertSafeShape(value) {
   assert.doesNotMatch(JSON.stringify(result.calls), /zak@example\.com|2125551212|123-45-6789|utm_campaign/i);
 }
 
-console.log('Analytics privacy tests passed: query PII dropped, safe attribution allowlisted, stale unsafe storage purged, event PII blocked.');
+{
+  const result = runAnalytics({
+    pathname: '/private/Jane-Doe',
+    referrer: 'https://partner.example/leads/Jane-Doe?campaign=private',
+  });
+
+  assert.deepEqual(result.attributes, {
+    landing_page: '/',
+    referrer: 'https://partner.example',
+  });
+  assert.deepEqual(result.stored, result.attributes);
+  assert.doesNotMatch(JSON.stringify(result), /Jane-Doe|\/leads\//i);
+}
+
+console.log('Analytics privacy tests passed: canonical landing paths enforced, referrers reduced to origins, unsafe query/stale storage/event PII blocked.');

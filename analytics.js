@@ -15,6 +15,30 @@
     'paid_social', 'paid-social', 'social', 'email', 'referral', 'display',
     'affiliate', 'sms',
   ]);
+  const ALLOWED_LANDING_PATHS = new Set([
+    '/',
+    '/about/',
+    '/security/',
+    '/privacy/',
+    '/terms/',
+    '/solutions/',
+    '/solutions/lender-lead-qualification/',
+    '/solutions/bank-statement-review/',
+    '/solutions/configurable-risk-scoring/',
+    '/solutions/lending-workflow-automation/',
+    '/solutions/offer-and-renewal-workflows/',
+    '/integrations/',
+    '/integrations/zoho-crm/',
+    '/integrations/microsoft-email/',
+    '/integrations/telnyx/',
+    '/integrations/lendsaas-lendtech/',
+    '/integrations/api-webhooks/',
+    '/resources/',
+    '/resources/evaluate-ai-underwriting-software/',
+    '/resources/build-vs-buy-lending-automation/',
+    '/resources/lending-workflow-platform-vs-point-tools/',
+    '/resources/workflow-readiness-assessment/',
+  ]);
 
   function clean(value, maxLength) {
     return typeof value === 'string'
@@ -31,7 +55,7 @@
 
   function cleanPath(value) {
     const path = clean(value, 500);
-    return path.startsWith('/') && !looksLikePii(path) ? path : '/';
+    return ALLOWED_LANDING_PATHS.has(path) && !looksLikePii(path) ? path : '/';
   }
 
   function cleanReferrer(value) {
@@ -39,8 +63,7 @@
     try {
       const url = new URL(value);
       if (url.protocol !== 'https:' && url.protocol !== 'http:') return '';
-      const referrer = clean(`${url.origin}${url.pathname}`, 500);
-      return looksLikePii(referrer) ? clean(url.origin, 200) : referrer;
+      return clean(url.origin, 200);
     } catch (_) {
       return '';
     }
