@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NLL9GDQY8S"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-NLL9GDQY8S');
+  </script>
+  <script defer src="/analytics.js?v=00ccf10ba9f42a81"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Microsoft Graph and Gmail API Email Workflows | Ables</title>
+  <meta name="description" content="Connect approved mailboxes to lender email workflows with deployment-specific permissions, routing, human review, and audit expectations." />
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1" />
+  <link rel="canonical" href="https://ables.ai/integrations/microsoft-email/" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ables.ai/integrations/microsoft-email/" />
+  <meta property="og:title" content="Microsoft Graph and Gmail API Email Workflows | Ables" />
+  <meta property="og:description" content="Connect approved mailboxes to lender email workflows with deployment-specific permissions, routing, human review, and audit expectations." />
+  <meta property="og:image" content="https://ables.ai/og-cover.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="stylesheet" href="/company.css?v=20260809a" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ables.ai/"},{"@type":"ListItem","position":2,"name":"Integrations","item":"https://ables.ai/integrations/"},{"@type":"ListItem","position":3,"name":"Microsoft Graph and Gmail API","item":"https://ables.ai/integrations/microsoft-email/"}]},{"@type":"Service","@id":"https://ables.ai/integrations/microsoft-email/#main","url":"https://ables.ai/integrations/microsoft-email/","name":"Email workflows through Microsoft Graph and Gmail API.","description":"Connect approved mailboxes to lender email workflows with deployment-specific permissions, routing, human review, and audit expectations.","inLanguage":"en-US","serviceType":"Microsoft Graph and Gmail API integration for lender email workflows","provider":{"@id":"https://ables.ai/#organization"},"audience":{"@type":"BusinessAudience","audienceType":"Small-business lenders and funding teams"}}]}</script>
+
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="/" aria-label="Ables home">
+        <svg width="34" height="20" viewBox="0 0 28 16" aria-hidden="true"><ellipse cx="12" cy="8" rx="11" ry="3.2" stroke="currentColor" stroke-width=".7" fill="none" opacity=".42" transform="rotate(-20 12 8)"/><circle cx="12" cy="8" r="5" fill="currentColor" opacity=".12"/><circle cx="12" cy="8" r="3.6" fill="currentColor" opacity=".32"/><circle cx="12" cy="8" r="2.8" fill="currentColor"/></svg>
+        Ables
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="/solutions/">Solutions</a>
+        <a href="/integrations/">Integrations</a>
+        <a href="/resources/">Resources</a>
+        <a href="/security/">Security</a>
+        <a class="nav-cta" href="/#cta">Book a demo</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="Breadcrumb"><div class="wrap"><ol><li><a href="/">Home</a></li><li><a href="/integrations/">Integrations</a></li><li><span aria-current="page">Microsoft Graph and Gmail API</span></li></ol></div></nav>
+
+  <main id="main">
+    <section class="page-hero page-hero--commercial">
+      <div class="wrap">
+        <p class="eyebrow">Integration · Email</p>
+        <h1>Email workflows through Microsoft Graph and Gmail API.</h1>
+        <p class="lead">Current Ables implementations support email workflows through Microsoft Graph and the Gmail API. Mailboxes, permissions, events, actions, and human review are scoped per deployment.</p>
+        <div class="hero-actions">
+          <a class="button" href="/#cta">Book a workflow review <span aria-hidden="true">→</span></a>
+          <a class="button button--secondary" href="/solutions/lender-lead-qualification/">Explore qualification workflows</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="wrap content-shell content-shell--wide">
+      <aside class="toc" aria-label="On this page">
+        <strong>On this page</strong>
+        <a href="#scope">Workflow scope</a>
+        <a href="#permissions">Permissions</a>
+        <a href="#controls">Controls</a>
+        <a href="#references">Vendor references</a>
+      </aside>
+      <article class="prose">
+
+      <p class="section-kicker">Mailbox scope</p><h2 id="scope">Choose the mailbox and actions deliberately</h2>
+      <p>An email workflow begins with the customer-approved account, mailbox or user context, folders or labels, message types, and actions. Depending on the selected process, email can support outreach, reply handling, routing, review tasks, and follow-up. Exact behavior must be demonstrated for the proposed deployment.</p>
+      <div class="workflow-ledger"><div class="workflow-step"><span class="step-label">Account</span><div><h3>Identify the approved mailbox</h3><p>Define the organization, user or shared mailbox, environment, and customer owner.</p></div></div><div class="workflow-step"><span class="step-label">Access</span><div><h3>Limit the permitted operations</h3><p>Choose the minimum read, compose, send, label, move, or other permissions required by the workflow.</p></div></div><div class="workflow-step"><span class="step-label">Route</span><div><h3>Define the selected messages and handoffs</h3><p>Document filters, classification expectations, exceptions, and when a person takes control.</p></div></div><div class="workflow-step"><span class="step-label">Record</span><div><h3>Choose the downstream system</h3><p>Define what status or context is written back and what remains only in the mailbox.</p></div></div></div>
+
+      <h2 id="permissions">Permissions and identity</h2>
+      <p>Microsoft Graph and Gmail use different authorization and administration models. Discovery should identify whether delegated or application access is appropriate, who grants consent, how credentials are stored and rotated, and how access is removed. The final architecture should be documented before production use.</p>
+
+      <h2 id="controls">Operational controls to test</h2>
+      <ul><li>Duplicate messages, threads, aliases, forwarding, and automated replies.</li><li>Human-sent replies that arrive while a workflow is processing.</li><li>Opt-outs, wrong recipients, bounced mail, and delivery failures.</li><li>Permission removal, token expiration, rate limits, and provider outages.</li><li>Mailbox reassignment, user departure, and incident response.</li></ul>
+      <div class="truth-note"><strong>No universal mailbox access or send behavior is claimed.</strong><p>The supported identity, scopes, throughput, routing, retention, and operational support depend on the provider and proposed deployment.</p></div>
+      <div class="source-list"><h2 id="references">Primary vendor references</h2><ul><li><a href="https://learn.microsoft.com/en-us/graph/api/resources/mail-api-overview" rel="noopener noreferrer">Microsoft Graph Outlook mail API overview</a></li><li><a href="https://developers.google.com/workspace/gmail/api/guides" rel="noopener noreferrer">Google Workspace Gmail API guides</a></li></ul></div>
+      <section class="cta-panel" aria-labelledby="page-cta"><h2 id="page-cta">Map one approved mailbox workflow.</h2><p>Discuss the account, permissions, message types, actions, handoffs, write-back behavior, and failure paths required by your team.</p><a class="button" href="/#cta">Book a workflow review <span aria-hidden="true">→</span></a></section>
+
+      </article>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <div>© 2026 Ables · AI workflow software for small-business lenders</div>
+      <div class="footer-links"><a href="/solutions/">Solutions</a><a href="/integrations/">Integrations</a><a href="/resources/">Resources</a><a href="/about/">About</a><a href="/security/">Security</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="mailto:zak@ables.ai">Contact</a></div>
+    </div>
+  </footer>
+
+</body>
+</html>

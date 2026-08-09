@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NLL9GDQY8S"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-NLL9GDQY8S');
+  </script>
+  <script defer src="/analytics.js?v=00ccf10ba9f42a81"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>REST API and Webhook Integrations for Lenders | Ables</title>
+  <meta name="description" content="Define custom lending workflow integrations with explicit events, authentication, schemas, idempotency, errors, reconciliation, and human ownership." />
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1" />
+  <link rel="canonical" href="https://ables.ai/integrations/api-webhooks/" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ables.ai/integrations/api-webhooks/" />
+  <meta property="og:title" content="REST API and Webhook Integrations for Lenders | Ables" />
+  <meta property="og:description" content="Define custom lending workflow integrations with explicit events, authentication, schemas, idempotency, errors, reconciliation, and human ownership." />
+  <meta property="og:image" content="https://ables.ai/og-cover.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="stylesheet" href="/company.css?v=20260809a" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ables.ai/"},{"@type":"ListItem","position":2,"name":"Integrations","item":"https://ables.ai/integrations/"},{"@type":"ListItem","position":3,"name":"REST APIs and webhooks","item":"https://ables.ai/integrations/api-webhooks/"}]},{"@type":"Service","@id":"https://ables.ai/integrations/api-webhooks/#main","url":"https://ables.ai/integrations/api-webhooks/","name":"REST API and webhook workflows with an explicit data contract.","description":"Define custom lending workflow integrations with explicit events, authentication, schemas, idempotency, errors, reconciliation, and human ownership.","inLanguage":"en-US","serviceType":"Custom REST API and webhook integration for lending workflows","provider":{"@id":"https://ables.ai/#organization"},"audience":{"@type":"BusinessAudience","audienceType":"Small-business lenders and funding teams"}}]}</script>
+
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="/" aria-label="Ables home">
+        <svg width="34" height="20" viewBox="0 0 28 16" aria-hidden="true"><ellipse cx="12" cy="8" rx="11" ry="3.2" stroke="currentColor" stroke-width=".7" fill="none" opacity=".42" transform="rotate(-20 12 8)"/><circle cx="12" cy="8" r="5" fill="currentColor" opacity=".12"/><circle cx="12" cy="8" r="3.6" fill="currentColor" opacity=".32"/><circle cx="12" cy="8" r="2.8" fill="currentColor"/></svg>
+        Ables
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="/solutions/">Solutions</a>
+        <a href="/integrations/">Integrations</a>
+        <a href="/resources/">Resources</a>
+        <a href="/security/">Security</a>
+        <a class="nav-cta" href="/#cta">Book a demo</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="Breadcrumb"><div class="wrap"><ol><li><a href="/">Home</a></li><li><a href="/integrations/">Integrations</a></li><li><span aria-current="page">REST APIs and webhooks</span></li></ol></div></nav>
+
+  <main id="main">
+    <section class="page-hero page-hero--commercial">
+      <div class="wrap">
+        <p class="eyebrow">Integration · Custom systems</p>
+        <h1>REST API and webhook workflows with an explicit data contract.</h1>
+        <p class="lead">Ables supports custom REST and webhook connections. A reliable implementation begins with the event, schema, permitted action, failure behavior, and system owner.</p>
+        <div class="hero-actions">
+          <a class="button" href="/#cta">Book a workflow review <span aria-hidden="true">→</span></a>
+          <a class="button button--secondary" href="/solutions/lending-workflow-automation/">Explore workflow automation</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="wrap content-shell content-shell--wide">
+      <aside class="toc" aria-label="On this page">
+        <strong>On this page</strong>
+        <a href="#contract">Integration contract</a>
+        <a href="#reliability">Reliability questions</a>
+        <a href="#security">Security questions</a>
+        <a href="#evaluation">Evaluation</a>
+      </aside>
+      <article class="prose">
+
+      <p class="section-kicker">Custom connections</p><h2 id="contract">Describe the integration as a contract</h2>
+      <div class="workflow-ledger"><div class="workflow-step"><span class="step-label">Event</span><div><h3>What happened?</h3><p>Name the source event, timestamp, identifier, expected state, version, and duplicate behavior.</p></div></div><div class="workflow-step"><span class="step-label">Payload</span><div><h3>What data is required?</h3><p>Define the schema, required and optional fields, types, sensitive-data classification, and validation rules.</p></div></div><div class="workflow-step"><span class="step-label">Action</span><div><h3>What may the receiver do?</h3><p>Limit the downstream read, write, message, calculation, task, or routing action to the agreed workflow.</p></div></div><div class="workflow-step"><span class="step-label">Result</span><div><h3>How is the outcome reconciled?</h3><p>Define success, partial success, retry, permanent failure, notification, and human review behavior.</p></div></div></div>
+
+      <h2 id="reliability">Reliability questions to answer</h2>
+      <ul><li>Can the same event arrive more than once, late, or out of order?</li><li>Which identifier makes the action safe to retry?</li><li>What timeout and response are expected?</li><li>Who owns retries, dead-letter events, and manual reconciliation?</li><li>How are schema and version changes introduced?</li><li>What monitoring confirms that both systems agree?</li></ul>
+      <p>These are design questions, not claims that every Ables connection implements the same mechanism. The answers belong in the deployment specification and test evidence.</p>
+
+      <h2 id="security">Security questions to answer</h2>
+      <ul><li>Authentication method, credential owner, storage, rotation, and revocation.</li><li>Transport path, network restrictions, source validation, and permitted origins.</li><li>Minimum data scope and field-level sensitivity.</li><li>Logging, redaction, retention, deletion, and access review.</li><li>Abuse prevention, rate limits, and incident contacts.</li></ul>
+      <div class="truth-note"><strong>Custom does not mean unrestricted.</strong><p>The safest connection is limited to the systems, events, fields, and actions required by the approved workflow.</p></div>
+
+      <h2 id="evaluation">Test the contract from both sides</h2>
+      <p>Use representative valid and invalid payloads, duplicate events, missing fields, stale states, permission failures, provider errors, timeouts, and human corrections. Verify both the immediate response and the final system-of-record state.</p>
+      <section class="cta-panel" aria-labelledby="page-cta"><h2 id="page-cta">Map the event before writing the connector.</h2><p>Bring the source event, payload, authentication, permitted action, reconciliation path, and system owners to a technical workflow review.</p><a class="button" href="/#cta">Book a workflow review <span aria-hidden="true">→</span></a></section>
+
+      </article>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <div>© 2026 Ables · AI workflow software for small-business lenders</div>
+      <div class="footer-links"><a href="/solutions/">Solutions</a><a href="/integrations/">Integrations</a><a href="/resources/">Resources</a><a href="/about/">About</a><a href="/security/">Security</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="mailto:zak@ables.ai">Contact</a></div>
+    </div>
+  </footer>
+
+</body>
+</html>
