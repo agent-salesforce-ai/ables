@@ -15,6 +15,8 @@
   const summary = document.getElementById('assessment-summary');
   const manualHours = document.getElementById('manual-hours');
   const priorityList = document.getElementById('priority-list');
+  const calculateButton = document.getElementById('calculate-readiness');
+  if (!calculateButton) return;
 
   function boundedNumber(input, minimum, maximum) {
     const parsed = Number(input.value);
@@ -33,6 +35,9 @@
 
   form.addEventListener('submit', function (event) {
     event.preventDefault();
+  });
+
+  calculateButton.addEventListener('click', function () {
 
     const volume = boundedNumber(volumeInput, 1, 100000);
     const minutes = boundedNumber(minutesInput, 0, 1440);

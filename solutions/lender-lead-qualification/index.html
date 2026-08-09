@@ -7,9 +7,12 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-NLL9GDQY8S');
+    gtag('config', 'G-NLL9GDQY8S', {
+      page_location: window.location.origin + window.location.pathname,
+      page_referrer: document.referrer ? new URL(document.referrer).origin + new URL(document.referrer).pathname : ''
+    });
   </script>
-  <script defer src="/analytics.js?v=00ccf10ba9f42a81"></script>
+  <script defer src="/analytics.js?v=4cee0530253c"></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>AI Lead Qualification for Business Lenders | Ables</title>

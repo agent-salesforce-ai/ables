@@ -68,7 +68,9 @@ for (const url of sitemapUrls) {
   if (canonicals.length !== 1 || canonicals[0]?.[1] !== url) fail(`${relative}: canonical does not match ${url}`);
   if (!/<meta\s+name="robots"\s+content="[^"]*index,follow/i.test(html)) fail(`${relative}: missing index,follow robots directive`);
   if (!html.includes('G-NLL9GDQY8S')) fail(`${relative}: missing Ables GA4 measurement ID`);
-  if (!html.includes('/analytics.js?v=00ccf10ba9f42a81')) fail(`${relative}: missing versioned analytics asset`);
+  if (!/page_location\s*:\s*window\.location\.origin\s*\+\s*window\.location\.pathname/.test(html)) fail(`${relative}: GA page_location can include query parameters`);
+  if (!/page_referrer\s*:\s*document\.referrer\s*\?\s*new URL\(document\.referrer\)\.origin\s*\+\s*new URL\(document\.referrer\)\.pathname\s*:\s*['"]{2}/.test(html)) fail(`${relative}: GA page_referrer can include query parameters`);
+  if (!html.includes('/analytics.js?v=4cee0530253c')) fail(`${relative}: missing versioned analytics asset`);
   if (/fonts\.googleapis\.com|fonts\.gstatic\.com/i.test(html)) fail(`${relative}: still loads external Google Fonts`);
   if (jsonLdBlocks.length === 0) fail(`${relative}: missing JSON-LD`);
 
@@ -130,7 +132,10 @@ for (const directory of ['solutions', 'integrations', 'resources']) {
 
 const assessmentHtml = await readFile(path.join(root, 'resources/workflow-readiness-assessment/index.html'), 'utf8');
 const privacyHtml = await readFile(path.join(root, 'privacy/index.html'), 'utf8');
-if (!assessmentHtml.includes('/assessment.js?v=20260809a')) fail('Assessment page is missing versioned assessment script');
+if (!assessmentHtml.includes('/assessment.js?v=7bb889a2a9ec')) fail('Assessment page is missing versioned assessment script');
+if (!assessmentHtml.includes('id="calculate-readiness" type="button"')) fail('Assessment must use a non-submitting calculate button');
+if (/\bname="(?:monthly-volume|minutes-per-item|system-count|handoff-count|control-state|access-state)"/.test(assessmentHtml)) fail('Assessment inputs must not be successful GET controls');
+if (!/<form[^>]+id="readiness-assessment"[^>]+method="post"/i.test(assessmentHtml)) fail('Assessment must fail closed with POST when scripts are unavailable');
 if (!privacyHtml.includes('values entered into the assessment are not submitted')) fail('Privacy notice is missing assessment data-handling disclosure');
 
 if (failures.length) {

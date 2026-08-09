@@ -5,7 +5,16 @@
   const ATTRIBUTION_KEY = 'ables-demo-attribution-v1';
   const ALLOWED_EVENTS = new Set(['demo_open', 'demo_video_click', 'generate_lead']);
   const ALLOWED_EVENT_PARAMS = new Set(['form_name', 'lead_type', 'page_path', 'cta_name', 'cta_location', 'destination_host']);
-  const UTM_FIELDS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'utm_id'];
+  const ALLOWED_ATTRIBUTION_SOURCES = new Set([
+    'direct', 'google', 'bing', 'duckduckgo', 'yahoo', 'linkedin',
+    'facebook', 'instagram', 'meta', 'newsletter', 'email', 'trustpilot',
+    'bbb', 'referral', 'ables',
+  ]);
+  const ALLOWED_ATTRIBUTION_MEDIA = new Set([
+    'none', 'organic', 'cpc', 'ppc', 'paid_search', 'paid-search',
+    'paid_social', 'paid-social', 'social', 'email', 'referral', 'display',
+    'affiliate', 'sms',
+  ]);
 
   function clean(value, maxLength) {
     return typeof value === 'string'
@@ -13,9 +22,16 @@
       : '';
   }
 
+  function looksLikePii(value) {
+    const text = clean(value, 500);
+    return /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i.test(text)
+      || /\b\d{3}[ -]?\d{2}[ -]?\d{4}\b/.test(text)
+      || /(?:\d[\s().+-]*){7,}/.test(text);
+  }
+
   function cleanPath(value) {
     const path = clean(value, 500);
-    return path.startsWith('/') ? path : '/';
+    return path.startsWith('/') && !looksLikePii(path) ? path : '/';
   }
 
   function cleanReferrer(value) {
@@ -23,10 +39,36 @@
     try {
       const url = new URL(value);
       if (url.protocol !== 'https:' && url.protocol !== 'http:') return '';
-      return clean(`${url.origin}${url.pathname}`, 500);
+      const referrer = clean(`${url.origin}${url.pathname}`, 500);
+      return looksLikePii(referrer) ? clean(url.origin, 200) : referrer;
     } catch (_) {
       return '';
     }
+  }
+
+  function allowlistedToken(value, allowlist) {
+    const token = clean(value, 80).toLowerCase();
+    return allowlist.has(token) ? token : '';
+  }
+
+  function sanitizeAttribution(raw) {
+    const source = allowlistedToken(raw?.utm_source, ALLOWED_ATTRIBUTION_SOURCES);
+    const medium = allowlistedToken(raw?.utm_medium, ALLOWED_ATTRIBUTION_MEDIA);
+    const sanitized = {
+      landing_page: cleanPath(raw?.landing_page || window.location.pathname),
+      referrer: cleanReferrer(raw?.referrer),
+    };
+    if (source && medium) {
+      sanitized.utm_source = source;
+      sanitized.utm_medium = medium;
+    }
+    return sanitized;
+  }
+
+  function storeFirstTouch(firstTouch) {
+    try {
+      sessionStorage.setItem(ATTRIBUTION_KEY, JSON.stringify(firstTouch));
+    } catch (_) {}
   }
 
   function readFirstTouch() {
@@ -34,23 +76,23 @@
       const stored = sessionStorage.getItem(ATTRIBUTION_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        if (parsed && typeof parsed === 'object') return parsed;
+        if (parsed && typeof parsed === 'object') {
+          const sanitized = sanitizeAttribution(parsed);
+          storeFirstTouch(sanitized);
+          return sanitized;
+        }
       }
     } catch (_) {}
 
     const params = new URLSearchParams(window.location.search);
-    const firstTouch = {
+    const firstTouch = sanitizeAttribution({
       landing_page: cleanPath(window.location.pathname),
       referrer: cleanReferrer(document.referrer),
-    };
-    UTM_FIELDS.forEach((field) => {
-      const value = clean(params.get(field), 200);
-      if (value) firstTouch[field] = value;
+      utm_source: params.get('utm_source'),
+      utm_medium: params.get('utm_medium'),
     });
 
-    try {
-      sessionStorage.setItem(ATTRIBUTION_KEY, JSON.stringify(firstTouch));
-    } catch (_) {}
+    storeFirstTouch(firstTouch);
     return firstTouch;
   }
 
@@ -64,7 +106,7 @@
     Object.entries(params || {}).forEach(([key, value]) => {
       if (!ALLOWED_EVENT_PARAMS.has(key)) return;
       const cleaned = key === 'page_path' ? cleanPath(value) : clean(value, 100);
-      if (cleaned) safeParams[key] = cleaned;
+      if (cleaned && !looksLikePii(cleaned)) safeParams[key] = cleaned;
     });
     window.gtag('event', eventName, safeParams);
   }

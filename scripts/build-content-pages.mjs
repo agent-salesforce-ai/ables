@@ -106,9 +106,12 @@ function layout(page) {
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-NLL9GDQY8S');
+    gtag('config', 'G-NLL9GDQY8S', {
+      page_location: window.location.origin + window.location.pathname,
+      page_referrer: document.referrer ? new URL(document.referrer).origin + new URL(document.referrer).pathname : ''
+    });
   </script>
-  <script defer src="/analytics.js?v=00ccf10ba9f42a81"></script>
+  <script defer src="/analytics.js?v=4cee0530253c"></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>${page.title}</title>
@@ -662,20 +665,20 @@ const pages = [
     breadcrumbs: [{ name: 'Resources', path: '/resources/' }, { name: 'Workflow readiness assessment', path: '/resources/workflow-readiness-assessment/' }],
     secondaryHref: '/resources/evaluate-ai-underwriting-software/', secondaryLabel: 'Read the evaluation guide',
     toc: [{ id: 'assessment', label: 'Assessment' }, { id: 'method', label: 'Method and assumptions' }, { id: 'next', label: 'Use the result' }],
-    head: '<script defer src="/assessment.js?v=20260809a"></script>',
+    head: '<script defer src="/assessment.js?v=7bb889a2a9ec"></script>',
     body: `
       <p class="section-kicker">Your inputs</p><h2 id="assessment">Describe one current workflow</h2>
       <p>Choose a single repeatable workflow, such as qualification, bank-statement review, risk-rule preparation, offer routing, or renewal follow-up. Use current observed values where possible.</p>
-      <form class="assessment" id="readiness-assessment">
+      <form class="assessment" id="readiness-assessment" action="/resources/workflow-readiness-assessment/" method="post">
         <div class="assessment-grid">
-          <div class="assessment-field"><label for="monthly-volume">Items handled per month</label><input id="monthly-volume" name="monthly-volume" type="number" min="1" max="100000" step="1" value="100" inputmode="numeric" /><small>Applications, deals, documents, or conversations in this one workflow.</small></div>
-          <div class="assessment-field"><label for="minutes-per-item">Repeatable manual minutes per item</label><input id="minutes-per-item" name="minutes-per-item" type="number" min="0" max="1440" step="1" value="30" inputmode="numeric" /><small>Exclude time that is entirely judgment or customer waiting time.</small></div>
-          <div class="assessment-field"><label for="system-count">Systems a person touches</label><input id="system-count" name="system-count" type="number" min="1" max="50" step="1" value="4" inputmode="numeric" /><small>Include inboxes and spreadsheets when they are part of the process.</small></div>
-          <div class="assessment-field"><label for="handoff-count">Human or system handoffs</label><input id="handoff-count" name="handoff-count" type="number" min="0" max="50" step="1" value="3" inputmode="numeric" /><small>Count transfers of data, status, ownership, or approval.</small></div>
-          <div class="assessment-field"><label for="control-state">Approval and exception rules</label><select id="control-state" name="control-state"><option value="documented">Documented and owned</option><option value="partial" selected>Partly documented</option><option value="unclear">Mostly implicit or unclear</option></select><small>Choose the state of this workflow, not the organization overall.</small></div>
-          <div class="assessment-field"><label for="access-state">Data and system access</label><select id="access-state" name="access-state"><option value="defined">APIs or approved events are defined</option><option value="available" selected>Exports or access exist but need mapping</option><option value="unclear">Access or ownership is unclear</option></select><small>This does not assess security approval or technical feasibility.</small></div>
+          <div class="assessment-field"><label for="monthly-volume">Items handled per month</label><input id="monthly-volume" type="number" min="1" max="100000" step="1" value="100" inputmode="numeric" /><small>Applications, deals, documents, or conversations in this one workflow.</small></div>
+          <div class="assessment-field"><label for="minutes-per-item">Repeatable manual minutes per item</label><input id="minutes-per-item" type="number" min="0" max="1440" step="1" value="30" inputmode="numeric" /><small>Exclude time that is entirely judgment or customer waiting time.</small></div>
+          <div class="assessment-field"><label for="system-count">Systems a person touches</label><input id="system-count" type="number" min="1" max="50" step="1" value="4" inputmode="numeric" /><small>Include inboxes and spreadsheets when they are part of the process.</small></div>
+          <div class="assessment-field"><label for="handoff-count">Human or system handoffs</label><input id="handoff-count" type="number" min="0" max="50" step="1" value="3" inputmode="numeric" /><small>Count transfers of data, status, ownership, or approval.</small></div>
+          <div class="assessment-field"><label for="control-state">Approval and exception rules</label><select id="control-state"><option value="documented">Documented and owned</option><option value="partial" selected>Partly documented</option><option value="unclear">Mostly implicit or unclear</option></select><small>Choose the state of this workflow, not the organization overall.</small></div>
+          <div class="assessment-field"><label for="access-state">Data and system access</label><select id="access-state"><option value="defined">APIs or approved events are defined</option><option value="available" selected>Exports or access exist but need mapping</option><option value="unclear">Access or ownership is unclear</option></select><small>This does not assess security approval or technical feasibility.</small></div>
         </div>
-        <div class="assessment-actions"><button class="button" type="submit">Calculate workflow snapshot</button><button class="button button--secondary" type="reset">Reset inputs</button></div>
+        <div class="assessment-actions"><button class="button" id="calculate-readiness" type="button">Calculate workflow snapshot</button><button class="button button--secondary" type="reset">Reset inputs</button></div>
         <section class="assessment-output" id="assessment-output" tabindex="-1" aria-live="polite" hidden>
           <p class="section-kicker">Workflow snapshot</p><h2 id="assessment-level">Mapping needed</h2><p id="assessment-summary"></p>
           <div class="assessment-metric"><strong id="manual-hours">0 hours</strong><span>Estimated monthly repeatable manual workload from your inputs—not predicted savings.</span></div>
