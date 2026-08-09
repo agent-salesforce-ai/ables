@@ -9,6 +9,7 @@
   gtag('js', new Date());
   gtag('config', 'G-NLL9GDQY8S');
 </script>
+<script src="/analytics.js"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>AI Underwriting &amp; Lending Automation Software | Ables</title>
@@ -486,7 +487,7 @@
         <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
       </button>
       <a href="/login.html" class="btn btn-ghost">Sign in</a>
-      <a href="#cta" class="btn btn-primary" data-action="open-demo">Book a demo <span class="arrow">→</span></a>
+      <a href="#cta" class="btn btn-primary" data-action="open-demo" data-cta-location="nav">Book a demo <span class="arrow">→</span></a>
     </div>
   </div>
 </nav>
@@ -516,7 +517,7 @@
       <h1 class="hero-title">AI underwriting automation for small-business lenders.</h1>
       <p class="hero-sub">Connect <strong>lead intake, qualification, document review, risk scoring, offer workflows, and follow-up</strong> in one system designed for lender oversight.</p>
       <div class="hero-cta">
-        <a href="https://demovideo.ables.ai" class="btn btn-accent btn-lg" target="_blank" rel="noopener noreferrer">Watch the product demo <span class="arrow">→</span></a>
+        <a href="https://demovideo.ables.ai" class="btn btn-accent btn-lg" target="_blank" rel="noopener noreferrer" data-action="watch-demo" data-cta-location="hero">Watch the product demo <span class="arrow">→</span></a>
         <a href="#stack" class="btn btn-ghost btn-lg">How it works</a>
       </div>
 
@@ -771,7 +772,7 @@
             <li>Standard CRM or API integration</li>
             <li>Email + chat support</li>
           </ul>
-          <a href="#" class="btn btn-ghost price-cta" data-action="open-demo">Get a quote <span class="arrow">→</span></a>
+          <a href="#" class="btn btn-ghost price-cta" data-action="open-demo" data-cta-location="pricing_starter">Get a quote <span class="arrow">→</span></a>
         </div>
         <div class="price-card price-card-feature">
           <div class="price-tier">Scale</div>
@@ -783,7 +784,7 @@
             <li>Security review materials + implementation support</li>
             <li>Service levels documented in the agreement</li>
           </ul>
-          <a href="#" class="btn btn-primary price-cta" data-action="open-demo">Get a quote <span class="arrow">→</span></a>
+          <a href="#" class="btn btn-primary price-cta" data-action="open-demo" data-cta-location="pricing_scale">Get a quote <span class="arrow">→</span></a>
         </div>
         <div class="price-card">
           <div class="price-tier">À la carte · Bespoke</div>
@@ -795,7 +796,7 @@
             <li>Bespoke models, channels, and integrations on request</li>
             <li>Private deployment + bring-your-own-LLM available</li>
           </ul>
-          <a href="#" class="btn btn-ghost price-cta" data-action="open-demo">Build a quote <span class="arrow">→</span></a>
+          <a href="#" class="btn btn-ghost price-cta" data-action="open-demo" data-cta-location="pricing_bespoke">Build a quote <span class="arrow">→</span></a>
         </div>
       </div>
 
@@ -810,7 +811,7 @@
         <h2>Start with the workflow<br/><em>your team already runs.</em></h2>
         <p class="lead">Book a walkthrough to review the product, integration fit, security requirements, and a representative evaluation scope.</p>
         <div class="hero-cta">
-          <a href="#" class="btn btn-primary btn-lg" data-action="open-demo">Book a walkthrough <span class="arrow">→</span></a>
+          <a href="#" class="btn btn-primary btn-lg" data-action="open-demo" data-cta-location="bottom_cta">Book a walkthrough <span class="arrow">→</span></a>
           <a href="/security/" class="btn btn-ghost btn-lg">Review security approach</a>
         </div>
       </div>
@@ -849,7 +850,7 @@
         <h5>Company</h5>
         <a href="/about/">About</a>
         <a href="/security/">Security</a>
-        <a href="#" data-action="open-demo">Book a demo</a>
+        <a href="#" data-action="open-demo" data-cta-location="footer">Book a demo</a>
         <a href="mailto:zak@ables.ai">Contact</a>
         <a href="https://www.linkedin.com/company/ables-ai/" target="_blank" rel="noopener noreferrer">Follow on LinkedIn</a>
         <a href="https://github.com/agent-salesforce-ai/ables">GitHub</a>
@@ -973,8 +974,18 @@
     const ENDPOINT = 'https://2.ables.ai/api/demo';
 
     let lastFocus = null;
+    let activeCtaLocation = 'unknown';
     function open(e){
       if (e) e.preventDefault();
+      activeCtaLocation = e && e.currentTarget && e.currentTarget.dataset.ctaLocation
+        ? e.currentTarget.dataset.ctaLocation
+        : 'unknown';
+      if (window.AblesAnalytics) {
+        window.AblesAnalytics.track('demo_open', {
+          cta_name: 'book_demo',
+          cta_location: activeCtaLocation,
+        });
+      }
       lastFocus = document.activeElement;
       modal.classList.add('open');
       formWrap.style.display = '';
@@ -991,6 +1002,15 @@
     }
     // Open triggers
     document.querySelectorAll('[data-action="open-demo"]').forEach(el => el.addEventListener('click', open));
+    document.querySelectorAll('[data-action="watch-demo"]').forEach(el => el.addEventListener('click', () => {
+      if (window.AblesAnalytics) {
+        window.AblesAnalytics.track('demo_video_click', {
+          cta_name: 'watch_product_demo',
+          cta_location: el.dataset.ctaLocation || 'unknown',
+          destination_host: 'demovideo.ables.ai',
+        });
+      }
+    }));
     // Close triggers
     modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
     document.querySelectorAll('[data-close-demo]').forEach(el => el.addEventListener('click', close));
@@ -1013,6 +1033,12 @@
       submitBtn.disabled = true;
       submitBtn.textContent = 'Sending…';
       try {
+        if (window.AblesAnalytics) {
+          Object.assign(payload, window.AblesAnalytics.getAttribution());
+          payload.cta_location = activeCtaLocation;
+          const clientId = await window.AblesAnalytics.getClientId(800);
+          if (clientId) payload.ga_client_id = clientId;
+        }
         const r = await fetch(ENDPOINT, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
@@ -1020,6 +1046,12 @@
         });
         const data = await r.json().catch(() => ({}));
         if (!r.ok || !data.ok) throw new Error(data.error || `Server returned ${r.status}`);
+        if (window.AblesAnalytics) {
+          window.AblesAnalytics.track('generate_lead', {
+            form_name: 'demo_request',
+            lead_type: 'demo_request',
+          });
+        }
         formWrap.style.display = 'none';
         success.classList.add('open');
         form.reset();
