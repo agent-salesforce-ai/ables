@@ -43,6 +43,10 @@ const sitemapUrls = [...sitemapText.matchAll(/<loc>(https:\/\/ables\.ai[^<]+)<\/
 if (sitemapUrls.length !== 22) fail(`Expected 22 sitemap URLs, found ${sitemapUrls.length}`);
 if (new Set(sitemapUrls).size !== sitemapUrls.length) fail('Sitemap contains duplicate URLs');
 
+const resourcesHtml = await readFile(path.join(root, 'resources', 'index.html'), 'utf8');
+if (!resourcesHtml.includes('href="https://lender-list.com/"')) fail('Resources page is missing the Lender List resource link');
+if (!resourcesHtml.includes('A directory match is not an approval or offer')) fail('Resources page is missing the Lender List disclaimer');
+
 const titles = new Map();
 const publicFiles = new Set();
 
