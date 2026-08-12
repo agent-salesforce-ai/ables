@@ -355,15 +355,11 @@
   .cta-box .hero-cta{justify-content:center;margin-bottom:0}
   @media (max-width:640px){.cta-box{padding:40px 24px}}
 
-  /* Featured industry resource */
-  .industry-resource{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:22px;padding:28px 30px;border:1px solid var(--line);border-radius:14px;background:var(--bg-2);box-shadow:var(--shadow-card);transition:transform .2s,box-shadow .2s}
-  .industry-resource:hover{transform:translateY(-2px);box-shadow:var(--shadow-card-elev)}
-  .industry-resource img{width:52px;height:52px}
-  .industry-resource small{display:block;margin-bottom:5px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
-  .industry-resource h2{margin:0 0 5px;font-size:24px}
-  .industry-resource p{margin:0;color:var(--muted);font-size:15px;line-height:1.5}
-  .industry-resource strong{font-family:var(--mono);font-size:12px;font-weight:500;white-space:nowrap}
-  @media (max-width:640px){.industry-resource{grid-template-columns:auto 1fr;padding:22px}.industry-resource strong{grid-column:2}}
+  .industry-resource{display:inline-flex;align-items:center;gap:8px;margin-top:18px;padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:var(--bg-2);font-family:var(--mono);font-size:11px;color:var(--muted);transition:border-color .2s,color .2s}
+  .industry-resource:hover{border-color:var(--text);color:var(--text)}
+  .industry-resource img{width:22px;height:22px}
+  .industry-resource small{color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
+  .industry-resource strong{font-weight:600;color:var(--text)}
 
   /* Footer */
   footer{padding:64px 0 48px;border-top:1px solid var(--line);color:var(--muted);font-size:14px}
@@ -575,16 +571,7 @@
         <span class="badge">Telnyx messaging</span>
         <span class="badge">CRM integrations</span>
       </div>
-    </div>
-  </section>
-
-  <section aria-labelledby="lender-list-home-title">
-    <div class="wrap">
-      <a class="industry-resource" href="https://lender-list.com/" target="_blank" rel="noopener noreferrer">
-        <img src="/assets/lender-list-mark.svg" alt="" width="52" height="52">
-        <div><small>Featured industry resource</small><h2 id="lender-list-home-title">Lender List</h2><p>Review published MCA lender criteria and match explanations. Confirm current criteria directly with the lender.</p></div>
-        <strong>Open directory →</strong>
-      </a>
+      <a class="industry-resource" href="https://lender-list.com/" target="_blank" rel="noopener noreferrer"><img src="/assets/lender-list-mark.svg" alt="" width="22" height="22"><small>Industry resource</small><strong id="lender-list-home-title">Lender List ↗</strong></a>
     </div>
   </section>
 
