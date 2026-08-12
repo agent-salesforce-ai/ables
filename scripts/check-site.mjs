@@ -45,6 +45,7 @@ if (new Set(sitemapUrls).size !== sitemapUrls.length) fail('Sitemap contains dup
 
 const resourcesHtml = await readFile(path.join(root, 'resources', 'index.html'), 'utf8');
 if (!resourcesHtml.includes('href="https://lender-list.com/"')) fail('Resources page is missing the Lender List resource link');
+if (!resourcesHtml.includes('src="/assets/lender-list-mark.svg"')) fail('Resources page is missing the Lender List logo');
 if (!resourcesHtml.includes('A directory match is not an approval or offer')) fail('Resources page is missing the Lender List disclaimer');
 
 const titles = new Map();
