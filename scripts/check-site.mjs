@@ -47,6 +47,9 @@ const resourcesHtml = await readFile(path.join(root, 'resources', 'index.html'),
 if (!resourcesHtml.includes('href="https://lender-list.com/"')) fail('Resources page is missing the Lender List resource link');
 if (!resourcesHtml.includes('src="/assets/lender-list-mark.svg"')) fail('Resources page is missing the Lender List logo');
 if (!resourcesHtml.includes('A directory match is not an approval or offer')) fail('Resources page is missing the Lender List disclaimer');
+const homeHtml = await readFile(path.join(root, 'index.html'), 'utf8');
+if (!homeHtml.includes('id="lender-list-home-title"')) fail('Homepage is missing the visible Lender List feature');
+if (!homeHtml.includes('href="https://lender-list.com/"')) fail('Homepage is missing the Lender List link');
 
 const titles = new Map();
 const publicFiles = new Set();
